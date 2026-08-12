@@ -1,31 +1,63 @@
-# Aesthetix
+# The Pass
 
-**Aesthetix** is a high-end Med Spa marketing site. Editorial, luxury aesthetic with membership, about, and booking flows.
+**Restaurant marketing intelligence.** Every restaurant location. Every
+campaign. Every meaningful result. One clear view.
 
-- **Stack:** Next.js (App Router), Tailwind CSS, Framer Motion, Lucide Icons
-- **Design:** Clinical luxury — Playfair Display + Inter, cream/forest/sage palette
+The Pass is a multi-location restaurant marketing reporting platform that
+turns Google Ads and Meta Ads data into a clear, owner-friendly view of
+spend, guest actions (reservations, orders, calls), cost per result, and
+marketing return — wrapped in a managed-service experience: a daily
+executive briefing, a transparent Pass Score, a prioritized opportunity
+feed, and visible management activity.
 
-## Getting Started
+Built with **Next.js (App Router) · TypeScript · Tailwind CSS v4** in the
+**Hospitality Intelligence** design system (warm ivory canvas, ink-navy
+navigation, cobalt interaction color, editorial serif headlines).
 
-From the **aesthetix** directory:
+## Run locally
 
 ```bash
 npm install
-npm run dev
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+No environment variables are needed — the app ships with a fully seeded
+demo brand (**Santorini by Georgios**, Fort Lauderdale + Miami Beach) whose
+daily fact data is generated deterministically and sums exactly to the
+blueprint's Last-30-Days totals.
 
-## Project structure
+```bash
+npm test           # vitest: metrics, dates, data layer, authorization
+npm run lint       # eslint
+npm run build      # production build
+```
 
-- `/` — Editorial landing (hero, story section, treatments)
-- `/membership` — Dark-luxury membership tiers
-- `/about` — Founder’s letter, philosophy, space gallery
+## What's inside
 
-## Scripts
+| Route | Purpose |
+| --- | --- |
+| `/` | Command Center: Daily Pass briefing, Return Hero, Pass Score, opportunities, Marketing Pulse, management activity, location comparison, campaign breakdown |
+| `/campaigns`, `/campaigns/[id]` | Campaign ledger + detail (Search keywords/terms, PMax insights, Meta ad sets) |
+| `/keywords` | Keywords · Search Terms · PMax Search Insights · Location Keywords |
+| `/conversions` | Normalized conversion categories, mapping, attribution disclosures |
+| `/locations`, `/locations/[id]` | Location comparison and profiles/mappings |
+| `/calendar` | Month/week/list marketing calendar with item drawer |
+| `/reports` | Executive Report + The Month in Review (print/PDF), saved reports |
+| `/integrations` | Connection status, mappings, sync history (demo mode) |
+| `/settings` | Brand settings, demo role switching, notification preferences |
+| `/api/reports/campaign-performance` | Scoped reporting endpoint |
 
-- `npm run dev` — Development server
-- `npm run build` — Production build
-- `npm run start` — Start production server
+## Architecture notes
 
-This project is **Aesthetix** only. It is not part of or tied to any other product or codebase.
+- **Data access:** pages talk only to `lib/data/` query functions returning
+  normalized types (`lib/types.ts`). The seeded demo source and future live
+  connectors (`lib/connectors/`) implement the same contract.
+- **Authorization:** roles and location grants are enforced in the data
+  layer and API, not by hiding UI. Switch demo users in Settings to verify.
+- **Metric rules:** ratios with zero denominators and unsupported platform
+  metrics render `—`, never a false `$0`. Money is stored in integer cents.
+- **Filters:** brand/location/platform/date/comparison state lives in the
+  URL and persists across pages and exports.
+
+Deploying: `netlify.toml` is included; connect the repo in Netlify (or
+Vercel) and deploy with defaults.

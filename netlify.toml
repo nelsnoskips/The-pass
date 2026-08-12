@@ -1,0 +1,10 @@
+# Netlify configuration for The Pass (Next.js App Router).
+# Netlify auto-detects Next.js and provisions the Next Runtime; connecting
+# this repo in the Netlify UI with these settings is all that's required.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

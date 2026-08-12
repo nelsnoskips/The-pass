@@ -1,55 +1,136 @@
 @import "tailwindcss";
 
-/* Aesthetix – Editorial / High-Fashion */
+/* The Pass — Hospitality Intelligence design system (blueprint §17) */
 :root {
-  --cream: #f9f7f2;
-  --forest: #1a3c34;
-  --text-editorial: #0f281e;
-  --sage-muted: #d4dcd6;
-  --teal: #0d9488;
-  --background: #f9f7f2;
-  --foreground: #0f281e;
+  --canvas: #f6f2e9;
+  --surface: #ffffff;
+  --ink: #081b32;
+  --cobalt: #1e5bff;
+  --emerald: #16a34a;
+  --champagne: #c9a66b;
+  --slate: #657082;
+  --line: #e7e1d8;
+  --warning: #d88a28;
+  --error: #d94e4e;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-cream: var(--cream);
-  --color-forest: var(--forest);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: #081b32;
+  --color-ink-800: #0d2440;
+  --color-ink-700: #143156;
+  --color-cobalt: #1e5bff;
+  --color-cobalt-soft: #e8eeff;
+  --color-emerald: #16a34a;
+  --color-emerald-soft: #e6f6ec;
+  --color-champagne: #c9a66b;
+  --color-champagne-soft: #f7efe2;
+  --color-slate: #657082;
+  --color-line: #e7e1d8;
+  --color-warning: #d88a28;
+  --color-warning-soft: #faf0e2;
+  --color-error: #d94e4e;
+  --color-error-soft: #fbeaea;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-playfair), Georgia, serif;
+  --font-display: var(--font-dm-serif), Georgia, serif;
+  --radius-card: 16px;
+  --shadow-card: 0 1px 2px rgb(8 27 50 / 0.04), 0 4px 16px rgb(8 27 50 / 0.05);
+  --shadow-card-hover: 0 2px 4px rgb(8 27 50 / 0.06), 0 8px 24px rgb(8 27 50 / 0.08);
 }
 
 body {
-  background: var(--cream);
-  color: var(--text-editorial);
+  background: var(--canvas);
+  color: var(--ink);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Editorial headings: Playfair Display Italic */
-.font-editorial {
-  font-family: var(--font-playfair), Georgia, serif;
-  font-weight: 600;
-  font-style: italic;
-  line-height: 1.1;
-}
-
+/* Editorial display face for briefings, hero outcomes, report covers. */
 .font-display {
-  font-family: var(--font-playfair), Georgia, serif;
-  font-weight: 700;
-  line-height: 1.1;
+  font-family: var(--font-dm-serif), Georgia, serif;
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
 }
 
-.text-technical {
-  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
+/* Uppercase micro-labels: DAILY PASS EXECUTIVE BRIEFING, etc. Use sparingly. */
+.micro-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-/* Noise/grain overlay – use .noise-overlay on a fixed full-screen div */
-.noise-overlay {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.5;
+/* Metrics always use tabular numerals. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ledger-style tables. */
+.ledger th {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slate);
+  white-space: nowrap;
+}
+.ledger td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Focus visibility (WCAG). */
+:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Restrained card hover lift. */
+.lift {
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.lift:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lift,
+  .lift:hover {
+    transition: none;
+    transform: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Skeleton shimmer. */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+.skeleton {
+  background: var(--line);
+  border-radius: 6px;
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+/* Print: executive report / Month in Review. */
+@media print {
+  body {
+    background: #ffffff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-page {
+    break-inside: avoid;
+  }
 }
