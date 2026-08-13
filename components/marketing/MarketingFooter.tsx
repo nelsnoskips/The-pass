@@ -12,6 +12,12 @@ export function MarketingFooter() {
               Restaurant growth, conducted. Strategy, technology, media, and
               conversion — one complete guest experience.
             </p>
+            <a
+              href="mailto:hello@madisonfour.com"
+              className="mt-5 inline-block text-[13.5px] text-[#B79A68] transition-colors hover:text-[#F1EDE5]"
+            >
+              hello@madisonfour.com
+            </a>
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-x-16 gap-y-3 sm:grid-cols-3">
             {[

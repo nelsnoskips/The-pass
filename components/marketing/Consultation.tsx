@@ -56,6 +56,15 @@ export function Consultation() {
           <p className="mk-label mt-10 text-[#1A1310]/50">
             Response within one business day
           </p>
+          <p className="mt-4 text-[13.5px] text-[#1A1310]/70">
+            Or write directly:{" "}
+            <a
+              href="mailto:hello@madisonfour.com"
+              className="border-b border-[#4B1719]/30 text-[#4B1719] transition-colors hover:border-[#4B1719]"
+            >
+              hello@madisonfour.com
+            </a>
+          </p>
         </div>
 
         {state === "sent" ? (
