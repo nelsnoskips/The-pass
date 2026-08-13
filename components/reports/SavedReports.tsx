@@ -53,7 +53,7 @@ export function SavedReports({ userId }: { userId: string }) {
           {reports.map((r) => (
             <li key={r.id} className="flex items-center gap-2 rounded-lg border border-line px-3 py-2 text-[13px]">
               <Link
-                href={r.query ? `/?${r.query}` : "/"}
+                href={r.query ? `/dashboard?${r.query}` : "/dashboard"}
                 className="min-w-0 flex-1 truncate font-medium text-cobalt hover:underline"
               >
                 {r.name}

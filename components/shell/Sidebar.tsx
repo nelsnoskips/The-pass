@@ -16,7 +16,7 @@ import {
 import clsx from "clsx";
 
 const NAV = [
-  { href: "/", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/campaigns", label: "Campaigns", icon: Megaphone },
   { href: "/keywords", label: "Keywords & Search Terms", icon: SearchCheck },
   { href: "/conversions", label: "Conversions", icon: MousePointerClick },
@@ -44,7 +44,7 @@ export function Sidebar({
       aria-label="Primary navigation"
     >
       <div className="px-6 pb-6 pt-7">
-        <Link href={withFilters("/")} className="block">
+        <Link href={withFilters("/dashboard")} className="block">
           <span className="font-display text-[26px] leading-none text-white">
             The Pass
           </span>
@@ -56,7 +56,7 @@ export function Sidebar({
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3">
         {NAV.map(({ href, label, icon: Icon }) => {
           const active =
-            href === "/" ? pathname === "/" : pathname.startsWith(href);
+            pathname.startsWith(href);
           return (
             <Link
               key={href}

@@ -147,7 +147,7 @@ export default async function OverviewPage({
           : statusLine === "Check conversion tracking"
             ? "attention"
             : "neutral",
-      href: `/?${serializeFilters({ ...filters, locationIds: [loc.id] })}`,
+      href: `/dashboard?${serializeFilters({ ...filters, locationIds: [loc.id] })}`,
     };
   });
 

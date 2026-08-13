@@ -503,7 +503,7 @@ export function notifications(anchor: string): AppNotification[] {
       body: "Alexis identified an estimated +40–60 reservations/mo opportunity.",
       at: `${addDays(anchor, -2)}T14:05:00Z`,
       read: false,
-      href: "/",
+      href: "/dashboard",
     },
     {
       id: "ntf_2",
@@ -512,7 +512,7 @@ export function notifications(anchor: string): AppNotification[] {
       body: "Alexis posted this week's account note.",
       at: `${addDays(anchor, -1)}T15:30:00Z`,
       read: false,
-      href: "/",
+      href: "/dashboard",
     },
     {
       id: "ntf_3",

@@ -101,7 +101,7 @@ export default async function WelcomePage() {
 
       <div className="pb-4 text-center">
         <Link
-          href="/"
+          href="/dashboard"
           className="inline-flex items-center gap-2 rounded-xl bg-cobalt px-6 py-3 text-[14px] font-semibold text-white hover:bg-cobalt/90"
         >
           Read your first Daily Pass briefing

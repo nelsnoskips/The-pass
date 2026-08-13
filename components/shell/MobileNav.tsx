@@ -19,7 +19,7 @@ import {
 import clsx from "clsx";
 
 const PRIMARY = [
-  { href: "/", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/campaigns", label: "Campaigns", icon: Megaphone },
   { href: "/conversions", label: "Conversions", icon: MousePointerClick },
   { href: "/calendar", label: "Calendar", icon: CalendarDays },
@@ -88,7 +88,7 @@ export function MobileNav() {
         <ul className="flex">
           {PRIMARY.map(({ href, label, icon: Icon }) => {
             const active =
-              href === "/" ? pathname === "/" : pathname.startsWith(href);
+              pathname.startsWith(href);
             return (
               <li key={href} className="flex-1">
                 <Link

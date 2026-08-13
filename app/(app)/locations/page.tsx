@@ -63,7 +63,7 @@ export default async function LocationsPage({
           const trackingIssue = locRows.some(
             (r) => r.totals.spendCents > 2000 && r.totals.conversions === 0,
           );
-          const overviewHref = `/?${serializeFilters({ ...filters, locationIds: [loc.id] })}`;
+          const overviewHref = `/dashboard?${serializeFilters({ ...filters, locationIds: [loc.id] })}`;
           const profileHref = `/locations/${loc.id}${serializeFilters(filters) ? `?${serializeFilters(filters)}` : ""}`;
 
           return (

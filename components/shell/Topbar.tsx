@@ -28,7 +28,7 @@ export function Topbar({
   return (
     <header className="no-print sticky top-0 z-30 border-b border-line bg-canvas/85 backdrop-blur">
       <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 sm:px-6 lg:px-8">
-        <Link href="/" className="mr-1 font-display text-xl text-ink lg:hidden">
+        <Link href="/dashboard" className="mr-1 font-display text-xl text-ink lg:hidden">
           The Pass
         </Link>
         <div className="order-last w-full lg:order-none lg:w-auto lg:flex-1">

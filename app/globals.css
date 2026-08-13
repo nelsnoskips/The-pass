@@ -134,3 +134,82 @@ body {
     break-inside: avoid;
   }
 }
+
+/* ------------------------------------------------ marketing (Madison Four) */
+.mk {
+  --mk-ink: #0a0a09;
+  --mk-bone: #f1ede5;
+  --mk-espresso: #1a1310;
+  --mk-oxblood: #4b1719;
+  --mk-champagne: #b79a68;
+  --mk-green: #83a978;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+.mk .font-editorial {
+  font-family: var(--font-instrument), Georgia, serif;
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: 0.005em;
+}
+
+.mk .mk-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.mk ::selection {
+  background: var(--mk-champagne);
+  color: var(--mk-ink);
+}
+
+/* Entrance reveals (load + scroll). */
+@keyframes mk-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.mk-rise {
+  animation: mk-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.mk-rise-2 { animation-delay: 0.15s; }
+.mk-rise-3 { animation-delay: 0.3s; }
+.mk-rise-4 { animation-delay: 0.45s; }
+
+/* Very slow cinematic drift for hero photography. */
+@keyframes mk-drift {
+  from { transform: scale(1.02) translateX(0); }
+  to { transform: scale(1.08) translateX(-1.5%); }
+}
+.mk-drift {
+  animation: mk-drift 28s ease-in-out infinite alternate;
+}
+
+/* The recurring "pass line" motif — a thin light traveling a hairline rule. */
+@keyframes mk-passline {
+  0% { transform: translateX(-100%); }
+  55% { transform: translateX(240%); }
+  100% { transform: translateX(240%); }
+}
+.mk-passline {
+  position: relative;
+  overflow: hidden;
+}
+.mk-passline::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 42%;
+  background: linear-gradient(90deg, transparent, var(--mk-champagne), transparent);
+  animation: mk-passline 6.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mk-rise,
+  .mk-drift,
+  .mk-passline::after {
+    animation: none !important;
+  }
+  .mk-rise { opacity: 1; transform: none; }
+}
