@@ -41,7 +41,7 @@ export function Hero() {
             <em className="italic text-[#B79A68]">conducted.</em>
           </h1>
           <p className="mk-rise mk-rise-3 mt-5 max-w-[440px] text-[15.5px] leading-relaxed text-[#F1EDE5]/70">
-            Strategy, creative, technology, and conversion — working as one
+            Strategy, technology, media, and conversion — working as one
             complete guest experience.
           </p>
 
@@ -68,7 +68,7 @@ export function Hero() {
             <div className="mk-passline h-px bg-[#B79A68]/25" />
             <div className="mt-3 flex justify-between text-[10px] font-medium uppercase tracking-[0.22em] text-[#F1EDE5]/40">
               <span>Strategy</span>
-              <span>Creative</span>
+              <span>Build</span>
               <span>Media</span>
               <span>Guest</span>
             </div>

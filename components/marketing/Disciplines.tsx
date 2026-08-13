@@ -1,7 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
   Compass,
-  Feather,
   Globe,
   MousePointerClick,
   Search,
@@ -17,11 +16,6 @@ const DISCIPLINES: {
     icon: Compass,
     label: "Strategy",
     detail: "Market intelligence, positioning, and growth roadmaps built for your reality.",
-  },
-  {
-    icon: Feather,
-    label: "Creative",
-    detail: "Stories, content, and campaigns that build preference and authenticity.",
   },
   {
     icon: Globe,
@@ -46,8 +40,8 @@ const DISCIPLINES: {
 ];
 
 /**
- * The six disciplines as a connected editorial sequence — fine rules and a
- * shared line, not six rounded cards. Hover deepens each stage.
+ * The five disciplines as a connected editorial sequence — fine rules and a
+ * shared line, not five rounded cards. Hover deepens each stage.
  */
 export function Disciplines() {
   return (
@@ -59,12 +53,12 @@ export function Disciplines() {
         <p className="mk-label text-[#4B1719]">Growth Management</p>
         <div className="mt-6 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <h2 className="font-editorial text-[38px] leading-[1.06] text-[#0A0A09] sm:text-[52px]">
-            Strategy. Creative. Technology.
+            Strategy. Technology. Media.
             <br />
             <em className="italic text-[#4B1719]">All in service of the guest.</em>
           </h2>
           <p className="max-w-[420px] self-end text-[15px] leading-relaxed text-[#1A1310]/75">
-            Madison Four brings restaurant strategy, creative, media, websites,
+            Madison Four brings restaurant strategy, websites, search, media,
             and conversion into one connected growth system. Every decision is
             grounded in how guests discover, choose, and return to a
             restaurant.
@@ -74,7 +68,7 @@ export function Disciplines() {
         <div className="relative mt-16">
           {/* The connecting line the disciplines hang from. */}
           <div aria-hidden className="absolute inset-x-0 top-[13px] hidden h-px bg-[#0A0A09]/15 lg:block" />
-          <ol className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-6">
+          <ol className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-5">
             {DISCIPLINES.map(({ icon: Icon, label, detail }, i) => (
               <li key={label} className="group relative">
                 <span

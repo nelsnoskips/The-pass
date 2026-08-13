@@ -9,7 +9,7 @@ export function MarketingFooter() {
           <div>
             <Wordmark tone="light" />
             <p className="mt-5 max-w-[300px] text-[13.5px] leading-relaxed text-[#F1EDE5]/50">
-              Restaurant growth, conducted. Strategy, creative, technology, and
+              Restaurant growth, conducted. Strategy, technology, media, and
               conversion — one complete guest experience.
             </p>
           </div>
