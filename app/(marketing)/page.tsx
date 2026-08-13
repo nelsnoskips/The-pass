@@ -27,7 +27,7 @@ export default function HomePage() {
             brand: { "@type": "Brand", name: "The Pass by Madison Four" },
             slogan: "Restaurant growth, conducted.",
             description:
-              "Madison Four connects strategy, creative, technology, and conversion into one complete guest experience for restaurants — powered by The Pass, its proprietary reporting and restaurant intelligence platform.",
+              "Madison Four connects restaurant strategy, websites, search, media, and conversion into one complete guest experience — powered by The Pass, its proprietary reporting and restaurant intelligence platform.",
             knowsAbout: [
               "Restaurant marketing",
               "SEO",

@@ -26,7 +26,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "The Pass by Madison Four — Restaurant Growth, Conducted.",
   description:
-    "Madison Four connects strategy, creative, technology, and conversion into one complete guest experience — with The Pass, our proprietary restaurant intelligence platform.",
+    "Madison Four connects restaurant strategy, websites, search, media, and conversion into one complete guest experience — with The Pass, our proprietary restaurant intelligence platform.",
   openGraph: {
     title: "The Pass by Madison Four",
     description: "Restaurant growth, conducted.",
