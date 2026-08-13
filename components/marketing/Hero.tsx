@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { EmberField } from "./EmberField";
 
 const HERO_IMAGE = "/images/hero-service.jpg";
 
@@ -25,6 +26,8 @@ export function Hero() {
         {/* Gradient joins copy field to photograph. */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A09] from-[26%] via-[#0A0A09]/78 via-[48%] to-[#0A0A09]/16" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0A0A09] to-transparent" />
+        {/* Embers drift over the photograph, never over the copy field. */}
+        <EmberField className="absolute inset-y-0 left-[24%] right-0 h-full w-auto lg:left-[30%]" />
       </div>
 
       <div className="relative mx-auto flex w-full max-w-[1400px] flex-col justify-center px-5 pb-24 pt-36 sm:px-8">
