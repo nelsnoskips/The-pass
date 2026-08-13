@@ -3,6 +3,7 @@ import { PageShell } from "@/components/site/PageShell";
 import { Reveal } from "@/components/ui/Reveal";
 import { DeliveryChecker } from "@/components/shop/DeliveryChecker";
 import { BottleGlyph } from "@/components/ui/Brand";
+import { Bloom, Deckle } from "@/components/ui/Artwork";
 import { bottles, collections, site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -23,14 +24,19 @@ export default function BottleShopPage() {
       title="Take the rebellion home"
       intro="Two dozen bottles we actually drink, with notes written like recommendations instead of distributor copy."
       image="bottleShop"
+      deckleTone="text-ink"
     >
-      <div className="border-b border-rule-dark bg-ink px-6 py-3 text-center text-sm text-bone md:px-10">
+      <div className="relative bg-ink px-6 py-4 text-center text-sm text-bone md:px-10">
+        <Deckle edge="bottom" variant={2} className="text-bone" />
+        <span className="relative">
         Local delivery + pickup available in {site.address.city} ·{" "}
         <span className="text-bone/60">21+ with ID at handoff</span>
+        </span>
       </div>
 
-      <section className="paper-grain bg-bone">
-        <div className="mx-auto max-w-[1200px] px-6 py-14 md:px-10 lg:py-20">
+      <section className="paper-grain relative overflow-hidden bg-bone">
+        <Bloom variant="c" opacity={50} className="-top-32 -right-24 h-[460px] w-[500px] text-wash-sage" />
+        <div className="relative mx-auto max-w-[1200px] px-6 py-16 md:px-10 lg:py-20">
           <Reveal>
             <DeliveryChecker />
           </Reveal>
@@ -85,8 +91,9 @@ export default function BottleShopPage() {
         </div>
       </section>
 
-      <section className="bg-ink text-bone">
-        <div className="mx-auto grid max-w-[1200px] gap-10 px-6 py-16 md:grid-cols-2 md:px-10">
+      <section className="relative bg-ink text-bone">
+        <Deckle edge="top" variant={1} className="text-bone" />
+        <div className="relative mx-auto grid max-w-[1200px] gap-10 px-6 py-20 md:grid-cols-2 md:px-10">
           <Reveal>
             <h2 className="display text-[clamp(1.8rem,3.2vw,2.6rem)]">
               The Wine Club

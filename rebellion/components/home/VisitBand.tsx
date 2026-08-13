@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { hours, images, site } from "@/lib/site";
 import { Reveal } from "@/components/ui/Reveal";
+import { Bloom, BrushRule } from "@/components/ui/Artwork";
 
 /**
  * Module 08 — visit (blueprint §07). Location, hours, parking and access sit
@@ -10,8 +11,13 @@ import { Reveal } from "@/components/ui/Reveal";
  */
 export function VisitBand() {
   return (
-    <section className="relative grid bg-paper lg:grid-cols-2">
-      <Reveal className="relative min-h-[300px] lg:min-h-[440px]">
+    <section className="paper-grain relative grid overflow-hidden bg-paper lg:grid-cols-2">
+      <Bloom
+        variant="b"
+        opacity={40}
+        className="-right-24 -bottom-32 h-[420px] w-[460px] text-wash-sky"
+      />
+      <Reveal className="art-frame relative min-h-[300px] lg:min-h-[440px]">
         <Image
           src={images.beachside.src}
           alt={images.beachside.alt}
@@ -21,9 +27,10 @@ export function VisitBand() {
         />
       </Reveal>
 
-      <div className="px-6 py-14 md:px-10 lg:py-20">
+      <div className="relative px-6 py-14 md:px-10 lg:py-20">
         <Reveal>
           <p className="micro text-oxblood">Visit</p>
+          <BrushRule className="mt-3 w-14 text-oxblood" variant={2} />
           <h2 className="display mt-4 text-[clamp(1.9rem,3.4vw,3rem)]">
             Two blocks from the water
           </h2>

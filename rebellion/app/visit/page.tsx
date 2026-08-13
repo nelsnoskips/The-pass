@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell } from "@/components/site/PageShell";
 import { Reveal } from "@/components/ui/Reveal";
+import { Bloom, InkSplatter } from "@/components/ui/Artwork";
 import { hours, site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -48,8 +49,10 @@ export default function VisitPage() {
       intro="Hours, parking, access and the answers people ask for most."
       image="beachside"
     >
-      <section className="paper-grain bg-bone">
-        <div className="mx-auto max-w-[1100px] px-6 py-16 md:px-10 lg:py-24">
+      <section className="paper-grain relative overflow-hidden bg-bone">
+        <Bloom variant="c" opacity={50} className="-top-32 right-[6%] h-[440px] w-[480px] text-wash-sage" />
+        <InkSplatter variant="spray" opacity={9} className="-bottom-8 left-[8%] hidden h-40 w-40 text-ink lg:block" />
+        <div className="relative mx-auto max-w-[1100px] px-6 py-16 md:px-10 lg:py-24">
           <div className="grid gap-10 border-b border-rule pb-14 sm:grid-cols-3">
             <Reveal>
               <h2 className="micro text-ink-mute">Address</h2>

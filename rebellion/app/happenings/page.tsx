@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PageShell } from "@/components/site/PageShell";
 import { Reveal } from "@/components/ui/Reveal";
+import { Bloom } from "@/components/ui/Artwork";
 import { happenings, images, site } from "@/lib/site";
 import { eventDate } from "@/lib/utils";
 
@@ -44,8 +45,9 @@ export default function HappeningsPage() {
       intro="Live music, wine dinners, brunch club, and classes. Some are ticketed, most are not, and all of them are worth rearranging a Tuesday for."
       image="eventLiveMusic"
     >
-      <div className="paper-grain bg-bone">
-        <div className="mx-auto max-w-[1100px] px-6 py-16 md:px-10 lg:py-24">
+      <div className="paper-grain relative overflow-hidden bg-bone">
+        <Bloom variant="b" opacity={50} className="-top-36 -right-28 h-[500px] w-[540px] text-wash-sky" />
+        <div className="relative mx-auto max-w-[1100px] px-6 py-16 md:px-10 lg:py-24">
           <ul className="divide-y divide-rule border-y border-rule">
             {happenings.map((event, i) => {
               const date = eventDate(event.date);
@@ -72,7 +74,7 @@ export default function HappeningsPage() {
                       </span>
                     </time>
 
-                    <div className="relative aspect-[4/3] overflow-hidden">
+                    <div className="art-frame relative aspect-[4/3] overflow-hidden">
                       <Image
                         src={img.src}
                         alt={img.alt}

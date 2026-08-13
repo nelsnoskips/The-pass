@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { images, site } from "@/lib/site";
 import { Reveal } from "@/components/ui/Reveal";
+import { Bloom, InkSplatter } from "@/components/ui/Artwork";
 
 /**
  * Module 01 — cinematic hero (blueprint §07).
@@ -32,18 +33,34 @@ export function Hero() {
         aria-hidden
         className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-ink/70 to-transparent"
       />
+      {/* An oxblood wash under the headline: it does the work of a scrim while
+          reading as pigment rather than a black box. */}
+      <Bloom
+        variant="c"
+        opacity={38}
+        className="-bottom-40 -left-48 h-[820px] w-[900px] text-oxblood"
+      />
 
       <div className="relative flex min-h-[86svh] flex-col justify-end px-6 pt-32 pb-14 md:min-h-[92svh] md:px-10 md:pb-20">
-        <h1 className="display max-w-[15ch] text-[clamp(2.9rem,9vw,7.5rem)]">
+        <h1 className="display relative max-w-[15ch] text-[clamp(2.9rem,9vw,7.5rem)]">
           <Reveal index={0} className="block">
             Rebel Against
           </Reveal>
           <Reveal index={1} className="block">
-            The Ordinary
+            {/* The one loud mark on the page: ink thrown at the end of the
+                line, anchored to the text so it lands there at any size. */}
+            <span className="relative inline-block">
+              The Ordinary
+              <InkSplatter
+                variant="b"
+                opacity={95}
+                className="-top-4 -right-8 h-14 w-14 text-signal md:-top-6 md:-right-14 md:h-24 md:w-24"
+              />
+            </span>
           </Reveal>
         </h1>
 
-        <Reveal index={2} className="mt-8 flex flex-wrap gap-3">
+        <Reveal index={2} className="relative mt-8 flex flex-wrap gap-3">
           <Link
             href={site.reserveUrl}
             className="micro bg-oxblood px-9 py-5 text-bone transition-colors duration-[var(--dur-micro)] hover:bg-[#8d343d]"

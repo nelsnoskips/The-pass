@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { happenings, hours, site } from "@/lib/site";
 import { eventDate } from "@/lib/utils";
+import { Deckle } from "@/components/ui/Artwork";
 
 /**
  * "Tonight at Rebellion" (blueprint §08, live status): a slim utility strip for
@@ -16,8 +17,10 @@ export function TonightStrip() {
   const today = hours[0];
 
   return (
-    <div className="border-b border-rule-dark bg-ink-soft text-bone">
-      <div className="flex flex-wrap items-center gap-x-8 gap-y-3 px-6 py-3.5 text-sm md:px-10">
+    <div className="relative border-b border-rule-dark bg-ink-soft text-bone">
+      {/* Paper from the section below tears up into the strip. */}
+      <Deckle edge="bottom" variant={1} className="text-bone" />
+      <div className="relative flex flex-wrap items-center gap-x-8 gap-y-3 px-6 py-3.5 pb-6 text-sm md:px-10 md:pb-8">
         <p className="micro flex items-center gap-2 text-signal">
           <span className="relative flex h-1.5 w-1.5">
             <span className="absolute inline-flex h-full w-full rounded-full bg-signal opacity-70" />

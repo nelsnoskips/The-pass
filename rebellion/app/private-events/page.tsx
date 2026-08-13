@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { PageShell } from "@/components/site/PageShell";
 import { Reveal } from "@/components/ui/Reveal";
+import { Bloom } from "@/components/ui/Artwork";
 import { EventInquiryForm } from "@/components/events/EventInquiryForm";
 import { images, occasions, site, venueFacts } from "@/lib/site";
 
@@ -30,8 +31,9 @@ export default function PrivateEventsPage() {
       intro="A room of its own, attached to the bistro. Same kitchen, same cellar, nobody else in the room."
       image="privateEvents"
     >
-      <section className="paper-grain bg-bone">
-        <div className="mx-auto max-w-[1200px] px-6 py-16 md:px-10 lg:py-20">
+      <section className="paper-grain relative overflow-hidden bg-bone">
+        <Bloom variant="a" opacity={50} className="-top-36 -left-28 h-[500px] w-[540px] text-wash-blush" />
+        <div className="relative mx-auto max-w-[1200px] px-6 py-16 md:px-10 lg:py-20">
           <Reveal>
             <dl className="grid grid-cols-2 gap-x-8 gap-y-8 border-b border-rule pb-12 sm:grid-cols-4">
               {venueFacts.map((f) => (
@@ -93,7 +95,7 @@ export default function PrivateEventsPage() {
               as="figure"
               key={name}
               index={i}
-              className="relative aspect-[4/3] overflow-hidden"
+              className="art-frame relative aspect-[4/3] overflow-hidden"
             >
               <Image
                 src={img.src}
@@ -107,8 +109,9 @@ export default function PrivateEventsPage() {
         })}
       </section>
 
-      <section className="bg-paper">
-        <div className="mx-auto grid max-w-[1200px] gap-12 px-6 py-16 md:px-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:py-24">
+      <section className="paper-grain relative overflow-hidden bg-paper">
+        <Bloom variant="c" opacity={45} className="-right-32 -bottom-32 h-[460px] w-[500px] text-wash-sage" />
+        <div className="relative mx-auto grid max-w-[1200px] gap-12 px-6 py-16 md:px-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:py-24">
           <Reveal>
             <h2 className="display text-[clamp(2rem,3.6vw,3rem)]">
               Plan your event

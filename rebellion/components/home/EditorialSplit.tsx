@@ -2,7 +2,7 @@ import Image from "next/image";
 import { images } from "@/lib/site";
 import { ArrowLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
-import { Wash } from "@/components/ui/Brand";
+import { Bloom, BrushRule, ChapterMark } from "@/components/ui/Artwork";
 
 /**
  * Module 04 — food + wine editorial (blueprint §07). Asymmetric on purpose:
@@ -12,12 +12,23 @@ import { Wash } from "@/components/ui/Brand";
 export function EditorialSplit() {
   return (
     <section className="paper-grain relative overflow-hidden bg-paper">
-      <Wash tone="sky" className="-right-24 -bottom-32 h-[460px] w-[520px]" />
+      <Bloom
+        variant="b"
+        opacity={50}
+        className="-right-40 -bottom-40 h-[560px] w-[620px] text-wash-sky"
+      />
+      <Bloom
+        variant="c"
+        opacity={45}
+        className="-top-32 -left-24 h-[400px] w-[440px] text-wash-blush"
+      />
+      <ChapterMark n="04" className="absolute bottom-6 left-6 hidden lg:block" />
 
       <div className="relative grid items-center gap-10 px-6 py-16 md:px-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 lg:py-24">
         <Reveal>
           <p className="micro text-oxblood">The Kitchen</p>
-          <h2 className="display-soft mt-5 text-[clamp(2rem,4vw,3.4rem)]">
+          <BrushRule className="mt-3 w-16 text-oxblood" variant={1} />
+          <h2 className="display-soft mt-6 text-[clamp(2rem,4vw,3.4rem)]">
             We cook like the rules are optional and the ingredients are not.
           </h2>
           <p className="mt-6 max-w-[46ch] text-[15px] leading-relaxed text-ink-mute">
@@ -33,7 +44,7 @@ export function EditorialSplit() {
         </Reveal>
 
         <Reveal index={1} className="grid grid-cols-5 gap-4">
-          <figure className="relative col-span-3 aspect-[4/5] overflow-hidden">
+          <figure className="art-frame-portrait relative col-span-3 aspect-[4/5] overflow-hidden">
             <Image
               src={images.featuredFood.src}
               alt={images.featuredFood.alt}
@@ -43,7 +54,7 @@ export function EditorialSplit() {
             />
           </figure>
           <div className="col-span-2 flex flex-col gap-4">
-            <figure className="relative aspect-square overflow-hidden">
+            <figure className="art-frame relative aspect-square overflow-hidden">
               <Image
                 src={images.board.src}
                 alt={images.board.alt}
@@ -52,7 +63,7 @@ export function EditorialSplit() {
                 className="object-cover"
               />
             </figure>
-            <figure className="relative flex-1 overflow-hidden">
+            <figure className="art-frame relative flex-1 overflow-hidden">
               <Image
                 src={images.bar.src}
                 alt={images.bar.alt}

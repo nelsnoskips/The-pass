@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { bottles, collections, images, site } from "@/lib/site";
 import { Reveal } from "@/components/ui/Reveal";
+import { Bloom, BrushRule, Deckle } from "@/components/ui/Artwork";
 
 /**
  * Module 06 — bottle shop feature (blueprint §07/§09). Leads with the edit and
@@ -10,7 +11,14 @@ import { Reveal } from "@/components/ui/Reveal";
 export function BottleShopFeature() {
   return (
     <section className="relative overflow-hidden bg-ink text-bone">
-      <div className="grid lg:grid-cols-[1fr_1.05fr]">
+      <Deckle edge="bottom" variant={1} className="text-bone" />
+      <Bloom
+        variant="c"
+        opacity={14}
+        className="-top-32 right-[6%] h-[520px] w-[560px] text-wash-sky"
+      />
+
+      <div className="relative grid lg:grid-cols-[1fr_1.05fr]">
         <Reveal className="relative min-h-[320px] lg:min-h-full">
           <Image
             src={images.bottleShop.src}
@@ -25,9 +33,10 @@ export function BottleShopFeature() {
           />
         </Reveal>
 
-        <div className="px-6 py-16 md:px-10 lg:py-24">
+        <div className="px-6 py-16 pb-20 md:px-10 lg:py-24">
           <Reveal>
             <p className="micro text-signal">Bottle Shop</p>
+            <BrushRule className="mt-3 w-16 text-signal" variant={0} />
             <h2 className="display mt-5 text-[clamp(2.2rem,4.4vw,3.8rem)]">
               Take the rebellion home
             </h2>

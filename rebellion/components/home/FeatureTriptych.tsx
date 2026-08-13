@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { features, images } from "@/lib/site";
 import { Reveal } from "@/components/ui/Reveal";
+import { BrushRule, Deckle } from "@/components/ui/Artwork";
 
 const tones = {
   ink: "bg-ink",
@@ -16,7 +17,12 @@ const tones = {
  */
 export function FeatureTriptych() {
   return (
-    <section className="grid text-bone lg:grid-cols-3">
+    <section className="relative grid text-bone lg:grid-cols-3">
+      {/* Paper tears over the band at both ends, so the dark panels read as
+          something laid onto the page rather than a rectangle of colour. */}
+      <Deckle edge="top" variant={0} className="text-bone" />
+      <Deckle edge="bottom" variant={2} className="text-bone" />
+
       {features.map((feature, i) => {
         const img = images[feature.image];
         return (
@@ -26,14 +32,11 @@ export function FeatureTriptych() {
             index={i}
             className={`group relative grid grid-cols-2 ${tones[feature.tone]}`}
           >
-            <div className="flex flex-col justify-center p-6 md:p-8">
+            <div className="flex flex-col justify-center p-6 py-10 md:p-8 md:py-12">
               <h2 className="display max-w-[10ch] text-[clamp(1.5rem,2.2vw,2rem)]">
                 {feature.eyebrow}
               </h2>
-              <span
-                aria-hidden
-                className="mt-4 mb-5 block h-px w-10 bg-signal"
-              />
+              <BrushRule variant={i % 3 === 0 ? 0 : ((i % 3) as 1 | 2)} className="mt-4 mb-5 w-12 text-signal" />
               <p className="max-w-[24ch] text-sm leading-relaxed text-bone/75">
                 {feature.lines.map((line) => (
                   <span key={line} className="block">

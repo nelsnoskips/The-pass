@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { images, occasions, venueFacts } from "@/lib/site";
 import { Reveal } from "@/components/ui/Reveal";
+import { Bloom, BrushRule, Deckle, InkSplatter } from "@/components/ui/Artwork";
 
 /**
  * Module 05 — private-events reveal (blueprint §07/§08). The attached venue has
@@ -11,10 +12,23 @@ import { Reveal } from "@/components/ui/Reveal";
 export function PrivateEventsReveal() {
   return (
     <section className="relative overflow-hidden bg-oxblood text-bone">
-      <div className="grid lg:grid-cols-[1.05fr_1fr]">
+      <Deckle edge="top" variant={1} className="text-paper" />
+      <Bloom
+        variant="a"
+        opacity={16}
+        className="-top-24 left-[18%] h-[520px] w-[560px] text-wash-blush"
+      />
+      <InkSplatter
+        variant="spray"
+        opacity={14}
+        className="bottom-8 left-4 hidden h-32 w-32 text-ink lg:block"
+      />
+
+      <div className="relative grid lg:grid-cols-[1.05fr_1fr]">
         <div className="px-6 py-16 md:px-10 lg:py-24">
           <Reveal>
             <p className="micro text-bone/70">The Annex at Rebellion</p>
+            <BrushRule className="mt-3 w-16 text-bone/70" variant={2} />
             <h2 className="display mt-5 text-[clamp(2.2rem,4.4vw,3.8rem)]">
               Gather differently
             </h2>

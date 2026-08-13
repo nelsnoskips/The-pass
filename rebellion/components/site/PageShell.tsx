@@ -4,6 +4,7 @@ import { Footer } from "@/components/site/Footer";
 import { FloatingReserve } from "@/components/site/FloatingReserve";
 import { images, type ImageName } from "@/lib/images";
 import { Reveal } from "@/components/ui/Reveal";
+import { BrushRule, Deckle, InkSplatter } from "@/components/ui/Artwork";
 
 /** Standard interior page: overlay header, editorial masthead, footer. */
 export function PageShell({
@@ -12,12 +13,16 @@ export function PageShell({
   intro,
   image,
   children,
+  /** Colour of the paper tearing up into the masthead — match whatever
+      surface follows it. */
+  deckleTone = "text-bone",
 }: {
   eyebrow: string;
   title: string;
   intro?: string;
   image: ImageName;
   children: React.ReactNode;
+  deckleTone?: string;
 }) {
   const img = images[image];
 
@@ -38,10 +43,18 @@ export function PageShell({
             aria-hidden
             className="absolute inset-0 bg-gradient-to-t from-ink/92 via-ink/55 to-ink/40"
           />
-          <div className="relative w-full px-6 pt-36 pb-12 md:px-10 md:pb-16">
+          <InkSplatter
+            variant="b"
+            opacity={70}
+            className="bottom-[18%] -left-20 h-[300px] w-[300px] text-oxblood md:h-[380px] md:w-[380px]"
+          />
+          <Deckle edge="bottom" variant={0} className={deckleTone} />
+
+          <div className="relative w-full px-6 pt-36 pb-16 md:px-10 md:pb-20">
             <Reveal>
               <p className="micro text-signal">{eyebrow}</p>
-              <h1 className="display mt-4 max-w-[18ch] text-[clamp(2.4rem,6.5vw,5rem)]">
+              <BrushRule className="mt-3 w-16 text-signal" variant={1} />
+              <h1 className="display mt-5 max-w-[18ch] text-[clamp(2.4rem,6.5vw,5rem)]">
                 {title}
               </h1>
               {intro && (

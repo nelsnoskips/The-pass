@@ -1,5 +1,5 @@
 import { Reveal } from "@/components/ui/Reveal";
-import { Splatter } from "@/components/ui/Brand";
+import { Bloom, BrushRule, InkSplatter } from "@/components/ui/Artwork";
 
 /* PLACEHOLDER — replace with real, attributed guest and press language before
    launch. Blueprint §07: selected review language, no generic logo wall. */
@@ -24,11 +24,17 @@ const quotes = [
 export function SocialProof() {
   return (
     <section className="paper-grain relative overflow-hidden bg-bone">
-      <Splatter
-        className="top-8 right-[8%] hidden h-20 w-20 opacity-30 md:block"
-        color="var(--wash-sky)"
+      <Bloom
+        variant="a"
+        opacity={45}
+        className="-top-40 right-[4%] h-[440px] w-[480px] text-wash-blush"
       />
-      <div className="relative px-6 py-16 md:px-10 lg:py-20">
+      <InkSplatter
+        variant="b"
+        opacity={10}
+        className="-bottom-10 left-[30%] hidden h-44 w-44 text-oxblood md:block"
+      />
+      <div className="relative px-6 py-20 md:px-10">
         <Reveal>
           <p className="micro text-oxblood">In their words</p>
         </Reveal>
@@ -36,7 +42,10 @@ export function SocialProof() {
           {quotes.map((q, i) => (
             <Reveal as="li" key={q.source} index={i}>
               <figure>
-                <span aria-hidden className="ink-rule mb-6 block w-14 text-oxblood" />
+                <BrushRule
+                  variant={(i % 3) as 0 | 1 | 2}
+                  className="mb-6 h-2.5 w-16 text-oxblood"
+                />
                 <blockquote className="display-soft text-[clamp(1.25rem,1.9vw,1.6rem)]">
                   {q.quote}
                 </blockquote>

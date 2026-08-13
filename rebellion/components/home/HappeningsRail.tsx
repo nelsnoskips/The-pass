@@ -6,6 +6,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { happenings, images } from "@/lib/site";
 import { ArrowLink } from "@/components/ui/Button";
+import { Bloom } from "@/components/ui/Artwork";
+import { Logotype } from "@/components/ui/Brand";
 import { eventDate } from "@/lib/utils";
 
 /**
@@ -48,9 +50,22 @@ export function HappeningsRail() {
   return (
     <section
       aria-labelledby="happenings-heading"
-      className="paper-grain relative overflow-hidden border-t border-rule bg-bone"
+      className="paper-grain relative overflow-hidden bg-bone"
     >
-      <div className="relative flex flex-col gap-6 px-6 py-12 md:px-10 lg:flex-row lg:items-center lg:gap-10">
+      {/* The logotype sits in the paper like a printer's watermark. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-14 -left-24 w-[380px] opacity-[0.035] select-none"
+      >
+        <Logotype />
+      </div>
+      <Bloom
+        variant="c"
+        opacity={50}
+        className="-top-24 right-[6%] h-[340px] w-[380px] text-wash-sage"
+      />
+
+      <div className="relative flex flex-col gap-6 px-6 py-14 md:px-10 lg:flex-row lg:items-center lg:gap-10">
         <div className="shrink-0 lg:w-56">
           <h2 id="happenings-heading" className="display text-3xl">
             Happenings
@@ -94,7 +109,7 @@ export function HappeningsRail() {
                     </span>
                   </time>
 
-                  <span className="relative block aspect-[4/3] w-[132px] shrink-0 overflow-hidden">
+                  <span className="art-frame relative block aspect-[4/3] w-[132px] shrink-0 overflow-hidden">
                     <Image
                       src={img.src}
                       alt={img.alt}

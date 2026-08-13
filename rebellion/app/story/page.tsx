@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { PageShell } from "@/components/site/PageShell";
 import { Reveal } from "@/components/ui/Reveal";
+import { Bloom, BrushRule } from "@/components/ui/Artwork";
 import { ArrowLink } from "@/components/ui/Button";
 import { images } from "@/lib/site";
 
@@ -41,8 +42,10 @@ export default function StoryPage() {
       intro="Rebellion started with a simple objection: most nights out are forgettable, and they don't have to be."
       image="diningRoom"
     >
-      <section className="paper-grain bg-bone">
-        <div className="mx-auto max-w-[1100px] px-6 py-16 md:px-10 lg:py-24">
+      <section className="paper-grain relative overflow-hidden bg-bone">
+        <Bloom variant="a" opacity={55} className="-top-40 -left-32 h-[520px] w-[560px] text-wash-blush" />
+        <Bloom variant="b" opacity={45} className="right-[4%] -bottom-40 h-[460px] w-[500px] text-wash-sky" />
+        <div className="relative mx-auto max-w-[1100px] px-6 py-16 md:px-10 lg:py-24">
           <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
             <Reveal>
               <h2 className="display-soft text-[clamp(1.7rem,3vw,2.4rem)]">
@@ -69,7 +72,7 @@ export default function StoryPage() {
               </div>
             </Reveal>
 
-            <Reveal index={1} className="relative aspect-[4/5]">
+            <Reveal index={1} className="art-frame-portrait relative aspect-[4/5]">
               <Image
                 src={images.chefPass.src}
                 alt={images.chefPass.alt}
@@ -82,6 +85,7 @@ export default function StoryPage() {
 
           <Reveal className="mt-20">
             <h2 className="micro text-oxblood">What we stand on</h2>
+            <BrushRule className="mt-3 w-16 text-oxblood" variant={0} />
             <ul className="mt-8 grid gap-px bg-rule sm:grid-cols-2">
               {pillars.map((p) => (
                 <li key={p.title} className="bg-bone p-8">

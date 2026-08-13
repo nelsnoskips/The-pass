@@ -2,11 +2,19 @@ import Link from "next/link";
 import { Facebook, Instagram, MapPin, Plus } from "lucide-react";
 import { hours, site } from "@/lib/site";
 import { Logotype } from "@/components/ui/Brand";
+import { Deckle, InkSplatter } from "@/components/ui/Artwork";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 
 export function Footer() {
   return (
     <footer className="relative overflow-hidden bg-ink text-bone">
+      <Deckle edge="top" variant={2} className="text-paper" />
+      <InkSplatter
+        variant="spray"
+        opacity={10}
+        className="top-6 left-[38%] hidden h-36 w-36 text-bone lg:block"
+      />
+
       {/* Oversized seal watermark — secondary texture, blueprint §05. */}
       <div
         aria-hidden
@@ -15,7 +23,7 @@ export function Footer() {
         <Logotype knockout />
       </div>
 
-      <div className="relative mx-auto grid max-w-[1400px] gap-10 px-6 py-14 md:px-10 lg:grid-cols-[1.1fr_1fr_0.8fr_1.4fr_auto] lg:items-start lg:gap-12">
+      <div className="relative mx-auto grid max-w-[1400px] gap-10 px-6 py-16 md:px-10 lg:grid-cols-[1.1fr_1fr_0.8fr_1.4fr_auto] lg:items-start lg:gap-12">
         <div>
           <h2 className="micro mb-4 flex items-center gap-2 text-signal">
             <MapPin size={14} aria-hidden /> Location

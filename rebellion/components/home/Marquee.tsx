@@ -1,4 +1,5 @@
 import { marqueeWords } from "@/lib/site";
+import { Deckle } from "@/components/ui/Artwork";
 
 /**
  * Editorial marquee (blueprint §08): slow, decorative, and paused on hover or
@@ -11,8 +12,10 @@ export function Marquee() {
   return (
     <div
       aria-hidden
-      className="marquee overflow-hidden border-y border-rule-dark bg-ink py-5 select-none"
+      className="marquee relative overflow-hidden bg-ink py-8 select-none"
     >
+      <Deckle edge="top" variant={2} className="text-bone" />
+      <Deckle edge="bottom" variant={0} className="text-paper" />
       <div className="marquee-track flex w-max items-center gap-8 pr-8">
         {[...run, ...run].map((word, i) => (
           <span key={`${word}-${i}`} className="flex items-center gap-8">

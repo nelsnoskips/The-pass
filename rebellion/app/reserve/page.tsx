@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell } from "@/components/site/PageShell";
 import { Reveal } from "@/components/ui/Reveal";
+import { Bloom } from "@/components/ui/Artwork";
 import { hours, site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -25,8 +26,9 @@ export default function ReservePage() {
       intro="Thursday through Saturday books up. The bar is first-come, always."
       image="gather"
     >
-      <section className="paper-grain bg-bone">
-        <div className="mx-auto grid max-w-[1100px] gap-12 px-6 py-16 md:px-10 lg:grid-cols-[1.2fr_0.8fr] lg:py-24">
+      <section className="paper-grain relative overflow-hidden bg-bone">
+        <Bloom variant="a" opacity={50} className="-top-32 -right-24 h-[460px] w-[500px] text-wash-blush" />
+        <div className="relative mx-auto grid max-w-[1100px] gap-12 px-6 py-16 md:px-10 lg:grid-cols-[1.2fr_0.8fr] lg:py-24">
           <Reveal>
             <div className="flex min-h-[360px] flex-col items-center justify-center border border-dashed border-ink/25 bg-paper p-10 text-center">
               <p className="micro text-oxblood">Reservation widget</p>

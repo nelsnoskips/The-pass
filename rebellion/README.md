@@ -42,6 +42,41 @@ own dependencies and does not share anything with The Pass app at the root.
 - `lib/site.ts` — nav, hours, NAP, menus, happenings, occasions, bottles.
   This is the shape the CMS should target (§11).
 - `components/ui/Reveal.tsx` — the one scroll-reveal primitive.
+- `components/ui/Artwork.tsx` — the painted layer (below).
+
+## The painted layer
+
+The identity is watercolour, ink and torn paper, so the site carries real
+artwork rather than CSS gradients — washes with granulated edges and pigment
+rims, thrown ink with satellites and spray, deckled paper between sections,
+painted edges on photographs, and the tooth of the stock under bone surfaces.
+
+`scripts/generate-artwork.py` produces all of it procedurally and
+deterministically:
+
+```bash
+python3 scripts/generate-artwork.py    # needs numpy + pillow
+```
+
+Two conventions make it maintainable:
+
+- **Everything is an alpha mask.** `/public/artwork/*.png` is white with the
+  shape in the alpha channel, and the components paint `currentColor` through
+  it — so a Tailwind `text-*` class recolours any texture and every tint stays
+  on a palette token. One file serves the whole palette (~650KB total).
+- **Torn edges belong to the paper.** A `<Deckle>` is rendered inside the
+  *dark* section it overlaps, tinted to match the paper doing the tearing.
+
+Components: `<Bloom>`, `<InkSplatter>`, `<Deckle>`, `<BrushRule>`,
+`<ChapterMark>`, plus the `art-frame` / `art-frame-portrait` classes for
+photographs and `paper-grain` for surfaces. All of it is decorative —
+`aria-hidden`, `pointer-events-none`, and hidden entirely where CSS masking
+is unsupported rather than degrading into coloured rectangles.
+
+When the illustrator delivers scanned washes and splatters, drop them into
+`/public/artwork` following the same mask convention and nothing else needs to
+change. The skeleton artwork is still outstanding — only the 1C logotype was
+supplied — which is why the §08 signature moment is not built yet.
 
 ## Swapping the placeholder photography
 

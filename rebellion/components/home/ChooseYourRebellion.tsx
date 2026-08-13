@@ -4,7 +4,7 @@ import { ShoppingBag, UtensilsCrossed, Wine } from "lucide-react";
 import { experiences, images, site } from "@/lib/site";
 import { ArrowLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
-import { Splatter, Wash } from "@/components/ui/Brand";
+import { Bloom, ChapterMark, InkSplatter } from "@/components/ui/Artwork";
 
 const icons = {
   dine: UtensilsCrossed,
@@ -20,11 +20,22 @@ const icons = {
 export function ChooseYourRebellion() {
   return (
     <section className="paper-grain relative overflow-hidden bg-bone">
-      <Wash tone="mixed" className="-top-24 -left-32 h-[420px] w-[560px]" />
-      <Splatter
-        className="bottom-10 left-[6%] hidden h-16 w-16 opacity-70 lg:block"
-        color="var(--wash-blush)"
+      <Bloom
+        variant="a"
+        opacity={45}
+        className="-top-24 -left-24 h-[380px] w-[420px] text-wash-blush"
       />
+      <Bloom
+        variant="b"
+        opacity={38}
+        className="-bottom-24 left-[6%] h-[320px] w-[360px] text-wash-sky"
+      />
+      <InkSplatter
+        variant="spray"
+        opacity={22}
+        className="bottom-6 left-[2%] hidden h-28 w-28 text-oxblood lg:block"
+      />
+      <ChapterMark n="02" className="absolute top-4 right-6 hidden lg:block" />
 
       <div className="relative grid lg:grid-cols-[0.92fr_1.08fr]">
         {/* Statement + chef */}
@@ -42,7 +53,10 @@ export function ChooseYourRebellion() {
             </div>
           </Reveal>
 
-          <Reveal index={1} className="relative min-h-[300px] lg:min-h-full">
+          <Reveal
+            index={1}
+            className="art-frame-portrait relative min-h-[300px] lg:min-h-full"
+          >
             <Image
               src={images.chefPass.src}
               alt={images.chefPass.alt}
@@ -70,8 +84,10 @@ export function ChooseYourRebellion() {
                   className="flex h-full flex-col transition-transform duration-[var(--dur-ui)] ease-[var(--ease-ui)] hover:-translate-y-[var(--lift)]"
                 >
                   {/* The image absorbs any extra column height so the copy
-                      block stays tight instead of stranding the CTA. */}
-                  <span className="relative block aspect-[4/3] flex-1 overflow-hidden sm:aspect-auto sm:min-h-[190px]">
+                      block stays tight instead of stranding the CTA, and it is
+                      laid onto the paper through a painted edge rather than a
+                      crop mark. */}
+                  <span className="art-frame-portrait relative block aspect-[4/3] flex-1 overflow-hidden sm:aspect-auto sm:min-h-[190px]">
                     <Image
                       src={img.src}
                       alt={img.alt}

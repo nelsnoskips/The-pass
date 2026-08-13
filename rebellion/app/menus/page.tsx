@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell } from "@/components/site/PageShell";
 import { Reveal } from "@/components/ui/Reveal";
+import { BrushRule } from "@/components/ui/Artwork";
 import { menuSections, site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -53,7 +54,7 @@ export default function MenusPage() {
                 {section.name}
               </h2>
               <p className="mt-2 text-sm text-ink-mute">{section.note}</p>
-              <span aria-hidden className="ink-rule mt-6 block w-24 text-oxblood" />
+              <BrushRule className="mt-6 h-3 w-28 text-oxblood" variant={1} />
 
               <ul className="mt-8 divide-y divide-rule">
                 {section.items.map((item) => (
