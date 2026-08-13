@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { EmberField } from "./EmberField";
 
-const HERO_IMAGE = "/images/hero-service.jpg";
+const HERO_IMAGE = "/images/hero-pass.jpg";
 
 /**
  * Split-composition hero: ink field with the brand statement on the left,

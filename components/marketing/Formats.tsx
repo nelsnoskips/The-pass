@@ -12,9 +12,8 @@ import Image from "next/image";
 const FORMATS = [
   {
     label: "Casual Dining",
-    image:
-      "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=1000&q=75&fm=jpg",
-    alt: "Guests sharing plates around a table at a casual restaurant",
+    image: "/images/casual-dining.jpg",
+    alt: "A full dining room at dinner service, guests at the tables and the open kitchen behind",
     stats: [
       { value: "+156%", metric: "Reservations" },
       { value: "+112%", metric: "Revenue" },
