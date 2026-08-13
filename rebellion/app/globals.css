@@ -1,0 +1,244 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Rebellion Beachside Bar & Bistro — design system
+   Blueprint §05 "Editorial hospitality with a live edge" + §08 motion tokens.
+   Every colour, type step and motion value used across the site resolves to a
+   token declared here. Nothing hard-codes a hex or a duration in a component.
+   ========================================================================== */
+
+:root {
+  /* Core palette (blueprint §05) */
+  --ink: #181817;
+  --bone: #f4efe6;
+  --oxblood: #742a32;
+  --brass: #b6955b;
+  --atlantic: #284c54;
+  --signal: #d25a43;
+
+  /* Derived surfaces — kept few on purpose. */
+  --paper: #fbf8f2;
+  --ink-soft: #262523;
+  --ink-mute: #6d6a64;
+  --rule: #ddd4c5;
+  --rule-dark: #35332f;
+
+  /* Watercolour wash tints lifted from the logotype artwork. */
+  --wash-blush: #e6b7bd;
+  --wash-sky: #b9cddb;
+  --wash-sage: #c6d3c0;
+
+  /* Motion tokens (blueprint §08). Mirrored in lib/motion.ts for JS use. */
+  --dur-micro: 160ms;
+  --dur-ui: 280ms;
+  --dur-editorial: 640ms;
+  --dur-signature: 1500ms;
+  --ease-expressive: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-ui: cubic-bezier(0.4, 0, 0.2, 1);
+  --lift: 3px;
+  --rise: 20px;
+  --stagger: 60ms;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-mute: var(--ink-mute);
+  --color-bone: var(--bone);
+  --color-paper: var(--paper);
+  --color-oxblood: var(--oxblood);
+  --color-brass: var(--brass);
+  --color-atlantic: var(--atlantic);
+  --color-signal: var(--signal);
+  --color-rule: var(--rule);
+  --color-rule-dark: var(--rule-dark);
+  --color-wash-blush: var(--wash-blush);
+  --color-wash-sky: var(--wash-sky);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument), "Instrument Serif", Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bone);
+  color: var(--ink);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--oxblood);
+  color: var(--bone);
+}
+
+/* --- Typography ---------------------------------------------------------- */
+
+/* Editorial display face. Set tight; the blueprint asks for scale and space
+   rather than decoration. */
+.display {
+  font-family: var(--font-instrument), Georgia, serif;
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+}
+
+/* Same face, sentence case — used for editorial statements and pull quotes. */
+.display-soft {
+  font-family: var(--font-instrument), Georgia, serif;
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+}
+
+/* Uppercase micro-labels: nav, eyebrows, buttons, table headers. */
+.micro {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.micro-wide {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* --- Focus --------------------------------------------------------------- */
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* --- Ink rule: the hand-drawn divider used between chapters --------------- */
+
+.ink-rule {
+  height: 2px;
+  background: currentColor;
+  clip-path: polygon(
+    0 40%, 4% 0, 12% 55%, 22% 10%, 33% 70%, 45% 15%, 58% 65%, 70% 5%,
+    82% 60%, 92% 20%, 100% 45%, 100% 100%, 0 100%
+  );
+}
+
+/* --- Reveal on scroll ---------------------------------------------------- */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(var(--rise));
+  transition:
+    opacity var(--dur-editorial) var(--ease-expressive),
+    transform var(--dur-editorial) var(--ease-expressive);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal="shown"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Marquee (blueprint §08: slow, pauses on hover/focus) ---------------- */
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 46s linear infinite;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+/* --- Signature moment: ink strokes drawing in (blueprint §08) ------------- */
+
+@keyframes draw-in {
+  from {
+    stroke-dashoffset: var(--dash, 1200);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes bloom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- Reduced motion: content and focus survive, choreography does not ----- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* --- Utilities ----------------------------------------------------------- */
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Grain + paper texture for bone sections; keeps flat colour from feeling
+   digital. Cheap: a single repeating gradient, no image request. */
+.paper-grain {
+  position: relative;
+}
+
+.paper-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgb(24 24 23 / 0.02) 0 1px, transparent 1px),
+    radial-gradient(circle at 70% 60%, rgb(24 24 23 / 0.02) 0 1px, transparent 1px);
+  background-size: 7px 7px, 11px 11px;
+}
