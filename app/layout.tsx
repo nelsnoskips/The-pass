@@ -24,13 +24,18 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://madisonfour.com"),
   title: "The Pass by Madison Four — Restaurant Growth, Conducted.",
   description:
     "Madison Four connects restaurant strategy, websites, search, media, and conversion into one complete guest experience — with The Pass, our proprietary restaurant intelligence platform.",
+  alternates: { canonical: "/" },
   openGraph: {
     title: "The Pass by Madison Four",
     description: "Restaurant growth, conducted.",
     type: "website",
+    url: "https://madisonfour.com",
+    siteName: "Madison Four",
+    images: [{ url: "/images/hero-pass.jpg", width: 1200, height: 800 }],
   },
 };
 

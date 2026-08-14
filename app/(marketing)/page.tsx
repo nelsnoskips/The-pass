@@ -24,6 +24,8 @@ export default function HomePage() {
             "@context": "https://schema.org",
             "@type": "Organization",
             name: "Madison Four",
+            url: "https://madisonfour.com",
+            email: "hello@madisonfour.com",
             brand: { "@type": "Brand", name: "The Pass by Madison Four" },
             slogan: "Restaurant growth, conducted.",
             description:
