@@ -236,6 +236,16 @@ body {
 .mk-acts {
   position: relative;
   z-index: 5;
+  height: 100%;
+}
+/* The final frame doubles as the still hero: acts I and II exist only
+   in cinematic mode, so with no engine the guest simply gets the
+   resolution frame, the classic left-aligned composition. */
+.mk-act-title,
+.mk-act-line1 { display: none; }
+.mk-act-final { height: 100%; }
+.mk-final-inner {
+  position: relative;
   display: flex;
   height: 100%;
   width: 100%;
@@ -244,12 +254,12 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 2.25rem;
   padding: 7rem 1.25rem 5rem;
 }
 @media (min-width: 640px) {
-  .mk-acts { padding-left: 2rem; padding-right: 2rem; }
+  .mk-final-inner { padding-left: 2rem; padding-right: 2rem; }
 }
+.mk-final-shade { display: none; }
 .mk-act-veil { display: none; }
 .mk-act-hint { display: none; }
 
@@ -274,10 +284,19 @@ body {
   pointer-events: none;
 }
 .mk-cine .mk-act a { pointer-events: auto; }
+.mk-cine .mk-act-title,
+.mk-cine .mk-act-line1 { display: flex; }
+/* Act III resolves into the still composition, gradient and all. */
+.mk-cine .mk-act-final { text-align: left; padding: 0; }
+.mk-cine .mk-final-shade {
+  display: block;
+  position: absolute;
+  inset: 0;
+}
 /* Pre-engine defaults: before either engine takes over, the stage shows
    Act I only, so the acts never stack visibly. */
 .mk-cine .mk-act-line1,
-.mk-cine .mk-act-cta { opacity: 0; visibility: hidden; }
+.mk-cine .mk-act-final { opacity: 0; visibility: hidden; }
 .mk-cine .mk-act-veil { opacity: 0.82; }
 .mk-cine .mk-act-hint { opacity: 0.65; }
 .mk-cine .mk-title-big {
@@ -285,17 +304,12 @@ body {
   line-height: 0.92;
   letter-spacing: 0.14em;
 }
-.mk-cine .mk-act-line1 h1 {
+.mk-cine .mk-line1-big {
   font-size: clamp(38px, 5.5vw, 80px);
   max-width: 1000px;
 }
 .mk-cine .mk-act-line1 .mk-sub {
   max-width: 560px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.mk-cine .mk-ctarow { justify-content: center; }
-.mk-cine .mk-act-cta .mk-passwrap {
   margin-left: auto;
   margin-right: auto;
 }
@@ -358,13 +372,13 @@ body {
     animation-range: 0 300vh;
   }
 
-  /* Act III: the invitation settles and stays. */
-  @keyframes mk-cine-cta {
-    0%, 80% { opacity: 0; transform: translateY(48px); visibility: hidden; }
-    96%, 100% { opacity: 1; transform: none; visibility: visible; }
+  /* Act III: the film resolves into the still hero and stays. */
+  @keyframes mk-cine-final {
+    0%, 84% { opacity: 0; transform: translateY(48px); visibility: hidden; }
+    97%, 100% { opacity: 1; transform: none; visibility: visible; }
   }
-  .mk-cine .mk-act-cta {
-    animation: mk-cine-cta linear both;
+  .mk-cine .mk-act-final {
+    animation: mk-cine-final linear both;
     animation-timeline: scroll(root);
     animation-range: 0 300vh;
   }
@@ -414,7 +428,7 @@ body {
   .mk-act-veil,
   .mk-act-title,
   .mk-act-line1,
-  .mk-act-cta,
+  .mk-act-final,
   .mk-act-hint {
     animation: none !important;
   }
