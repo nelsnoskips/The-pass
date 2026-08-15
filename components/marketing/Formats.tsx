@@ -2,8 +2,8 @@ import Image from "next/image";
 
 /**
  * Case studies — real client results, anonymized at the clients' request.
- * The lead metric is each engagement's headline number; `detail` grounds it
- * and `work` says what was actually done.
+ * Narrative lines are in Madison Four's own voice (not client quotes);
+ * `headline` leads the story, `narrative` grounds the numbers.
  */
 
 const CASES = [
@@ -13,7 +13,9 @@ const CASES = [
     image: "/images/casual-dining.jpg",
     alt: "A full dining room at dinner service, guests at the tables and the open kitchen behind",
     stats: [{ value: "+34.9%", metric: "Net Sales YoY" }],
-    detail: "$486K → $655K record month — every location up 20%+",
+    headline: "Four locations. One record-breaking month.",
+    narrative:
+      "Net sales grew 34.9% year over year — from $486K to $655K — with every location up more than 20%.",
     work: "Localized Google Ads by market, Meta retargeting, an event-driven happy-hour playbook.",
   },
   {
@@ -22,7 +24,9 @@ const CASES = [
     image: "/images/qsr-handoff.jpg",
     alt: "A team member handing an order across the counter of a busy bar and bistro",
     stats: [{ value: "+53.7%", metric: "Net Sales YoY" }],
-    detail: "First-ever six-figure month ($68K → $105K), +500 guests",
+    headline: "From a $68K month to the first six-figure month.",
+    narrative:
+      "$105K in net sales and 500 additional guests, year over year.",
     work: "Happy-hour campaign, custom landing page, guest winback offers.",
   },
   {
@@ -31,7 +35,9 @@ const CASES = [
     image: "/images/chef-pass.jpg",
     alt: "A chef finishing a plated dish beneath the pass lights",
     stats: [{ value: "-75%", metric: "Cost per Reservation" }],
-    detail: "$50+ → ~$12 on Meta — conversion campaigns now profitable",
+    headline: "Meta, turned into a profitable channel.",
+    narrative:
+      "Cost per reservation dropped from more than $50 to roughly $12 — a 75% reduction.",
     work: "Rebuilt reservation and conversion campaigns; refined the website and creative.",
   },
   {
@@ -43,7 +49,9 @@ const CASES = [
       { value: "+39.5%", metric: "Net Sales YoY" },
       { value: "+37.9%", metric: "Guests" },
     ],
-    detail: "912 → 1,258 guests in the strongest month since launch",
+    headline: "The strongest month since launch.",
+    narrative:
+      "Net sales up 39.5% while guest traffic grew from 912 to 1,258.",
     work: "Full marketing framework and a retargeted brunch campaign.",
   },
 ];
@@ -81,7 +89,7 @@ export function Formats() {
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A09]/95 via-[#0A0A09]/35 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A09]/95 via-[#0A0A09]/30 to-transparent" />
                   </>
                 ) : (
                   <div className="absolute inset-0 border border-[#B79A68]/25 bg-[#141210]" />
@@ -98,14 +106,19 @@ export function Formats() {
                       </p>
                     ))}
                   </div>
-                  <p className="mt-1.5 text-[12px] leading-snug text-[#F1EDE5]/70">{c.detail}</p>
                 </figcaption>
               </div>
-              <div className="border-x border-b border-[#B79A68]/15 px-5 py-4">
-                <p className="text-[11px] uppercase tracking-[0.14em] text-[#F1EDE5]/45">
-                  {c.descriptor}
+              <div className="flex flex-1 flex-col border-x border-b border-[#B79A68]/15 px-5 py-5">
+                <p className="font-editorial text-[19px] leading-snug text-[#F1EDE5]">
+                  {c.headline}
                 </p>
-                <p className="mt-1.5 text-[12.5px] leading-relaxed text-[#F1EDE5]/60">{c.work}</p>
+                <p className="mt-2 text-[13px] leading-relaxed text-[#F1EDE5]/65">{c.narrative}</p>
+                <div className="mt-auto pt-4">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-[#F1EDE5]/45">
+                    {c.descriptor}
+                  </p>
+                  <p className="mt-1.5 text-[12.5px] leading-relaxed text-[#F1EDE5]/55">{c.work}</p>
+                </div>
               </div>
             </figure>
           ))}
