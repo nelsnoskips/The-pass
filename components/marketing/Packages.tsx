@@ -141,6 +141,16 @@ export function Packages() {
             monthly.
           </p>
         </div>
+
+        <div className="mt-8 border-t border-[#0A0A09]/15 pt-8 lg:flex lg:items-baseline lg:justify-between lg:gap-16">
+          <p className="mk-label shrink-0 text-[#4B1719]">On timelines</p>
+          <p className="mt-4 max-w-[720px] text-[14px] leading-relaxed text-[#1A1310]/75 lg:mt-0">
+            Timelines run from the day we have your deposit and your
+            content: menu, photography, and story. Send those promptly and
+            we hold the dates. We move fast; we just can&apos;t plate what
+            hasn&apos;t reached the kitchen.
+          </p>
+        </div>
       </div>
     </section>
   );
