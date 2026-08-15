@@ -35,7 +35,7 @@ export function MarketingFooter() {
               </a>
             ))}
             <Link
-              href="/dashboard"
+              href="/portal"
               className="flex items-center gap-1.5 text-[13px] text-[#F1EDE5]/60 transition-colors hover:text-[#F1EDE5]"
             >
               <span aria-hidden className="h-1 w-1 rounded-full bg-[#83A978]" />

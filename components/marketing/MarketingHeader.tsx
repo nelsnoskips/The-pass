@@ -59,7 +59,7 @@ export function MarketingHeader() {
 
         <div className="hidden items-center gap-5 lg:flex">
           <Link
-            href="/dashboard"
+            href="/portal"
             className="mk-label flex items-center gap-1.5 text-[#F1EDE5]/70 transition-colors hover:text-[#F1EDE5]"
           >
             <span aria-hidden className="h-1 w-1 rounded-full bg-[#83A978]" />
@@ -111,7 +111,7 @@ export function MarketingHeader() {
               Request a Consultation
             </a>
             <Link
-              href="/dashboard"
+              href="/portal"
               className="mk-label py-2 text-center text-[#F1EDE5]/70"
             >
               Client Login
