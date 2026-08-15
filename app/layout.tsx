@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Instrument_Serif, Inter } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 const dmSerif = DM_Serif_Display({
@@ -48,6 +49,7 @@ export default function RootLayout({
       className={`${dmSerif.variable} ${instrumentSerif.variable} ${inter.variable}`}
     >
       <body className="min-h-screen antialiased">{children}</body>
+      <GoogleAnalytics gaId="G-FCXWZB4R7M" />
     </html>
   );
 }

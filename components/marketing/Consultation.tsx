@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { sendGAEvent } from "@next/third-parties/google";
 
 /**
  * Consultation request. Submits to Netlify Forms when deployed on Netlify
@@ -23,6 +24,7 @@ export function Consultation() {
         body: new URLSearchParams(data as unknown as Record<string, string>).toString(),
       });
       if (!res.ok) throw new Error(`form endpoint returned ${res.status}`);
+      sendGAEvent("event", "generate_lead", { method: "consultation_form" });
       setState("sent");
       form.reset();
     } catch {
