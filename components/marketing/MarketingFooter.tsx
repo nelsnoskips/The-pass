@@ -46,9 +46,23 @@ export function MarketingFooter() {
           </nav>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3 pt-6">
-          <p className="text-[11.5px] text-[#F1EDE5]/35">
-            © {new Date().getFullYear()} Madison Four. All rights reserved.
-          </p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <p className="text-[11.5px] text-[#F1EDE5]/35">
+              © {new Date().getFullYear()} Madison Four. All rights reserved.
+            </p>
+            <Link
+              href="/privacy"
+              className="text-[11.5px] text-[#F1EDE5]/35 transition-colors hover:text-[#F1EDE5]/70"
+            >
+              Privacy
+            </Link>
+            <Link
+              href="/terms"
+              className="text-[11.5px] text-[#F1EDE5]/35 transition-colors hover:text-[#F1EDE5]/70"
+            >
+              Terms
+            </Link>
+          </div>
           <p className="mk-label text-[#B79A68]/60">
             Every detail, considered.
           </p>
