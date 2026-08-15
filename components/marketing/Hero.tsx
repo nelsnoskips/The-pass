@@ -13,7 +13,7 @@ export function Hero() {
     <section className="relative flex min-h-[92vh] items-stretch overflow-hidden bg-[#0A0A09]">
       {/* Photography: absolute, right-weighted, slow cinematic drift. */}
       <div className="absolute inset-0" aria-hidden>
-        <div className="absolute inset-y-0 left-[24%] right-0 lg:left-[34%]">
+        <div className="mk-scroll-art absolute inset-y-0 left-[24%] right-0 lg:left-[34%]">
           <Image
             src={HERO_IMAGE}
             alt=""
@@ -31,7 +31,7 @@ export function Hero() {
         <EmberField className="absolute inset-y-0 left-[24%] right-0 h-full w-auto lg:left-[30%]" />
       </div>
 
-      <div className="relative mx-auto flex w-full max-w-[1400px] flex-col justify-center px-5 pb-24 pt-36 sm:px-8">
+      <div className="mk-scroll-copy relative mx-auto flex w-full max-w-[1400px] flex-col justify-center px-5 pb-24 pt-36 sm:px-8">
         <div className="max-w-[620px]">
           <p className="mk-rise font-editorial text-[15vw] leading-[0.94] tracking-[0.12em] text-[#F1EDE5] sm:text-[92px]">
             THE PASS

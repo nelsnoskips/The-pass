@@ -43,7 +43,7 @@ export function Consultation() {
       className="scroll-mt-24 bg-[#F1EDE5] px-5 py-24 sm:px-8 sm:py-32"
     >
       <div className="mx-auto grid max-w-[1100px] gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
-        <div>
+        <div className="mk-reveal">
           <p className="mk-label text-[#4B1719]">Begin</p>
           <h2 className="mt-5 font-editorial text-[38px] leading-[1.06] text-[#0A0A09] sm:text-[48px]">
             Request a private

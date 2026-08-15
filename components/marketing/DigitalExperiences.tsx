@@ -15,7 +15,7 @@ export function DigitalExperiences() {
       className="scroll-mt-24 bg-[#F1EDE5] px-5 py-24 sm:px-8 sm:py-32"
     >
       <div className="mx-auto grid max-w-[1200px] items-center gap-12 lg:grid-cols-2 lg:gap-20">
-        <div>
+        <div className="mk-reveal">
           <p className="mk-label text-[#4B1719]">Digital Experiences</p>
           <h2 className="mt-5 font-editorial text-[38px] leading-[1.06] text-[#0A0A09] sm:text-[46px]">
             Websites guests find,
@@ -56,7 +56,7 @@ export function DigitalExperiences() {
             alt="A bright, plant-filled dining room set for daytime service"
             fill
             sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover"
+            className="mk-parallax object-cover"
           />
           <div aria-hidden className="absolute inset-0 ring-1 ring-inset ring-[#0A0A09]/10" />
         </figure>

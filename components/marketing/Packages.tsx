@@ -65,7 +65,7 @@ export function Packages() {
     >
       <div className="mx-auto max-w-[1200px]">
         <p className="mk-label text-[#4B1719]">Engagements</p>
-        <div className="mt-6 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
+        <div className="mk-reveal mt-6 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <h2 className="font-editorial text-[38px] leading-[1.06] text-[#0A0A09] sm:text-[52px]">
             Three ways to work
             <br />
@@ -83,7 +83,7 @@ export function Packages() {
           {PACKAGES.map((pkg, i) => (
             <li
               key={pkg.name}
-              className="group lg:border-l lg:border-[#0A0A09]/15 lg:pl-10 lg:first:border-l-0 lg:first:pl-0"
+              className="mk-reveal group lg:border-l lg:border-[#0A0A09]/15 lg:pl-10 lg:first:border-l-0 lg:first:pl-0"
             >
               <p className="mk-label text-[#0A0A09]">
                 <span

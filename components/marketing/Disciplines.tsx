@@ -45,7 +45,7 @@ export function Disciplines() {
     >
       <div className="mx-auto max-w-[1400px]">
         <p className="mk-label text-[#4B1719]">The Craft</p>
-        <div className="mt-6 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
+        <div className="mk-reveal mt-6 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <h2 className="font-editorial text-[38px] leading-[1.06] text-[#0A0A09] sm:text-[52px]">
             Designed. Built. Found.
             <br />
@@ -64,7 +64,7 @@ export function Disciplines() {
           <div aria-hidden className="absolute inset-x-0 top-[13px] hidden h-px bg-[#0A0A09]/15 lg:block" />
           <ol className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
             {DISCIPLINES.map(({ icon: Icon, label, detail }, i) => (
-              <li key={label} className="group relative">
+              <li key={label} className="mk-reveal group relative">
                 <span
                   aria-hidden
                   className="relative z-10 inline-flex h-[27px] w-[27px] items-center justify-center bg-[#F1EDE5] text-[#0A0A09] transition-colors group-hover:text-[#4B1719]"

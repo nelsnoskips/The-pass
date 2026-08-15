@@ -205,10 +205,68 @@ body {
   animation: mk-passline 6.5s ease-in-out infinite;
 }
 
+/* ------------------------------------------- scroll-driven motion --- */
+/* Pure CSS scroll timelines: zero JavaScript, compositor-driven, and
+   scrubbed by the scroll position itself. Browsers without support (and
+   guests who prefer reduced motion) simply get the still page. */
+
+@supports (animation-timeline: scroll()) {
+  /* Hero photography sinks slower than the page: depth, not decoration.
+     Pre-scaled so the drifting frame never reveals its edges. */
+  @keyframes mk-scroll-art {
+    from { transform: scale(1.1) translateY(-2.5%); }
+    to { transform: scale(1.1) translateY(4.5%); }
+  }
+  .mk-scroll-art {
+    animation: mk-scroll-art linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 100vh;
+  }
+
+  /* The brand statement lifts away a touch faster than the page and
+     dims, handing attention to the first section. */
+  @keyframes mk-scroll-copy {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0.15; transform: translateY(-7%); }
+  }
+  .mk-scroll-copy {
+    animation: mk-scroll-copy linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 90vh;
+  }
+
+  /* Content settles into place as it enters the viewport — scrubbed, so
+     it reverses gracefully when the guest scrolls back up. */
+  @keyframes mk-reveal {
+    from { opacity: 0; transform: translateY(26px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .mk-reveal {
+    animation: mk-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 8% entry 52%;
+  }
+
+  /* Photography breathes inside its frame while crossing the viewport. */
+  @keyframes mk-parallax {
+    from { transform: scale(1.12) translateY(-3.5%); }
+    to { transform: scale(1.12) translateY(3.5%); }
+  }
+  .mk-parallax {
+    animation: mk-parallax linear both;
+    animation-timeline: view();
+    animation-range: cover 0% cover 100%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mk-rise,
   .mk-drift,
-  .mk-passline::after {
+  .mk-passline::after,
+  .mk-scroll-art,
+  .mk-scroll-copy,
+  .mk-reveal,
+  .mk-parallax {
     animation: none !important;
   }
   .mk-rise { opacity: 1; transform: none; }

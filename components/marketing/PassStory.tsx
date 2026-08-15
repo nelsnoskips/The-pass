@@ -22,12 +22,12 @@ export function PassStory() {
             fill
             quality={90}
             sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover"
+            className="mk-parallax object-cover"
           />
           <div aria-hidden className="absolute inset-0 ring-1 ring-inset ring-[#B79A68]/25" />
         </figure>
 
-        <div>
+        <div className="mk-reveal">
           <PassMark size={30} color="#B79A68" />
           <h2 className="mt-8 font-editorial text-[38px] leading-[1.08] text-[#F1EDE5] sm:text-[46px]">
             In every kitchen, there is a place where nothing reaches the guest{" "}
