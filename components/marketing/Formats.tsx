@@ -1,38 +1,50 @@
 import Image from "next/image";
 
 /**
- * Growth Across Every Format — casual dining leads; quick service and fine
- * dining support.
- *
- * NOTE: the stat overlays are PLACEHOLDERS for layout. Replace with real,
- * verifiable client results before launch — never publish sample numbers as
- * case studies.
+ * Case studies — real client results, anonymized at the clients' request.
+ * The lead metric is each engagement's headline number; `detail` grounds it
+ * and `work` says what was actually done.
  */
 
-const FORMATS = [
+const CASES = [
   {
-    label: "Casual Dining",
+    label: "Casual Dining · Sports Bar",
+    descriptor: "4-location group · Northern California",
     image: "/images/casual-dining.jpg",
     alt: "A full dining room at dinner service, guests at the tables and the open kitchen behind",
-    stats: [
-      { value: "+156%", metric: "Reservations" },
-      { value: "+112%", metric: "Revenue" },
-    ],
-    wide: true,
+    stats: [{ value: "+34.9%", metric: "Net Sales YoY" }],
+    detail: "$486K → $655K record month — every location up 20%+",
+    work: "Localized Google Ads by market, Meta retargeting, an event-driven happy-hour playbook.",
   },
   {
-    label: "Quick Service",
+    label: "Casual Dining · Bar & Bistro",
+    descriptor: "Beachside single location · Orlando",
     image: "/images/qsr-handoff.jpg",
-    alt: "A team member handing a packaged order to a guest at a modern counter-service restaurant",
-    stats: [{ value: "+87%", metric: "Revenue" }],
-    wide: false,
+    alt: "A team member handing an order across the counter of a busy bar and bistro",
+    stats: [{ value: "+53.7%", metric: "Net Sales YoY" }],
+    detail: "First-ever six-figure month ($68K → $105K), +500 guests",
+    work: "Happy-hour campaign, custom landing page, guest winback offers.",
   },
   {
-    label: "Fine Dining",
+    label: "Fine Dining · French Bistro",
+    descriptor: "Single location · Baton Rouge",
     image: "/images/chef-pass.jpg",
     alt: "A chef finishing a plated dish beneath the pass lights",
-    stats: [{ value: "+68%", metric: "Reservations" }],
-    wide: false,
+    stats: [{ value: "-75%", metric: "Cost per Reservation" }],
+    detail: "$50+ → ~$12 on Meta — conversion campaigns now profitable",
+    work: "Rebuilt reservation and conversion campaigns; refined the website and creative.",
+  },
+  {
+    label: "Casual Dining · Speakeasy",
+    descriptor: "Single location · Honolulu",
+    image: null,
+    alt: "",
+    stats: [
+      { value: "+39.5%", metric: "Net Sales YoY" },
+      { value: "+37.9%", metric: "Guests" },
+    ],
+    detail: "912 → 1,258 guests in the strongest month since launch",
+    work: "Full marketing framework and a retargeted brunch campaign.",
   },
 ];
 
@@ -50,56 +62,58 @@ export function Formats() {
             </h2>
           </div>
           <p className="max-w-[420px] text-[15px] leading-relaxed text-[#F1EDE5]/60 lg:justify-self-end">
-            Different models. Same system. Stronger results. From counter
-            service to tasting menus, the discipline is identical: know the
-            guest, connect every channel, measure what matters.
+            Different models. Same system. Stronger results. From neighborhood
+            bars to tasting menus, the discipline is identical: know the guest,
+            connect every channel, measure what matters.
           </p>
         </div>
 
         <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {FORMATS.map((format) => (
-            <figure
-              key={format.label}
-              className={`group relative overflow-hidden ${format.wide ? "lg:col-span-2" : ""}`}
-            >
+          {CASES.map((c) => (
+            <figure key={c.label} className="group relative flex flex-col overflow-hidden">
               <div className="relative aspect-[4/3] lg:aspect-[3/2.6]">
-                <Image
-                  src={format.image}
-                  alt={format.alt}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A09]/85 via-[#0A0A09]/15 to-transparent" />
+                {c.image ? (
+                  <>
+                    <Image
+                      src={c.image}
+                      alt={c.alt}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A09]/95 via-[#0A0A09]/35 to-transparent" />
+                  </>
+                ) : (
+                  <div className="absolute inset-0 border border-[#B79A68]/25 bg-[#141210]" />
+                )}
+                <figcaption className="absolute inset-x-0 bottom-0 p-5">
+                  <p className="mk-label text-[#B79A68]">{c.label}</p>
+                  <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
+                    {c.stats.map((stat) => (
+                      <p key={stat.metric} className="text-[#F1EDE5]">
+                        <span className="tnum font-editorial text-[28px]">{stat.value}</span>{" "}
+                        <span className="text-[10.5px] uppercase tracking-[0.16em] text-[#F1EDE5]/60">
+                          {stat.metric}
+                        </span>
+                      </p>
+                    ))}
+                  </div>
+                  <p className="mt-1.5 text-[12px] leading-snug text-[#F1EDE5]/70">{c.detail}</p>
+                </figcaption>
               </div>
-              <figcaption className="absolute inset-x-0 bottom-0 p-5">
-                <p className="mk-label text-[#B79A68]">{format.label}</p>
-                <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1">
-                  {format.stats.map((stat) => (
-                    <p key={stat.metric} className="text-[#F1EDE5]">
-                      <span className="tnum font-editorial text-[28px]">{stat.value}</span>{" "}
-                      <span className="text-[10.5px] uppercase tracking-[0.16em] text-[#F1EDE5]/60">
-                        {stat.metric}
-                      </span>
-                    </p>
-                  ))}
-                </div>
-              </figcaption>
+              <div className="border-x border-b border-[#B79A68]/15 px-5 py-4">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-[#F1EDE5]/45">
+                  {c.descriptor}
+                </p>
+                <p className="mt-1.5 text-[12.5px] leading-relaxed text-[#F1EDE5]/60">{c.work}</p>
+              </div>
             </figure>
           ))}
         </div>
 
-        <blockquote className="mx-auto mt-20 max-w-[720px] text-center">
-          <p className="font-editorial italic text-[24px] leading-[1.4] text-[#F1EDE5] sm:text-[28px]">
-            “The Pass gave us clarity, focus, and a system that drives results.
-            It feels less like an agency and more like a partner in our
-            growth.”
-          </p>
-          <footer className="mk-label mt-6 text-[#B79A68]">
-            Multi-location client, Florida
-            {/* PLACEHOLDER attribution — replace with a real, permissioned quote. */}
-          </footer>
-        </blockquote>
+        <p className="mt-8 text-center text-[11.5px] text-[#F1EDE5]/35">
+          Real results from client engagements. Names withheld at our clients&rsquo; request.
+        </p>
       </div>
     </section>
   );
