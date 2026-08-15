@@ -26,13 +26,13 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://madisonfour.com"),
-  title: "The Pass by Madison Four — Restaurant Growth, Conducted.",
+  title: "The Pass by Madison Four — Restaurant Websites, Crafted.",
   description:
-    "Madison Four connects restaurant strategy, websites, search, media, and conversion into one complete guest experience — with The Pass, our proprietary restaurant intelligence platform.",
+    "The Pass by Madison Four is a design studio for restaurants: custom websites, search and AI visibility, and guest-first digital experiences.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "The Pass by Madison Four",
-    description: "Restaurant growth, conducted.",
+    description: "Restaurant websites, crafted.",
     type: "website",
     url: "https://madisonfour.com",
     siteName: "Madison Four",

@@ -7,11 +7,9 @@ import clsx from "clsx";
 import { Wordmark } from "./PassMark";
 
 const NAV = [
-  { href: "#growth-management", label: "Growth Management" },
+  { href: "#craft", label: "The Craft" },
   { href: "#digital-experiences", label: "Digital Experiences" },
-  { href: "#the-pass", label: "The Pass" },
-  { href: "#work", label: "Work" },
-  { href: "#about", label: "About" },
+  { href: "#about", label: "Our Story" },
 ];
 
 /**

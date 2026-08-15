@@ -1,7 +1,5 @@
 import { Hero } from "@/components/marketing/Hero";
 import { Disciplines } from "@/components/marketing/Disciplines";
-import { PlatformPreview } from "@/components/marketing/PlatformPreview";
-import { Formats } from "@/components/marketing/Formats";
 import { DigitalExperiences } from "@/components/marketing/DigitalExperiences";
 import { PassStory } from "@/components/marketing/PassStory";
 import { Consultation } from "@/components/marketing/Consultation";
@@ -11,8 +9,6 @@ export default function HomePage() {
     <>
       <Hero />
       <Disciplines />
-      <PlatformPreview />
-      <Formats />
       <DigitalExperiences />
       <PassStory />
       <Consultation />
@@ -27,16 +23,16 @@ export default function HomePage() {
             url: "https://madisonfour.com",
             email: "hello@madisonfour.com",
             brand: { "@type": "Brand", name: "The Pass by Madison Four" },
-            slogan: "Restaurant growth, conducted.",
+            slogan: "Restaurant websites, crafted.",
             description:
-              "Madison Four connects restaurant strategy, websites, search, media, and conversion into one complete guest experience — powered by The Pass, its proprietary reporting and restaurant intelligence platform.",
+              "The Pass by Madison Four is a design studio for restaurants — custom websites engineered to be found on Google and in AI answers, and to turn lookers into guests.",
             knowsAbout: [
-              "Restaurant marketing",
+              "Restaurant web design",
+              "Restaurant websites",
+              "Web development",
               "SEO",
               "Answer engine optimization",
-              "Google Ads",
-              "Meta Ads",
-              "Restaurant websites",
+              "Hospitality digital experiences",
             ],
           }),
         }}

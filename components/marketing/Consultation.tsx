@@ -103,7 +103,7 @@ export function Consultation() {
             ))}
             <label className="sm:col-span-2">
               <span className="mk-label text-[#1A1310]/60">
-                What would growth look like for you?
+                What should your website do for you?
               </span>
               <textarea
                 name="message"

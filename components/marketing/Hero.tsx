@@ -41,12 +41,12 @@ export function Hero() {
           </p>
 
           <h1 className="mk-rise mk-rise-3 mt-10 font-editorial text-[34px] leading-[1.08] text-[#F1EDE5] sm:text-[44px]">
-            Restaurant growth,{" "}
-            <em className="italic text-[#B79A68]">conducted.</em>
+            Restaurant websites,{" "}
+            <em className="italic text-[#B79A68]">crafted.</em>
           </h1>
           <p className="mk-rise mk-rise-3 mt-5 max-w-[440px] text-[15.5px] leading-relaxed text-[#F1EDE5]/70">
-            Strategy, technology, media, and conversion — working as one
-            complete guest experience.
+            The design studio for restaurants — websites that carry your
+            hospitality online and turn lookers into guests.
           </p>
 
           <div className="mk-rise mk-rise-4 mt-10 flex flex-wrap items-center gap-4">
@@ -60,10 +60,10 @@ export function Hero() {
               </span>
             </a>
             <a
-              href="#growth-management"
+              href="#craft"
               className="mk-label py-4 text-[#F1EDE5]/65 transition-colors hover:text-[#F1EDE5]"
             >
-              Explore Our Approach
+              Explore the Craft
             </a>
           </div>
 
@@ -71,9 +71,9 @@ export function Hero() {
           <div className="mk-rise mk-rise-4 mt-14 max-w-[440px]">
             <div className="mk-passline h-px bg-[#B79A68]/25" />
             <div className="mt-3 flex justify-between text-[10px] font-medium uppercase tracking-[0.22em] text-[#F1EDE5]/40">
-              <span>Strategy</span>
+              <span>Design</span>
               <span>Build</span>
-              <span>Media</span>
+              <span>Launch</span>
               <span>Guest</span>
             </div>
           </div>

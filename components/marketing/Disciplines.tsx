@@ -1,10 +1,9 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  Compass,
-  Globe,
+  Code2,
   MousePointerClick,
+  PenTool,
   Search,
-  Target,
 } from "lucide-react";
 
 const DISCIPLINES: {
@@ -13,62 +12,57 @@ const DISCIPLINES: {
   detail: string;
 }[] = [
   {
-    icon: Compass,
-    label: "Strategy",
-    detail: "Market intelligence, positioning, and growth roadmaps built for your reality.",
+    icon: PenTool,
+    label: "Design",
+    detail: "Identity, interface, and menus — designed to seat more guests.",
   },
   {
-    icon: Globe,
-    label: "Digital Experiences",
-    detail: "Custom websites and experiences that convert and endure.",
+    icon: Code2,
+    label: "Build",
+    detail: "Custom, fast, resilient builds. No templates, nothing off the shelf.",
   },
   {
     icon: Search,
     label: "SEO / AEO",
-    detail: "Search visibility and entity authority that deliver qualified demand — on Google and in AI answers.",
-  },
-  {
-    icon: Target,
-    label: "Paid Media",
-    detail: "Precision media that captures intent and maximizes return.",
+    detail: "Search visibility and entity authority — on Google and in AI answers.",
   },
   {
     icon: MousePointerClick,
-    label: "Conversion",
-    detail: "Measurement, testing, and optimization across the guest journey.",
+    label: "Guest Journey",
+    detail: "Reservations, ordering, and calls — conversion designed into every page.",
   },
 ];
 
 /**
- * The five disciplines as a connected editorial sequence — fine rules and a
- * shared line, not five rounded cards. Hover deepens each stage.
+ * The craft as a connected editorial sequence — fine rules and a shared
+ * line, not rounded cards. Hover deepens each stage.
  */
 export function Disciplines() {
   return (
     <section
-      id="growth-management"
+      id="craft"
       className="scroll-mt-24 bg-[#F1EDE5] px-5 py-24 sm:px-8 sm:py-32"
     >
       <div className="mx-auto max-w-[1400px]">
-        <p className="mk-label text-[#4B1719]">Growth Management</p>
+        <p className="mk-label text-[#4B1719]">The Craft</p>
         <div className="mt-6 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <h2 className="font-editorial text-[38px] leading-[1.06] text-[#0A0A09] sm:text-[52px]">
-            Strategy. Technology. Media.
+            Designed. Built. Found.
             <br />
             <em className="italic text-[#4B1719]">All in service of the guest.</em>
           </h2>
           <p className="max-w-[420px] self-end text-[15px] leading-relaxed text-[#1A1310]/75">
-            Madison Four brings restaurant strategy, websites, search, media,
-            and conversion into one connected growth system. Every decision is
-            grounded in how guests discover, choose, and return to a
-            restaurant.
+            Madison Four designs and builds restaurant websites end to end —
+            identity, interface, engineering, and the search foundations that
+            make them discoverable. Every decision is grounded in how guests
+            find, choose, and return to a restaurant.
           </p>
         </div>
 
         <div className="relative mt-16">
           {/* The connecting line the disciplines hang from. */}
           <div aria-hidden className="absolute inset-x-0 top-[13px] hidden h-px bg-[#0A0A09]/15 lg:block" />
-          <ol className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-5">
+          <ol className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
             {DISCIPLINES.map(({ icon: Icon, label, detail }, i) => (
               <li key={label} className="group relative">
                 <span

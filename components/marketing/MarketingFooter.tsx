@@ -9,8 +9,8 @@ export function MarketingFooter() {
           <div>
             <Wordmark tone="light" />
             <p className="mt-5 max-w-[300px] text-[13.5px] leading-relaxed text-[#F1EDE5]/50">
-              Restaurant growth, conducted. Strategy, technology, media, and
-              conversion — one complete guest experience.
+              Restaurant websites, crafted. Design, engineering, and
+              discoverability — one complete guest experience.
             </p>
             <a
               href="mailto:hello@madisonfour.com"
@@ -21,11 +21,9 @@ export function MarketingFooter() {
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-x-16 gap-y-3 sm:grid-cols-3">
             {[
-              ["Growth Management", "#growth-management"],
+              ["The Craft", "#craft"],
               ["Digital Experiences", "#digital-experiences"],
-              ["The Pass Platform", "#the-pass"],
-              ["Work", "#work"],
-              ["About", "#about"],
+              ["Our Story", "#about"],
               ["Request a Consultation", "#consultation"],
             ].map(([label, href]) => (
               <a

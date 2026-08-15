@@ -40,16 +40,16 @@ export function PassStory() {
               intention, under the light.
             </p>
             <p>
-              We named our practice after it because that is how we treat your
-              growth. Every detail considered. Every channel working together.
-              Every experience prepared to perform. Nothing reaches the guest
+              We named our studio after it because that is how we treat your
+              website. Every detail considered. Every page working. Every
+              experience prepared to perform. Nothing reaches the guest
               without purpose.
             </p>
           </div>
           <div className="mt-10 max-w-[380px]">
             <div className="mk-passline h-px bg-[#B79A68]/25" />
             <p className="mk-label mt-4 text-[#B79A68]">
-              Anyone can run marketing. We conduct it.
+              Anyone can launch a website. We conduct one.
             </p>
           </div>
         </div>

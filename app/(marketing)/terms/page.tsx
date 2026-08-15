@@ -21,10 +21,10 @@ export default function TermsPage() {
 
       <LegalSection heading="Our services">
         <p>
-          Madison Four provides restaurant marketing services — strategy,
-          digital experiences, search, media, and reporting through The Pass
-          platform. Descriptions on this site are general; the scope of any
-          engagement is defined in its written agreement.
+          Madison Four designs and builds websites and digital experiences for
+          restaurants, including search visibility work and client reporting.
+          Descriptions on this site are general; the scope of any engagement
+          is defined in its written agreement.
         </p>
       </LegalSection>
 
