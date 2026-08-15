@@ -36,7 +36,7 @@ export function PassStory() {
           <div className="mt-8 space-y-5 text-[15px] leading-relaxed text-[#F1EDE5]/70">
             <p>
               The pass is where a restaurant&apos;s standards live. Every dish is
-              inspected, organized, and handed from kitchen to service — with
+              inspected, organized, and handed from kitchen to service with
               intention, under the light.
             </p>
             <p>

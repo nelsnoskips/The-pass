@@ -14,7 +14,7 @@ const DISCIPLINES: {
   {
     icon: PenTool,
     label: "Design",
-    detail: "Identity, interface, and menus — designed to seat more guests.",
+    detail: "Identity, interface, and menus, all designed to seat more guests.",
   },
   {
     icon: Code2,
@@ -24,12 +24,12 @@ const DISCIPLINES: {
   {
     icon: Search,
     label: "SEO / AEO",
-    detail: "Search visibility and entity authority — on Google and in AI answers.",
+    detail: "Search visibility on Google and in AI answers alike.",
   },
   {
     icon: MousePointerClick,
     label: "Guest Journey",
-    detail: "Reservations, ordering, and calls — conversion designed into every page.",
+    detail: "Reservations, ordering, and calls, with conversion built into every page.",
   },
 ];
 
@@ -52,10 +52,10 @@ export function Disciplines() {
             <em className="italic text-[#4B1719]">All in service of the guest.</em>
           </h2>
           <p className="max-w-[420px] self-end text-[15px] leading-relaxed text-[#1A1310]/75">
-            Madison Four designs and builds restaurant websites end to end —
-            identity, interface, engineering, and the search foundations that
-            make them discoverable. Every decision is grounded in how guests
-            find, choose, and return to a restaurant.
+            Madison Four designs and builds restaurant websites end to end,
+            from identity and interface to engineering and the search
+            foundations that make them discoverable. Every decision is
+            grounded in how guests find, choose, and return to a restaurant.
           </p>
         </div>
 

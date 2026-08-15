@@ -18,7 +18,7 @@ export function DigitalExperiences() {
         <div>
           <p className="mk-label text-[#4B1719]">Digital Experiences</p>
           <h2 className="mt-5 font-editorial text-[38px] leading-[1.06] text-[#0A0A09] sm:text-[46px]">
-            Websites guests find —
+            Websites guests find,
             <br />
             whether they search{" "}
             <em className="italic text-[#4B1719]">or ask.</em>
@@ -31,7 +31,7 @@ export function DigitalExperiences() {
             </p>
             <p>
               Every build is engineered for how guests actually discover
-              restaurants now — structured for Google&apos;s rankings{" "}
+              restaurants now: structured for Google&apos;s rankings{" "}
               <span className="text-[#0A0A09]">and</span> legible to the AI
               assistants guests increasingly ask instead. Search engine
               optimization and answer engine optimization, one foundation.

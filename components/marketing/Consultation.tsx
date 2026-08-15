@@ -29,7 +29,7 @@ export function Consultation() {
       form.reset();
     } catch {
       setState("error");
-      const subject = encodeURIComponent("Consultation request — The Pass");
+      const subject = encodeURIComponent("Consultation request: The Pass");
       const body = encodeURIComponent(
         `Name: ${data.get("name")}\nRestaurant: ${data.get("restaurant")}\nLocations: ${data.get("locations")}\nEmail: ${data.get("email")}\n\n${data.get("message")}`,
       );
@@ -122,7 +122,7 @@ export function Consultation() {
               </button>
               {state === "error" && (
                 <p className="mt-3 text-[13px] text-[#4B1719]">
-                  Direct submission wasn&apos;t available — we&apos;ve opened your email
+                  Direct submission wasn&apos;t available, so we&apos;ve opened your email
                   client instead.
                 </p>
               )}

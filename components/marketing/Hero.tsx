@@ -45,7 +45,7 @@ export function Hero() {
             <em className="italic text-[#B79A68]">crafted.</em>
           </h1>
           <p className="mk-rise mk-rise-3 mt-5 max-w-[440px] text-[15.5px] leading-relaxed text-[#F1EDE5]/70">
-            The design studio for restaurants — websites that carry your
+            The design studio for restaurants. Websites that carry your
             hospitality online and turn lookers into guests.
           </p>
 

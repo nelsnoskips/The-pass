@@ -25,7 +25,7 @@ export default function HomePage() {
             brand: { "@type": "Brand", name: "The Pass by Madison Four" },
             slogan: "Restaurant websites, crafted.",
             description:
-              "The Pass by Madison Four is a design studio for restaurants — custom websites engineered to be found on Google and in AI answers, and to turn lookers into guests.",
+              "The Pass by Madison Four is a design studio for restaurants, building custom websites engineered to be found on Google and in AI answers and to turn lookers into guests.",
             knowsAbout: [
               "Restaurant web design",
               "Restaurant websites",

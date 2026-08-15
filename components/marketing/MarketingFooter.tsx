@@ -10,7 +10,7 @@ export function MarketingFooter() {
             <Wordmark tone="light" />
             <p className="mt-5 max-w-[300px] text-[13.5px] leading-relaxed text-[#F1EDE5]/50">
               Restaurant websites, crafted. Design, engineering, and
-              discoverability — one complete guest experience.
+              discoverability in one complete guest experience.
             </p>
             <a
               href="mailto:hello@madisonfour.com"

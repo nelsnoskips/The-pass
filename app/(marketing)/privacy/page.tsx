@@ -1,7 +1,7 @@
 import { LegalPage, LegalSection } from "@/components/marketing/LegalPage";
 
 export const metadata = {
-  title: "Privacy Policy — Madison Four",
+  title: "Privacy Policy | Madison Four",
   description: "How Madison Four collects, uses, and protects your information.",
   alternates: { canonical: "/privacy" },
 };
@@ -63,7 +63,7 @@ export default function PrivacyPage() {
         <p>
           The public site uses no advertising or cross-site tracking cookies.
           The client platform (The Pass) uses functional cookies strictly to
-          operate the product — for example, keeping you signed in.
+          operate the product, such as keeping you signed in.
         </p>
       </LegalSection>
 

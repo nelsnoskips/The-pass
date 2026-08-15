@@ -26,7 +26,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://madisonfour.com"),
-  title: "The Pass by Madison Four — Restaurant Websites, Crafted.",
+  title: "The Pass by Madison Four | Restaurant Websites, Crafted.",
   description:
     "The Pass by Madison Four is a design studio for restaurants: custom websites, search and AI visibility, and guest-first digital experiences.",
   alternates: { canonical: "/" },

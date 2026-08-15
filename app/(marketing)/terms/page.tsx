@@ -1,7 +1,7 @@
 import { LegalPage, LegalSection } from "@/components/marketing/LegalPage";
 
 export const metadata = {
-  title: "Terms of Service — Madison Four",
+  title: "Terms of Service | Madison Four",
   description: "The terms that govern use of madisonfour.com and The Pass.",
   alternates: { canonical: "/terms" },
 };
@@ -30,7 +30,7 @@ export default function TermsPage() {
 
       <LegalSection heading="Your use of the site">
         <p>
-          You agree not to misuse the site — including attempting to access
+          You agree not to misuse the site. That includes attempting to access
           accounts or data that are not yours, probing or disrupting our
           systems, scraping at scale, or submitting forms with false or
           unlawful content.

@@ -36,7 +36,7 @@ export function MarketingHeader() {
       )}
     >
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-6 px-5 py-4 sm:px-8">
-        <Link href="/" aria-label="The Pass by Madison Four — home">
+        <Link href="/" aria-label="The Pass by Madison Four, home">
           <Wordmark tone="light" compact />
         </Link>
 
