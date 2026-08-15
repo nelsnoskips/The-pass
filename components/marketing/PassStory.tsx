@@ -20,6 +20,7 @@ export function PassStory() {
             src={CHEF_IMAGE}
             alt="A chef finishing a plated dish beneath the copper heat lamps of the pass"
             fill
+            quality={90}
             sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover"
           />

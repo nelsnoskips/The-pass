@@ -19,6 +19,7 @@ export function Hero() {
             alt=""
             fill
             priority
+            quality={90}
             sizes="(max-width: 1024px) 100vw, 66vw"
             className="mk-drift object-cover object-center"
           />
