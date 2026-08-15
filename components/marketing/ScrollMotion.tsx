@@ -14,11 +14,42 @@ import { useEffect } from "react";
  */
 export function ScrollMotion() {
   useEffect(() => {
-    if (
-      CSS.supports("animation-timeline: scroll()") ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      return;
+    const cssPath = CSS.supports("animation-timeline: scroll()");
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    // Diagnostic overlay: visit any marketing page with ?motion-debug to
+    // see which motion engine is active and live readouts. Harmless and
+    // invisible without the parameter.
+    let debugFrame = 0;
+    let debugEl: HTMLDivElement | null = null;
+    if (new URLSearchParams(window.location.search).has("motion-debug")) {
+      debugEl = document.createElement("div");
+      debugEl.style.cssText =
+        "position:fixed;bottom:12px;left:12px;z-index:9999;background:#0A0A09;color:#F1EDE5;font:12px/1.6 monospace;padding:10px 14px;border:1px solid #B79A68;white-space:pre;pointer-events:none";
+      document.body.appendChild(debugEl);
+      const readout = () => {
+        const copy = document.querySelector(".mk-scroll-copy");
+        const cs = copy ? getComputedStyle(copy) : null;
+        debugEl!.textContent = [
+          `engine: ${reduced ? "OFF (reduced motion)" : cssPath ? "CSS scroll-timeline" : "JS fallback"}`,
+          `css support: ${cssPath}`,
+          `reduced motion: ${reduced}`,
+          `scrollY: ${Math.round(window.scrollY)}`,
+          `hero opacity: ${cs ? Number(cs.opacity).toFixed(2) : "n/a"}`,
+          `hero transform: ${cs ? cs.transform : "n/a"}`,
+        ].join("\n");
+        debugFrame = requestAnimationFrame(readout);
+      };
+      debugFrame = requestAnimationFrame(readout);
+    }
+
+    if (cssPath || reduced) {
+      return () => {
+        cancelAnimationFrame(debugFrame);
+        debugEl?.remove();
+      };
     }
 
     const q = <T extends Element>(sel: string) =>
@@ -91,6 +122,8 @@ export function ScrollMotion() {
     window.addEventListener("resize", wake, { passive: true });
     return () => {
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(debugFrame);
+      debugEl?.remove();
       window.removeEventListener("scroll", wake);
       window.removeEventListener("resize", wake);
     };
