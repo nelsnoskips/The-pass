@@ -19,7 +19,7 @@ const PACKAGES: {
       "Complete SEO and AEO setup included",
       "Analytics and launch support",
     ],
-    timeline: "Four to six weeks",
+    timeline: "Two to three weeks",
   },
   {
     name: "The Refresh",
@@ -33,7 +33,7 @@ const PACKAGES: {
       "Complete SEO and AEO setup included",
       "Speed and mobile pass",
     ],
-    timeline: "Three to four weeks",
+    timeline: "Ten days to two weeks",
   },
   {
     name: "The Residency",
