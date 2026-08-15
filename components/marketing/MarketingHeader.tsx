@@ -9,6 +9,7 @@ import { Wordmark } from "./PassMark";
 const NAV = [
   { href: "#craft", label: "The Craft" },
   { href: "#digital-experiences", label: "Digital Experiences" },
+  { href: "#packages", label: "Engagements" },
   { href: "#about", label: "Our Story" },
 ];
 

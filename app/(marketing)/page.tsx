@@ -1,6 +1,7 @@
 import { Hero } from "@/components/marketing/Hero";
 import { Disciplines } from "@/components/marketing/Disciplines";
 import { DigitalExperiences } from "@/components/marketing/DigitalExperiences";
+import { Packages } from "@/components/marketing/Packages";
 import { PassStory } from "@/components/marketing/PassStory";
 import { Consultation } from "@/components/marketing/Consultation";
 
@@ -10,6 +11,7 @@ export default function HomePage() {
       <Hero />
       <Disciplines />
       <DigitalExperiences />
+      <Packages />
       <PassStory />
       <Consultation />
       <script
@@ -33,6 +35,42 @@ export default function HomePage() {
               "SEO",
               "Answer engine optimization",
               "Hospitality digital experiences",
+            ],
+            makesOffer: [
+              {
+                "@type": "Offer",
+                name: "The Opening",
+                description:
+                  "A complete custom restaurant website, designed and built from nothing, with full SEO and AEO setup included.",
+                priceSpecification: {
+                  "@type": "PriceSpecification",
+                  minPrice: 4000,
+                  priceCurrency: "USD",
+                },
+              },
+              {
+                "@type": "Offer",
+                name: "The Refresh",
+                description:
+                  "A full redesign of an existing restaurant website on a custom foundation, with full SEO and AEO setup included.",
+                priceSpecification: {
+                  "@type": "PriceSpecification",
+                  minPrice: 3000,
+                  priceCurrency: "USD",
+                },
+              },
+              {
+                "@type": "Offer",
+                name: "The Residency",
+                description:
+                  "Ongoing care for restaurant websites: hosting, updates, and continuous SEO and AI-visibility tuning, billed monthly.",
+                priceSpecification: {
+                  "@type": "UnitPriceSpecification",
+                  minPrice: 900,
+                  priceCurrency: "USD",
+                  unitText: "month",
+                },
+              },
             ],
           }),
         }}
