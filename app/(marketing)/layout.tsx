@@ -1,5 +1,6 @@
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { MarketingFooter } from "@/components/marketing/MarketingFooter";
+import { ScrollMotion } from "@/components/marketing/ScrollMotion";
 
 export default function MarketingLayout({
   children,
@@ -13,6 +14,7 @@ export default function MarketingLayout({
         Skip to content
       </a>
       <MarketingHeader />
+      <ScrollMotion />
       <main id="main-content">{children}</main>
       <MarketingFooter />
     </div>
