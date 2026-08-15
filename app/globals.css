@@ -210,47 +210,192 @@ body {
    scrubbed by the scroll position itself. Browsers without support (and
    guests who prefer reduced motion) simply get the still page. */
 
+/* ------------------------------------------------- cinematic hero --- */
+/* A pinned stage the guest scrubs through: the room brightens, the
+   wordmark passes through the camera, the promise and the invitation
+   arrive in turn. The .mk-cine class is added by ScrollMotion only when
+   a motion engine is available; without it (no JS, reduced motion, old
+   browsers with no fallback) the stage renders as a classic still hero. */
+
+.mk-stagewrap {
+  position: relative;
+  height: 100svh;
+  min-height: 640px;
+}
+.mk-cine .mk-stagewrap {
+  height: 400vh;
+  min-height: 0;
+}
+.mk-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 640px;
+  overflow: hidden;
+}
+.mk-acts {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2.25rem;
+  padding: 7rem 1.25rem 5rem;
+}
+@media (min-width: 640px) {
+  .mk-acts { padding-left: 2rem; padding-right: 2rem; }
+}
+.mk-act-veil { display: none; }
+.mk-act-hint { display: none; }
+
+.mk-cine .mk-veil-static { display: none; }
+.mk-cine .mk-act-veil {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.mk-cine .mk-acts { position: static; }
+.mk-cine .mk-act {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 1.5rem;
+  pointer-events: none;
+}
+.mk-cine .mk-act a { pointer-events: auto; }
+/* Pre-engine defaults: before either engine takes over, the stage shows
+   Act I only, so the acts never stack visibly. */
+.mk-cine .mk-act-line1,
+.mk-cine .mk-act-cta { opacity: 0; visibility: hidden; }
+.mk-cine .mk-act-veil { opacity: 0.82; }
+.mk-cine .mk-act-hint { opacity: 0.65; }
+.mk-cine .mk-title-big {
+  font-size: clamp(72px, 13vw, 190px);
+  line-height: 0.92;
+  letter-spacing: 0.14em;
+}
+.mk-cine .mk-act-line1 h1 {
+  font-size: clamp(38px, 5.5vw, 80px);
+  max-width: 1000px;
+}
+.mk-cine .mk-act-line1 .mk-sub {
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.mk-cine .mk-ctarow { justify-content: center; }
+.mk-cine .mk-act-cta .mk-passwrap {
+  margin-left: auto;
+  margin-right: auto;
+}
+.mk-cine .mk-act-hint {
+  position: absolute;
+  z-index: 6;
+  inset-inline: 0;
+  bottom: 1.75rem;
+  display: flex;
+  justify-content: center;
+}
+
 @supports (animation-timeline: scroll()) {
-  /* Hero photography sinks slower than the page: depth, not decoration.
-     Pre-scaled so the drifting frame never reveals its edges. */
-  @keyframes mk-scroll-art {
-    from { transform: scale(1.1) translateY(-2.5%); }
-    to { transform: scale(1.1) translateY(4.5%); }
+  /* The camera dollies into the room across the whole stage. */
+  @keyframes mk-cine-photo {
+    from { transform: scale(1.04) translateY(0); }
+    to { transform: scale(1.28) translateY(-3%); }
   }
-  .mk-scroll-art {
-    animation: mk-scroll-art linear both;
+  .mk-cine .mk-act-photo {
+    animation: mk-cine-photo linear both;
     animation-timeline: scroll(root);
-    animation-range: 0 100vh;
+    animation-range: 0 300vh;
   }
 
-  /* The brand statement lifts away a touch faster than the page and
-     dims, handing attention to the first section. */
-  @keyframes mk-scroll-copy {
-    from { opacity: 1; transform: translateY(0); }
-    to { opacity: 0.15; transform: translateY(-7%); }
+  /* The dark veil lifts: the room comes to light. */
+  @keyframes mk-cine-veil {
+    0% { opacity: 0.82; }
+    45% { opacity: 0.42; }
+    100% { opacity: 0.34; }
   }
-  .mk-scroll-copy {
-    animation: mk-scroll-copy linear both;
+  .mk-cine .mk-act-veil {
+    animation: mk-cine-veil linear both;
     animation-timeline: scroll(root);
-    animation-range: 0 90vh;
+    animation-range: 0 300vh;
+  }
+
+  /* Act I: the wordmark passes through the camera. */
+  @keyframes mk-cine-title {
+    0% { opacity: 1; transform: none; visibility: visible; }
+    12% { opacity: 1; transform: scale(1.04); visibility: visible; }
+    37% { opacity: 0; transform: scale(1.34) translateY(-6%); visibility: hidden; }
+    100% { opacity: 0; transform: scale(1.34) translateY(-6%); visibility: hidden; }
+  }
+  .mk-cine .mk-act-title {
+    animation: mk-cine-title linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 300vh;
+  }
+
+  /* Act II: the promise arrives, holds, and hands off. */
+  @keyframes mk-cine-line1 {
+    0%, 33% { opacity: 0; transform: translateY(64px); visibility: hidden; }
+    50% { opacity: 1; transform: none; visibility: visible; }
+    72% { opacity: 1; transform: none; visibility: visible; }
+    88%, 100% { opacity: 0; transform: translateY(-64px); visibility: hidden; }
+  }
+  .mk-cine .mk-act-line1 {
+    animation: mk-cine-line1 linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 300vh;
+  }
+
+  /* Act III: the invitation settles and stays. */
+  @keyframes mk-cine-cta {
+    0%, 80% { opacity: 0; transform: translateY(48px); visibility: hidden; }
+    96%, 100% { opacity: 1; transform: none; visibility: visible; }
+  }
+  .mk-cine .mk-act-cta {
+    animation: mk-cine-cta linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 300vh;
+  }
+
+  /* The scroll hint bows out as soon as the guest begins. */
+  @keyframes mk-cine-hint {
+    0% { opacity: 0.65; }
+    10%, 100% { opacity: 0; }
+  }
+  .mk-cine .mk-act-hint {
+    animation: mk-cine-hint linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 300vh;
   }
 
   /* Content settles into place as it enters the viewport — scrubbed, so
      it reverses gracefully when the guest scrolls back up. */
   @keyframes mk-reveal {
-    from { opacity: 0; transform: translateY(26px); }
+    from { opacity: 0; transform: translateY(56px); }
     to { opacity: 1; transform: translateY(0); }
   }
   .mk-reveal {
     animation: mk-reveal linear both;
     animation-timeline: view();
-    animation-range: entry 8% entry 52%;
+    animation-range: entry 10% entry 65%;
   }
 
   /* Photography breathes inside its frame while crossing the viewport. */
   @keyframes mk-parallax {
-    from { transform: scale(1.12) translateY(-3.5%); }
-    to { transform: scale(1.12) translateY(3.5%); }
+    from { transform: scale(1.16) translateY(-6%); }
+    to { transform: scale(1.16) translateY(6%); }
   }
   .mk-parallax {
     animation: mk-parallax linear both;
@@ -263,10 +408,14 @@ body {
   .mk-rise,
   .mk-drift,
   .mk-passline::after,
-  .mk-scroll-art,
-  .mk-scroll-copy,
   .mk-reveal,
-  .mk-parallax {
+  .mk-parallax,
+  .mk-act-photo,
+  .mk-act-veil,
+  .mk-act-title,
+  .mk-act-line1,
+  .mk-act-cta,
+  .mk-act-hint {
     animation: none !important;
   }
   .mk-rise { opacity: 1; transform: none; }
