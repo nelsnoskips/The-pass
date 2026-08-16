@@ -258,11 +258,11 @@ export default function SereinPage() {
             fill
             quality={86}
             sizes="100vw"
-            className="object-cover object-[62%_center]"
+            className="object-cover object-[46%_center]"
           />
           <div
             aria-hidden
-            className="absolute inset-0 bg-gradient-to-r from-[#05070B] via-[#05070B]/45 to-transparent"
+            className="absolute inset-0 bg-gradient-to-r from-[#05070B] via-[#05070B]/35 to-transparent"
           />
           <div className="absolute inset-0 flex items-center">
             <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-8">
