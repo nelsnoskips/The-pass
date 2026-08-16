@@ -5,14 +5,16 @@ import { DuskClock } from "@/components/serein/DuskClock";
 const GOLDEN = "/images/serein/serein-golden.jpg";
 const DUSK = "/images/serein/serein-dusk.jpg";
 const NIGHT = "/images/serein/serein-night.jpg";
+const THRESHOLD = "/images/serein/threshold.png";
+const ROOM = "/images/serein/room.png";
 
 /** Three movements pulled forward as the visual chapter. `image` stays
  *  null until the course photography lands; the cards are composed to
  *  read as finished either way. */
-const FEATURED: { n: string; name: string; detail: string; image: string | null }[] = [
-  { n: "01", name: "Tide", detail: "Santa Barbara uni, sea lettuce, cold broth of its own shells", image: null },
-  { n: "06", name: "Ember", detail: "Spot prawn over Santa Maria oak, its head pressed into sauce", image: null },
-  { n: "08", name: "Veil", detail: "Kanpachi, compressed cucumber, coastal sage oil", image: null },
+const FEATURED: { n: string; name: string; detail: string; image: string | null; pos: string }[] = [
+  { n: "01", name: "Tide", detail: "Santa Barbara uni, sea lettuce, cold broth of its own shells", image: "/images/serein/movement-tide.jpg", pos: "object-[center_74%]" },
+  { n: "06", name: "Ember", detail: "Local halibut seared on a fired stone, kelp, dill", image: "/images/serein/movement-ember.jpg", pos: "object-[center_42%]" },
+  { n: "08", name: "Veil", detail: "Kanpachi under a rice veil, sea herbs, clear broth", image: "/images/serein/movement-veil.png", pos: "object-[center_58%]" },
 ];
 
 const MOVEMENTS: { n: string; name: string; detail: string }[] = [
@@ -175,16 +177,17 @@ export default function SereinPage() {
                 ))}
               </dl>
             </div>
-            <figure className="relative aspect-[4/5] overflow-hidden bg-[#05070B]/5">
-              {/* PLACEHOLDER: a single plated course on stone, daylight.
-                  See the image brief for what to generate. */}
-              <div className="flex h-full items-center justify-center px-8 text-center">
-                <p className="srn-label text-[#05070B]/35">
-                  Course photograph
-                  <br />
-                  to come
-                </p>
-              </div>
+            <figure className="relative aspect-[5/4] overflow-hidden">
+              {/* Shot on the same cream as this chapter, so it sits in the
+                  page rather than on it. */}
+              <Image
+                src={THRESHOLD}
+                alt="The first movement: shellfish and sea herbs in a dark stone bowl"
+                fill
+                quality={88}
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover object-[100%_center]"
+              />
             </figure>
           </div>
         </div>
@@ -208,7 +211,7 @@ export default function SereinPage() {
                       fill
                       quality={86}
                       sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
+                      className={`object-cover ${m.pos} transition-transform duration-[1200ms] group-hover:scale-[1.04]`}
                     />
                   ) : (
                     /* Composed placeholder: a lit horizon in the dark, so
@@ -250,8 +253,8 @@ export default function SereinPage() {
       <section id="room" className="relative scroll-mt-16 overflow-hidden bg-[#05070B]">
         <div className="relative aspect-[16/10] min-h-[420px] w-full">
           <Image
-            src={DUSK}
-            alt="The dining room at dusk, thirty seats facing the Pacific"
+            src={ROOM}
+            alt="The dining room at dusk: one long candlelit table facing the Pacific"
             fill
             quality={86}
             sizes="100vw"
@@ -259,7 +262,7 @@ export default function SereinPage() {
           />
           <div
             aria-hidden
-            className="absolute inset-0 bg-gradient-to-r from-[#05070B] via-[#05070B]/70 to-transparent"
+            className="absolute inset-0 bg-gradient-to-r from-[#05070B] via-[#05070B]/45 to-transparent"
           />
           <div className="absolute inset-0 flex items-center">
             <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-8">
