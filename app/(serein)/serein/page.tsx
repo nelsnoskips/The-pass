@@ -105,7 +105,7 @@ export default function SereinPage() {
                   </p>
                   <div className="mt-10 flex flex-wrap items-center gap-5">
                     <a
-                      href="#reserve"
+                      href="/serein/reserve"
                       className="srn-label group inline-flex items-center gap-3 border border-[#C9884B] px-7 py-4 text-[#E9E5DB] transition-colors hover:bg-[#C9884B] hover:text-[#05070B]"
                     >
                       Reserve an Evening

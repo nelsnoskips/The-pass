@@ -61,7 +61,7 @@ export function SereinHeader() {
             ))}
           </nav>
           <a
-            href="#reserve"
+            href="/serein/reserve"
             className="srn-label border border-[#C9884B]/70 px-5 py-3 text-[#E9E5DB] backdrop-blur-[2px] transition-colors hover:bg-[#C9884B] hover:text-[#05070B]"
           >
             Reserve
