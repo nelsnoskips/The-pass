@@ -28,7 +28,14 @@ export function SereinHeader() {
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
+    <header
+      className={clsx(
+        // Transparent over the film; an ink bar once the page begins, so
+        // the cream type never lands on the parchment chapter unreadable.
+        "fixed inset-x-0 top-0 z-50 transition-colors duration-500",
+        past ? "bg-[#05070B]/92 backdrop-blur-sm" : "bg-transparent",
+      )}
+    >
       <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-6 px-5 py-5 sm:px-8">
         <a
           href="#top"

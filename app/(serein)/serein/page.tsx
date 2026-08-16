@@ -6,6 +6,15 @@ const GOLDEN = "/images/serein/serein-golden.jpg";
 const DUSK = "/images/serein/serein-dusk.jpg";
 const NIGHT = "/images/serein/serein-night.jpg";
 
+/** Three movements pulled forward as the visual chapter. `image` stays
+ *  null until the course photography lands; the cards are composed to
+ *  read as finished either way. */
+const FEATURED: { n: string; name: string; detail: string; image: string | null }[] = [
+  { n: "01", name: "Tide", detail: "Santa Barbara uni, sea lettuce, cold broth of its own shells", image: null },
+  { n: "06", name: "Ember", detail: "Spot prawn over Santa Maria oak, its head pressed into sauce", image: null },
+  { n: "08", name: "Veil", detail: "Kanpachi, compressed cucumber, coastal sage oil", image: null },
+];
+
 const MOVEMENTS: { n: string; name: string; detail: string }[] = [
   { n: "I", name: "Tide", detail: "Santa Barbara uni, sea lettuce, cold broth of its own shells" },
   { n: "II", name: "Stone", detail: "Abalone cooked over embers, kelp butter, verjus" },
@@ -181,12 +190,104 @@ export default function SereinPage() {
         </div>
       </section>
 
-      {/* ------------------------------ chapter 02 — the ten movements --- */}
-      <section id="menu" className="scroll-mt-16 bg-[#05070B] px-5 py-24 sm:px-8 sm:py-32">
+      {/* ------------------------------- chapter 02 — three movements --- */}
+      <section id="movements" className="scroll-mt-16 bg-[#05070B] px-5 py-24 sm:px-8 sm:py-28">
         <div className="mx-auto max-w-[1200px]">
           <p className="srn-chapter-label srn-label text-[#E9E5DB]/45">
             <span>02</span>
-            <span>The Ten Movements</span>
+            <span>Ten movements, one current</span>
+          </p>
+          <ol className="mt-12 grid gap-6 md:grid-cols-3">
+            {FEATURED.map((m) => (
+              <li key={m.n} className="group relative">
+                <div className="relative aspect-[4/5] overflow-hidden bg-[#0B0F16]">
+                  {m.image ? (
+                    <Image
+                      src={m.image}
+                      alt={`${m.name}: ${m.detail}`}
+                      fill
+                      quality={86}
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
+                    />
+                  ) : (
+                    /* Composed placeholder: a lit horizon in the dark, so
+                       the card reads as finished before the plate lands. */
+                    <div
+                      aria-hidden
+                      className="absolute inset-0 bg-[#0B1119] bg-[radial-gradient(130%_90%_at_50%_120%,rgba(201,136,75,0.38),rgba(11,17,25,0)_62%)] ring-1 ring-inset ring-[#C9884B]/15"
+                    />
+                  )}
+                  <div
+                    aria-hidden
+                    className="absolute inset-0 bg-gradient-to-t from-[#05070B] via-[#05070B]/35 to-transparent"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 p-7">
+                    <p className="srn-label text-[#C9884B]">{m.n}</p>
+                    <p className="srn-serif mt-3 text-[34px] leading-none text-[#E9E5DB]">
+                      {m.name}
+                    </p>
+                    <span
+                      aria-hidden
+                      className="mt-4 block h-px w-8 bg-[#C9884B]/60 transition-all duration-500 group-hover:w-full"
+                    />
+                    {/* Two-line floor keeps the names aligned across cards. */}
+                    <p className="mt-4 min-h-[42px] text-[12.5px] leading-relaxed text-[#E9E5DB]/60">
+                      {m.detail}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p className="srn-label mt-10 text-[#E9E5DB]/40">
+            Three of ten. The rest arrive in order, as the light goes.
+          </p>
+        </div>
+      </section>
+
+      {/* ------------------------------------- chapter 03 — the room --- */}
+      <section id="room" className="relative scroll-mt-16 overflow-hidden bg-[#05070B]">
+        <div className="relative aspect-[16/10] min-h-[420px] w-full">
+          <Image
+            src={DUSK}
+            alt="The dining room at dusk, thirty seats facing the Pacific"
+            fill
+            quality={86}
+            sizes="100vw"
+            className="object-cover object-[62%_center]"
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-r from-[#05070B] via-[#05070B]/70 to-transparent"
+          />
+          <div className="absolute inset-0 flex items-center">
+            <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-8">
+              <p className="srn-chapter-label srn-label max-w-[420px] text-[#E9E5DB]/45">
+                <span>03</span>
+                <span>The Room</span>
+              </p>
+              <h2 className="srn-serif mt-8 max-w-[620px] text-[clamp(34px,5vw,64px)] leading-[1.04] text-[#E9E5DB]">
+                Thirty seats.
+                <br />
+                <em className="italic text-[#C9884B]">One shared horizon.</em>
+              </h2>
+              <p className="mt-7 max-w-[400px] text-[15px] leading-relaxed text-[#E9E5DB]/70">
+                Dark timber, ocean-worn stone, and a single long window. Every
+                seat faces the water, and the room is lit only by what is left
+                of the day and what we light when it goes.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------ chapter 04 — the ten movements --- */}
+      <section id="menu" className="scroll-mt-16 bg-[#05070B] px-5 py-24 sm:px-8 sm:py-32">
+        <div className="mx-auto max-w-[1200px]">
+          <p className="srn-chapter-label srn-label text-[#E9E5DB]/45">
+            <span>04</span>
+            <span>The Menu</span>
           </p>
           <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_1.15fr] lg:gap-20">
             <div>
@@ -231,43 +332,7 @@ export default function SereinPage() {
         </div>
       </section>
 
-      {/* ------------------------------------- chapter 03 — the room --- */}
-      <section id="room" className="relative scroll-mt-16 overflow-hidden bg-[#05070B]">
-        <div className="relative aspect-[16/10] min-h-[420px] w-full">
-          <Image
-            src={DUSK}
-            alt="The dining room at dusk, thirty seats facing the Pacific"
-            fill
-            quality={86}
-            sizes="100vw"
-            className="object-cover object-[62%_center]"
-          />
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-gradient-to-r from-[#05070B] via-[#05070B]/70 to-transparent"
-          />
-          <div className="absolute inset-0 flex items-center">
-            <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-8">
-              <p className="srn-chapter-label srn-label max-w-[420px] text-[#E9E5DB]/45">
-                <span>03</span>
-                <span>The Room</span>
-              </p>
-              <h2 className="srn-serif mt-8 max-w-[620px] text-[clamp(34px,5vw,64px)] leading-[1.04] text-[#E9E5DB]">
-                Thirty seats.
-                <br />
-                <em className="italic text-[#C9884B]">One shared horizon.</em>
-              </h2>
-              <p className="mt-7 max-w-[400px] text-[15px] leading-relaxed text-[#E9E5DB]/70">
-                Dark timber, ocean-worn stone, and a single long window. Every
-                seat faces the water, and the room is lit only by what is left
-                of the day and what we light when it goes.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------- chapter 04 — reservation --- */}
+      {/* ----------------------------------- chapter 05 — reservation --- */}
       <section id="reserve" className="relative scroll-mt-16 overflow-hidden bg-[#05070B]">
         <div className="absolute inset-0" aria-hidden>
           <Image src={NIGHT} alt="" fill quality={86} sizes="100vw" className="object-cover object-[70%_center]" />
@@ -275,7 +340,7 @@ export default function SereinPage() {
         </div>
         <div className="relative mx-auto max-w-[1200px] px-5 py-24 sm:px-8 sm:py-32">
           <p className="srn-chapter-label srn-label max-w-[420px] text-[#E9E5DB]/45">
-            <span>04</span>
+            <span>05</span>
             <span>Arrival</span>
           </p>
           <div className="mt-12 grid gap-14 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
