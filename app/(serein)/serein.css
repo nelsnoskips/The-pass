@@ -146,6 +146,20 @@
     10%, 100% { opacity: 0; }
   }
 
+  /* The film hands off: once Act III has held, the whole stage recedes
+     and dissolves over the final screen of the runway, so the page
+     arrives out of darkness instead of cutting. Its own range, past the
+     end of the act timeline. */
+  @keyframes srn-stage-exit {
+    from { opacity: 1; transform: scale(1) translateY(0); }
+    to { opacity: 0; transform: scale(0.965) translateY(-5%); }
+  }
+  .srn-cine .srn-stage {
+    animation: srn-stage-exit linear both;
+    animation-timeline: scroll(root);
+    animation-range: 300vh 400vh;
+  }
+
   .srn-cine .srn-photo,
   .srn-cine .srn-img-golden,
   .srn-cine .srn-img-night,
@@ -186,7 +200,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .srn-photo, .srn-img-golden, .srn-img-night, .srn-veil,
-  .srn-act-title, .srn-act-line, .srn-act-final, .srn-hint {
+  .srn-act-title, .srn-act-line, .srn-act-final, .srn-hint, .srn-stage {
     animation: none !important;
   }
 }

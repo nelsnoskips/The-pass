@@ -12,7 +12,14 @@ import { useEffect } from "react";
  */
 
 type Props = { o?: [number, number]; y?: [number, number]; s?: [number, number] };
-type Track = { sel: string; yUnit?: "px" | "%"; backdrop?: boolean; kf: [number, Props][] };
+type Track = {
+  sel: string;
+  yUnit?: "px" | "%";
+  backdrop?: boolean;
+  /** "acts" runs over 0-300vh; "exit" over 300-400vh. */
+  phase?: "acts" | "exit";
+  kf: [number, Props][];
+};
 
 const TRACKS: Track[] = [
   { sel: ".srn-photo", yUnit: "%", backdrop: true, kf: [[0, { s: [1.04, 1.26], y: [0, -2.5] }], [100, {}]] },
@@ -23,6 +30,8 @@ const TRACKS: Track[] = [
   { sel: ".srn-act-line", yUnit: "px", kf: [[0, { o: [0, 0], y: [64, 64] }], [33, { o: [0, 1], y: [64, 0] }], [50, { o: [1, 1], y: [0, 0] }], [72, { o: [1, 0], y: [0, -64] }], [88, { o: [0, 0], y: [-64, -64] }], [100, {}]] },
   { sel: ".srn-act-final", yUnit: "px", kf: [[0, { o: [0, 0], y: [48, 48] }], [84, { o: [0, 1], y: [48, 0] }], [97, { o: [1, 1], y: [0, 0] }], [100, {}]] },
   { sel: ".srn-hint", kf: [[0, { o: [0.6, 0] }], [10, { o: [0, 0] }], [100, {}]] },
+  // The stage recedes and dissolves after the acts have held.
+  { sel: ".srn-stage", yUnit: "%", backdrop: true, phase: "exit", kf: [[0, { o: [1, 0], s: [1, 0.965], y: [0, -5] }], [100, {}]] },
 ];
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -75,8 +84,11 @@ export function SereinMotion() {
     let running = false;
 
     const apply = () => {
-      const p100 = clamp01(eased / (window.innerHeight * 3)) * 100;
+      const vh = window.innerHeight;
+      const pActs = clamp01(eased / (vh * 3)) * 100;
+      const pExit = clamp01((eased - vh * 3) / vh) * 100;
       for (const { track, els } of tracks) {
+        const p100 = track.phase === "exit" ? pExit : pActs;
         let i = 0;
         while (i < track.kf.length - 2 && p100 >= track.kf[i + 1][0]) i++;
         const seg = track.kf[i][1];

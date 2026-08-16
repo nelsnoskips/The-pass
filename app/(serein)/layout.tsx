@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SereinHeader } from "@/components/serein/SereinHeader";
 import { SereinMotion } from "@/components/serein/SereinMotion";
 import "./serein.css";
 
@@ -25,6 +26,7 @@ export default function SereinLayout({
         }}
       />
       <SereinMotion />
+      <SereinHeader />
       {children}
     </div>
   );

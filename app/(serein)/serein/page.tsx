@@ -32,7 +32,7 @@ export default function SereinPage() {
   return (
     <>
       {/* ------------------------------------------------ the film --- */}
-      <section className="srn-stagewrap">
+      <section id="top" className="srn-stagewrap">
         <div className="srn-stage">
           <div className="srn-photo">
             {/* Dusk is the base layer; golden covers it, night rises over both. */}
@@ -232,7 +232,7 @@ export default function SereinPage() {
       </section>
 
       {/* ------------------------------------- chapter 03 — the room --- */}
-      <section className="relative overflow-hidden bg-[#05070B]">
+      <section id="room" className="relative scroll-mt-16 overflow-hidden bg-[#05070B]">
         <div className="relative aspect-[16/10] min-h-[420px] w-full">
           <Image
             src={DUSK}
