@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Masthead } from "@/components/house/Masthead";
 import { ChickenCount } from "@/components/house/ChickenCount";
 import { Plate } from "@/components/house/Plate";
@@ -26,35 +27,52 @@ export default function HouseIssuePage() {
       <Masthead issue={issue.number} dated={issue.dated} />
 
       <main id="main">
-        {/* ------------------------------------------- the hero band --- */}
-        <section className="hse-paper relative overflow-hidden border-b-4 border-[#16130F]">
-          <div className="mx-auto max-w-[1320px] px-4 pt-6 sm:px-6">
-            <h1 className="hse-display text-[clamp(56px,15vw,210px)] leading-[0.82]">
-              House Issue
-              <span className="align-super text-[0.2em]">™</span>
-            </h1>
-          </div>
+        {/* ------------------------------------------ the layered hero --- */}
+        {/* Three planes: storefront behind, masthead type in the middle,
+            the cut-out sandwich in front. Each moves at its own rate on
+            scroll, so the depth is real rather than a rectangle sliding. */}
+        <section className="hse-stage hse-paper border-b-4 border-[#16130F]">
+          <div className="relative mx-auto min-h-[520px] max-w-[1320px] px-4 pb-8 pt-6 sm:min-h-[620px] sm:px-6 lg:min-h-[720px]">
+            {/* Plane 1: the block. */}
+            <div className="hse-layer hse-l-back absolute inset-y-0 right-0 w-full lg:w-[62%]">
+              <Plate
+                src="/images/house/hero-storefront.jpg"
+                alt="The HOUSE ISSUE storefront on Sunset, benches out front"
+                label="Hero · the storefront"
+                className="h-full w-full"
+                sizes="(max-width: 1024px) 100vw, 62vw"
+                priority
+              />
+              <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-[#F2EDE4] via-[#F2EDE4]/35 to-transparent lg:via-[#F2EDE4]/10" />
+            </div>
 
-          <div className="relative mt-4 grid gap-0 md:grid-cols-[1.15fr_1fr]">
-            <Plate
-              src="/images/house/hero-sandwich.jpg"
-              alt="A turkey club held in paper outside the shop"
-              label="Hero · the sandwich in hand"
-              className="aspect-[4/3] md:aspect-auto md:min-h-[420px]"
-              sizes="(max-width: 768px) 100vw, 55vw"
-              priority
-            />
-            <Plate
-              src="/images/house/hero-storefront.jpg"
-              alt="The HOUSE ISSUE storefront on Sunset, benches out front"
-              label="Hero · the storefront"
-              className="aspect-[4/3] md:aspect-auto md:min-h-[420px]"
-              sizes="(max-width: 768px) 100vw, 45vw"
-              priority
-            />
+            {/* Plane 2: the masthead, which the sandwich passes in front of. */}
+            <div className="hse-layer hse-l-type relative z-10 pointer-events-none">
+              <h1 className="hse-display text-[clamp(56px,15vw,206px)] leading-[0.82]">
+                House Issue
+                <span className="align-super text-[0.2em]">™</span>
+              </h1>
+              <p className="hse-label mt-3 max-w-[280px] text-[#16130F]/70">
+                {HOUSE.descriptor} · {HOUSE.place}
+              </p>
+            </div>
 
-            {/* The live count, slapped over the seam. */}
-            <div className="absolute bottom-6 left-4 z-10 sm:left-6">
+            {/* Plane 3: the sandwich, cut out and closest to the guest. */}
+            <div className="hse-layer hse-l-hand pointer-events-none absolute inset-x-0 bottom-[-4%] z-20 flex justify-center lg:left-auto lg:right-[4%] lg:w-[54%]">
+              <Image
+                src="/images/house/hero-sandwich.png"
+                alt="A turkey club held out toward you"
+                width={1665}
+                height={1531}
+                priority
+                quality={88}
+                sizes="(max-width: 1024px) 90vw, 54vw"
+                className="h-auto w-[86%] max-w-[720px] drop-shadow-[0_28px_45px_rgba(22,19,15,0.34)] lg:w-full"
+              />
+            </div>
+
+            {/* The live count, tucked behind the sandwich edge. */}
+            <div className="absolute bottom-8 left-4 z-[15] sm:left-6">
               <ChickenCount variant="sticker" />
             </div>
           </div>

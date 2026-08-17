@@ -126,3 +126,47 @@
   text-transform: uppercase;
   line-height: 1.35;
 }
+
+/* ------------------------------------------- the layered hero --- */
+/* Three depth planes with the cut-out sandwich between them: the
+   masthead type runs behind it, the storefront sits further back. On
+   scroll each plane moves at its own rate, which reads as real depth
+   rather than parallax on a rectangle. Compositor-only, gated on
+   support, and off under reduced motion — this page's argument is
+   speed, so the effect costs one transform per layer and nothing else. */
+
+/* clip, not hidden: overflow:hidden would make this a scroll container
+   and freeze the view() timelines of everything inside it. */
+.hse-stage { position: relative; overflow: clip; }
+.hse-layer { will-change: transform; }
+
+@supports (animation-timeline: view()) {
+  @keyframes hse-back {
+    from { transform: translateY(-2%) scale(1.06); }
+    to { transform: translateY(4%) scale(1.06); }
+  }
+  @keyframes hse-type {
+    from { transform: translateY(0); }
+    to { transform: translateY(-22%); }
+  }
+  @keyframes hse-hand {
+    from { transform: translateY(4%) rotate(-1.2deg) scale(1.02); }
+    to { transform: translateY(-6%) rotate(0.8deg) scale(1.02); }
+  }
+  /* Driven by the page scroll rather than the element's own view
+     progress: this hero is always at the top, so a root timeline
+     guarantees an exact resting state at load (a view() timeline
+     starts mid-range here and clipped the masthead). */
+  .hse-l-back, .hse-l-type, .hse-l-hand {
+    animation: linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 100vh;
+  }
+  .hse-l-back { animation-name: hse-back; }
+  .hse-l-type { animation-name: hse-type; }
+  .hse-l-hand { animation-name: hse-hand; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hse-l-back, .hse-l-type, .hse-l-hand { animation: none !important; }
+}
