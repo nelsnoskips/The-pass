@@ -183,49 +183,62 @@ export default function HouseIssuePage() {
 
             <ol className="mt-8 grid gap-6 md:grid-cols-3">
               {issue.features.map((f, i) => (
-                <li key={f.code} className="hse-card p-5 text-[#16130F]">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="hse-display text-[40px] leading-none text-[#E8552A]">
-                        {String(i + 1).padStart(2, "0")}
-                      </p>
-                      <p className="hse-display mt-3 text-[26px]">{f.name}</p>
-                      <p className="hse-num mt-2 text-[20px]">${f.price}</p>
-                    </div>
-                    <p className="hse-label hse-num text-[#16130F]/50">{f.code}</p>
+                <li
+                  key={f.code}
+                  className="hse-card relative flex min-h-[272px] flex-col px-5 pb-5 pt-6 text-[#16130F]"
+                >
+                  {/* The plate is printed larger than its card and runs off
+                      the top and right edges. A menu that keeps every
+                      photograph politely inside its box reads as a
+                      catalogue; letting the food break the rule is what
+                      makes it read as press. */}
+                  <div className="pointer-events-none absolute -top-[18%] right-[-9%] z-[5] w-[62%]">
+                    <Plate
+                      src={f.image}
+                      alt={f.name}
+                      label={f.name}
+                      className="hse-cut-bare aspect-square"
+                      imgClassName="object-contain"
+                      sizes="(max-width: 768px) 55vw, 20vw"
+                    />
                   </div>
 
-                  <Plate
-                    src={f.image}
-                    alt={f.name}
-                    label={f.name}
-                    className="hse-cut mt-4 aspect-[5/4]"
-                    imgClassName="object-contain p-[3%]"
-                    sizes="(max-width: 768px) 100vw, 30vw"
-                  />
+                  <div className="relative z-10 w-[47%]">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="hse-display text-[clamp(36px,3.8vw,50px)] leading-none text-[#E8552A]">
+                        {String(i + 1).padStart(2, "0")}
+                      </p>
+                      <p className="hse-label hse-num pt-1 text-[#16130F]/45">{f.code}</p>
+                    </div>
+                    <p className="hse-display mt-2 text-[21px] leading-[0.95]">{f.name}</p>
+                    <p className="hse-num mt-1.5 text-[19px]">${f.price}</p>
+                  </div>
 
-                  <p className="hse-label mt-4 text-[#16130F]/55">
-                    Availability:{" "}
-                    <span className="text-[#2E7D32]">
-                      {f.availability === "good" ? "Good" : f.availability === "limited" ? "Limited" : "Gone"}
-                    </span>
-                  </p>
+                  <div className="relative z-10 mt-auto pt-8">
+                    <p className="hse-label text-[#16130F]/55">
+                      Availability:{" "}
+                      <span className="text-[#2E7D32]">
+                        {f.availability === "good" ? "Good" : f.availability === "limited" ? "Limited" : "Gone"}
+                      </span>
+                    </p>
 
-                  <div className="mt-4 flex items-center justify-between gap-3">
-                    <span className="hse-stepper">
-                      <button type="button" aria-label={`One fewer ${f.name}`}>−</button>
-                      <span className="hse-num w-9 text-center text-[15px]">1</span>
-                      <button type="button" aria-label={`One more ${f.name}`}>+</button>
-                    </span>
-                    <button type="button" className="hse-btn hse-label flex-1">
-                      Add
-                    </button>
+                    <div className="mt-3 flex items-center gap-3">
+                      <span className="hse-stepper">
+                        <button type="button" aria-label={`One fewer ${f.name}`}>−</button>
+                        <span className="hse-num w-9 text-center text-[15px]">1</span>
+                        <button type="button" aria-label={`One more ${f.name}`}>+</button>
+                      </span>
+                      <button type="button" className="hse-btn hse-label flex-1">
+                        Add
+                      </button>
+                    </div>
                   </div>
                 </li>
               ))}
             </ol>
 
-            <p className="hse-label mt-8 text-center text-[#F2EDE4]/45">
+            {/* The rail plaque, stamped into the counter. */}
+            <p className="hse-label mx-auto mt-10 w-fit border border-[#F2EDE4]/25 bg-[#16130F]/70 px-5 py-2 text-[#F2EDE4]/60">
               — {HOUSE.motto} —
             </p>
           </div>
