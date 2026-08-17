@@ -107,10 +107,10 @@ export const ISSUES: Issue[] = [
       { code: "HI-003", name: "Crispy Potatoes", price: "6", availability: "good", image: "/images/house/menu-potatoes.jpg" },
     ],
     drop: [
-      { name: "Block Tee", variant: "Natural", price: "36", image: "/images/house/drop-tee.jpg" },
-      { name: "H/01 Cap", variant: "Washed black", price: "32", image: "/images/house/drop-cap.jpg" },
-      { name: "Chili Oil", variant: "8oz, made for the block", price: "14", image: "/images/house/drop-chili-oil.jpg" },
-      { name: "Sandwich Wrap", variant: "10 pack", price: "8", image: "/images/house/drop-wrap.jpg" },
+      { name: "Block Tee", variant: "Natural", price: "36", image: "/images/house/cut-tee.png" },
+      { name: "H/01 Cap", variant: "Washed black", price: "32", image: "/images/house/cut-cap.png" },
+      { name: "Chili Oil", variant: "8oz, made for the block", price: "14", image: "/images/house/cut-chili-oil.png" },
+      { name: "Sandwich Wrap", variant: "10 pack", price: "8", image: "/images/house/cut-wrap.png" },
     ],
     sections: [
       {

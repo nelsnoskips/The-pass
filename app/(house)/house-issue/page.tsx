@@ -238,7 +238,8 @@ export default function HouseIssuePage() {
                     src={d.image}
                     alt={`${d.name}, ${d.variant}`}
                     label={d.name}
-                    className="aspect-square bg-[#F2EDE4]/10"
+                    className="hse-cut aspect-square"
+                    imgClassName="object-contain p-[13%]"
                     sizes="(max-width: 1024px) 50vw, 22vw"
                   />
                   <p className="hse-label mt-4">

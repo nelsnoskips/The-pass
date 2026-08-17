@@ -59,6 +59,17 @@
   overflow: hidden;
   background: rgba(22, 19, 15, 0.06);
 }
+/* A cutout sits on paper rather than filling a frame: the product is
+   knocked out of its background, so it needs ground beneath it and air
+   around it, and a shadow so it lifts off the sheet instead of looking
+   pasted on. */
+.hse-cut {
+  background: var(--hse-paper);
+  overflow: visible;
+}
+.hse-cut img {
+  filter: drop-shadow(0 14px 18px rgba(22, 19, 15, 0.22));
+}
 .hse-plate-empty {
   display: flex;
   align-items: center;
