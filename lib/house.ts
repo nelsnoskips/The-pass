@@ -11,7 +11,13 @@
  * maintaining them separately.
  */
 
-export type MenuItem = { name: string; detail: string; price: string };
+export type MenuItem = {
+  name: string;
+  detail: string;
+  price: string;
+  /** Items the rotisserie makes: they run out with the birds. */
+  fromRotisserie?: boolean;
+};
 export type MenuSection = { title: string; note?: string; items: MenuItem[] };
 
 export type Good = {
@@ -111,10 +117,10 @@ export const ISSUES: Issue[] = [
         title: "From the Rotisserie",
         note: "From 11am, until it runs out",
         items: [
-          { name: "Half Chicken", detail: "Brined two days, oregano, lemon, drippings", price: "14" },
-          { name: "Whole Chicken", detail: "With bread beneath it, which is the point", price: "26" },
-          { name: "Chicken, Rice, Green Sauce", detail: "The plate we eat on our own break", price: "16" },
-          { name: "Potatoes, Under the Bird", detail: "Cooked in what falls", price: "7" },
+          { name: "Half Chicken", detail: "Brined two days, oregano, lemon, drippings", price: "14", fromRotisserie: true },
+          { name: "Whole Chicken", detail: "With bread beneath it, which is the point", price: "26", fromRotisserie: true },
+          { name: "Chicken, Rice, Green Sauce", detail: "The plate we eat on our own break", price: "16", fromRotisserie: true },
+          { name: "Potatoes, Under the Bird", detail: "Cooked in what falls", price: "7", fromRotisserie: true },
         ],
       },
       {
@@ -172,6 +178,14 @@ export function allGoods(): Good[] {
     .sort((a, b) => b.number - a.number)
     .flatMap((i) => i.goods);
 }
+
+export const FULFILMENT = {
+  /** Delivery runs the block and a mile around it. */
+  radius: "One mile of the shop",
+  fee: 4,
+  pickupWait: "Twenty minutes, longer at noon",
+  deliveryWait: "Forty minutes, we will text you",
+} as const;
 
 export function issueLabel(n: number): string {
   return `No. ${String(n).padStart(3, "0")}`;

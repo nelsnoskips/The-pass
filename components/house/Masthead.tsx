@@ -22,7 +22,7 @@ export function Masthead({ issue, dated }: { issue: number; dated: string }) {
 
           <nav aria-label="Primary" className="order-3 flex items-center gap-6 sm:order-none">
             <Link href="/house-issue#menu" className="hse-label transition-colors hover:text-[#E8552A]">Menu</Link>
-            <Link href="/house-issue#order" className="hse-label transition-colors hover:text-[#E8552A]">Order</Link>
+            <Link href="/house-issue/order" className="hse-label transition-colors hover:text-[#E8552A]">Order</Link>
             <Link href="/house-issue#visit" className="hse-label transition-colors hover:text-[#E8552A]">Visit</Link>
             <Link href="/house-issue/goods" className="hse-label transition-colors hover:text-[#E8552A]">Goods</Link>
           </nav>
@@ -46,9 +46,9 @@ export function Masthead({ issue, dated }: { issue: number; dated: string }) {
             <p className="hse-label text-[#16130F]/70">1806 Los Angeles, CA</p>
           </div>
           <div className="flex items-center gap-3">
-            <a href="#order" className="hse-btn hse-label">
+            <Link href="/house-issue/order" className="hse-btn hse-label">
               <span aria-hidden>▣</span> Order Pickup
-            </a>
+            </Link>
             <a href="#menu" className="hse-btn hse-btn-ghost hse-label">
               <span aria-hidden>☰</span> View Menu
             </a>

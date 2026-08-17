@@ -400,12 +400,12 @@ export default function HouseIssuePage() {
                   <dd className="hse-num">{HOUSE.phone}</dd>
                 </div>
               </dl>
-              <a
-                href={`tel:${HOUSE.phone.replace(/[^0-9]/g, "")}`}
+              <Link
+                href="/house-issue/order"
                 className="hse-btn hse-label mt-6 w-full bg-[#16130F] text-[#F2EDE4] hover:bg-[#F2EDE4] hover:text-[#16130F]"
               >
-                <span aria-hidden>▣</span> Order pickup →
-              </a>
+                <span aria-hidden>▣</span> Order pickup or delivery →
+              </Link>
               <p className="hse-label mt-4 text-[#16130F]/70">
                 Walk-ins welcome. {HOUSE.promise}
               </p>
