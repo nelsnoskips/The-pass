@@ -1,43 +1,76 @@
-/* HOUSE ISSUE — newsprint editorial. The counterweight to SEREIN: no
-   scroll film, no veils, nothing that delays a hungry person from the
-   hours, the menu, and the phone number. Speed and legibility are the
-   design. */
+/* HOUSE ISSUE — newsprint, but loud. Heavy condensed display type,
+   press orange, sticker and torn-paper devices. The counterweight to
+   SEREIN: no scroll film, no veils, nothing between a hungry person
+   and the phone number. Speed and legibility are the design. */
 
 .hse {
-  --hse-paper: #f4f1ea;
-  --hse-ink: #14120f;
-  --hse-press: #b3352a; /* press red, used sparingly and never for body */
-  --hse-rule: rgba(20, 18, 15, 0.18);
+  --hse-paper: #f2ede4;
+  --hse-ink: #16130f;
+  --hse-orange: #e8552a;
+  --hse-rule: rgba(22, 19, 15, 0.2);
   background: var(--hse-paper);
   color: var(--hse-ink);
 }
 
 .hse .hse-display {
-  font-family: var(--font-dm-serif), Georgia, serif;
+  font-family: var(--font-anton), Impact, "Haettenschweiler", sans-serif;
   font-weight: 400;
-  line-height: 0.98;
-  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: 0.005em;
 }
 .hse .hse-label {
   font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
-.hse .hse-num {
-  font-variant-numeric: tabular-nums;
+.hse .hse-num { font-variant-numeric: tabular-nums; }
+
+/* Newsprint tooth: a whisper of texture so the paper is not flat. */
+.hse-paper {
+  background-color: var(--hse-paper);
+  background-image: radial-gradient(rgba(22, 19, 15, 0.05) 1px, transparent 1px);
+  background-size: 3px 3px;
 }
 
-/* The masthead: heavy rule above, hairline below, as a paper would set it. */
-.hse-masthead {
-  border-top: 6px solid var(--hse-ink);
-  border-bottom: 1px solid var(--hse-ink);
-}
 .hse-rule { border-top: 1px solid var(--hse-rule); }
-.hse-rule-heavy { border-top: 3px solid var(--hse-ink); }
+.hse-rule-heavy { border-top: 4px solid var(--hse-ink); }
 
-/* Menu lines: name and price bound by a dotted leader, the way a
-   printed menu does it, so the eye can travel. */
+/* Stickers sit slightly off-square, the way a real one is slapped on. */
+.hse-sticker { transform: rotate(-2deg); box-shadow: 0 2px 0 rgba(22, 19, 15, 0.25); }
+.hse-sticker-r { transform: rotate(1.6deg); }
+
+/* Torn edge for the quote card, cut with a clip path rather than art. */
+.hse-torn {
+  clip-path: polygon(
+    0% 2%, 6% 0%, 14% 2.5%, 26% 0.5%, 38% 2.5%, 52% 0%, 66% 2%, 78% 0%, 90% 2.5%, 100% 1%,
+    100% 98%, 92% 100%, 80% 97.5%, 68% 100%, 54% 97.5%, 40% 100%, 27% 97.5%, 15% 100%, 5% 97.5%, 0% 99%
+  );
+}
+
+/* Product and menu cards: hard edges, black rules, no rounding. */
+.hse-card {
+  border: 2px solid var(--hse-ink);
+  background: var(--hse-paper);
+}
+.hse-plate {
+  position: relative;
+  overflow: hidden;
+  background: rgba(22, 19, 15, 0.06);
+}
+.hse-plate-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(22, 19, 15, 0.06) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+/* The menu line, printed-menu style. */
 .hse-line {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -47,35 +80,49 @@
   border-bottom: 1px dotted var(--hse-rule);
 }
 
-/* Photographs sit in a ruled plate with a caption, like printed stock. */
-.hse-plate {
-  position: relative;
-  overflow: hidden;
-  background: rgba(20, 18, 15, 0.06);
-  outline: 1px solid var(--hse-rule);
-  outline-offset: -1px;
+.hse-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid var(--hse-ink);
 }
-/* Placeholder state: reads as a reserved plate rather than a hole. */
-.hse-plate-empty {
-  display: flex;
+.hse-stepper button {
+  width: 2rem;
+  height: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.hse-stepper button:hover { background: var(--hse-ink); color: var(--hse-paper); }
+
+.hse-btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(20, 18, 15, 0.05) 0 6px,
-    transparent 6px 12px
-  );
+  gap: 0.5rem;
+  background: var(--hse-orange);
+  color: var(--hse-ink);
+  border: 2px solid var(--hse-ink);
+  padding: 0.7rem 1.25rem;
+  transition: background 0.15s, color 0.15s;
 }
-
-.hse-good {
-  border-top: 1px solid var(--hse-rule);
-  padding-top: 1.25rem;
+.hse-btn:hover { background: var(--hse-ink); color: var(--hse-paper); }
+.hse-btn-ghost {
+  background: transparent;
+  color: inherit;
 }
+.hse-btn-ghost:hover { background: var(--hse-ink); color: var(--hse-paper); }
 
-/* Links inside body copy get a press-red underline on hover, nothing more. */
 .hse a.hse-link {
-  border-bottom: 1px solid rgba(179, 53, 42, 0.4);
-  color: var(--hse-press);
+  border-bottom: 1px solid rgba(232, 85, 42, 0.5);
+  color: var(--hse-orange);
   transition: border-color 0.2s;
 }
-.hse a.hse-link:hover { border-color: var(--hse-press); }
+.hse a.hse-link:hover { border-color: var(--hse-orange); }
+
+/* Annotation callouts on the feature photograph. */
+.hse-callout {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.35;
+}

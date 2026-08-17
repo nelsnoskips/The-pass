@@ -1,11 +1,21 @@
 import Link from "next/link";
 import { Masthead } from "@/components/house/Masthead";
-import { HOUSE, ISSUES, currentIssue, issueLabel } from "@/lib/house";
+import { ChickenCount } from "@/components/house/ChickenCount";
+import { Plate } from "@/components/house/Plate";
+import {
+  COLLAB,
+  HOUSE,
+  ISSUES,
+  THIS_WEEK,
+  currentIssue,
+  issueLabel,
+} from "@/lib/house";
 
 /**
- * The current issue. Order of business, deliberately: masthead, the
- * things a hungry person needs, the menu, then the editorial matter.
- * No scroll film here — this concept proves restraint.
+ * Issue No. 001. The order of business is deliberate: navigation and
+ * ordering, the masthead, the live count, the promise, today's menu,
+ * the drop, the block, then how to get here. No motion anywhere — this
+ * concept proves restraint next to SEREIN's film.
  */
 export default function HouseIssuePage() {
   const issue = currentIssue();
@@ -16,72 +26,288 @@ export default function HouseIssuePage() {
       <Masthead issue={issue.number} dated={issue.dated} />
 
       <main id="main">
-        {/* The lede: what this issue is about. */}
-        <section className="mx-auto max-w-[1200px] px-5 py-14 sm:px-8">
-          <div className="grid gap-10 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
-            <div>
-              <p className="hse-label text-[#B3352A]">
-                Issue {issueLabel(issue.number)} · {issue.dated}
-              </p>
-              <h2 className="hse-display mt-5 text-[clamp(34px,5.5vw,68px)]">
-                {issue.title}
-              </h2>
-              <p className="mt-6 max-w-[640px] text-[clamp(17px,2vw,21px)] leading-[1.5] text-[#14120F]/80">
-                {issue.standfirst}
-              </p>
-              <p className="mt-5 max-w-[600px] text-[15px] leading-relaxed text-[#14120F]/70">
-                {issue.lede}
-              </p>
-            </div>
+        {/* ------------------------------------------- the hero band --- */}
+        <section className="hse-paper relative overflow-hidden border-b-4 border-[#16130F]">
+          <div className="mx-auto max-w-[1320px] px-4 pt-6 sm:px-6">
+            <h1 className="hse-display text-[clamp(56px,15vw,210px)] leading-[0.82]">
+              House Issue
+              <span className="align-super text-[0.2em]">™</span>
+            </h1>
+          </div>
 
-            {/* PLATE: the issue photograph. Reserved, captioned, ruled. */}
-            <figure>
-              <div className="hse-plate hse-plate-empty aspect-[4/5]">
-                <p className="hse-label px-6 text-center text-[#14120F]/40">
-                  Plate 01
-                  <br />
-                  The rotisserie
-                </p>
-              </div>
-              <figcaption className="hse-label mt-3 text-[#14120F]/50">
-                Plate 01 · Birds on the spit, eleven in the morning
-              </figcaption>
-            </figure>
+          <div className="relative mt-4 grid gap-0 md:grid-cols-[1.15fr_1fr]">
+            <Plate
+              src="/images/house/hero-sandwich.jpg"
+              alt="A turkey club held in paper outside the shop"
+              label="Hero · the sandwich in hand"
+              className="aspect-[4/3] md:aspect-auto md:min-h-[420px]"
+              sizes="(max-width: 768px) 100vw, 55vw"
+              priority
+            />
+            <Plate
+              src="/images/house/hero-storefront.jpg"
+              alt="The HOUSE ISSUE storefront on Sunset, benches out front"
+              label="Hero · the storefront"
+              className="aspect-[4/3] md:aspect-auto md:min-h-[420px]"
+              sizes="(max-width: 768px) 100vw, 45vw"
+              priority
+            />
+
+            {/* The live count, slapped over the seam. */}
+            <div className="absolute bottom-6 left-4 z-10 sm:left-6">
+              <ChickenCount variant="sticker" />
+            </div>
           </div>
         </section>
 
-        {/* The menu, in columns, with dotted leaders. */}
-        <section id="menu" className="scroll-mt-4 bg-[#14120F] py-16 text-[#F4F1EA]">
-          <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
-            <div className="flex flex-wrap items-baseline justify-between gap-4">
-              <h2 className="hse-display text-[clamp(28px,4vw,44px)]">
-                What we have today
+        {/* ------------------------------------------- the promise --- */}
+        <section className="hse-paper border-b-4 border-[#16130F]">
+          <div className="mx-auto grid max-w-[1320px] gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1fr_1.1fr_0.75fr] lg:items-center lg:gap-12">
+            <div>
+              <h2 className="hse-display text-[clamp(34px,5vw,62px)]">
+                Good food.
+                <br />
+                Good people.
+                <br />
+                Same table.
               </h2>
-              <p className="hse-label text-[#F4F1EA]/60">{HOUSE.kitchenNote}</p>
+              <p className="mt-6 max-w-[380px] text-[14.5px] leading-relaxed text-[#16130F]/75">
+                We are a neighborhood deli, rotisserie and goods shop in Los
+                Angeles. Everything we do is made for the block and the
+                people on it.
+              </p>
+              <p className="hse-label mt-8 inline-block rounded-full border-2 border-[#16130F] px-4 py-2">
+                {HOUSE.mark}
+              </p>
             </div>
 
-            <div className="mt-12 grid gap-x-14 gap-y-12 lg:grid-cols-3">
+            <figure className="relative">
+              <Plate
+                src="/images/house/plate-rotisserie.jpg"
+                alt="A rotisserie chicken on a metal tray with crispy potatoes and pickles"
+                label="Feature · the rotisserie plate"
+                className="aspect-[4/3]"
+                sizes="(max-width: 1024px) 100vw, 40vw"
+              />
+              <figcaption className="mt-4 grid gap-2 sm:grid-cols-3">
+                {[
+                  ["Rotisserie chicken", "Lemon, herb, garlic"],
+                  ["Crispy potatoes", "Kettle fried daily"],
+                  ["House pickles", "Dill, garlic, chili"],
+                ].map(([t, d]) => (
+                  <span key={t} className="hse-callout text-[#16130F]/70">
+                    <span aria-hidden className="mr-1 text-[#E8552A]">↗</span>
+                    {t}
+                    <span className="mt-0.5 block font-normal tracking-normal normal-case opacity-70">
+                      {d}
+                    </span>
+                  </span>
+                ))}
+              </figcaption>
+            </figure>
+
+            <blockquote className="hse-torn hse-sticker-r bg-[#EFE7D8] p-8 text-center">
+              <p className="hse-display text-[clamp(28px,3.4vw,42px)] leading-[0.95]">
+                “Made
+                <br />
+                for the
+                <br />
+                block.”
+              </p>
+              <span aria-hidden className="mx-auto mt-3 block h-1 w-16 bg-[#E8552A]" />
+              <p className="hse-label mt-5 text-[#16130F]/60">
+                House Issue
+                <br />
+                Los Angeles, CA
+              </p>
+            </blockquote>
+          </div>
+        </section>
+
+        {/* ------------------------------------------ today's menu --- */}
+        <section id="menu" className="scroll-mt-4 bg-[#16130F] py-12 text-[#F2EDE4]">
+          <div className="mx-auto max-w-[1320px] px-4 sm:px-6">
+            <div className="flex flex-wrap items-baseline justify-between gap-4">
+              <p className="hse-label">Today&apos;s menu</p>
+              <a href="#full-menu" className="hse-label transition-colors hover:text-[#E8552A]">
+                Full menu →
+              </a>
+            </div>
+
+            <ol className="mt-8 grid gap-6 md:grid-cols-3">
+              {issue.features.map((f, i) => (
+                <li key={f.code} className="hse-card p-5 text-[#16130F]">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="hse-display text-[40px] leading-none text-[#E8552A]">
+                        {String(i + 1).padStart(2, "0")}
+                      </p>
+                      <p className="hse-display mt-3 text-[26px]">{f.name}</p>
+                      <p className="hse-num mt-2 text-[20px]">${f.price}</p>
+                    </div>
+                    <p className="hse-label hse-num text-[#16130F]/50">{f.code}</p>
+                  </div>
+
+                  <Plate
+                    src={f.image}
+                    alt={f.name}
+                    label={f.name}
+                    className="mt-4 aspect-[4/3]"
+                    sizes="(max-width: 768px) 100vw, 30vw"
+                  />
+
+                  <p className="hse-label mt-4 text-[#16130F]/55">
+                    Availability:{" "}
+                    <span className="text-[#2E7D32]">
+                      {f.availability === "good" ? "Good" : f.availability === "limited" ? "Limited" : "Gone"}
+                    </span>
+                  </p>
+
+                  <div className="mt-4 flex items-center justify-between gap-3">
+                    <span className="hse-stepper">
+                      <button type="button" aria-label={`One fewer ${f.name}`}>−</button>
+                      <span className="hse-num w-9 text-center text-[15px]">1</span>
+                      <button type="button" aria-label={`One more ${f.name}`}>+</button>
+                    </span>
+                    <button type="button" className="hse-btn hse-label flex-1">
+                      Add
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ol>
+
+            <p className="hse-label mt-8 text-center text-[#F2EDE4]/45">
+              — {HOUSE.motto} —
+            </p>
+          </div>
+        </section>
+
+        {/* ------------------------------------------------ the drop --- */}
+        <section className="bg-[#16130F] pb-14 text-[#F2EDE4]">
+          <div className="mx-auto grid max-w-[1320px] gap-8 px-4 sm:px-6 lg:grid-cols-[0.85fr_2fr] lg:gap-10">
+            <div className="bg-[#E8552A] p-8 text-[#16130F]">
+              <p className="hse-label">The Drop</p>
+              <p className="hse-display mt-5 text-[clamp(30px,3.6vw,50px)]">
+                Issue 001 / available until it isn&apos;t.
+              </p>
+              <Link href="/house-issue/goods" className="hse-btn hse-label mt-8 bg-[#16130F] text-[#F2EDE4] hover:bg-[#F2EDE4] hover:text-[#16130F]">
+                Shop the drop →
+              </Link>
+            </div>
+
+            <ul className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+              {issue.drop.map((d) => (
+                <li key={d.name}>
+                  <Plate
+                    src={d.image}
+                    alt={`${d.name}, ${d.variant}`}
+                    label={d.name}
+                    className="aspect-square bg-[#F2EDE4]/10"
+                    sizes="(max-width: 1024px) 50vw, 22vw"
+                  />
+                  <p className="hse-label mt-4">
+                    {d.name} <span className="text-[#F2EDE4]/55">({d.variant})</span>
+                  </p>
+                  <p className="hse-num mt-1 text-[15px] text-[#F2EDE4]/85">${d.price}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* ------------------------------------- the neighborhood desk --- */}
+        <section className="hse-paper border-y-4 border-[#16130F]">
+          <div className="mx-auto max-w-[1320px] px-4 py-14 sm:px-6">
+            <p className="hse-label text-[#E8552A]">Neighborhood Desk</p>
+            <div className="mt-8 grid gap-10 lg:grid-cols-[0.9fr_1.1fr_0.8fr] lg:gap-12">
+              <div>
+                <h2 className="hse-display text-[clamp(30px,4vw,52px)]">
+                  This block,
+                  <br />
+                  this week.
+                </h2>
+                <ul className="mt-8 space-y-5">
+                  {THIS_WEEK.map((e) => (
+                    <li key={e.title} className="hse-rule pt-4">
+                      <p className="hse-label">
+                        {e.title} · {e.time}
+                      </p>
+                      <p className="mt-1.5 text-[13.5px] text-[#16130F]/70">{e.detail}</p>
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/house-issue/issues" className="hse-btn hse-btn-ghost hse-label mt-8">
+                  View calendar →
+                </Link>
+              </div>
+
+              <figure>
+                <Plate
+                  src="/images/house/desk-polaroids.jpg"
+                  alt="Guests at the long table, taped-down photographs"
+                  label="Desk · the block, photographed"
+                  className="aspect-[4/3]"
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                />
+                <figcaption className="hse-label mt-3 text-[#16130F]/55">
+                  Thank you for making this block home.
+                </figcaption>
+              </figure>
+
+              <div className="space-y-8">
+                <div className="hse-card p-6 text-center">
+                  <p className="hse-label text-[#E8552A]">Local collab</p>
+                  <p className="hse-display mt-4 text-[22px]">House Issue</p>
+                  <p className="hse-display text-[16px] text-[#16130F]/60">×</p>
+                  <p className="hse-display text-[22px]">{COLLAB.partner}</p>
+                  <p className="hse-label mt-4 text-[#16130F]/70">{COLLAB.what}</p>
+                  <p className="hse-label mt-1 text-[#16130F]/70">{COLLAB.when}</p>
+                </div>
+
+                <form className="hse-card p-6">
+                  <p className="hse-label">Neighborhood notes</p>
+                  <p className="mt-2 text-[13px] leading-relaxed text-[#16130F]/70">
+                    Got something for the block? Tell us about it.
+                  </p>
+                  <input
+                    type="text"
+                    aria-label="Your note"
+                    className="mt-4 w-full border-b-2 border-[#16130F]/30 bg-transparent py-2 text-[14px] outline-none focus:border-[#E8552A]"
+                  />
+                  <button type="button" className="hse-btn hse-label mt-4 w-full">
+                    Submit →
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ------------------------------------------- the full menu --- */}
+        <section id="full-menu" className="hse-paper scroll-mt-4 border-b-4 border-[#16130F]">
+          <div className="mx-auto max-w-[1320px] px-4 py-14 sm:px-6">
+            <div className="flex flex-wrap items-baseline justify-between gap-4">
+              <h2 className="hse-display text-[clamp(28px,3.6vw,46px)]">
+                Everything we have today
+              </h2>
+              <p className="hse-label text-[#E8552A]">{HOUSE.kitchenNote}</p>
+            </div>
+            <div className="mt-10 grid gap-x-14 gap-y-12 lg:grid-cols-3">
               {issue.sections.map((s) => (
                 <div key={s.title}>
                   <h3 className="hse-display text-[24px]">{s.title}</h3>
-                  {s.note && (
-                    <p className="hse-label mt-2 text-[#E0A99F]">{s.note}</p>
-                  )}
+                  {s.note && <p className="hse-label mt-2 text-[#E8552A]">{s.note}</p>}
                   <ul className="mt-6">
                     {s.items.map((item) => (
-                      <li
-                        key={item.name}
-                        className="hse-line border-b-[rgba(244,241,234,0.2)]"
-                      >
+                      <li key={item.name} className="hse-line">
                         <span>
-                          <span className="block text-[16px]">{item.name}</span>
-                          <span className="mt-1 block text-[13px] leading-snug text-[#F4F1EA]/60">
+                          <span className="block text-[15.5px]">{item.name}</span>
+                          <span className="mt-1 block text-[12.5px] leading-snug text-[#16130F]/65">
                             {item.detail}
                           </span>
                         </span>
-                        <span className="hse-num text-[15px] text-[#F4F1EA]/85">
-                          {item.price}
-                        </span>
+                        <span className="hse-num text-[15px]">{item.price}</span>
                       </li>
                     ))}
                   </ul>
@@ -89,95 +315,85 @@ export default function HouseIssuePage() {
               ))}
             </div>
 
-            <div
-              id="order"
-              className="mt-14 flex flex-wrap items-center gap-6 border-t border-[#F4F1EA]/20 pt-10"
-            >
-              <a
-                href={`tel:${HOUSE.phone.replace(/[^0-9]/g, "")}`}
-                className="hse-label bg-[#B3352A] px-7 py-4 text-[#F4F1EA] transition-colors hover:bg-[#F4F1EA] hover:text-[#14120F]"
-              >
-                Call to order · {HOUSE.phone}
-              </a>
-              <p className="max-w-[420px] text-[13.5px] leading-relaxed text-[#F4F1EA]/65">
-                Pickup only, twenty minutes most of the day, longer at noon.
-                We would rather tell you the truth than take the order.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Goods from this issue. */}
-        <section className="mx-auto max-w-[1200px] px-5 py-16 sm:px-8">
-          <div className="hse-rule-heavy flex flex-wrap items-baseline justify-between gap-4 pt-8">
-            <h2 className="hse-display text-[clamp(28px,4vw,44px)]">
-              Goods, {issueLabel(issue.number)}
-            </h2>
-            <Link href="/house-issue/goods" className="hse-link hse-label">
-              Everything we sell →
-            </Link>
-          </div>
-          <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {issue.goods.map((g) => (
-              <li key={g.name} className="hse-good">
-                <div className="hse-plate hse-plate-empty aspect-square">
-                  <p className="hse-label px-4 text-center text-[#14120F]/35">
-                    {g.name}
-                  </p>
-                </div>
-                <p className="mt-4 text-[15px]">{g.name}</p>
-                <p className="mt-1 text-[13px] leading-snug text-[#14120F]/65">
-                  {g.detail}
-                </p>
-                <p className="mt-3 flex items-baseline justify-between">
-                  <span className="hse-num text-[15px]">${g.price}</span>
-                  <span
-                    className={
-                      g.status === "sold out"
-                        ? "hse-label text-[#14120F]/40"
-                        : g.status === "low"
-                          ? "hse-label text-[#B3352A]"
-                          : "hse-label text-[#14120F]/55"
-                    }
-                  >
-                    {g.status}
-                  </span>
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {/* Editorial matter: the voice of the house. */}
-        <section className="mx-auto max-w-[1200px] px-5 pb-16 sm:px-8">
-          <div className="hse-rule-heavy grid gap-10 pt-8 lg:grid-cols-[auto_1fr] lg:gap-16">
-            <h2 className="hse-label text-[#B3352A] lg:w-[180px]">
-              From the counter
-            </h2>
-            <div className="grid gap-10 sm:grid-cols-2">
+            <div className="hse-rule mt-12 grid gap-10 pt-8 sm:grid-cols-2">
               {issue.notes.map((n) => (
                 <article key={n.title}>
-                  <h3 className="hse-display text-[22px]">{n.title}</h3>
-                  <p className="mt-3 text-[14.5px] leading-relaxed text-[#14120F]/75">
-                    {n.body}
-                  </p>
+                  <h3 className="hse-display text-[20px]">{n.title}</h3>
+                  <p className="mt-3 text-[14px] leading-relaxed text-[#16130F]/75">{n.body}</p>
                 </article>
               ))}
             </div>
+
+            <p className="hse-label mt-10 text-[#16130F]/55">
+              {past.length > 0
+                ? `${past.length} issue${past.length === 1 ? "" : "s"} before this one · `
+                : "The first issue. The next one is already cooking · "}
+              <Link href="/house-issue/issues" className="hse-link">The archive →</Link>
+            </p>
           </div>
         </section>
 
-        {/* The archive. */}
-        <section className="mx-auto max-w-[1200px] px-5 pb-8 sm:px-8">
-          <div className="hse-rule flex flex-wrap items-baseline justify-between gap-4 pt-8">
-            <p className="hse-label text-[#14120F]/55">
-              {past.length > 0
-                ? `${past.length} issue${past.length === 1 ? "" : "s"} before this one`
-                : "The first issue. The next one is already being cooked."}
-            </p>
-            <Link href="/house-issue/issues" className="hse-link hse-label">
-              The archive →
-            </Link>
+        {/* --------------------------------------------- come hungry --- */}
+        <section id="visit" className="scroll-mt-4 bg-[#E8552A] text-[#16130F]">
+          <div className="mx-auto grid max-w-[1320px] gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.2fr_1fr_0.9fr] lg:items-center">
+            <div>
+              <p className="hse-label">Come visit</p>
+              <h2 className="hse-display mt-4 text-[clamp(46px,8vw,120px)] leading-[0.85]">
+                Come
+                <br />
+                hungry.
+              </h2>
+            </div>
+
+            <div id="order" className="scroll-mt-4">
+              <p className="hse-label">{HOUSE.address}</p>
+              <dl className="mt-5 space-y-2 text-[14px]">
+                <div className="flex justify-between gap-6 border-b border-[#16130F]/25 pb-2">
+                  <dt className="hse-label">Open today</dt>
+                  <dd className="hse-num">{HOUSE.hours}</dd>
+                </div>
+                <div className="flex justify-between gap-6 border-b border-[#16130F]/25 pb-2">
+                  <dt className="hse-label">Phone</dt>
+                  <dd className="hse-num">{HOUSE.phone}</dd>
+                </div>
+              </dl>
+              <a
+                href={`tel:${HOUSE.phone.replace(/[^0-9]/g, "")}`}
+                className="hse-btn hse-label mt-6 w-full bg-[#16130F] text-[#F2EDE4] hover:bg-[#F2EDE4] hover:text-[#16130F]"
+              >
+                <span aria-hidden>▣</span> Order pickup →
+              </a>
+              <p className="hse-label mt-4 text-[#16130F]/70">
+                Walk-ins welcome. {HOUSE.promise}
+              </p>
+            </div>
+
+            {/* A drawn map, not an embed: no third-party script on a page
+                whose whole argument is speed. */}
+            <div className="relative border-2 border-[#16130F] bg-[#F2EDE4] p-5">
+              <svg viewBox="0 0 300 200" className="h-auto w-full" role="img" aria-label="Map: 1806 W Sunset Boulevard">
+                <rect width="300" height="200" fill="#F2EDE4" />
+                <path d="M0 130 L300 96" stroke="#16130F" strokeWidth="7" opacity="0.85" />
+                <path d="M0 60 L300 30" stroke="#16130F" strokeWidth="2" opacity="0.3" />
+                <path d="M96 0 L128 200" stroke="#16130F" strokeWidth="2" opacity="0.3" />
+                <path d="M210 0 L236 200" stroke="#16130F" strokeWidth="2" opacity="0.3" />
+                <text x="228" y="88" fontSize="9" fontWeight="700" fill="#16130F" opacity="0.7">SUNSET BLVD</text>
+                <circle cx="150" cy="112" r="9" fill="#E8552A" stroke="#16130F" strokeWidth="2" />
+                <text x="150" y="140" fontSize="9" fontWeight="700" textAnchor="middle" fill="#16130F">H/01</text>
+              </svg>
+              <p className="hse-label mt-3 text-center text-[#16130F]/60">1806 W Sunset Blvd</p>
+            </div>
+          </div>
+
+          {/* The receipt. */}
+          <div className="mx-auto max-w-[1320px] px-4 pb-12 sm:px-6">
+            <div className="hse-sticker mx-auto max-w-[320px] bg-[#F2EDE4] px-6 py-5 text-center">
+              <p className="hse-label">Thank you</p>
+              <p className="mt-2 text-[13px] text-[#16130F]/70">See you tomorrow.</p>
+              <p className="hse-label hse-num mt-4 text-[#16130F]/50">
+                House Issue · {issueLabel(issue.number)} · Sunday Edition
+              </p>
+            </div>
           </div>
         </section>
       </main>

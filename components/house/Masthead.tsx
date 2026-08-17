@@ -1,59 +1,58 @@
 import Link from "next/link";
 import { HOUSE, issueLabel } from "@/lib/house";
+import { ChickenCount } from "./ChickenCount";
 
 /**
- * The masthead carries the live issue number and date the way a paper
- * does, and directly beneath it the four things a hungry person came
- * for: hours, address, phone, and how to order. The conceit never
- * stands in front of the operational layer.
+ * Two bars and a masthead. The black utility bar carries navigation,
+ * the live rotisserie count and the cart; the paper bar carries the
+ * issue line and the two things a hungry person wants — order, and see
+ * the menu. Personality starts only after both are in reach.
  */
 export function Masthead({ issue, dated }: { issue: number; dated: string }) {
   return (
     <header>
-      <div className="hse-masthead">
-        <div className="mx-auto max-w-[1200px] px-5 py-6 sm:px-8">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
-            <p className="hse-label hse-num text-[#14120F]/70">
-              Issue {issueLabel(issue)}
-            </p>
-            <p className="hse-label text-[#14120F]/70">{dated}</p>
-            <p className="hse-label text-[#B3352A]">{HOUSE.hours}</p>
-          </div>
-          <Link href="/house-issue" className="mt-5 block">
-            <h1 className="hse-display text-[clamp(44px,11vw,148px)] leading-[0.86] tracking-[-0.02em]">
-              HOUSE ISSUE
-            </h1>
+      <div className="bg-[#16130F] text-[#F2EDE4]">
+        <div className="mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6">
+          <Link href="/house-issue" className="flex items-center gap-3">
+            <span className="hse-display text-[19px]">House Issue</span>
+            <span className="hse-label rounded-full border border-[#F2EDE4]/50 px-2.5 py-1 text-[10px]">
+              {HOUSE.mark}
+            </span>
           </Link>
-          <p className="hse-label mt-5 text-[#14120F]/70">
-            {HOUSE.descriptor} · {HOUSE.place}
-          </p>
+
+          <nav aria-label="Primary" className="order-3 flex items-center gap-6 sm:order-none">
+            <Link href="/house-issue#menu" className="hse-label transition-colors hover:text-[#E8552A]">Menu</Link>
+            <Link href="/house-issue#order" className="hse-label transition-colors hover:text-[#E8552A]">Order</Link>
+            <Link href="/house-issue#visit" className="hse-label transition-colors hover:text-[#E8552A]">Visit</Link>
+            <Link href="/house-issue/goods" className="hse-label transition-colors hover:text-[#E8552A]">Goods</Link>
+          </nav>
+
+          <div className="flex items-center gap-4">
+            <ChickenCount variant="pill" />
+            <span className="hse-label hse-num inline-flex items-center gap-2 rounded-full border border-[#F2EDE4]/50 px-3 py-1.5">
+              <span aria-hidden>◻</span> 0
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* The operational bar: everything a guest needs before personality. */}
-      <div className="border-b border-[#14120F]/20 bg-[#14120F] text-[#F4F1EA]">
-        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-8 gap-y-3 px-5 py-3.5 sm:px-8">
-          <p className="hse-label">{HOUSE.address}</p>
-          <a href={`tel:${HOUSE.phone.replace(/[^0-9]/g, "")}`} className="hse-label hse-num transition-colors hover:text-[#E0A99F]">
-            {HOUSE.phone}
-          </a>
-          <nav aria-label="Primary" className="flex items-center gap-6">
-            <Link href="/house-issue#menu" className="hse-label transition-colors hover:text-[#E0A99F]">
-              Menu
-            </Link>
-            <Link href="/house-issue/goods" className="hse-label transition-colors hover:text-[#E0A99F]">
-              Goods
-            </Link>
-            <Link href="/house-issue/issues" className="hse-label transition-colors hover:text-[#E0A99F]">
-              Archive
-            </Link>
-          </nav>
-          <a
-            href="#order"
-            className="hse-label bg-[#B3352A] px-4 py-2 text-[#F4F1EA] transition-colors hover:bg-[#F4F1EA] hover:text-[#14120F]"
-          >
-            Order Pickup
-          </a>
+      <div className="hse-paper border-b-4 border-[#16130F]">
+        <div className="mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-x-8 gap-y-4 px-4 py-4 sm:px-6">
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
+            <p className="hse-label hse-num">
+              Issue {issueLabel(issue)} / {dated}
+            </p>
+            <p className="hse-label text-[#16130F]/70">{HOUSE.hoursLong}</p>
+            <p className="hse-label text-[#16130F]/70">1806 Los Angeles, CA</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <a href="#order" className="hse-btn hse-label">
+              <span aria-hidden>▣</span> Order Pickup
+            </a>
+            <a href="#menu" className="hse-btn hse-btn-ghost hse-label">
+              <span aria-hidden>☰</span> View Menu
+            </a>
+          </div>
         </div>
       </div>
     </header>

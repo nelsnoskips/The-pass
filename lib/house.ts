@@ -22,6 +22,23 @@ export type Good = {
   status: "in stock" | "low" | "sold out";
 };
 
+/** The three plates the current issue leads with, as ordered items. */
+export type Feature = {
+  code: string;
+  name: string;
+  price: string;
+  availability: "good" | "limited" | "gone";
+  image: string;
+};
+
+/** A Drop product: merchandise published with the issue. */
+export type DropItem = {
+  name: string;
+  variant: string;
+  price: string;
+  image: string;
+};
+
 export type Issue = {
   number: number;
   /** Display date, e.g. "August 2026". */
@@ -30,6 +47,8 @@ export type Issue = {
   standfirst: string;
   /** The one thing this issue is about. */
   lede: string;
+  features: Feature[];
+  drop: DropItem[];
   sections: MenuSection[];
   goods: Good[];
   /** Short notes from the counter: the house's editorial voice. */
@@ -39,23 +58,54 @@ export type Issue = {
 
 export const HOUSE = {
   name: "HOUSE ISSUE",
+  mark: "H/01",
   descriptor: "Neighborhood Deli, Rotisserie & Goods",
   place: "Los Angeles, California",
-  address: "2417 Sunset Boulevard, Los Angeles",
-  phone: "(213) 555-0148",
-  hours: "Open daily, 8am to 8pm",
+  address: "1806 W Sunset Blvd, Los Angeles, CA 90026",
+  phone: "(323) 555-1806",
+  hours: "11am — 9pm",
+  hoursLong: "Open today · 11am — 9pm",
   kitchenNote: "Rotisserie from 11am, until it runs out",
+  motto: "Made for the block",
+  promise: "Good food. Good people. Same table.",
+  /** Birds put on at open; the live counter reads down from here. */
+  birdsAtOpen: 60,
+} as const;
+
+export type Event = { day: string; time: string; title: string; detail: string };
+
+export const THIS_WEEK: Event[] = [
+  { day: "Friday", time: "6pm", title: "Friday Vinyl", detail: "Crate digs and community jams" },
+  { day: "Saturday", time: "11am", title: "Saturday Chicken Run", detail: "5K. Good food. Better people." },
+  { day: "Sunday", time: "4pm", title: "Sunday Family Table", detail: "Long table, big portions" },
+];
+
+export const COLLAB = {
+  partner: "Bricks & Wood",
+  what: "Tee drop and pop-up",
+  when: "Sat 5/24 · 12 to 4pm",
 } as const;
 
 export const ISSUES: Issue[] = [
   {
     number: 1,
-    dated: "August 2026",
+    dated: "Sunday Edition · August 2026",
     title: "Chickens and the things that go beside them",
     standfirst:
       "The first issue: one bird, done properly, and the counter that grew around it.",
     lede:
       "We opened with a rotisserie and a slicer and an argument about whether a deli needs anything else. It does not, mostly. What follows is what we make every day, plus the things we could not help making.",
+    features: [
+      { code: "HI-001", name: "Turkey Club", price: "14", availability: "good", image: "/images/house/menu-turkey-club.jpg" },
+      { code: "HI-002", name: "Rotisserie Plate", price: "18", availability: "good", image: "/images/house/menu-rotisserie.jpg" },
+      { code: "HI-003", name: "Crispy Potatoes", price: "6", availability: "good", image: "/images/house/menu-potatoes.jpg" },
+    ],
+    drop: [
+      { name: "Block Tee", variant: "Natural", price: "36", image: "/images/house/drop-tee.jpg" },
+      { name: "H/01 Cap", variant: "Washed black", price: "32", image: "/images/house/drop-cap.jpg" },
+      { name: "Chili Oil", variant: "8oz, made for the block", price: "14", image: "/images/house/drop-chili-oil.jpg" },
+      { name: "Sandwich Wrap", variant: "10 pack", price: "8", image: "/images/house/drop-wrap.jpg" },
+    ],
     sections: [
       {
         title: "From the Rotisserie",

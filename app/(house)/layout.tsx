@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
+import { Anton } from "next/font/google";
 import Link from "next/link";
 import { HOUSE } from "@/lib/house";
 import "./house.css";
+
+// Heavy condensed display face for the masthead and headlines.
+const anton = Anton({ subsets: ["latin"], weight: "400", variable: "--font-anton", display: "swap" });
 
 export const metadata: Metadata = {
   title: "HOUSE ISSUE — Neighborhood Deli, Rotisserie & Goods",
@@ -14,7 +18,7 @@ export default function HouseLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="hse min-h-screen">
+    <div className={`hse min-h-screen ${anton.variable}`}>
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-[#14120F] focus:px-4 focus:py-2 focus:text-[#F4F1EA]"
@@ -26,7 +30,7 @@ export default function HouseLayout({
       <footer className="hse-rule-heavy mt-24 bg-[#F4F1EA]">
         <div className="mx-auto grid max-w-[1200px] gap-8 px-5 py-12 sm:px-8 lg:grid-cols-4">
           <div>
-            <p className="hse-display text-[26px]">HOUSE ISSUE</p>
+            <p className="hse-display text-[30px]">House Issue</p>
             <p className="hse-label mt-3 text-[#14120F]/60">{HOUSE.descriptor}</p>
           </div>
           <div>
