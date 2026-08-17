@@ -336,3 +336,6 @@
 @media (prefers-reduced-motion: reduce) {
   .hse-cal-dot, .hse-cal-line, .hse-cal-text { animation: none !important; }
 }
+
+/* The rubber stamp: outlined, set on the angle a hand would leave it. */
+.hse-stamp { transform: rotate(-6deg); letter-spacing: 0.2em; }

@@ -62,9 +62,10 @@ export const WORK: ConceptWork[] = [
     ],
     package: "The Opening",
     liveUrl: "/house-issue",
-    image: "/images/serein/threshold.png",
-    cardImage: "/images/serein/threshold.png",
-    imageAlt: "HOUSE ISSUE: a plated dish on a pale counter",
+    image: "/images/house/hero-storefront.jpg",
+    cardImage: "/images/house/plate-rotisserie.jpg",
+    imageAlt:
+      "HOUSE ISSUE: a rotisserie chicken and crispy potatoes on a metal tray",
     live: true,
   },
   {

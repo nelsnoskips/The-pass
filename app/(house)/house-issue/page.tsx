@@ -148,8 +148,20 @@ export default function HouseIssuePage() {
         </section>
 
         {/* ------------------------------------------ today's menu --- */}
-        <section id="menu" className="scroll-mt-4 bg-[#16130F] py-12 text-[#F2EDE4]">
-          <div className="mx-auto max-w-[1320px] px-4 sm:px-6">
+        <section id="menu" className="relative scroll-mt-4 overflow-clip bg-[#16130F] py-12 text-[#F2EDE4]">
+          {/* The counter the cards sit on. */}
+          <div className="absolute inset-0" aria-hidden>
+            <Plate
+              src="/images/house/case-steel.jpg"
+              alt=""
+              label=""
+              className="h-full w-full"
+              sizes="100vw"
+              imgClassName="object-cover"
+            />
+            <div className="absolute inset-0 bg-[#16130F]/72" />
+          </div>
+          <div className="relative mx-auto max-w-[1320px] px-4 sm:px-6">
             <div className="flex flex-wrap items-baseline justify-between gap-4">
               <p className="hse-label">Today&apos;s menu</p>
               <a href="#full-menu" className="hse-label transition-colors hover:text-[#E8552A]">
@@ -286,6 +298,14 @@ export default function HouseIssuePage() {
                   <p className="hse-display text-[22px]">{COLLAB.partner}</p>
                   <p className="hse-label mt-4 text-[#16130F]/70">{COLLAB.what}</p>
                   <p className="hse-label mt-1 text-[#16130F]/70">{COLLAB.when}</p>
+                  <Image
+                    src="/images/house/stamp-chicken-ink.png"
+                    alt=""
+                    width={1254}
+                    height={1600}
+                    sizes="120px"
+                    className="mx-auto mt-5 h-auto w-[86px] opacity-80"
+                  />
                 </div>
 
                 <form className="hse-card p-6">
@@ -408,14 +428,30 @@ export default function HouseIssuePage() {
             </div>
           </div>
 
-          {/* The receipt. */}
-          <div className="mx-auto max-w-[1320px] px-4 pb-12 sm:px-6">
-            <div className="hse-sticker mx-auto max-w-[320px] bg-[#F2EDE4] px-6 py-5 text-center">
+          {/* The receipt, left on the counter. */}
+          <div className="relative mx-auto max-w-[1320px] px-4 pb-12 sm:px-6">
+            <div className="relative overflow-clip border-2 border-[#16130F] py-12">
+              <div className="absolute inset-0" aria-hidden>
+                <Plate
+                  src="/images/house/wood-counter.jpg"
+                  alt=""
+                  label=""
+                  className="h-full w-full"
+                  sizes="100vw"
+                  imgClassName="object-cover"
+                />
+                <div className="absolute inset-0 bg-[#16130F]/45" />
+              </div>
+              <p className="hse-stamp hse-label absolute right-5 top-5 z-10 hidden border-2 border-[#F2EDE4]/80 px-3 py-2 text-[#F2EDE4]/80 sm:block">
+                {HOUSE.motto}
+              </p>
+              <div className="hse-sticker relative z-10 mx-auto max-w-[320px] bg-[#F2EDE4] px-6 py-5 text-center">
               <p className="hse-label">Thank you</p>
               <p className="mt-2 text-[13px] text-[#16130F]/70">See you tomorrow.</p>
-              <p className="hse-label hse-num mt-4 text-[#16130F]/50">
-                House Issue · {issueLabel(issue.number)} · Sunday Edition
-              </p>
+                <p className="hse-label hse-num mt-4 text-[#16130F]/50">
+                  House Issue · {issueLabel(issue.number)} · Sunday Edition
+                </p>
+              </div>
             </div>
           </div>
         </section>
