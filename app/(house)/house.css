@@ -170,3 +170,169 @@
 @media (prefers-reduced-motion: reduce) {
   .hse-l-back, .hse-l-type, .hse-l-hand { animation: none !important; }
 }
+
+/* ------------------------------------------ ingredient callouts --- */
+/* Annotations on the intact sandwich: dot lands, leader line draws
+   outward, label arrives — staggered so they read one at a time as the
+   guest scrolls. Desktop only; on a phone the sandwich is too small to
+   annotate without covering it. */
+
+.hse-cals { position: absolute; inset: 0; display: none; }
+@media (min-width: 1024px) {
+  .hse-cals { display: block; }
+}
+
+.hse-cal {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+.hse-cal-left { flex-direction: row-reverse; }
+
+.hse-cal-dot {
+  position: relative;
+  height: 7px;
+  width: 7px;
+  flex: none;
+  border-radius: 9999px;
+  background: #e8552a;
+  box-shadow: 0 0 0 3px rgba(242, 237, 228, 0.9);
+  /* Base is the finished state: the animation only hides it beforehand,
+     so a passed window can never leave the annotation blank. */
+  transform: scale(1);
+}
+.hse-cal-line {
+  display: block;
+  height: 1px;
+  width: 4rem;
+  flex: none;
+  background: #16130f;
+  opacity: 0.65;
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+.hse-cal-left .hse-cal-line { transform-origin: right center; }
+
+.hse-cal-text {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #16130f;
+  opacity: 1;
+  /* A printed chip: keeps the annotation readable wherever it lands. */
+  background: rgba(242, 237, 228, 0.94);
+  padding: 0.3rem 0.5rem;
+  box-shadow: 0 1px 0 rgba(22, 19, 15, 0.25);
+}
+.hse-cal-left .hse-cal-text { text-align: right; }
+.hse-cal-detail {
+  display: block;
+  margin-top: 2px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  opacity: 0.6;
+}
+
+@supports (animation-timeline: scroll()) {
+  /* One window for the whole sequence, with the order encoded in the
+     keyframes. Outside the window the base style (the finished
+     annotation) stands, so nothing relies on fill-mode, which scroll
+     timelines do not apply outside their range. */
+  .hse-cal-dot, .hse-cal-line, .hse-cal-text {
+    animation: linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 62vh;
+  }
+
+  @keyframes hse-c0-dot {
+    0%, 6% { transform: scale(0); }
+    14%, 100% { transform: scale(1); }
+  }
+  @keyframes hse-c0-line {
+    0%, 12% { transform: scaleX(0); }
+    22%, 100% { transform: scaleX(1); }
+  }
+  @keyframes hse-c0-text-r {
+    0%, 18% { opacity: 0; transform: translateX(-6px); }
+    30%, 100% { opacity: 1; transform: none; }
+  }
+  @keyframes hse-c0-text-l {
+    0%, 18% { opacity: 0; transform: translateX(6px); }
+    30%, 100% { opacity: 1; transform: none; }
+  }
+  .hse-cal-0 .hse-cal-dot { animation-name: hse-c0-dot; }
+  .hse-cal-0 .hse-cal-line { animation-name: hse-c0-line; }
+  .hse-cal-0.hse-cal-right .hse-cal-text { animation-name: hse-c0-text-r; }
+  .hse-cal-0.hse-cal-left .hse-cal-text { animation-name: hse-c0-text-l; }
+
+  @keyframes hse-c1-dot {
+    0%, 24% { transform: scale(0); }
+    32%, 100% { transform: scale(1); }
+  }
+  @keyframes hse-c1-line {
+    0%, 30% { transform: scaleX(0); }
+    40%, 100% { transform: scaleX(1); }
+  }
+  @keyframes hse-c1-text-r {
+    0%, 36% { opacity: 0; transform: translateX(-6px); }
+    48%, 100% { opacity: 1; transform: none; }
+  }
+  @keyframes hse-c1-text-l {
+    0%, 36% { opacity: 0; transform: translateX(6px); }
+    48%, 100% { opacity: 1; transform: none; }
+  }
+  .hse-cal-1 .hse-cal-dot { animation-name: hse-c1-dot; }
+  .hse-cal-1 .hse-cal-line { animation-name: hse-c1-line; }
+  .hse-cal-1.hse-cal-right .hse-cal-text { animation-name: hse-c1-text-r; }
+  .hse-cal-1.hse-cal-left .hse-cal-text { animation-name: hse-c1-text-l; }
+
+  @keyframes hse-c2-dot {
+    0%, 42% { transform: scale(0); }
+    50%, 100% { transform: scale(1); }
+  }
+  @keyframes hse-c2-line {
+    0%, 48% { transform: scaleX(0); }
+    58%, 100% { transform: scaleX(1); }
+  }
+  @keyframes hse-c2-text-r {
+    0%, 54% { opacity: 0; transform: translateX(-6px); }
+    66%, 100% { opacity: 1; transform: none; }
+  }
+  @keyframes hse-c2-text-l {
+    0%, 54% { opacity: 0; transform: translateX(6px); }
+    66%, 100% { opacity: 1; transform: none; }
+  }
+  .hse-cal-2 .hse-cal-dot { animation-name: hse-c2-dot; }
+  .hse-cal-2 .hse-cal-line { animation-name: hse-c2-line; }
+  .hse-cal-2.hse-cal-right .hse-cal-text { animation-name: hse-c2-text-r; }
+  .hse-cal-2.hse-cal-left .hse-cal-text { animation-name: hse-c2-text-l; }
+
+  @keyframes hse-c3-dot {
+    0%, 60% { transform: scale(0); }
+    68%, 100% { transform: scale(1); }
+  }
+  @keyframes hse-c3-line {
+    0%, 66% { transform: scaleX(0); }
+    76%, 100% { transform: scaleX(1); }
+  }
+  @keyframes hse-c3-text-r {
+    0%, 72% { opacity: 0; transform: translateX(-6px); }
+    84%, 100% { opacity: 1; transform: none; }
+  }
+  @keyframes hse-c3-text-l {
+    0%, 72% { opacity: 0; transform: translateX(6px); }
+    84%, 100% { opacity: 1; transform: none; }
+  }
+  .hse-cal-3 .hse-cal-dot { animation-name: hse-c3-dot; }
+  .hse-cal-3 .hse-cal-line { animation-name: hse-c3-line; }
+  .hse-cal-3.hse-cal-right .hse-cal-text { animation-name: hse-c3-text-r; }
+  .hse-cal-3.hse-cal-left .hse-cal-text { animation-name: hse-c3-text-l; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hse-cal-dot, .hse-cal-line, .hse-cal-text { animation: none !important; }
+}

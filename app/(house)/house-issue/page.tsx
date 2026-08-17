@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Masthead } from "@/components/house/Masthead";
 import { ChickenCount } from "@/components/house/ChickenCount";
 import { Plate } from "@/components/house/Plate";
+import { HeroCallouts } from "@/components/house/HeroCallouts";
 import {
   COLLAB,
   HOUSE,
@@ -59,16 +60,20 @@ export default function HouseIssuePage() {
 
             {/* Plane 3: the sandwich, cut out and closest to the guest. */}
             <div className="hse-layer hse-l-hand pointer-events-none absolute inset-x-0 bottom-[-4%] z-20 flex justify-center lg:left-auto lg:right-[4%] lg:w-[54%]">
-              <Image
-                src="/images/house/hero-sandwich.png"
-                alt="A turkey club held out toward you"
-                width={1665}
-                height={1531}
-                priority
-                quality={88}
-                sizes="(max-width: 1024px) 90vw, 54vw"
-                className="h-auto w-[86%] max-w-[720px] drop-shadow-[0_28px_45px_rgba(22,19,15,0.34)] lg:w-full"
-              />
+              {/* The sandwich, whole. Annotations anchor to its frame. */}
+              <div className="relative w-[86%] max-w-[720px] lg:w-full">
+                <Image
+                  src="/images/house/hero-sandwich.png"
+                  alt="A turkey club held out toward you"
+                  width={1665}
+                  height={1531}
+                  priority
+                  quality={88}
+                  sizes="(max-width: 1024px) 90vw, 54vw"
+                  className="h-auto w-full drop-shadow-[0_28px_45px_rgba(22,19,15,0.34)]"
+                />
+                <HeroCallouts />
+              </div>
             </div>
 
             {/* The live count, tucked behind the sandwich edge. */}
