@@ -102,9 +102,9 @@ export const ISSUES: Issue[] = [
     lede:
       "We opened with a rotisserie and a slicer and an argument about whether a deli needs anything else. It does not, mostly. What follows is what we make every day, plus the things we could not help making.",
     features: [
-      { code: "HI-001", name: "Turkey Club", price: "14", availability: "good", image: "/images/house/menu-turkey-club.jpg" },
-      { code: "HI-002", name: "Rotisserie Plate", price: "18", availability: "good", image: "/images/house/menu-rotisserie.jpg" },
-      { code: "HI-003", name: "Crispy Potatoes", price: "6", availability: "good", image: "/images/house/menu-potatoes.jpg" },
+      { code: "HI-001", name: "Turkey Club", price: "14", availability: "good", image: "/images/house/cutout-turkey-club.png" },
+      { code: "HI-002", name: "Rotisserie Plate", price: "18", availability: "good", image: "/images/house/cutout-rotisserie-plate.png" },
+      { code: "HI-003", name: "Crispy Potatoes", price: "6", availability: "good", image: "/images/house/cutout-crispy-potatoes.png" },
     ],
     drop: [
       { name: "Block Tee", variant: "Natural", price: "36", image: "/images/house/cut-tee.png" },

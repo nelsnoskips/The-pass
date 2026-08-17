@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
+import { Prop } from "./Prop";
 import { FULFILMENT, HOUSE, currentIssue, issueLabel } from "@/lib/house";
 
 /**
@@ -78,8 +79,8 @@ export function OrderFlow() {
 
   if (placed) {
     return (
-      <div className="mx-auto max-w-[420px]">
-        <div className="hse-sticker bg-[#F2EDE4] px-7 py-8 text-center">
+      <div className="mx-auto max-w-[360px]">
+        <Prop stock="receipt" className="hse-sticker px-7 py-14 text-center" sizes="(max-width: 640px) 90vw, 360px">
           <p className="hse-label text-[#E8552A]">Order in</p>
           <p className="hse-display mt-3 text-[36px]">
             {mode === "pickup" ? "Pickup" : "Delivery"} · {ready}
@@ -106,7 +107,7 @@ export function OrderFlow() {
           <p className="hse-label mt-6 text-[#16130F]/45">
             House Issue · {issueLabel(issue.number)} · Made for the block
           </p>
-        </div>
+        </Prop>
         <button
           type="button"
           onClick={() => {

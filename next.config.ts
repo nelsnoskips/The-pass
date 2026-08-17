@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     root: process.cwd(),
   },
   images: {
+    // Food and paper stock carry visible grain, so they are served above
+    // the default 75. Next only honours qualities declared here.
+    qualities: [75, 82, 84, 86, 88],
     remotePatterns: [
       {
         protocol: "https",

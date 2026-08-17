@@ -27,11 +27,47 @@
 }
 .hse .hse-num { font-variant-numeric: tabular-nums; }
 
-/* Newsprint tooth: a whisper of texture so the paper is not flat. */
+/* Real stock, photographed, under the printed dot screen. The sheet
+   carries its own grain and fibre; the dot screen on top is what makes
+   it read as printed rather than as a scan of blank paper. Kept faint
+   and large-tiled so the seams never announce themselves. */
 .hse-paper {
   background-color: var(--hse-paper);
-  background-image: radial-gradient(rgba(22, 19, 15, 0.05) 1px, transparent 1px);
-  background-size: 3px 3px;
+  background-image: radial-gradient(rgba(22, 19, 15, 0.05) 1px, transparent 1px),
+    url("/images/house/paper-background.jpg");
+  /* Cover rather than a tile: the sheet is one photograph per section,
+     so there is no repeat seam to spot, and cover crops instead of
+     stretching so the fibre never smears. */
+  background-size: 3px 3px, cover;
+  background-repeat: repeat, no-repeat;
+  background-position: 0 0, center;
+  background-blend-mode: normal, multiply;
+}
+
+/* A prop lying on the page: paper stock, tape, a polaroid frame. The
+   art carries its own edge, so nothing here draws a border. */
+.hse-prop {
+  position: relative;
+  isolation: isolate;
+}
+.hse-prop-art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* Explicit, because the intrinsic width/height attributes would
+     otherwise impose the file's aspect ratio on a stretched sheet. */
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  filter: drop-shadow(0 10px 16px rgba(22, 19, 15, 0.18));
+  pointer-events: none;
+}
+/* Tape holds a prop to the sheet: laid over the top edge, off-square. */
+.hse-tape {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 5px rgba(22, 19, 15, 0.28));
 }
 
 .hse-rule { border-top: 1px solid var(--hse-rule); }
@@ -69,6 +105,15 @@
 }
 .hse-cut img {
   filter: drop-shadow(0 14px 18px rgba(22, 19, 15, 0.22));
+}
+/* A cutout with no chip beneath it: straight onto whatever the section
+   is printed on. */
+.hse-cut-bare {
+  background: transparent;
+  overflow: visible;
+}
+.hse-cut-bare img {
+  filter: drop-shadow(0 18px 24px rgba(22, 19, 15, 0.26));
 }
 .hse-plate-empty {
   display: flex;

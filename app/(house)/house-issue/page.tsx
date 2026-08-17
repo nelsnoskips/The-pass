@@ -4,6 +4,7 @@ import { Masthead } from "@/components/house/Masthead";
 import { ChickenCount } from "@/components/house/ChickenCount";
 import { Plate } from "@/components/house/Plate";
 import { HeroCallouts } from "@/components/house/HeroCallouts";
+import { Polaroid, Prop, Tape } from "@/components/house/Prop";
 import {
   COLLAB,
   HOUSE,
@@ -35,16 +36,19 @@ export default function HouseIssuePage() {
         <section className="hse-stage hse-paper border-b-4 border-[#16130F]">
           <div className="relative mx-auto min-h-[520px] max-w-[1320px] px-4 pb-8 pt-6 sm:min-h-[620px] sm:px-6 lg:min-h-[720px]">
             {/* Plane 1: the block. */}
-            <div className="hse-layer hse-l-back absolute inset-y-0 right-0 w-full lg:w-[62%]">
+            {/* Masked rather than scrimmed: a solid gradient would have to
+                guess the paper's colour, and the paper is a photograph
+                with its own variation. Fading the photo's own alpha lets
+                the real sheet show through, so there is no seam. */}
+            <div className="hse-layer hse-l-back absolute inset-y-0 right-0 w-full [mask-image:linear-gradient(to_right,transparent_2%,black_46%)] lg:w-[62%] lg:[mask-image:linear-gradient(to_right,transparent_0%,black_34%)]">
               <Plate
                 src="/images/house/hero-storefront.jpg"
                 alt="The HOUSE ISSUE storefront on Sunset, benches out front"
                 label="Hero · the storefront"
-                className="h-full w-full"
+                className="h-full w-full bg-transparent"
                 sizes="(max-width: 1024px) 100vw, 62vw"
                 priority
               />
-              <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-[#F2EDE4] via-[#F2EDE4]/35 to-transparent lg:via-[#F2EDE4]/10" />
             </div>
 
             {/* Plane 2: the masthead, which the sandwich passes in front of. */}
@@ -106,10 +110,11 @@ export default function HouseIssuePage() {
 
             <figure className="relative">
               <Plate
-                src="/images/house/plate-rotisserie.jpg"
-                alt="A rotisserie chicken on a metal tray with crispy potatoes and pickles"
+                src="/images/house/cutout-rotisserie-spread.png"
+                alt="A rotisserie chicken on a metal tray with crispy potatoes, pickles and charred greens"
                 label="Feature · the rotisserie plate"
-                className="aspect-[4/3]"
+                className="hse-cut-bare aspect-[4/3]"
+                imgClassName="object-contain"
                 sizes="(max-width: 1024px) 100vw, 40vw"
               />
               <figcaption className="mt-4 grid gap-2 sm:grid-cols-3">
@@ -129,21 +134,28 @@ export default function HouseIssuePage() {
               </figcaption>
             </figure>
 
-            <blockquote className="hse-torn hse-sticker-r bg-[#EFE7D8] p-8 text-center">
-              <p className="hse-display text-[clamp(28px,3.4vw,42px)] leading-[0.95]">
-                “Made
-                <br />
-                for the
-                <br />
-                block.”
-              </p>
-              <span aria-hidden className="mx-auto mt-3 block h-1 w-16 bg-[#E8552A]" />
-              <p className="hse-label mt-5 text-[#16130F]/60">
-                House Issue
-                <br />
-                Los Angeles, CA
-              </p>
-            </blockquote>
+            <Prop
+              stock="quote-card"
+              className="hse-sticker-r mx-auto w-full max-w-[340px]"
+              sizes="(max-width: 1024px) 90vw, 26vw"
+            >
+              <Tape kind="kraft" width={132} className="-top-4 left-6 -rotate-[7deg]" />
+              <blockquote className="px-9 py-12 text-center">
+                <p className="hse-display text-[clamp(28px,3.4vw,42px)] leading-[0.95]">
+                  “Made
+                  <br />
+                  for the
+                  <br />
+                  block.”
+                </p>
+                <span aria-hidden className="mx-auto mt-3 block h-1 w-16 bg-[#E8552A]" />
+                <p className="hse-label mt-5 text-[#16130F]/60">
+                  House Issue
+                  <br />
+                  Los Angeles, CA
+                </p>
+              </blockquote>
+            </Prop>
           </div>
         </section>
 
@@ -187,7 +199,8 @@ export default function HouseIssuePage() {
                     src={f.image}
                     alt={f.name}
                     label={f.name}
-                    className="mt-4 aspect-[4/3]"
+                    className="hse-cut mt-4 aspect-[5/4]"
+                    imgClassName="object-contain p-[3%]"
                     sizes="(max-width: 768px) 100vw, 30vw"
                   />
 
@@ -278,21 +291,22 @@ export default function HouseIssuePage() {
                 </Link>
               </div>
 
-              <figure>
-                <Plate
+              <figure className="lg:-mt-2">
+                <Polaroid
                   src="/images/house/desk-polaroids.jpg"
                   alt="Guests at the long table, taped-down photographs"
-                  label="Desk · the block, photographed"
-                  className="aspect-[4/3]"
+                  className="rotate-[-1.4deg]"
                   sizes="(max-width: 1024px) 100vw, 40vw"
-                />
-                <figcaption className="hse-label mt-3 text-[#16130F]/55">
-                  Thank you for making this block home.
-                </figcaption>
+                >
+                  <Tape kind="orange" width={150} className="-top-5 left-1/2 -translate-x-1/2 rotate-[2.5deg]" />
+                  <figcaption className="hse-label absolute bottom-[6%] left-0 w-full text-center text-[#16130F]/55">
+                    Thank you for making this block home.
+                  </figcaption>
+                </Polaroid>
               </figure>
 
               <div className="space-y-8">
-                <div className="hse-card p-6 text-center">
+                <Prop stock="menu-card" className="px-7 py-8 text-center" sizes="(max-width: 1024px) 90vw, 22vw">
                   <p className="hse-label text-[#E8552A]">Local collab</p>
                   <p className="hse-display mt-4 text-[22px]">House Issue</p>
                   <p className="hse-display text-[16px] text-[#16130F]/60">×</p>
@@ -307,7 +321,7 @@ export default function HouseIssuePage() {
                     sizes="120px"
                     className="mx-auto mt-5 h-auto w-[86px] opacity-80"
                   />
-                </div>
+                </Prop>
 
                 <form className="hse-card p-6">
                   <p className="hse-label">Neighborhood notes</p>
