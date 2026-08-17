@@ -1,0 +1,81 @@
+/* HOUSE ISSUE — newsprint editorial. The counterweight to SEREIN: no
+   scroll film, no veils, nothing that delays a hungry person from the
+   hours, the menu, and the phone number. Speed and legibility are the
+   design. */
+
+.hse {
+  --hse-paper: #f4f1ea;
+  --hse-ink: #14120f;
+  --hse-press: #b3352a; /* press red, used sparingly and never for body */
+  --hse-rule: rgba(20, 18, 15, 0.18);
+  background: var(--hse-paper);
+  color: var(--hse-ink);
+}
+
+.hse .hse-display {
+  font-family: var(--font-dm-serif), Georgia, serif;
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+}
+.hse .hse-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.hse .hse-num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* The masthead: heavy rule above, hairline below, as a paper would set it. */
+.hse-masthead {
+  border-top: 6px solid var(--hse-ink);
+  border-bottom: 1px solid var(--hse-ink);
+}
+.hse-rule { border-top: 1px solid var(--hse-rule); }
+.hse-rule-heavy { border-top: 3px solid var(--hse-ink); }
+
+/* Menu lines: name and price bound by a dotted leader, the way a
+   printed menu does it, so the eye can travel. */
+.hse-line {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px dotted var(--hse-rule);
+}
+
+/* Photographs sit in a ruled plate with a caption, like printed stock. */
+.hse-plate {
+  position: relative;
+  overflow: hidden;
+  background: rgba(20, 18, 15, 0.06);
+  outline: 1px solid var(--hse-rule);
+  outline-offset: -1px;
+}
+/* Placeholder state: reads as a reserved plate rather than a hole. */
+.hse-plate-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(20, 18, 15, 0.05) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+.hse-good {
+  border-top: 1px solid var(--hse-rule);
+  padding-top: 1.25rem;
+}
+
+/* Links inside body copy get a press-red underline on hover, nothing more. */
+.hse a.hse-link {
+  border-bottom: 1px solid rgba(179, 53, 42, 0.4);
+  color: var(--hse-press);
+  transition: border-color 0.2s;
+}
+.hse a.hse-link:hover { border-color: var(--hse-press); }

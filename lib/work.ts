@@ -30,6 +30,44 @@ export type ConceptWork = {
 
 export const WORK: ConceptWork[] = [
   {
+    slug: "house-issue",
+    name: "HOUSE ISSUE",
+    tagline: "A deli that publishes everything it makes.",
+    segment: "Neighborhood deli, rotisserie and goods",
+    place: "Los Angeles, California",
+    brief:
+      "A counter open daily, selling sandwiches to people in a hurry and rotisserie chickens to people going home. It needed the opposite of a showpiece: hours, menu and phone number in reach immediately, and a reason for the same neighbours to come back next week.",
+    decisions: [
+      {
+        title: "The conceit sits under the basics, never in front",
+        detail:
+          "Address, hours, phone and ordering are fixed in the bar directly beneath the masthead, before a word of personality. A hungry person at noon reaches the menu in one tap; the editorial idea is what they find if they stay.",
+      },
+      {
+        title: "Everything is published as an issue",
+        detail:
+          "Seasonal menus, collaborations and runs of goods are numbered, dated and archived, each at a permanent address. A deli site usually has nothing worth returning to; this one accumulates, and last August's menu stays a record of what August tasted like.",
+      },
+      {
+        title: "Restraint is the design",
+        detail:
+          "No pinned film, no veils, no motion at all: newsprint typography, dotted leaders, and photography set in ruled plates. The same studio that built SEREIN's scroll film chose none of it here, because the room is different.",
+      },
+    ],
+    proof: [
+      "Hours, address, phone and ordering above the fold",
+      "Issue system with a permanent URL per issue and a full archive",
+      "Goods shop tied to the issue each product came from",
+      "No animation, no libraries: the page is the performance budget",
+    ],
+    package: "The Opening",
+    liveUrl: "/house-issue",
+    image: "/images/serein/threshold.png",
+    cardImage: "/images/serein/threshold.png",
+    imageAlt: "HOUSE ISSUE: a plated dish on a pale counter",
+    live: true,
+  },
+  {
     slug: "serein",
     name: "SEREIN",
     tagline: "A tasting room that loses its light as you scroll.",
