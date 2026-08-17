@@ -2,6 +2,7 @@ import { Hero } from "@/components/marketing/Hero";
 import { Disciplines } from "@/components/marketing/Disciplines";
 import { DigitalExperiences } from "@/components/marketing/DigitalExperiences";
 import { Packages } from "@/components/marketing/Packages";
+import { TestKitchen } from "@/components/marketing/TestKitchen";
 import { PassStory } from "@/components/marketing/PassStory";
 import { Consultation } from "@/components/marketing/Consultation";
 
@@ -11,6 +12,7 @@ export default function HomePage() {
       <Hero />
       <Disciplines />
       <DigitalExperiences />
+      <TestKitchen />
       <Packages />
       <PassStory />
       <Consultation />
