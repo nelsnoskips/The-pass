@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 
 const NAV = [
-  { href: "#menu", label: "Menu" },
-  { href: "#room", label: "The Room" },
+  { href: "/serein#menu", label: "Menu" },
+  { href: "/serein#room", label: "The Room" },
+  { href: "/serein/membership", label: "The Blue Hour" },
 ];
 
 /**

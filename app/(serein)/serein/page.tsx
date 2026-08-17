@@ -335,6 +335,36 @@ export default function SereinPage() {
         </div>
       </section>
 
+      {/* -------------------------- the blue hour, the members' circle --- */}
+      <section className="srn-blue border-y border-[#E9E5DB]/12 bg-[#080C13] px-5 py-20 sm:px-8">
+        <div className="mx-auto grid max-w-[1200px] items-center gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
+          <div>
+            <p className="srn-label text-[#6E8CA6]">The Blue Hour</p>
+            <p className="srn-serif mt-5 text-[clamp(28px,3.6vw,44px)] leading-[1.06] text-[#E9E5DB]">
+              Thirty seats fill quickly. The circle
+              <br />
+              <em className="italic text-[#6E8CA6]">never has to call.</em>
+            </p>
+          </div>
+          <div className="lg:justify-self-end">
+            <p className="max-w-[380px] text-[14px] leading-relaxed text-[#E9E5DB]/65">
+              Standing evenings, pairings carried, and the nights we cook
+              only for members: single-producer dinners, the cellar opened,
+              the kitchen off the menu.
+            </p>
+            <a
+              href="/serein/membership"
+              className="srn-label group mt-7 inline-flex items-center gap-3 border border-[#6E8CA6]/70 px-6 py-3.5 text-[#E9E5DB] transition-colors hover:bg-[#6E8CA6] hover:text-[#05070B]"
+            >
+              The members&apos; circle
+              <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ----------------------------------- chapter 05 — reservation --- */}
       <section id="reserve" className="relative scroll-mt-16 overflow-hidden bg-[#05070B]">
         <div className="absolute inset-0" aria-hidden>

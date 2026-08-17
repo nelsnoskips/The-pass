@@ -204,3 +204,25 @@
     animation: none !important;
   }
 }
+
+/* ---------------------------------------------- the blue hour --- */
+/* SEREIN's members' circle carries its own accent: the mist blue of
+   the interval after sunset, set against the house brass. */
+.srn-blue {
+  --srn-hour: #6E8CA6;
+}
+.srn-blue .srn-hour-rule {
+  background: linear-gradient(90deg, rgba(110, 140, 166, 0.5), rgba(110, 140, 166, 0));
+}
+.srn-tier {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid rgba(233, 229, 219, 0.14);
+  padding-top: 2rem;
+  transition: border-color 0.4s;
+}
+.srn-tier:hover { border-color: rgba(110, 140, 166, 0.6); }
+@media (min-width: 1024px) {
+  .srn-tier { border-top: none; border-left: 1px solid rgba(233, 229, 219, 0.14); padding: 0 0 0 2.5rem; }
+  .srn-tier:first-child { border-left: none; padding-left: 0; }
+}
