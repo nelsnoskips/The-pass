@@ -19,6 +19,17 @@ export default function HouseLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className={`hse min-h-screen ${anton.variable}`}>
+      {/* Before first paint, so the hero never flashes its unpinned
+          height. Only a browser that runs JavaScript can scrub a video,
+          and only a visitor who has not asked for less motion should be
+          held in place — anyone else scrolls straight past a still. */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html:
+            "try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)" +
+            "document.documentElement.classList.add('hse-cine')}catch(e){}",
+        }}
+      />
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-[#14120F] focus:px-4 focus:py-2 focus:text-[#F4F1EA]"
