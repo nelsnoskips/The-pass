@@ -186,21 +186,20 @@
 /* ------------------------------------------- the layered hero --- */
 /* Three depth planes with the cut-out sandwich between them: the
    masthead type runs behind it, the rotisserie film sits further back.
-   On scroll each plane moves at its own rate, which reads as real depth
-   rather than parallax on a rectangle. Compositor-only, gated on
-   support, and off under reduced motion — this page's argument is
-   speed, so the effect costs one transform per layer and nothing else. */
+   The film plane never transforms — the video is its motion — so only
+   the type and the sandwich drift, and only once the stage releases.
+   Compositor-only, gated on support, and off under reduced motion. */
 
-/* The pinned stage. The wrapper is two viewports tall and the stage
-   sticks to the top of the first, so for that first viewport of
-   scrolling the page appears to hold still and only the film advances —
-   the spit turns, the count falls — and then the stage releases and the
-   page carries on down. The hold is the point: it gives the visitor a
-   reason to keep scrolling before anything has moved.
+/* The pinned stage. The wrapper runs 160vh and the stage sticks to the
+   top of it, so for the first 60vh of scrolling the page
+   holds still and only the film advances — the spit turns, the count
+   falls — and then the stage releases and the page carries on down.
+   Sixty is deliberate: long enough to notice the birds turning, short
+   enough that nobody feels held hostage by a hero.
 
    Gated on .hse-cine, because a browser that cannot scrub a video must
    never be given a viewport of scrolling in which nothing happens. */
-.hse-cine .hse-pin { height: 200vh; }
+.hse-cine .hse-pin { height: 160vh; }
 .hse-cine .hse-pin-stage {
   position: sticky;
   top: 0;
@@ -236,10 +235,6 @@
 .hse-layer { will-change: transform; }
 
 @supports (animation-timeline: view()) {
-  @keyframes hse-back {
-    from { transform: translateY(-2%) scale(1.06); }
-    to { transform: translateY(4%) scale(1.06); }
-  }
   @keyframes hse-type {
     from { transform: translateY(0); }
     to { transform: translateY(-22%); }
@@ -252,24 +247,24 @@
      progress: this hero is always at the top, so a root timeline
      guarantees an exact resting state at load (a view() timeline
      starts mid-range here and clipped the masthead). */
-  .hse-l-back, .hse-l-type, .hse-l-hand {
+  .hse-l-type, .hse-l-hand {
     animation: linear both;
     animation-timeline: scroll(root);
     animation-range: 0 100vh;
   }
   /* Pinned, the planes must not move — the film is the only thing
-     answering the scroll for the first viewport. They take over across
-     the second, as the stage releases and travels up the page. */
-  .hse-cine .hse-l-back,
+     answering the scroll while the stage is held. They take over once
+     it releases and travels up the page. The film plane is not among
+     them: it carries the video, and a layer that slides while it plays
+     reads as a reposition rather than as motion. */
   .hse-cine .hse-l-type,
-  .hse-cine .hse-l-hand { animation-range: 100vh 200vh; }
-  .hse-l-back { animation-name: hse-back; }
+  .hse-cine .hse-l-hand { animation-range: 60vh 160vh; }
   .hse-l-type { animation-name: hse-type; }
   .hse-l-hand { animation-name: hse-hand; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hse-l-back, .hse-l-type, .hse-l-hand { animation: none !important; }
+  .hse-l-type, .hse-l-hand { animation: none !important; }
 }
 
 /* The rubber stamp: outlined, set on the angle a hand would leave it. */

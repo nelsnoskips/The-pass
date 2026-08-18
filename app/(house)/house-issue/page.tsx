@@ -33,10 +33,11 @@ export default function HouseIssuePage() {
       <main id="main">
         {/* ------------------------------------------ the layered hero --- */}
         {/* Three planes: the rotisserie film behind, masthead type in the
-            middle, the cut-out sandwich in front. Each answers the scroll
-            at its own rate, so the depth is real rather than a rectangle
-            sliding — and the film's playhead is scrubbed by the same
-            scroll, so the birds cook as the visitor descends. */}
+            middle, the cut-out sandwich in front. The stage holds while
+            the film is scrubbed, so the birds cook without the page
+            moving; the type and the sandwich only drift once it lets go.
+            The film plane itself never transforms — it plays, it does not
+            slide. */}
         <section className="hse-stage hse-paper border-b-4 border-[#16130F]">
           <div className="hse-pin">
             <div className="hse-pin-stage w-full">
