@@ -1,46 +1,83 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HOUSE } from "@/lib/house";
+import { subscribeScrub } from "./scrubStore";
 
 /**
  * Live status: how many birds are left. A rotisserie that cooks a set
  * number and stops is the truest thing about this house, so the site
  * says it out loud and keeps saying it as the day goes.
  *
- * The count reads down from opening across the service window, which
- * makes the page feel staffed rather than published. Renders a stable
- * placeholder until mounted, since it depends on the visitor's clock.
+ * In the hero it does something more. Passed `scrub`, it takes its hour
+ * from the scroll rather than the clock: the page opens at eleven with a
+ * full spit and runs forward to the present as the visitor scrolls, the
+ * count falling with the film behind it. The scroll is the working day.
+ * By the time the hero resolves it has caught up with the real time and
+ * hands back to the clock, so what finally rests on screen is true.
+ *
+ * Renders a stable placeholder until mounted, since it depends on the
+ * visitor's own clock.
  */
 
 const OPEN_HOUR = 11;
 const CLOSE_HOUR = 21;
 
-function birdsLeft(now: Date): { left: number; stamp: string } {
-  const hours = now.getHours() + now.getMinutes() / 60;
+/** Everything the counter shows is a function of one number: the hour. */
+function stateAtHour(hours: number): { left: number; stamp: string } {
   const through = Math.min(
     1,
     Math.max(0, (hours - OPEN_HOUR) / (CLOSE_HOUR - OPEN_HOUR)),
   );
   // Sells faster over lunch, slows through the afternoon.
-  const curve = Math.pow(through, 0.72);
-  const left = Math.max(0, Math.round(HOUSE.birdsAtOpen * (1 - curve)));
-  const stamp = now.toLocaleTimeString("en-US", {
+  const left = Math.max(
+    0,
+    Math.round(HOUSE.birdsAtOpen * (1 - Math.pow(through, 0.72))),
+  );
+
+  const whole = Math.floor(hours);
+  const stamped = new Date();
+  stamped.setHours(whole, Math.min(59, Math.round((hours - whole) * 60)), 0, 0);
+  const stamp = stamped.toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
   });
   return { left, stamp };
 }
 
-export function ChickenCount({ variant }: { variant: "pill" | "sticker" }) {
-  const [state, setState] = useState<{ left: number; stamp: string } | null>(null);
+export function ChickenCount({
+  variant,
+  scrub = false,
+}: {
+  variant: "pill" | "sticker";
+  /** Take the hour from the scroll instead of the clock. Hero only. */
+  scrub?: boolean;
+}) {
+  const [now, setNow] = useState<number | null>(null);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const tick = () => setState(birdsLeft(new Date()));
+    const tick = () => {
+      const d = new Date();
+      setNow(d.getHours() + d.getMinutes() / 60);
+    };
     tick();
     const id = setInterval(tick, 60_000);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    if (!scrub) return;
+    return subscribeScrub(setProgress);
+  }, [scrub]);
+
+  const state = useMemo(() => {
+    if (now === null) return null;
+    if (!scrub) return stateAtHour(now);
+    // Before opening there is no day to play forward; sit at the top.
+    const to = Math.max(now, OPEN_HOUR);
+    return stateAtHour(OPEN_HOUR + (to - OPEN_HOUR) * progress);
+  }, [now, progress, scrub]);
 
   const sold = state?.left === 0;
 
@@ -63,7 +100,7 @@ export function ChickenCount({ variant }: { variant: "pill" | "sticker" }) {
       <p className="hse-display mt-2 text-[26px] leading-none">
         {sold ? "Sold out" : "Chickens on"}
       </p>
-      <p className="hse-display mt-1 text-[64px] leading-[0.85]">
+      <p className="hse-display hse-num mt-1 text-[64px] leading-[0.85]">
         {state === null ? "··" : state.left}
         {!sold && <span className="ml-2 text-[24px]">left</span>}
       </p>
