@@ -16,11 +16,22 @@ export function FindTheNoise() {
   const { ref, entered } = useEntered<HTMLElement>(0.25);
 
   return (
-    <section
-      ref={ref}
-      id="locations"
-      className="fbk-torn-t fbk-oxblood relative px-5 py-16 sm:px-8"
-      aria-labelledby="find-heading"
+    <>
+      {/* The oxblood sheet's torn top edge, with the paper fiber lit
+          along the rip. Separate from the section so the fiber can peek
+          past the tear instead of being clipped by it. */}
+      <div aria-hidden className="relative z-[5] -mb-px h-10 sm:h-14">
+        <div
+          className="fbk-torn-t absolute inset-0 bg-[#e3c9bd]"
+          style={{ transform: "translateY(-5px)" }}
+        />
+        <div className="fbk-torn-t fbk-oxblood absolute inset-0" />
+      </div>
+      <section
+        ref={ref}
+        id="locations"
+        className="fbk-oxblood relative px-5 pb-16 pt-8 sm:px-8"
+        aria-labelledby="find-heading"
     >
       <p className="fbk-label flex items-center gap-3 text-[rgba(232,225,211,0.8)]">
         <span className="border border-[rgba(232,225,211,0.5)] px-2 py-1">07</span>
@@ -72,7 +83,8 @@ export function FindTheNoise() {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </>
   );
 }
 

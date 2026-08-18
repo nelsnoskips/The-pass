@@ -23,7 +23,12 @@ import { SignalSection } from "@/components/feedback/SignalSection";
 function Tear({ tilt }: { tilt: number }) {
   return (
     <div aria-hidden className="fbk-tear-strip" style={{ transform: `rotate(${tilt}deg)` }}>
-      <div className="fbk-stock fbk-torn-tb h-full w-full" />
+      {/* The fiber inside the sheet shows along both ripped edges. */}
+      <div
+        className="fbk-torn-tb fbk-tear-fiber absolute inset-0"
+        style={{ transform: "scaleY(1.16)" }}
+      />
+      <div className="fbk-torn-tb fbk-stock absolute inset-0" />
     </div>
   );
 }
@@ -33,7 +38,7 @@ export default function FeedbackPage() {
     <>
       <Hero />
       <SignalSection />
-      <Tear tilt={-0.5} />
+      <Tear tilt={-0.4} />
       <div className="grid lg:grid-cols-2">
         <ChannelMenu />
         <Pedalboard />

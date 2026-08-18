@@ -29,39 +29,57 @@ export function ChannelMenu() {
         <span className="fbk-chip">03</span> Set list / Menu
       </p>
 
-      <div className="fbk-stock relative mt-6 rotate-[-0.4deg] p-5 sm:p-8">
-        {/* Tape, off-square, holding the card to the panel. */}
-        <span
-          aria-hidden
-          className="absolute -top-4 left-8 h-8 w-24 rotate-[-4deg] bg-[rgba(232,225,211,0.22)] backdrop-blur-[1px]"
-        />
-        <span
-          aria-hidden
-          className="absolute -top-4 right-10 h-8 w-24 rotate-[3deg] bg-[rgba(232,225,211,0.22)] backdrop-blur-[1px]"
-        />
+      {/* The card sits in an amp case, per the comp: grille cloth
+          behind it, a lamp lit in the corner, and black gaffer tape
+          slapped across each corner holding the paper down. */}
+      <div className="fbk-grille relative mt-6 border border-[rgba(232,225,211,0.16)] p-4 sm:p-6">
+        <span aria-hidden className="fbk-led fbk-led-on absolute right-3 top-3" />
 
-        <h2 id="setlist-heading" className="sr-only">
+        <div className="fbk-stock relative rotate-[-0.4deg] p-5 sm:p-8">
+          <Gaffer className="-left-5 -top-2 rotate-[-42deg]" />
+          <Gaffer className="-right-5 -top-2 rotate-[43deg]" />
+          <Gaffer className="-bottom-2 -left-5 rotate-[41deg]" />
+          <Gaffer className="-bottom-2 -right-5 rotate-[-44deg]" />
+
+          <h2 id="setlist-heading" className="sr-only">
           Set list
         </h2>
 
-        <ul className="divide-y divide-[rgba(20,16,14,0.15)]">
-          {LEAD_ITEMS.map((item) => (
-            <li key={item.code}>
-              <ChannelStrip item={item} />
-            </li>
-          ))}
-        </ul>
+          <ul className="divide-y divide-[rgba(20,16,14,0.15)]">
+            {LEAD_ITEMS.map((item) => (
+              <li key={item.code}>
+                <ChannelStrip item={item} />
+              </li>
+            ))}
+          </ul>
 
-        <div className="mt-6 flex justify-end">
-          <Link
-            href="/feedback/menu"
-            className="fbk-label inline-flex items-center gap-2 text-[#14100e] underline decoration-[#7E1416] underline-offset-4"
-          >
-            Full set list →
-          </Link>
+          <div className="mt-6 flex justify-end">
+            <Link
+              href="/feedback/menu"
+              className="fbk-label inline-flex items-center gap-2 text-[#14100e] underline decoration-[#7E1416] underline-offset-4"
+            >
+              Full set list →
+            </Link>
+          </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/** A strip of black gaffer tape, laid across a corner of the card. */
+function Gaffer({ className }: { className: string }) {
+  return (
+    <span
+      aria-hidden
+      className={`absolute z-10 h-6 w-24 ${className}`}
+      style={{
+        background:
+          "linear-gradient(180deg, #201c19 0%, #120f0d 45%, #1b1714 100%)",
+        boxShadow: "0 3px 6px rgba(0,0,0,0.5)",
+        opacity: 0.94,
+      }}
+    />
   );
 }
 
