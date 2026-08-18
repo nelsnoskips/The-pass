@@ -62,10 +62,15 @@ export const WORK: ConceptWork[] = [
     ],
     package: "The Opening, with the signature treatment",
     liveUrl: "/feedback",
-    image: "/images/feedback/hero.jpg",
+    // The case hero follows the other rooms' convention — photography,
+    // not a screenshot: the site's own distorted wordmark would sit
+    // directly under the case page's serif title and the two marks
+    // fight. The card keeps the screenshot, because on the homepage the
+    // interface itself is the argument.
+    image: "/images/feedback/process-05-finished-burger.jpg",
     cardImage: "/images/feedback/card.jpg",
     imageAlt:
-      "FEEDBACK: the amplifier knob and the burger mid-cook on a hot flat top",
+      "FEEDBACK: the finished double smash burger on the flat top, smoke rising",
     live: true,
   },
   {
