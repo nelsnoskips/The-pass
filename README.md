@@ -47,6 +47,14 @@ npm run build      # production build
 | `/settings` | Brand settings, demo role switching, notification preferences |
 | `/api/reports/campaign-performance` | Scoped reporting endpoint |
 
+Concept rooms (the Test Kitchen — demo restaurant sites, not part of the app):
+
+| Route | Concept |
+| --- | --- |
+| `/serein` | SEREIN: a tasting room that loses its light as you scroll |
+| `/house-issue` | HOUSE ISSUE: a deli that publishes everything it makes |
+| `/feedback` | FEEDBACK: a burger counter you have to turn up before it feeds you |
+
 ## Architecture notes
 
 - **Data access:** pages talk only to `lib/data/` query functions returning

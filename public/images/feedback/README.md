@@ -68,3 +68,8 @@ pedals in a row.
 - JPEG quality ~85, PNG for anything transparent, at least 2000px on the
   long edge. Keep the cut-outs' shadows *in* the alpha — the page adds
   its own drop shadow underneath.
+
+## Already in this folder
+- `card.jpg` / `hero.jpg` — the Test Kitchen listing card and the case-page
+  hero, shot from the running site so the concept is linkable today. Replace
+  them with real frames once the shoot lands; nothing else references them.

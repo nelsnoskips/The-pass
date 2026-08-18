@@ -125,9 +125,10 @@ export function stageProgressAt(pressure: number): number {
 
 /** The pressure that puts a given frame exactly on screen. */
 export function pressureForStage(index: number): number {
-  const stage = STAGES[Math.min(Math.max(index, 0), STAGES.length - 1)];
+  const at = Math.min(Math.max(index, 0), STAGES.length - 1);
+  const stage = STAGES[at];
   // Land a little inside the frame so the stage reads as settled.
-  const next = STAGES[index + 1];
+  const next = STAGES[at + 1];
   return next ? (stage.at + next.at) / 2 : PRESSURE_MAX;
 }
 

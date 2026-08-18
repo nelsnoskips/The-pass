@@ -1,0 +1,550 @@
+/* FEEDBACK — a burger counter run like a venue. Near-black, one hot
+   light source, bone paper and two reds. The counterweight to HOUSE
+   ISSUE's daylight and to SEREIN's dusk.
+
+   The room's rhythm matters more than any single effect: almost
+   everything here is restrained and fast (150—250ms, compositor-only),
+   so that the two loud moments — the wordmark blowing out at maximum
+   feedback, and the pedal board changing the waveform's personality —
+   land as events rather than as more of the same. */
+
+.fbk {
+  --fb-black: #0b0908;
+  --fb-ink: #14100e;
+  --fb-char: #241a14;
+  --fb-steel: #2e2622;
+  --fb-bone: #e8e1d3;
+  --fb-bone-dim: rgba(232, 225, 211, 0.55);
+  --fb-blood: #7e1416;
+  --fb-red: #e23b2e;
+  --fb-amber: #e8a33d;
+  --fb-rule: rgba(232, 225, 211, 0.16);
+
+  background: var(--fb-black);
+  color: var(--fb-bone);
+  /* The bar across the top is fixed, so anything an anchor jumps to has
+     to clear it or it lands underneath. */
+  scroll-padding-top: 5rem;
+  /* Every visual on the page reads this. The provider writes it on
+     scroll and on knob drag, so CSS can respond to pressure without a
+     React render per frame. */
+  --fb-level: 0;
+}
+
+.fbk .fbk-display {
+  font-family: var(--font-anton), Impact, "Haettenschweiler", sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.86;
+  letter-spacing: 0.01em;
+}
+.fbk .fbk-mono {
+  font-family: var(--font-mono), ui-monospace, "SFMono-Regular", monospace;
+  font-variant-numeric: tabular-nums;
+}
+.fbk .fbk-label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------- surfaces --- */
+
+/* The griddle: carbon and grease, hot in the middle, gone at the edges.
+   Stands in for the photograph until one is uploaded, and stays
+   underneath it afterwards so the plate never shows a hard edge. */
+.fbk-griddle {
+  background-color: #0b0908;
+  background-image:
+    radial-gradient(120% 90% at 50% 42%, rgba(226, 122, 46, 0.13) 0%, transparent 62%),
+    radial-gradient(80% 60% at 50% 30%, rgba(232, 163, 61, 0.1) 0%, transparent 60%),
+    linear-gradient(180deg, #171210 0%, #0b0908 70%);
+}
+
+/* Printed stock: the torn sheets, the menu card, the receipt. */
+.fbk-paper {
+  background-color: #e8e1d3;
+  background-image: radial-gradient(rgba(20, 16, 14, 0.055) 1px, transparent 1px);
+  background-size: 3px 3px;
+  color: var(--fb-ink);
+}
+
+/* Film grain over the whole room, laid down once at the top level so no
+   section has to carry its own. Cheap, static, and it does more for the
+   photography than any filter would. */
+.fbk-grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* A torn edge, cut rather than drawn, so it stays crisp at any width. */
+.fbk-torn-b {
+  clip-path: polygon(
+    0% 0%, 100% 0%, 100% 96%, 93% 99%, 86% 95.5%, 78% 99%, 70% 96%, 61% 99.5%,
+    52% 96%, 44% 99%, 35% 95.5%, 27% 99%, 18% 96%, 10% 99%, 4% 96.5%, 0% 99%
+  );
+}
+.fbk-torn-t {
+  clip-path: polygon(
+    0% 3%, 6% 0.5%, 14% 4%, 23% 1%, 32% 4.5%, 41% 1%, 50% 4%, 59% 0.5%,
+    68% 4%, 77% 1%, 86% 4.5%, 94% 1%, 100% 3.5%, 100% 100%, 0% 100%
+  );
+}
+
+.fbk-rule { border-top: 1px solid var(--fb-rule); }
+
+.fbk [id] { scroll-margin-top: 5rem; }
+
+/* ------------------------------------------------- amplifier parts --- */
+
+/* Brushed steel with a light that rakes across it, for the knob face,
+   the pedal chassis and the amp panel. */
+.fbk-steel {
+  background-image:
+    linear-gradient(145deg, #4a423c 0%, #2b2521 38%, #3b332e 60%, #1d1815 100%);
+}
+.fbk-knurl {
+  background-image: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.14) 0deg 1.4deg,
+    rgba(0, 0, 0, 0.35) 1.4deg 3deg
+  );
+}
+
+/* An indicator lamp. Dark when the channel is off; when it is lit the
+   glow is a box-shadow rather than a filter, so it costs nothing. */
+.fbk-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: rgba(226, 59, 46, 0.22);
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.8);
+  transition: background 160ms ease, box-shadow 160ms ease;
+}
+.fbk-led-on {
+  background: var(--fb-red);
+  box-shadow: 0 0 6px 1px rgba(226, 59, 46, 0.75), 0 0 16px 3px rgba(226, 59, 46, 0.3);
+}
+.fbk-led-amber.fbk-led-on {
+  background: var(--fb-amber);
+  box-shadow: 0 0 6px 1px rgba(232, 163, 61, 0.75), 0 0 16px 3px rgba(232, 163, 61, 0.3);
+}
+
+/* ---------------------------------------------------------- parts --- */
+
+.fbk-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--fb-blood);
+  color: var(--fb-bone);
+  padding: 0.28rem 0.55rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+}
+
+.fbk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  background: var(--fb-blood);
+  color: var(--fb-bone);
+  border: 1px solid rgba(232, 225, 211, 0.22);
+  padding: 0.85rem 1.6rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  /* Fast and mechanical: this is a switch, not a fade. */
+  transition: background 150ms ease, color 150ms ease, transform 120ms ease,
+    box-shadow 150ms ease;
+}
+.fbk-btn:hover {
+  background: var(--fb-red);
+  box-shadow: 0 0 0 1px rgba(226, 59, 46, 0.5), 0 8px 24px rgba(226, 59, 46, 0.22);
+}
+.fbk-btn:active { transform: translateY(1px); }
+.fbk-btn-ghost {
+  background: transparent;
+  border-color: rgba(232, 225, 211, 0.28);
+}
+.fbk-btn-ghost:hover {
+  background: rgba(232, 225, 211, 0.08);
+  box-shadow: none;
+}
+
+.fbk a.fbk-link {
+  color: var(--fb-bone);
+  border-bottom: 1px solid rgba(226, 59, 46, 0.55);
+  transition: border-color 150ms ease, color 150ms ease;
+}
+.fbk a.fbk-link:hover { color: var(--fb-red); border-color: var(--fb-red); }
+
+/* ------------------------------------------------- channel cards --- */
+
+/* A menu item is a channel on an amp: it switches from red to amber,
+   the plate steps forward, and the whole card takes one frame of
+   horizontal signal distortion. All of it under 250ms — the point is
+   that it feels switched rather than animated. */
+/* The behaviour only: a channel strip works the same whether it is
+   printed on the paper menu card or mounted on the dark chassis, so the
+   ground it sits on is a separate opt-in class. */
+.fbk-channel {
+  position: relative;
+  isolation: isolate;
+  transition: border-color 180ms ease, transform 180ms ease,
+    box-shadow 180ms ease;
+}
+.fbk-channel-dark {
+  background: linear-gradient(180deg, #1a1512 0%, #100c0a 100%);
+  border: 1px solid var(--fb-rule);
+}
+.fbk-channel-dark:hover,
+.fbk-channel-dark:focus-within {
+  border-color: rgba(232, 163, 61, 0.45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+.fbk-channel-art {
+  transition: transform 200ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.fbk-channel:hover .fbk-channel-art,
+.fbk-channel:focus-within .fbk-channel-art {
+  transform: translateZ(0) scale(1.06) translateY(-2px);
+}
+
+@keyframes fbk-glitch {
+  0% { transform: translateX(0); }
+  18% { transform: translateX(-3px) skewX(-1.5deg); }
+  34% { transform: translateX(2px) skewX(1deg); }
+  52% { transform: translateX(-1px); }
+  100% { transform: translateX(0); }
+}
+.fbk-channel:hover,
+.fbk-channel:focus-within { animation: fbk-glitch 220ms steps(4, end) 1; }
+
+/* The availability meter jumps on switch rather than sliding. */
+.fbk-meter {
+  height: 3px;
+  background: rgba(232, 225, 211, 0.12);
+  overflow: hidden;
+}
+.fbk-meter span {
+  display: block;
+  height: 100%;
+  background: var(--fb-red);
+  transform-origin: left center;
+  transition: transform 180ms steps(6, end), background 180ms ease;
+}
+.fbk-channel:hover .fbk-meter span,
+.fbk-channel:focus-within .fbk-meter span { background: var(--fb-amber); }
+
+/* ADD behaves like a mechanical toggle: it depresses and stays down. */
+.fbk-toggle-light {
+  border: 1px solid rgba(20, 16, 14, 0.4);
+  background: rgba(20, 16, 14, 0.04);
+  color: var(--fb-ink);
+  box-shadow: inset 0 -2px 0 rgba(20, 16, 14, 0.35);
+  transition: transform 120ms ease, box-shadow 120ms ease, background 150ms ease,
+    color 150ms ease;
+}
+.fbk-toggle-light:hover { background: rgba(20, 16, 14, 0.1); }
+.fbk-toggle-light:active,
+.fbk-toggle-light[data-on="true"] {
+  transform: translateY(2px);
+  box-shadow: inset 0 2px 4px rgba(20, 16, 14, 0.4);
+  background: var(--fb-blood);
+  color: var(--fb-bone);
+}
+
+.fbk-toggle {
+  border: 1px solid rgba(232, 225, 211, 0.3);
+  background: rgba(232, 225, 211, 0.05);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.55);
+  transition: transform 120ms ease, box-shadow 120ms ease, background 150ms ease;
+}
+.fbk-toggle:hover { background: rgba(232, 225, 211, 0.12); }
+.fbk-toggle:active,
+.fbk-toggle[data-on="true"] {
+  transform: translateY(2px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7);
+  background: var(--fb-blood);
+}
+
+/* ------------------------------------------------------ the hero --- */
+
+/* Pinned by sticky rather than by a library: the stage stays put while
+   the tall track above it is scrolled through, and the scroll position
+   inside that track is the pressure. Nothing is transformed off its
+   own layer, and if the JS never arrives the stage is simply a hero. */
+.fbk-track { position: relative; }
+.fbk-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 620px;
+  overflow: clip;
+}
+
+/* Heat haze behind the burger. Two counter-drifting plumes so the loop
+   never reads as a loop, scaled by pressure. */
+@keyframes fbk-steam-a {
+  0% { transform: translate3d(-4%, 6%, 0) scale(1); opacity: 0; }
+  22% { opacity: 1; }
+  100% { transform: translate3d(3%, -34%, 0) scale(1.5); opacity: 0; }
+}
+@keyframes fbk-steam-b {
+  0% { transform: translate3d(5%, 10%, 0) scale(0.9); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translate3d(-6%, -40%, 0) scale(1.6); opacity: 0; }
+}
+.fbk-steam {
+  position: absolute;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  filter: blur(18px);
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 236, 214, 0.5),
+    rgba(255, 236, 214, 0.06) 62%,
+    transparent 72%
+  );
+  /* Idles faintly, and opens up as pressure comes on. */
+  opacity: calc(0.16 + var(--fb-level) * 0.7);
+}
+.fbk-steam-a { animation: fbk-steam-a 9s linear infinite; }
+.fbk-steam-b { animation: fbk-steam-b 11.5s linear infinite 2.4s; }
+
+/* The slow camera push on the product: 2% across the whole hero. */
+.fbk-push { transform: scale(calc(1 + var(--fb-level) * 0.02)); }
+
+/* Lighting gets hotter with pressure — a warm wash over the plate
+   rather than a filter on the image, so it composites for free. */
+.fbk-heat {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  opacity: calc(var(--fb-level) * 0.85);
+  background: radial-gradient(
+    58% 48% at 50% 56%,
+    rgba(255, 148, 46, 0.95) 0%,
+    rgba(226, 59, 46, 0.35) 45%,
+    transparent 72%
+  );
+}
+
+/* The raw patty trembles under sound pressure before the smash. */
+@keyframes fbk-tremble {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  25% { transform: translate3d(-1px, 1px, 0); }
+  50% { transform: translate3d(1px, -1px, 0); }
+  75% { transform: translate3d(1px, 1px, 0); }
+}
+.fbk-tremble { animation: fbk-tremble 90ms linear infinite; }
+
+/* Maximum feedback: one 140ms blow-out, then it settles. */
+@keyframes fbk-blowout {
+  0% { transform: scale(1); filter: none; }
+  30% { transform: scale(1.035); filter: brightness(1.7) contrast(1.3); }
+  60% { transform: scale(0.995); filter: brightness(1.2); }
+  100% { transform: scale(1); filter: none; }
+}
+.fbk-blowout { animation: fbk-blowout 150ms ease-out 1; }
+
+/* ------------------------------------------------------ callouts --- */
+
+.fbk-cal {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  white-space: nowrap;
+}
+.fbk-cal-line {
+  display: block;
+  height: 1px;
+  background: rgba(232, 225, 211, 0.7);
+  transform-origin: left center;
+  transition: transform 520ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.fbk-cal-dot {
+  height: 6px;
+  width: 6px;
+  flex: none;
+  border-radius: 9999px;
+  background: var(--fb-red);
+  box-shadow: 0 0 0 3px rgba(11, 9, 8, 0.7);
+}
+
+/* ------------------------------------------------------- cassette --- */
+
+@keyframes fbk-spool { to { transform: rotate(360deg); } }
+.fbk-spool { animation: fbk-spool 6s linear infinite; transform-origin: 50% 50%; }
+.fbk-spool-slow { animation-duration: 9s; }
+
+/* The Limited Run stamp lands rather than fades. */
+@keyframes fbk-stamp {
+  0% { transform: rotate(-14deg) scale(2.4); opacity: 0; }
+  55% { transform: rotate(-9deg) scale(0.94); opacity: 1; }
+  75% { transform: rotate(-9deg) scale(1.04); }
+  100% { transform: rotate(-9deg) scale(1); opacity: 1; }
+}
+.fbk-stamped { animation: fbk-stamp 420ms cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+
+/* One camera flash as the crowd photograph enters, then never again. */
+@keyframes fbk-flash {
+  0%, 12% { opacity: 0; }
+  16% { opacity: 0.85; }
+  24% { opacity: 0.05; }
+  30% { opacity: 0.45; }
+  100% { opacity: 0; }
+}
+.fbk-flash { animation: fbk-flash 900ms ease-out both; }
+
+/* --------------------------------------------------------- cursor --- */
+
+/* A waveform, not a dot. Hidden wherever there is no fine pointer. */
+.fbk-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 70;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .fbk-cursor { display: none; }
+}
+
+/* ----------------------------------------------------- transition --- */
+
+/* Between pages the signal collapses to a flat line, the screen cuts to
+   black, and the new page arrives as the wave returns. Under 600ms end
+   to end, because a transition anyone waits on is a broken transition. */
+.fbk-cut {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  background: #000;
+  opacity: 0;
+}
+@keyframes fbk-cut-out {
+  0% { opacity: 0; }
+  55%, 100% { opacity: 1; }
+}
+@keyframes fbk-cut-in {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.fbk-cut-out { animation: fbk-cut-out 260ms ease-in both; }
+.fbk-cut-in { animation: fbk-cut-in 300ms ease-out both; }
+
+/* ---------------------------------------------------------- print --- */
+
+/* The receipt feeds out of the footer the way it feeds out of a thermal
+   printer: from a slot, at the speed the head actually moves. */
+@keyframes fbk-feed {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+.fbk-feed { animation: fbk-feed 900ms cubic-bezier(0.35, 0, 0.2, 1) both; }
+.fbk-receipt {
+  background:
+    linear-gradient(180deg, rgba(20, 16, 14, 0.06), transparent 12%),
+    #ece7db;
+  color: #14100e;
+  /* Thermal paper tears on a zigzag, top and bottom. */
+  clip-path: polygon(
+    0% 1.2%, 3% 0%, 6% 1.2%, 9% 0%, 12% 1.2%, 15% 0%, 18% 1.2%, 21% 0%, 24% 1.2%,
+    27% 0%, 30% 1.2%, 33% 0%, 36% 1.2%, 39% 0%, 42% 1.2%, 45% 0%, 48% 1.2%,
+    51% 0%, 54% 1.2%, 57% 0%, 60% 1.2%, 63% 0%, 66% 1.2%, 69% 0%, 72% 1.2%,
+    75% 0%, 78% 1.2%, 81% 0%, 84% 1.2%, 87% 0%, 90% 1.2%, 93% 0%, 96% 1.2%, 100% 0%,
+    100% 98.8%, 97% 100%, 94% 98.8%, 91% 100%, 88% 98.8%, 85% 100%, 82% 98.8%,
+    79% 100%, 76% 98.8%, 73% 100%, 70% 98.8%, 67% 100%, 64% 98.8%, 61% 100%,
+    58% 98.8%, 55% 100%, 52% 98.8%, 49% 100%, 46% 98.8%, 43% 100%, 40% 98.8%,
+    37% 100%, 34% 98.8%, 31% 100%, 28% 98.8%, 25% 100%, 22% 98.8%, 19% 100%,
+    16% 98.8%, 13% 100%, 10% 98.8%, 7% 100%, 4% 98.8%, 1% 100%, 0% 98.8%
+  );
+}
+
+/* ------------------------------------------------------ restraint --- */
+
+/* Reduced motion is not a degraded version of this page — it is the
+   finished burger, immediately, with every section at its resting
+   state. The information and the ordering are identical. */
+@media (prefers-reduced-motion: reduce) {
+  .fbk *,
+  .fbk *::before,
+  .fbk *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .fbk-stage { position: relative; height: auto; min-height: 0; }
+  .fbk-track { height: auto !important; }
+  .fbk-steam { display: none; }
+}
+
+/* ------------------------------------------------- changing track --- */
+
+/* Between cook frames the picture does not cross-fade — it cuts, the
+   way a tape deck changes track: one torn frame, a flash of gain, and
+   the next stage is already there. 110ms, once. */
+@keyframes fbk-track-change {
+  0% { transform: translateX(0); filter: none; opacity: 1; }
+  20% { transform: translateX(-7px) skewX(2deg); filter: brightness(1.9) saturate(0.4); }
+  45% { transform: translateX(5px) skewX(-1.5deg); filter: brightness(0.7); }
+  70% { transform: translateX(-2px); filter: brightness(1.25); }
+  100% { transform: translateX(0); filter: none; opacity: 1; }
+}
+.fbk-track-change { animation: fbk-track-change 130ms steps(5, end) 1; }
+
+/* The frame strip down the right of the hero: five numbered stills that
+   double as a manual scrubber. */
+.fbk-frame {
+  position: relative;
+  border: 1px solid rgba(232, 225, 211, 0.16);
+  background: #0f0b09;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+.fbk-frame:hover { border-color: rgba(232, 163, 61, 0.5); transform: translateX(-3px); }
+.fbk-frame[data-active="true"] {
+  border-color: var(--fb-red);
+  box-shadow: -3px 0 0 0 var(--fb-red);
+}
+
+/* Where the CTA is handed over at maximum feedback. */
+.fbk-reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 220ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.fbk-reveal[data-on="true"] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* The patch cable draws itself in when a pedal is engaged. */
+@keyframes fbk-patch { to { stroke-dashoffset: 0; } }
+
+/* A channel's indicator lights when the channel is selected. Written
+   here rather than as a utility because the lit state is a compound of
+   colour and two shadows, and hover has to reach a child. */
+.fbk-channel:hover .fbk-led,
+.fbk-channel:focus-within .fbk-led {
+  background: var(--fb-amber);
+  box-shadow: 0 0 6px 1px rgba(232, 163, 61, 0.75), 0 0 16px 3px rgba(232, 163, 61, 0.3);
+}

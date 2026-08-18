@@ -30,6 +30,45 @@ export type ConceptWork = {
 
 export const WORK: ConceptWork[] = [
   {
+    slug: "feedback",
+    name: "FEEDBACK",
+    tagline: "A burger counter you have to turn up before it feeds you.",
+    segment: "Smash burgers, fries and shakes",
+    place: "Rivertown, USA",
+    brief:
+      "A loud, cheap, fast counter with a line out the door at 11pm and nothing to say for itself online. It needed a site with the volume of the room — and it needed that volume to sell burgers rather than to win an award.",
+    decisions: [
+      {
+        title: "One number runs the whole room",
+        detail:
+          "Pressure — the amp knob in the hero — is a single value from 0 to 10, and everything downstream reads it: the steam, the waveform, the heat on the griddle, how distorted the wordmark is, and which of the five cook frames is showing. Scrolling, dragging the knob and clicking a numbered frame all move the same number, so three different inputs feel like one instrument instead of three effects.",
+      },
+      {
+        title: "The guest cooks the burger",
+        detail:
+          "The hero is not a video of a burger being made; it is a burger being made, at the speed the guest turns the knob. A raw ball trembles on the steel, the smash lands, onions, cheese and the bun drop in on separate tracks, and at maximum feedback the mark blows out and hands over the order button. It is the one thing a burger site can do that a photograph cannot.",
+      },
+      {
+        title: "Two loud moments, and restraint everywhere else",
+        detail:
+          "The set list, the release and the loyalty pass move in 150—250ms and stop. That restraint is what buys the two loud moments — the blow-out at ten, and the pedal board rewriting the waveform — the room to land. Under reduced motion the burger is simply finished, and every price, hour and phone number is identical.",
+      },
+    ],
+    proof: [
+      "Scroll, drag and tap all drive the same cook, reconciled to one scroll position",
+      "Sound is synthesised in the Web Audio API — no files, no autoplay, off until asked",
+      "Three sauces, three genuinely different waveform functions",
+      "Thermal receipt in the footer prints the live order from every page",
+    ],
+    package: "The Opening, with the signature treatment",
+    liveUrl: "/feedback",
+    image: "/images/feedback/hero.jpg",
+    cardImage: "/images/feedback/card.jpg",
+    imageAlt:
+      "FEEDBACK: the amplifier knob and the burger mid-cook on a hot flat top",
+    live: true,
+  },
+  {
     slug: "house-issue",
     name: "HOUSE ISSUE",
     tagline: "A deli that publishes everything it makes.",
