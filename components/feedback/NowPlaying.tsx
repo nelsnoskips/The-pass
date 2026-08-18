@@ -80,9 +80,9 @@ export function NowPlaying() {
         <span className="fbk-chip">05</span> Now playing
       </p>
 
-      {/* Stacked, not two columns: this section now shares a row with
-          All Ages, so its own width is half the page. */}
-      <div className="mt-8 grid gap-10">
+      {/* The comp's arrangement: the release notes on the left, the
+          tape standing beside them on the right. */}
+      <div className="mt-8 grid gap-8 md:grid-cols-[1fr_minmax(240px,300px)] md:items-start">
         <div>
           <h2
             id="release-heading"

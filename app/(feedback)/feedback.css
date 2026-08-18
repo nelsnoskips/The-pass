@@ -37,6 +37,15 @@
   text-transform: uppercase;
   line-height: 0.86;
   letter-spacing: 0.01em;
+  /* The comp's headlines are rough-printed, not clean: ink that missed
+     the paper in flecks. A tiled turbulence mask knocks pinholes out of
+     every display setting at once, so the whole page's type distresses
+     together — and because it is a mask, the colour underneath is
+     whatever the heading already was. */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.16' numOctaves='4' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 6 0 -0.72'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.16' numOctaves='4' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 6 0 -0.72'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
+  -webkit-mask-size: 240px 240px;
+  mask-size: 240px 240px;
 }
 .fbk .fbk-mono {
   font-family: var(--font-mono), ui-monospace, "SFMono-Regular", monospace;
@@ -541,13 +550,35 @@
 .fbk-tear-strip {
   position: relative;
   z-index: 5;
-  height: 3rem;
-  margin: -1.1rem 0;
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.55));
+  height: 4.5rem;
+  margin: -1.6rem 0;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.55));
 }
 @media (min-width: 640px) {
-  .fbk-tear-strip { height: 3.5rem; margin: -1.3rem 0; }
+  .fbk-tear-strip { height: 6rem; margin: -2.1rem 0; }
 }
+
+/* The hero's ORDER NOW, per the comp: a scrap of the bone stock lying
+   on the photograph — but a real link. Small enough that a cut edge
+   reads as torn without needing the photographed treatment. */
+.fbk-scrap {
+  display: inline-block;
+  padding: 0.8rem 1.9rem 0.9rem;
+  background-color: #e8e1d3;
+  background-image: url("/images/feedback/texture-bone-paper.jpg");
+  background-size: cover;
+  background-blend-mode: multiply;
+  color: var(--fb-ink);
+  transform: rotate(-1.2deg);
+  clip-path: polygon(
+    1% 8%, 9% 2%, 22% 6%, 34% 0%, 47% 5%, 60% 1%, 72% 6%, 85% 2%, 97% 7%,
+    100% 34%, 98% 62%, 100% 90%, 89% 96%, 76% 92%, 63% 99%, 49% 94%,
+    35% 100%, 21% 95%, 9% 99%, 0% 91%, 2% 60%, 0% 32%
+  );
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.6));
+  transition: transform 150ms ease;
+}
+.fbk-scrap:hover { transform: rotate(-1.2deg) scale(1.04); }
 
 /* The patch cable draws itself in when a pedal is engaged. */
 @keyframes fbk-patch { to { stroke-dashoffset: 0; } }

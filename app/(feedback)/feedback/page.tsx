@@ -50,12 +50,14 @@ function PhotoTear() {
 function Tear({ tilt }: { tilt: number }) {
   return (
     <div aria-hidden className="fbk-tear-strip" style={{ transform: `rotate(${tilt}deg)` }}>
-      {/* The fiber inside the sheet shows along both ripped edges. */}
-      <div
-        className="fbk-torn-tb fbk-tear-fiber absolute inset-0"
-        style={{ transform: "scaleY(1.16)" }}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/feedback/tear-strip-bone.png"
+        alt=""
+        className="h-full w-full select-none object-fill"
+        loading="lazy"
+        decoding="async"
       />
-      <div className="fbk-torn-tb fbk-stock absolute inset-0" />
     </div>
   );
 }

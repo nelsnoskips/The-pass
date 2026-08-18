@@ -59,6 +59,13 @@ reference so the grade, the light and the counter all match.
   (2 variants, best kept) and keyed by flood fill so the fiber survived.
   Laid over the hero → section 02 boundary.
 
+### The torn paper, photographed
+Shot on chroma green and keyed locally. Every tear on the page is one of
+these — no drawn tears remain.
+- `paper-sheet-torn.png` — the section-02 sheet, diagonal rip and all.
+- `tear-strip-bone.png` — the divider strips between acts.
+- `tear-strip-oxblood.png` — COME HUNGRY's torn top edge.
+
 ### The Test Kitchen listing
 - `card.jpg` · `hero.jpg` — shot from the running page at full pressure.
   Regenerate these whenever the hero changes.

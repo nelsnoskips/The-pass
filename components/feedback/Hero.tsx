@@ -329,12 +329,12 @@ function HeroCta() {
   return (
     <div className="text-center">
       <div className="fbk-reveal" data-on={on}>
-        <a href="/feedback/order" className="fbk-btn text-[13px]">
-          Order now
+        <a href="/feedback/order" className="fbk-scrap">
+          <span className="fbk-display block text-[26px]">Order now</span>
+          <span className="fbk-mono mt-0.5 block text-[9px] uppercase tracking-[0.2em] text-[#14100e]/70">
+            Smash burgers · Fries · Shakes
+          </span>
         </a>
-        <p className="fbk-label mt-2 text-[rgba(232,225,211,0.55)]">
-          Smash burgers · Fries · Shakes
-        </p>
       </div>
       {!on && (
         <p className="fbk-label text-[rgba(232,225,211,0.45)]">

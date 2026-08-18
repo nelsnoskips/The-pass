@@ -17,15 +17,22 @@ export function FindTheNoise() {
 
   return (
     <>
-      {/* The oxblood sheet's torn top edge, with the paper fiber lit
-          along the rip. Separate from the section so the fiber can peek
-          past the tear instead of being clipped by it. */}
-      <div aria-hidden className="relative z-[5] -mb-px h-10 sm:h-14">
-        <div
-          className="fbk-torn-t absolute inset-0 bg-[#e3c9bd]"
-          style={{ transform: "translateY(-5px)" }}
+      {/* The oxblood sheet's torn top edge, photographed: the rip is the
+          image itself, and a mask dissolves the strip's body into the
+          section's own stock so the tones can never disagree. */}
+      <div aria-hidden className="relative z-[5] -mb-14 h-24 sm:-mb-16 sm:h-28">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/feedback/tear-strip-oxblood.png"
+          alt=""
+          className="h-full w-full select-none object-cover object-top"
+          style={{
+            maskImage: "linear-gradient(180deg, #000 55%, transparent 96%)",
+            WebkitMaskImage: "linear-gradient(180deg, #000 55%, transparent 96%)",
+          }}
+          loading="lazy"
+          decoding="async"
         />
-        <div className="fbk-torn-t fbk-oxblood absolute inset-0" />
       </div>
       <section
         ref={ref}

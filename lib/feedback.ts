@@ -390,8 +390,10 @@ export const SURFACE = {
   griddle: "/images/feedback/hero-griddle-background.jpg",
   /** The finished burger, isolated — the hero's resting state. */
   hero: "/images/feedback/hero-burger-cutout.png",
-  /** The macro cross-section behind the torn sheet. */
-  anatomy: "/images/feedback/signal-burger-closeup.jpg",
+  /** Behind the torn sheet: the whole burger at reading distance, so
+      the callouts have real layers to point at. The extreme macro
+      (signal-burger-closeup.jpg) crowded the frame. */
+  anatomy: "/images/feedback/process-05-finished-burger.jpg",
   bonePaper: "/images/feedback/texture-bone-paper.jpg",
   oxbloodPaper: "/images/feedback/texture-oxblood-paper.jpg",
   oxbloodPanel: "/images/feedback/paper-oxblood-panel.jpg",

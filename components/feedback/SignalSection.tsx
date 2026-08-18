@@ -23,8 +23,7 @@ import { useScrollProgress } from "./useScrollProgress";
  */
 
 export function SignalSection() {
-  const sheet = useRef<HTMLDivElement>(null);
-  const fiber = useRef<HTMLDivElement>(null);
+  const sheet = useRef<HTMLImageElement>(null);
   const photo = useRef<HTMLDivElement>(null);
   const lines = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -33,14 +32,10 @@ export function SignalSection() {
       const t = Math.min(1, Math.max(0, (p - 0.22) / 0.5));
 
       // The sheet slides a few percent so the rip moves over the
-      // burger; the fiber layer rides with it, offset, so the torn
-      // edge stays lit the whole way.
+      // burger. The tear, its fiber and its shadow are all in the
+      // photograph, so one layer carries the whole device.
       const drift = (-3.2 + t * 3.2).toFixed(2);
       sheet.current?.style.setProperty("transform", `translate3d(${drift}%, 0, 0)`);
-      fiber.current?.style.setProperty(
-        "transform",
-        `translate3d(calc(${drift}% + 7px), -5px, 0)`,
-      );
 
       // The burger pushes the other way, underneath.
       photo.current?.style.setProperty(
@@ -72,7 +67,7 @@ export function SignalSection() {
             src={SURFACE.anatomy}
             alt="Cross-section of the double smash: crust, cheese and onion"
             className="h-full w-full"
-            imgClassName="h-full w-full object-cover"
+            imgClassName="h-full w-full object-cover object-[72%_center]"
             fallback={<div className="fbk-griddle h-full w-full" />}
           />
           {/* A breath of shade in the rip's corner so the callout type
@@ -80,20 +75,21 @@ export function SignalSection() {
           <div className="absolute inset-0 bg-gradient-to-l from-[#0b0908]/55 via-transparent to-transparent" />
         </div>
 
-        {/* The fiber inside the sheet, peeking past the torn edge. */}
-        <div
-          ref={fiber}
-          className="fbk-torn-sheet fbk-tear-fiber absolute inset-0 will-change-transform"
-          style={{ transform: "translate3d(calc(-3.2% + 7px), -5px, 0)" }}
-          aria-hidden
-        />
-
-        {/* The sheet itself, with the diagonal rip cut out of it. */}
-        <div
+        {/* The sheet itself: a photographed piece of the bone stock with
+            the diagonal rip actually torn out of it — fiber, curl and
+            edge shadow all real. Stretched a little past the left edge
+            so the drift never exposes a seam. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           ref={sheet}
-          className="fbk-torn-sheet fbk-stock absolute inset-0 will-change-transform"
-          style={{ transform: "translate3d(-3.2%, 0, 0)" }}
+          src="/images/feedback/paper-sheet-torn.png"
+          alt=""
           aria-hidden
+          className="absolute inset-y-0 -left-[17%] h-full w-[117%] max-w-none select-none object-fill will-change-transform"
+          style={{
+            transform: "translate3d(-3.2%, 0, 0)",
+            filter: "drop-shadow(10px 0 18px rgba(0,0,0,0.45))",
+          }}
         />
 
         {/* The printed side of the sheet. */}

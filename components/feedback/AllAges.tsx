@@ -79,77 +79,20 @@ export function AllAges() {
           <span className="fbk-chip">06</span> All ages
         </p>
 
-        {/* Stacked: the section shares a row with Now Playing. */}
-        <div className="mt-8 grid gap-10">
-          <div>
-            <h2
-              id="allages-heading"
-              className="fbk-display text-[clamp(34px,3.8vw,56px)]"
-            >
-              All ages.
-              <br />
-              All volume.
-            </h2>
-
-            <div className="mt-10 grid gap-8 sm:grid-cols-2">
-              <div>
-                <p className="fbk-label text-[rgba(232,225,211,0.5)]">
-                  Upcoming show
-                </p>
-                <p className="fbk-display mt-2 text-[28px]">{EVENT.date}</p>
-                <p className="fbk-mono mt-1 text-[13px] text-[rgba(232,225,211,0.75)]">
-                  {EVENT.time}
-                </p>
-                <p className="fbk-mono mt-2 text-[12px] leading-relaxed text-[rgba(232,225,211,0.6)]">
-                  {EVENT.detail}
-                </p>
-                <Link
-                  href="/feedback/menu#shows"
-                  className="fbk-label mt-4 inline-block text-[var(--fb-red)] underline underline-offset-4"
-                >
-                  View events →
-                </Link>
-              </div>
-
-              <div>
-                <p className="fbk-label text-[rgba(232,225,211,0.5)]">
-                  Merch preview
-                </p>
-                <div className="mt-3 flex gap-4">
-                  {MERCH.map((item, i) => (
-                    <div
-                      key={item.name}
-                      className="flex-1"
-                      style={{
-                        opacity: entered ? 1 : 0,
-                        transform: entered ? "none" : "translateX(28px)",
-                        transition: `opacity 420ms ease ${i * 140}ms, transform 420ms cubic-bezier(0.2,0.8,0.3,1) ${i * 140}ms`,
-                      }}
-                    >
-                      <Plate
-                        src={item.image}
-                        alt={item.name}
-                        className="h-24 w-full"
-                        imgClassName="h-full w-full object-contain"
-                      />
-                      <p className="fbk-mono mt-2 text-[11px] text-[rgba(232,225,211,0.7)]">
-                        {item.name} · {money(item.price)}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-                <Link
-                  href="/feedback/merch"
-                  className="fbk-label mt-4 inline-block text-[var(--fb-red)] underline underline-offset-4"
-                >
-                  Shop merch →
-                </Link>
-              </div>
-            </div>
-          </div>
+        {/* The comp's order: the headline with the pass card hung
+            beside it, then the show and the merch table underneath. */}
+        <div className="mt-8 grid gap-8 xl:grid-cols-[1fr_auto] xl:items-start">
+          <h2
+            id="allages-heading"
+            className="fbk-display text-[clamp(34px,3.8vw,56px)]"
+          >
+            All ages.
+            <br />
+            All volume.
+          </h2>
 
           {/* The pass. Ten stamps, and the card knows where it is. */}
-          <div className="fbk-stock relative max-w-[380px] rotate-[1deg] border-2 border-[#7E1416] p-5">
+          <div className="fbk-stock relative w-full max-w-[360px] rotate-[1deg] border-2 border-[#7E1416] p-5">
             <p className="fbk-display text-center text-[24px] text-[#14100e]">
               {LOYALTY.name}
             </p>
@@ -177,6 +120,64 @@ export function AllAges() {
             <p className="fbk-mono mt-4 text-center text-[10px] text-[#14100e]/55">
               {punched} of {LOYALTY.stamps} · {LOYALTY.stamps - punched} to go
             </p>
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-6 sm:grid-cols-2">
+          {/* The show, on its own board. */}
+          <div className="border border-[rgba(232,225,211,0.2)] bg-[rgba(11,9,8,0.55)] p-5">
+            <p className="fbk-label text-[rgba(232,225,211,0.5)]">
+              Upcoming show
+            </p>
+            <p className="fbk-display mt-2 text-[30px]">{EVENT.date}</p>
+            <p className="fbk-mono mt-1 text-[12px] uppercase tracking-widest text-[rgba(232,225,211,0.75)]">
+              All ages · {EVENT.time}
+            </p>
+            <p className="fbk-mono mt-1 text-[12px] uppercase tracking-widest text-[rgba(232,225,211,0.6)]">
+              Local bands · Loud food
+            </p>
+            <Link
+              href="/feedback/menu#shows"
+              className="fbk-label mt-4 inline-block text-[var(--fb-red)] underline underline-offset-4"
+            >
+              View events →
+            </Link>
+          </div>
+
+          {/* The merch, laid out like stock on a venue table. */}
+          <div className="p-5 sm:pl-0">
+            <p className="fbk-label text-[rgba(232,225,211,0.5)]">
+              Merch preview
+            </p>
+            <div className="mt-3 flex gap-4">
+              {MERCH.map((item, i) => (
+                <div
+                  key={item.name}
+                  className="flex-1"
+                  style={{
+                    opacity: entered ? 1 : 0,
+                    transform: entered ? "none" : "translateX(28px)",
+                    transition: `opacity 420ms ease ${i * 140}ms, transform 420ms cubic-bezier(0.2,0.8,0.3,1) ${i * 140}ms`,
+                  }}
+                >
+                  <Plate
+                    src={item.image}
+                    alt={item.name}
+                    className="h-24 w-full"
+                    imgClassName="h-full w-full object-contain"
+                  />
+                  <p className="fbk-mono mt-2 text-[11px] text-[rgba(232,225,211,0.7)]">
+                    {item.name} · {money(item.price)}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <Link
+              href="/feedback/merch"
+              className="fbk-label mt-4 inline-block text-[var(--fb-red)] underline underline-offset-4"
+            >
+              Shop merch →
+            </Link>
           </div>
         </div>
       </div>
