@@ -53,6 +53,12 @@ reference so the grade, the light and the counter all match.
 - `texture-oxblood-paper.jpg` — stock for the last panel.
 - `paper-receipt-blank.png` — thermal roll for the footer ticket.
 
+### The hero's ripped bottom edge
+- `tear-edge.png` — a photographed tear: charcoal stock torn across its
+  full width, fiber flaring along the rip, transparent below. Generated
+  (2 variants, best kept) and keyed by flood fill so the fiber survived.
+  Laid over the hero → section 02 boundary.
+
 ### The Test Kitchen listing
 - `card.jpg` · `hero.jpg` — shot from the running page at full pressure.
   Regenerate these whenever the hero changes.

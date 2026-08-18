@@ -16,6 +16,33 @@ import { SignalSection } from "@/components/feedback/SignalSection";
  * changing the room's signal — actually land.
  */
 /**
+ * The hero's bottom edge, ripped.
+ *
+ * A photographed tear — charcoal stock torn across its full width, the
+ * fiber flaring along the rip — laid over the boundary so the hero
+ * reads as a poster torn off the page, with section 02's paper showing
+ * beneath. The gradient melts the strip's body into the hero's black,
+ * so only the tear itself reads as new information.
+ */
+function PhotoTear() {
+  return (
+    <div aria-hidden className="pointer-events-none relative z-[6] -mb-6 -mt-14 h-24 sm:-mb-8 sm:-mt-20 sm:h-32 lg:h-36">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/feedback/tear-edge.png"
+        alt=""
+        className="h-full w-full select-none object-fill"
+        loading="lazy"
+        decoding="async"
+      />
+      <div
+        className="absolute inset-x-0 top-0 h-[55%] bg-gradient-to-b from-[#0b0908] via-[#0b0908]/85 to-transparent"
+      />
+    </div>
+  );
+}
+
+/**
  * A strip ripped out of the page between two dark acts. The stock is the
  * photographed bone paper, so the tear reads as the same sheet the menu
  * card and the loyalty pass are printed on.
@@ -37,6 +64,7 @@ export default function FeedbackPage() {
   return (
     <>
       <Hero />
+      <PhotoTear />
       <SignalSection />
       <Tear tilt={-0.4} />
       <div className="grid lg:grid-cols-2">

@@ -15,6 +15,13 @@ hot light source, bone paper, deep red and signal red
 > text-only at the same model and resolution.
 >
 > Balance 1,187.6 → **1,175.7**.
+>
+> **2026-08-18, second run:** the hero's ripped bottom edge
+> (`tear-edge.png`) — two 21:9 2k variants plus one `remove_background`
+> pass, **5.0 credits**. The remover left white debris under the fiber,
+> so the shipped alpha was cut locally by flood-filling the contiguous
+> white background from the frame edge, which preserves the fiber the
+> matting model ate. Balance → **1,170.7**.
 
 ## The hero concept — "the guest cooks it"
 
