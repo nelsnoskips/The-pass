@@ -67,7 +67,7 @@ export function SignalSection() {
             src={SURFACE.anatomy}
             alt="Cross-section of the double smash: crust, cheese and onion"
             className="h-full w-full"
-            imgClassName="h-full w-full object-cover object-[72%_center]"
+            imgClassName="h-full w-full object-cover object-[62%_center]"
             fallback={<div className="fbk-griddle h-full w-full" />}
           />
           {/* A breath of shade in the rip's corner so the callout type
@@ -85,7 +85,7 @@ export function SignalSection() {
           src="/images/feedback/paper-sheet-torn.png"
           alt=""
           aria-hidden
-          className="absolute inset-y-0 -left-[17%] h-full w-[117%] max-w-none select-none object-fill will-change-transform"
+          className="absolute inset-y-0 -left-[67%] h-full w-[155%] max-w-none select-none object-fill will-change-transform"
           style={{
             transform: "translate3d(-3.2%, 0, 0)",
             filter: "drop-shadow(10px 0 18px rgba(0,0,0,0.45))",
@@ -135,7 +135,7 @@ export function SignalSection() {
                 lines.current[i] = node;
               }}
               className="fbk-cal right-8"
-              style={{ top: `${9 + i * 16}%`, ["--fbk-draw" as string]: "0" }}
+              style={{ top: `${7 + i * 17}%`, ["--fbk-draw" as string]: "0" }}
             >
               <span
                 className="fbk-cal-dot"
