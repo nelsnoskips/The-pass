@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { ANATOMY } from "@/lib/feedback";
+import { ANATOMY, SURFACE } from "@/lib/feedback";
 import { Plate } from "./Plate";
 import { Waveform } from "./Waveform";
 import { useScrollProgress } from "./useScrollProgress";
@@ -67,7 +67,7 @@ export function SignalSection() {
         {/* The photograph, pinned. */}
         <div ref={photo} className="absolute inset-0 will-change-transform">
           <Plate
-            src="/images/feedback/anatomy-cross-section.jpg"
+            src={SURFACE.anatomy}
             alt="Cross-section of the double smash: crust, cheese and onion"
             className="h-full w-full"
             imgClassName="h-full w-full object-cover"
@@ -116,7 +116,7 @@ export function SignalSection() {
         {/* The torn sheet, sliding across. */}
         <div
           ref={sheet}
-          className="fbk-torn-b fbk-paper relative z-10 h-full w-[86%] max-w-[760px] will-change-transform"
+          className="fbk-torn-b fbk-stock relative z-10 h-full w-[86%] max-w-[760px] will-change-transform"
           style={{ transform: "translate3d(-5%, 0, 0)" }}
         >
           <div className="flex h-full flex-col justify-center px-6 sm:px-12 lg:px-16">

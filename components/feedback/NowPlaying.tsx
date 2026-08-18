@@ -138,17 +138,13 @@ export function NowPlaying() {
               imgClassName="h-full w-full object-cover"
             />
             <div className="mt-4">
-              <Cassette spinning={entered && !pressure.reduced} />
+              <Transport spinning={entered && !pressure.reduced} />
             </div>
-            <p className="fbk-mono mt-3 flex justify-between text-[10px] text-[rgba(232,225,211,0.5)]">
-              <span>{RELEASE.format}</span>
-              <span>SIDE A</span>
-            </p>
           </div>
 
           {entered && (
             <span
-              className={`fbk-label absolute -bottom-5 right-4 z-10 border-2 border-[var(--fb-red)] px-3 py-1.5 text-[var(--fb-red)] ${
+              className={`fbk-label absolute -bottom-5 left-4 z-10 border-2 border-[var(--fb-red)] px-3 py-1.5 text-[var(--fb-red)] ${
                 pressure.reduced ? "" : "fbk-stamped"
               }`}
               style={{ transform: "rotate(-9deg)" }}
@@ -162,41 +158,69 @@ export function NowPlaying() {
   );
 }
 
-/** A tape deck, drawn: two reels, one full, one filling. */
-function Cassette({ spinning }: { spinning: boolean }) {
+/**
+ * The transport, not the tape.
+ *
+ * The photograph above is already a cassette, so drawing a second one
+ * underneath it only competes. What is missing from a still is that the
+ * thing is *running* — so this is the deck: two spools turning and a
+ * position line creeping across, which is the one piece of information
+ * a photograph cannot carry.
+ */
+function Transport({ spinning }: { spinning: boolean }) {
   return (
-    <svg viewBox="0 0 320 120" className="w-full" aria-hidden>
-      <rect x="2" y="2" width="316" height="116" fill="#15100e" stroke="rgba(232,225,211,0.22)" />
-      <rect x="26" y="18" width="268" height="52" fill="#0b0908" stroke="rgba(232,225,211,0.14)" />
-      {[
-        { cx: 96, r: 26, slow: false },
-        { cx: 224, r: 26, slow: true },
-      ].map((reel) => (
-        <g key={reel.cx}>
-          <circle cx={reel.cx} cy="44" r={reel.r} fill="#2a2320" />
-          <circle cx={reel.cx} cy="44" r={reel.r - 8} fill="#0b0908" />
-          <g
-            className={spinning ? `fbk-spool${reel.slow ? " fbk-spool-slow" : ""}` : undefined}
-            style={{ transformOrigin: `${reel.cx}px 44px` }}
-          >
-            {Array.from({ length: 6 }, (_, i) => {
-              const angle = (i / 6) * Math.PI * 2;
-              return (
-                <line
-                  key={i}
-                  x1={reel.cx + Math.cos(angle) * 6}
-                  y1={44 + Math.sin(angle) * 6}
-                  x2={reel.cx + Math.cos(angle) * 16}
-                  y2={44 + Math.sin(angle) * 16}
-                  stroke="rgba(232,225,211,0.55)"
-                  strokeWidth="2.5"
-                />
-              );
-            })}
-          </g>
+    <div className="flex items-center gap-3 border-t border-[rgba(232,225,211,0.14)] pt-3">
+      <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0" aria-hidden>
+        <circle cx="10" cy="10" r="9" fill="none" stroke="rgba(232,225,211,0.3)" />
+        <g className={spinning ? "fbk-spool" : undefined} style={{ transformOrigin: "10px 10px" }}>
+          {[0, 1, 2].map((i) => (
+            <line
+              key={i}
+              x1="10"
+              y1="10"
+              x2={10 + Math.cos((i / 3) * Math.PI * 2) * 7}
+              y2={10 + Math.sin((i / 3) * Math.PI * 2) * 7}
+              stroke="rgba(232,225,211,0.65)"
+              strokeWidth="1.6"
+            />
+          ))}
         </g>
-      ))}
-      <rect x="26" y="84" width="268" height="20" fill="#0b0908" stroke="rgba(232,225,211,0.12)" />
-    </svg>
+      </svg>
+
+      <span className="fbk-mono text-[10px] tracking-widest text-[rgba(232,225,211,0.55)]">
+        {RELEASE.format}
+      </span>
+
+      <span className="relative h-px flex-1 bg-[rgba(232,225,211,0.18)]">
+        <span
+          className={`absolute inset-y-0 left-0 bg-[var(--fb-red)] ${spinning ? "fbk-creep" : ""}`}
+          style={{ width: spinning ? undefined : "38%" }}
+        />
+      </span>
+
+      <span className="fbk-mono text-[10px] tracking-widest text-[rgba(232,225,211,0.55)]">
+        SIDE A
+      </span>
+
+      <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0" aria-hidden>
+        <circle cx="10" cy="10" r="9" fill="none" stroke="rgba(232,225,211,0.3)" />
+        <g
+          className={spinning ? "fbk-spool fbk-spool-slow" : undefined}
+          style={{ transformOrigin: "10px 10px" }}
+        >
+          {[0, 1, 2].map((i) => (
+            <line
+              key={i}
+              x1="10"
+              y1="10"
+              x2={10 + Math.cos((i / 3) * Math.PI * 2 + 0.6) * 7}
+              y2={10 + Math.sin((i / 3) * Math.PI * 2 + 0.6) * 7}
+              stroke="rgba(232,225,211,0.65)"
+              strokeWidth="1.6"
+            />
+          ))}
+        </g>
+      </svg>
+    </div>
   );
 }

@@ -548,3 +548,60 @@
   background: var(--fb-amber);
   box-shadow: 0 0 6px 1px rgba(232, 163, 61, 0.75), 0 0 16px 3px rgba(232, 163, 61, 0.3);
 }
+
+/* --------------------------------------------- photographed stock --- */
+
+/* Real paper, photographed, under the printed dot screen. The sheet
+   carries its own fibre and its own unevenness; the screen on top is
+   what makes it read as printed rather than as a scan of blank stock.
+   Multiply, so the type sits *in* the paper rather than on it. */
+.fbk-stock {
+  background-color: #e8e1d3;
+  background-image: radial-gradient(rgba(20, 16, 14, 0.05) 1px, transparent 1px),
+    url("/images/feedback/texture-bone-paper.jpg");
+  background-size: 3px 3px, cover;
+  background-repeat: repeat, no-repeat;
+  background-position: 0 0, center;
+  background-blend-mode: normal, multiply;
+  color: var(--fb-ink);
+}
+
+/* The amplifier's grille cloth, behind the pedal board. Held well back:
+   it is a ground for three bottles and a waveform, not a subject. */
+.fbk-grille {
+  background-image: linear-gradient(
+      145deg,
+      rgba(74, 66, 60, 0.86) 0%,
+      rgba(43, 37, 33, 0.92) 38%,
+      rgba(29, 24, 21, 0.96) 100%
+    ),
+    url("/images/feedback/texture-amp-grille.jpg");
+  background-size: cover, cover;
+  background-position: center, center;
+}
+
+/* Oxblood stock for the last panel, printed rather than filled: the
+   colour is in the paper, so the huge type picks up its grain. */
+.fbk-oxblood {
+  background-color: #7e1416;
+  background-image: url("/images/feedback/texture-oxblood-paper.jpg");
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: multiply;
+}
+
+/* Thermal stock for the receipt: the real roll, with the tear kept as a
+   clip path so it stays crisp at any width. */
+.fbk-receipt-stock {
+  background-color: #ece7db;
+  background-image: url("/images/feedback/paper-receipt-blank.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+/* The tape running: a position line creeping across the transport. */
+@keyframes fbk-creep {
+  from { width: 4%; }
+  to { width: 96%; }
+}
+.fbk-creep { animation: fbk-creep 40s linear infinite; }

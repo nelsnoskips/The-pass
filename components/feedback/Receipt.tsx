@@ -72,7 +72,7 @@ export function Receipt() {
       <div
         // Re-keyed on the ticket so every change re-feeds the paper.
         key={live ? JSON.stringify(order.lines) : "demo"}
-        className={`fbk-receipt w-[300px] px-6 py-7 ${
+        className={`fbk-receipt fbk-receipt-stock w-[300px] px-6 py-7 ${
           entered && !pressure.reduced ? "fbk-feed" : ""
         }`}
       >

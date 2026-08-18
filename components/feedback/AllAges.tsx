@@ -148,7 +148,7 @@ export function AllAges() {
           </div>
 
           {/* The pass. Ten stamps, and the card knows where it is. */}
-          <div className="fbk-paper relative max-w-[380px] rotate-[1deg] border-2 border-[#7E1416] p-5">
+          <div className="fbk-stock relative max-w-[380px] rotate-[1deg] border-2 border-[#7E1416] p-5">
             <p className="fbk-display text-center text-[24px] text-[#14100e]">
               {LOYALTY.name}
             </p>

@@ -34,7 +34,7 @@ export default function MenuPage() {
                 <p className="fbk-label text-[rgba(232,225,211,0.45)]">{set.note}</p>
               )}
             </div>
-            <div className="fbk-paper mt-5">
+            <div className="fbk-stock mt-5">
               <ul className="divide-y divide-[rgba(20,16,14,0.15)]">
                 {set.items.map((item) => (
                   <li key={item.code}>

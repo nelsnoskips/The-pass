@@ -19,7 +19,7 @@ export function FindTheNoise() {
     <section
       ref={ref}
       id="locations"
-      className="fbk-torn-t relative bg-[#7E1416] px-5 py-16 sm:px-8"
+      className="fbk-torn-t fbk-oxblood relative px-5 py-16 sm:px-8"
       aria-labelledby="find-heading"
     >
       <p className="fbk-label flex items-center gap-3 text-[rgba(232,225,211,0.8)]">

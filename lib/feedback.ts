@@ -53,8 +53,14 @@ export type BuildStage = {
   caption: string;
   /** Pressure at which this stage takes over. */
   at: number;
-  /** Transparent still, once photographed. Falls back to the drawn stage. */
+  /** The full-bleed still for this frame. Falls back to the drawn stage. */
   image: string;
+  /**
+   * Set on the frame that resolves: instead of another full-bleed still,
+   * the stage cuts to the griddle and presents the burger isolated. It
+   * is the moment the cook stops and the product is handed over.
+   */
+  resolves?: boolean;
 };
 
 /**
@@ -69,35 +75,36 @@ export const STAGES: BuildStage[] = [
     name: "Raw patty",
     caption: "Ball of chuck, waiting over the heat",
     at: 0,
-    image: "/images/feedback/stage-1-raw.png",
+    image: "/images/feedback/process-01-raw-patty.jpg",
   },
   {
     n: 2,
     name: "First smash",
     caption: "Pressed thin — the edges start to catch",
     at: 2,
-    image: "/images/feedback/stage-2-smash.png",
+    image: "/images/feedback/process-02-first-smash.jpg",
   },
   {
     n: 3,
     name: "Onions",
     caption: "Griddled onion pressed into the crust",
     at: 4,
-    image: "/images/feedback/stage-3-onions.png",
+    image: "/images/feedback/process-03-griddled-onions.jpg",
   },
   {
     n: 4,
     name: "Cheese melt",
     caption: "Double American, over the edge",
     at: 6,
-    image: "/images/feedback/stage-4-cheese.png",
+    image: "/images/feedback/process-04-cheese-melt.jpg",
   },
   {
     n: 5,
     name: "The Feedback",
     caption: "Bun on. Pickles in. Signal live.",
     at: 8,
-    image: "/images/feedback/stage-5-finished.png",
+    image: "/images/feedback/process-05-finished-burger.jpg",
+    resolves: true,
   },
 ];
 
@@ -171,7 +178,7 @@ export const SET_LIST: { title: string; note?: string; items: MenuItem[] }[] = [
         name: "The Feedback",
         detail: "Double smash, American, onions, pickles, house sauce.",
         price: 9,
-        image: "/images/feedback/menu-the-feedback.jpg",
+        image: "/images/feedback/menu-feedback-burger.jpg",
         availability: 86,
         kind: "burger",
       },
@@ -321,7 +328,7 @@ export const RELEASE = {
   through: "Available through Oct 31",
   price: 12,
   code: "BN",
-  cover: "/images/feedback/release-cover.png",
+  cover: "/images/feedback/now-playing-cassette-burger.jpg",
   /** Track listing, which is to say ingredients. */
   tracks: [
     "Double smash patty",
@@ -341,7 +348,7 @@ export const EVENT = {
   date: "Fri. Oct 31",
   time: "8pm",
   detail: "All ages · Local bands · Loud food",
-  image: "/images/feedback/crowd.jpg",
+  image: "/images/feedback/all-ages-crowd.jpg",
 } as const;
 
 export const LOYALTY = {
@@ -371,6 +378,44 @@ export const MERCH: MerchItem[] = [
     image: "/images/feedback/merch-cap.png",
   },
 ];
+
+/* -------------------------------------------------- the surfaces --- */
+
+/**
+ * Photographed stock and panels. These are grounds rather than content:
+ * the sections read them through CSS backgrounds, so a section is never
+ * waiting on an image to be laid out.
+ */
+export const SURFACE = {
+  griddle: "/images/feedback/hero-griddle-background.jpg",
+  /** The finished burger, isolated — the hero's resting state. */
+  hero: "/images/feedback/hero-burger-cutout.png",
+  /** The macro cross-section behind the torn sheet. */
+  anatomy: "/images/feedback/signal-burger-closeup.jpg",
+  bonePaper: "/images/feedback/texture-bone-paper.jpg",
+  oxbloodPaper: "/images/feedback/texture-oxblood-paper.jpg",
+  oxbloodPanel: "/images/feedback/paper-oxblood-panel.jpg",
+  ampGrille: "/images/feedback/texture-amp-grille.jpg",
+  receipt: "/images/feedback/paper-receipt-blank.png",
+} as const;
+
+/**
+ * The wordmark in its three states — clean, signal, overload.
+ *
+ * NOT WIRED YET, deliberately: the supplied artwork is set flush to its
+ * canvas on both sides, so the F loses its stem and the K its right leg
+ * at any size. The hero draws the mark as SVG instead, which renders the
+ * whole word, stays crisp at any width, responds to *any* pressure value
+ * rather than three of them, and is real text to a screen reader.
+ *
+ * Re-export these with side bearing — even 4% of the canvas each side —
+ * and swapping them in is a one-line change in the hero.
+ */
+export const MARK = {
+  clean: "/images/feedback/logo-feedback-01-clean.png",
+  signal: "/images/feedback/logo-feedback-02-signal.png",
+  overload: "/images/feedback/logo-feedback-03-overload.png",
+} as const;
 
 /* ---------------------------------------------- signal, annotated --- */
 

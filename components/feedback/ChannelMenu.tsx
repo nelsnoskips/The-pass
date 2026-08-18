@@ -29,7 +29,7 @@ export function ChannelMenu() {
         <span className="fbk-chip">03</span> Set list / Menu
       </p>
 
-      <div className="fbk-paper relative mt-6 rotate-[-0.4deg] p-5 sm:p-8">
+      <div className="fbk-stock relative mt-6 rotate-[-0.4deg] p-5 sm:p-8">
         {/* Tape, off-square, holding the card to the panel. */}
         <span
           aria-hidden

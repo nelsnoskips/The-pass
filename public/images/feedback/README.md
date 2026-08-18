@@ -1,75 +1,79 @@
 # FEEDBACK — image slots
 
-Upload here with these **exact filenames**. Every slot has a drawn
-fallback, so the page is complete and presentable with this folder
-empty — each file you drop in simply replaces its placeholder. Nothing
-in the code needs to change.
+Wired and live. The filenames below are what the code reads; replacing a
+file replaces what the page shows, with no code change. Any slot whose
+file is missing renders a composed stand-in instead, so the page is never
+broken while a shot is outstanding.
 
-## Hero (layered — these stack, so the cut-outs must be transparent)
-- `griddle.jpg` — a dark, hot flat-top seen close: carbon, grease sheen,
-  one hard specular highlight. Almost black at the edges, warm in the
-  centre. Landscape 16:9. This is plane 1, and it is mostly out of focus.
-- `steam.webp` — an animated, seamlessly looping steam/heat wisp on a
-  **transparent** background, white to nothing. 3—5s, subtle. Plane 2.
-  (An `.mp4`/`.webm` with alpha works too — rename to `steam.webm`.)
+## In use
 
-## The five cook frames (transparent PNG, locked-off camera)
-The knob scrubs between these, so shoot them as one setup: same angle,
-same distance, same light. Only the burger changes.
-- `stage-1-raw.png`      — a ball of chuck sitting on the flat top, untouched.
-- `stage-2-smash.png`    — pressed thin, edges beginning to catch and crisp.
-- `stage-3-onions.png`   — griddled onion pressed down into the crust.
-- `stage-4-cheese.png`   — double American over the edge, mid-melt.
-- `stage-5-finished.png` — the finished burger, bun on, pickles showing.
-  This one doubles as the hero product shot, so give it the most care.
+### Hero
+- `hero-griddle-background.jpg` — the bare flat top. Also the ground the
+  hero cuts back to when the cook resolves.
+- `hero-burger-cutout.png` — the finished burger, isolated. This is the
+  resolve, and the thing that becomes the order button.
 
-## Section 02 — Crisp Edges. Heavy Feedback.
-- `anatomy-cross-section.jpg` — extreme close cross-section of the double
-  smash: craggy crust, cheese running, onion. Fills the frame, macro,
-  landscape 3:2. This is the loudest photograph on the site.
-- `paper-tear.png` — a torn sheet of off-white stock, ragged on one long
-  edge, **transparent** elsewhere. Scanned or photographed flat.
+### The five cook frames
+Full-bleed stills of the same flat top. The knob scrubs between them and
+each carries its own griddle, light and smoke, so the cook *is* the
+stage rather than a cut-out floating over one.
+- `process-01-raw-patty.jpg`
+- `process-02-first-smash.jpg`
+- `process-03-griddled-onions.jpg`
+- `process-04-cheese-melt.jpg`
+- `process-05-finished-burger.jpg`
 
-## Section 03 — the set list (square, dark ground, hard side light)
-- `menu-the-feedback.jpg`
+### Section 02 — Crisp Edges. Heavy Feedback.
+- `signal-burger-closeup.jpg` — the macro cross-section, pinned behind
+  the torn sheet.
+
+### Section 03 — the set list
+- `menu-feedback-burger.jpg`
 - `menu-clean-channel.jpg`
 - `menu-distortion-fries.jpg`
-- `menu-overdrive.jpg`
-- `menu-soundcheck.jpg`
-- `menu-loaded.jpg`
-- `menu-vanilla-hum.jpg`
-- `menu-black-noise.jpg`
 
-## Section 04 — the pedal board (transparent PNG, shot straight on)
-Squeeze bottles, front-on, same height and lens so they line up like
-pedals in a row.
-- `sauce-house.png`  — deep red label.
-- `sauce-spicy.png`  — deep red label, hotter.
-- `sauce-garlic.png` — bone/cream label.
-- `amp-panel.jpg`    — optional: a scuffed amplifier chassis / tolex
-  texture used as the board's ground. Landscape, tiles or covers.
+### Section 04 — the pedal board
+- `sauce-house.png` · `sauce-spicy.png` · `sauce-garlic.png`
+- `texture-amp-grille.jpg` — the board's ground.
 
-## Section 05 — Now Playing
-- `release-cover.png` — the monthly burger shot as a cassette J-card
-  cover: burger centred, sleeve type around it. Transparent or square.
+### Sections 05—07
+- `now-playing-cassette-burger.jpg` — the release.
+- `all-ages-crowd.jpg` — the room.
+- `merch-tee.png` · `merch-cap.png`
+- `texture-bone-paper.jpg` — stock for the menu card, the torn sheet and
+  the loyalty pass.
+- `texture-oxblood-paper.jpg` — stock for the last panel.
+- `paper-receipt-blank.png` — thermal roll for the footer ticket.
 
-## Section 06 — All Ages
-- `crowd.jpg`      — a packed, low-light room shot on flash: young crowd,
-  tile walls, documentary. Landscape 3:2. Grain welcome.
-- `merch-tee.png`  — black tee, flat, **transparent** background.
-- `merch-cap.png`  — washed maroon cap, three-quarter, **transparent**.
+### The Test Kitchen listing
+- `card.jpg` · `hero.jpg` — shot from the running page at full pressure.
+  Regenerate these whenever the hero changes.
+
+## Still open
+
+Nothing here blocks the page — each renders its stand-in.
+
+- **Five menu stills.** `menu-overdrive.jpg`, `menu-soundcheck.jpg`,
+  `menu-loaded.jpg`, `menu-vanilla-hum.jpg`, `menu-black-noise.jpg`.
+  Square, dark ground, hard side light, to match the three that exist.
+- **`waveform-moving.webp` uploaded as 0 bytes** — the file is empty. No
+  loss: every waveform on the site is drawn as SVG, which stays sharp at
+  any width and lets the pedal board change the wave's *shape* rather
+  than swap a video. Not needed unless you want it somewhere specific.
+- **The three logo states are not wired.** `logo-feedback-01-clean.png`,
+  `-02-signal.png` and `-03-overload.png` are set flush to their canvas
+  on both sides, so the F loses its stem and the K its right leg at any
+  size. The hero draws the mark as SVG instead — whole word, crisp at any
+  width, responds to every pressure value rather than three of them, and
+  is real text to a screen reader. Re-export with even 4% side bearing
+  and swapping them in is a one-line change.
+- **`paper-oxblood-panel.jpg`** is uploaded but unused; the tiling
+  oxblood texture covers the same ground better.
+- **Steam plate.** The hero's heat haze is CSS and the cook frames carry
+  their own smoke, so this is optional. `steam.webp`, transparent, if you
+  ever want it.
 
 ## Notes
-- Dark, hot, high-contrast. This room is the opposite of HOUSE ISSUE:
-  near-black grounds, one warm light source, deep red and bone accents.
-- Palette to shoot toward: near-black `#0B0908`, char `#241A14`,
-  bone `#E8E1D3`, blood red `#7E1416`, signal red `#E23B2E`,
-  amber `#E8A33D`.
-- JPEG quality ~85, PNG for anything transparent, at least 2000px on the
-  long edge. Keep the cut-outs' shadows *in* the alpha — the page adds
-  its own drop shadow underneath.
-
-## Already in this folder
-- `card.jpg` / `hero.jpg` — the Test Kitchen listing card and the case-page
-  hero, shot from the running site so the concept is linkable today. Replace
-  them with real frames once the shoot lands; nothing else references them.
+- Dark, hot, high contrast. Near-black `#0B0908`, char `#241A14`,
+  bone `#E8E1D3`, blood `#7E1416`, signal red `#E23B2E`, amber `#E8A33D`.
+- Keep cut-out shadows *in* the alpha — the page adds its own beneath.

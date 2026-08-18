@@ -28,7 +28,7 @@ export function Pedalboard() {
   return (
     <section
       id="sauces"
-      className="fbk-steel relative overflow-hidden px-5 py-16 sm:px-8"
+      className="fbk-steel fbk-grille relative overflow-hidden px-5 py-16 sm:px-8"
       aria-labelledby="sauces-heading"
     >
       {/* The board's own signal, running behind the pedals. */}
@@ -101,13 +101,15 @@ export function Pedalboard() {
                       sauce.led === "#E8A33D" ? "fbk-led-amber" : ""
                     }`}
                   />
+                  {/* The bottle's own label already says which sauce it
+                      is, so the plate under it reports what engaging it
+                      does to the signal instead of repeating the name. */}
                   <span className="fbk-display mt-2 block text-[15px] sm:text-[19px]">
-                    {sauce.name}
+                    {sauce.personality}
                   </span>
                   <span className="fbk-mono mt-1 flex justify-between text-[9px] text-[rgba(232,225,211,0.45)]">
-                    <span>MILD</span>
+                    <span>{sauce.heat}</span>
                     <span>{on ? "ON" : "OFF"}</span>
-                    <span>LOUD</span>
                   </span>
                 </span>
               </button>
@@ -161,10 +163,10 @@ function Cable({ index }: { index: number }) {
       >
         <path
           key={index}
-          d={`M${x} 0 C ${x} 22, 50 16, 50 38`}
+          d={`M${x} 0 C ${x} 30, 50 26, 50 38`}
           fill="none"
           stroke="var(--fb-red)"
-          strokeWidth="2"
+          strokeWidth="2.5"
           vectorEffect="non-scaling-stroke"
           strokeLinecap="round"
           style={{
