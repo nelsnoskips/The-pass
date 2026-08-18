@@ -537,6 +537,27 @@
   pointer-events: auto;
 }
 
+/* A strip of stock ripped out of the page: jagged on both long edges,
+   laid between dark sections so the page reads as torn, not stacked. */
+.fbk-torn-tb {
+  clip-path: polygon(
+    0% 26%, 4% 8%, 10% 30%, 17% 10%, 24% 28%, 31% 6%, 38% 26%, 45% 10%,
+    52% 30%, 59% 8%, 66% 28%, 73% 10%, 80% 30%, 87% 8%, 94% 26%, 100% 12%,
+    100% 74%, 96% 92%, 89% 70%, 82% 94%, 75% 72%, 68% 92%, 61% 70%, 54% 94%,
+    47% 72%, 40% 92%, 33% 70%, 26% 94%, 19% 72%, 12% 92%, 5% 74%, 0% 90%
+  );
+}
+.fbk-tear-strip {
+  position: relative;
+  z-index: 5;
+  height: 3rem;
+  margin: -1.1rem 0;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.55));
+}
+@media (min-width: 640px) {
+  .fbk-tear-strip { height: 3.5rem; margin: -1.3rem 0; }
+}
+
 /* The patch cable draws itself in when a pedal is engaged. */
 @keyframes fbk-patch { to { stroke-dashoffset: 0; } }
 

@@ -15,17 +15,34 @@ import { SignalSection } from "@/components/feedback/SignalSection";
  * loud moments — maximum feedback in the hero, and the pedal board
  * changing the room's signal — actually land.
  */
+/**
+ * A strip ripped out of the page between two dark acts. The stock is the
+ * photographed bone paper, so the tear reads as the same sheet the menu
+ * card and the loyalty pass are printed on.
+ */
+function Tear({ tilt }: { tilt: number }) {
+  return (
+    <div aria-hidden className="fbk-tear-strip" style={{ transform: `rotate(${tilt}deg)` }}>
+      <div className="fbk-stock fbk-torn-tb h-full w-full" />
+    </div>
+  );
+}
+
 export default function FeedbackPage() {
   return (
     <>
       <Hero />
       <SignalSection />
+      <Tear tilt={-0.5} />
       <div className="grid lg:grid-cols-2">
         <ChannelMenu />
         <Pedalboard />
       </div>
-      <NowPlaying />
-      <AllAges />
+      <Tear tilt={0.4} />
+      <div className="grid lg:grid-cols-2">
+        <NowPlaying />
+        <AllAges />
+      </div>
       <FindTheNoise />
     </>
   );

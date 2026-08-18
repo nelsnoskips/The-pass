@@ -80,11 +80,13 @@ export function NowPlaying() {
         <span className="fbk-chip">05</span> Now playing
       </p>
 
-      <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_minmax(280px,420px)] lg:items-center">
+      {/* Stacked, not two columns: this section now shares a row with
+          All Ages, so its own width is half the page. */}
+      <div className="mt-8 grid gap-10">
         <div>
           <h2
             id="release-heading"
-            className="fbk-display text-[clamp(34px,5.5vw,64px)]"
+            className="fbk-display text-[clamp(34px,3.6vw,52px)]"
           >
             Now playing:
             <br />
@@ -129,7 +131,7 @@ export function NowPlaying() {
         </div>
 
         {/* The cassette: cover, reels, stamp. */}
-        <div ref={card} className="relative transition-transform duration-200">
+        <div ref={card} className="relative max-w-[420px] transition-transform duration-200">
           <div className="relative border border-[rgba(232,225,211,0.2)] bg-[#0b0908] p-4">
             <Plate
               src={RELEASE.cover}

@@ -79,11 +79,12 @@ export function AllAges() {
           <span className="fbk-chip">06</span> All ages
         </p>
 
-        <div className="mt-8 grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-start">
+        {/* Stacked: the section shares a row with Now Playing. */}
+        <div className="mt-8 grid gap-10">
           <div>
             <h2
               id="allages-heading"
-              className="fbk-display text-[clamp(36px,6vw,76px)]"
+              className="fbk-display text-[clamp(34px,3.8vw,56px)]"
             >
               All ages.
               <br />
