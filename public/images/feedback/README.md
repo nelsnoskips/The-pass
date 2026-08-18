@@ -28,9 +28,17 @@ stage rather than a cut-out floating over one.
   the torn sheet.
 
 ### Section 03 — the set list
+All eight tracks are shot. The first three came with the upload; the
+other five were generated against `menu-clean-channel.jpg` as the style
+reference so the grade, the light and the counter all match.
 - `menu-feedback-burger.jpg`
 - `menu-clean-channel.jpg`
 - `menu-distortion-fries.jpg`
+- `menu-overdrive.jpg`
+- `menu-soundcheck.jpg`
+- `menu-loaded.jpg`
+- `menu-vanilla-hum.jpg`
+- `menu-black-noise.jpg`
 
 ### Section 04 — the pedal board
 - `sauce-house.png` · `sauce-spicy.png` · `sauce-garlic.png`
@@ -53,9 +61,6 @@ stage rather than a cut-out floating over one.
 
 Nothing here blocks the page — each renders its stand-in.
 
-- **Five menu stills.** `menu-overdrive.jpg`, `menu-soundcheck.jpg`,
-  `menu-loaded.jpg`, `menu-vanilla-hum.jpg`, `menu-black-noise.jpg`.
-  Square, dark ground, hard side light, to match the three that exist.
 - **`waveform-moving.webp` uploaded as 0 bytes** — the file is empty. No
   loss: every waveform on the site is drawn as SVG, which stays sharp at
   any width and lets the pedal board change the wave's *shape* rather

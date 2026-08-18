@@ -4,11 +4,17 @@
 hot light source, bone paper, deep red and signal red
 **Date:** 2026-08-18 · **Higgsfield balance at planning time:** 1,187.6 credits (Plus)
 
-> **Nothing here has been generated.** The site is built, deployed and
-> presentable with `public/images/feedback/` empty — every slot draws its own
-> stand-in. This is the plan for replacing those stand-ins with photography,
-> and the credit cost of doing it. It needs an explicit go-ahead before a
-> single credit is spent.
+> **Status: the shoot landed, and one line of this plan was actually run.**
+>
+> Everything except the set list arrived as an upload. The five missing menu
+> stills were generated on 2026-08-18 against `menu-clean-channel.jpg` as the
+> style reference, and cost **11.9 credits** — not the 7.5 quoted. The quote
+> came from a preflight of `nano_banana_2` at 1k with no reference image;
+> attaching one raises the price to about 2.4 a frame. Worth knowing before
+> the next batch: reference-driven generation is roughly 60% more than
+> text-only at the same model and resolution.
+>
+> Balance 1,187.6 → **1,175.7**.
 
 ## The hero concept — "the guest cooks it"
 
