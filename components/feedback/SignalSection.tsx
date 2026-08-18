@@ -61,18 +61,28 @@ export function SignalSection() {
       aria-labelledby="signal-heading"
     >
       <div className="fbk-stage bg-[#0b0908]">
-        {/* The photograph, pinned under everything. */}
-        <div ref={photo} className="absolute inset-0 will-change-transform">
-          <Plate
-            src={SURFACE.anatomy}
-            alt="Cross-section of the double smash: crust, cheese and onion"
-            className="h-full w-full"
-            imgClassName="h-full w-full object-cover object-[62%_center]"
-            fallback={<div className="fbk-griddle h-full w-full" />}
+        {/* The photograph, pinned under everything — held at the comp's
+            distance: the whole burger sits inside the rip at about 45%
+            of the page rather than a crop filling the stage, its edges
+            melting into the dark so no photo rectangle ever shows. */}
+        <div ref={photo} className="absolute inset-0 bg-[#0b0908] will-change-transform">
+          <div className="absolute -right-[2%] -top-[2%] h-[104%] w-[58%] rotate-[-9deg] scale-[1.06]">
+            <Plate
+              src={SURFACE.anatomy}
+              alt="The Feedback, whole, through the torn sheet"
+              className="h-full w-full"
+              imgClassName="h-full w-full object-cover object-[center_62%]"
+              fallback={<div className="fbk-griddle h-full w-full" />}
+            />
+          </div>
+          <div
+            aria-hidden
+            className="absolute -right-[2%] top-0 h-full w-[58%]"
+            style={{ boxShadow: "inset 0 0 90px 50px #0b0908" }}
           />
           {/* A breath of shade in the rip's corner so the callout type
               stays legible over the brightest part of the crust. */}
-          <div className="absolute inset-0 bg-gradient-to-l from-[#0b0908]/55 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-l from-[#0b0908]/45 via-transparent to-transparent" />
         </div>
 
         {/* The sheet itself: a photographed piece of the bone stock with
@@ -85,7 +95,7 @@ export function SignalSection() {
           src="/images/feedback/paper-sheet-torn.png"
           alt=""
           aria-hidden
-          className="absolute inset-y-0 -left-[67%] h-full w-[155%] max-w-none select-none object-fill will-change-transform"
+          className="absolute inset-y-0 -left-[1%] h-full w-[81%] max-w-none select-none object-fill will-change-transform"
           style={{
             transform: "translate3d(-3.2%, 0, 0)",
             filter: "drop-shadow(10px 0 18px rgba(0,0,0,0.45))",
