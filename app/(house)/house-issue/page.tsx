@@ -5,6 +5,7 @@ import { ChickenCount } from "@/components/house/ChickenCount";
 import { Plate } from "@/components/house/Plate";
 import { HeroCallouts } from "@/components/house/HeroCallouts";
 import { Polaroid, Prop, Tape } from "@/components/house/Prop";
+import { RotisserieScrub } from "@/components/house/RotisserieScrub";
 import {
   COLLAB,
   HOUSE,
@@ -17,8 +18,10 @@ import {
 /**
  * Issue No. 001. The order of business is deliberate: navigation and
  * ordering, the masthead, the live count, the promise, today's menu,
- * the drop, the block, then how to get here. No motion anywhere — this
- * concept proves restraint next to SEREIN's film.
+ * the drop, the block, then how to get here. The only motion is in the
+ * hero, and it is work rather than decoration: the spit turns because
+ * the visitor scrolls. Everything below it holds still, which is the
+ * restraint this concept trades on next to SEREIN.
  */
 export default function HouseIssuePage() {
   const issue = currentIssue();
@@ -30,24 +33,23 @@ export default function HouseIssuePage() {
 
       <main id="main">
         {/* ------------------------------------------ the layered hero --- */}
-        {/* Three planes: storefront behind, masthead type in the middle,
-            the cut-out sandwich in front. Each moves at its own rate on
-            scroll, so the depth is real rather than a rectangle sliding. */}
+        {/* Three planes: the rotisserie film behind, masthead type in the
+            middle, the cut-out sandwich in front. Each answers the scroll
+            at its own rate, so the depth is real rather than a rectangle
+            sliding — and the film's playhead is scrubbed by the same
+            scroll, so the birds cook as the visitor descends. */}
         <section className="hse-stage hse-paper border-b-4 border-[#16130F]">
           <div className="relative mx-auto min-h-[520px] max-w-[1320px] px-4 pb-8 pt-6 sm:min-h-[620px] sm:px-6 lg:min-h-[720px]">
-            {/* Plane 1: the block. */}
+            {/* Plane 1: the spit. */}
             {/* Masked rather than scrimmed: a solid gradient would have to
                 guess the paper's colour, and the paper is a photograph
                 with its own variation. Fading the photo's own alpha lets
                 the real sheet show through, so there is no seam. */}
-            <div className="hse-layer hse-l-back absolute inset-y-0 right-0 w-full [mask-image:linear-gradient(to_right,transparent_2%,black_46%)] lg:w-[62%] lg:[mask-image:linear-gradient(to_right,transparent_0%,black_34%)]">
-              <Plate
-                src="/images/house/hero-storefront.jpg"
-                alt="The HOUSE ISSUE storefront on Sunset, benches out front"
-                label="Hero · the storefront"
-                className="h-full w-full bg-transparent"
-                sizes="(max-width: 1024px) 100vw, 62vw"
-                priority
+            <div className="hse-layer hse-l-back hse-film absolute inset-y-0 right-0 w-full lg:w-[72%]">
+              <RotisserieScrub
+                src="/video/house/rotisserie-scrub.mp4"
+                poster="/video/house/rotisserie-poster.jpg"
+                className="h-full w-full object-cover"
               />
             </div>
 
@@ -63,7 +65,7 @@ export default function HouseIssuePage() {
             </div>
 
             {/* Plane 3: the sandwich, cut out and closest to the guest. */}
-            <div className="hse-layer hse-l-hand pointer-events-none absolute inset-x-0 bottom-[-4%] z-20 flex justify-center lg:left-auto lg:right-[4%] lg:w-[54%]">
+            <div className="hse-layer hse-l-hand pointer-events-none absolute inset-x-0 bottom-[-4%] z-20 flex justify-center lg:left-auto lg:right-[1%] lg:w-[49%]">
               {/* The sandwich, whole. Annotations anchor to its frame. */}
               <div className="relative w-[86%] max-w-[720px] lg:w-full">
                 <Image
@@ -82,7 +84,7 @@ export default function HouseIssuePage() {
 
             {/* The live count, tucked behind the sandwich edge. */}
             <div className="absolute bottom-8 left-4 z-[15] sm:left-6">
-              <ChickenCount variant="sticker" />
+              <ChickenCount variant="sticker" scrub />
             </div>
           </div>
         </section>

@@ -185,11 +185,31 @@
 
 /* ------------------------------------------- the layered hero --- */
 /* Three depth planes with the cut-out sandwich between them: the
-   masthead type runs behind it, the storefront sits further back. On
-   scroll each plane moves at its own rate, which reads as real depth
+   masthead type runs behind it, the rotisserie film sits further back.
+   On scroll each plane moves at its own rate, which reads as real depth
    rather than parallax on a rectangle. Compositor-only, gated on
    support, and off under reduced motion — this page's argument is
    speed, so the effect costs one transform per layer and nothing else. */
+
+/* The hero film is masked on two axes. Horizontally it dissolves into the
+   paper so there is no photographic edge; vertically it fades out under
+   the masthead, because the wordmark is printed in ink and ink on a dark
+   rotisserie case cannot be read. The film keeps the lower two-thirds,
+   which is where the spit and the tray are anyway. */
+.hse-film {
+  -webkit-mask-image: linear-gradient(to right, transparent 2%, #000 46%);
+  mask-image: linear-gradient(to right, transparent 2%, #000 46%);
+}
+@media (min-width: 1024px) {
+  .hse-film {
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 30%),
+      linear-gradient(to bottom, transparent 4%, #000 38%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, transparent 0%, #000 30%),
+      linear-gradient(to bottom, transparent 4%, #000 38%);
+    mask-composite: intersect;
+  }
+}
 
 /* clip, not hidden: overflow:hidden would make this a scroll container
    and freeze the view() timelines of everything inside it. */
