@@ -48,23 +48,33 @@ hotter as pressure rises without re-rendering anything.
 
 ## Assets to generate
 
+Model IDs and credit costs below are **preflighted against the live catalogue**
+(2026-08-18), not estimated. Two things came back different from the first pass
+at this plan, and both change the shape of it:
+
+- **No image model returns transparency.** Every cut-out needs a separate
+  `remove_background` pass afterwards — the five cook frames, three bottles,
+  two merch shots and the torn paper. Twelve passes. That tool takes no cost
+  preflight, so it is the one unpriced line here.
+- **Video is the expensive part, by a lot.** A 5s silent 720p clip is 17.5
+  credits on `seedance_2_0` and 7.5 on `kling3_0` — not the ~5 the earlier
+  draft assumed. Everything else is 1.5—2.0 credits a frame.
+
 | # | Asset | Model | Params | Credits |
 |---|---|---|---|---|
-| 1 | Frame 5, the finished burger (3 passes budgeted) | `nano_banana_pro` | 2k, 3:2, transparent | 6.0 |
-| 2 | Frames 1—4, one batch, frame 5 as the reference | `nano_banana_pro` | 2k, 3:2, transparent | 8.0 |
-| 3 | Griddle plate + macro cross-section (one batch) | `nano_banana_2` | 2k, 3:2 | 3.0 |
-| 4 | Steam loop, transparent | `seedance1_5` | 4s, 720p, silent | 4.8 |
-| 5 | Menu stills ×8 (one batch) | `nano_banana_2` | 1k, 1:1 | 12.0 |
-| 6 | Sauce bottles ×3 + merch ×2 (one batch, transparent) | `nano_banana_2` | 1k, 3:4 | 7.5 |
-| 7 | Crowd, release cover, torn paper (one batch) | `nano_banana_2` | 2k, mixed | 4.5 |
-| — | **Total** | | | **45.8** |
+| 1 | Frame 5, the finished burger — 3 variants to pick from | `nano_banana_pro` | 2k, 3:2 | 6.0 |
+| 2 | Frames 1—4, each with frame 5 passed back as the reference | `nano_banana_pro` | 2k, 3:2 | 8.0 |
+| 3 | `griddle.jpg` + `anatomy-cross-section.jpg` | `nano_banana_2` | 2k, 3:2 | 4.0 |
+| 4 | Menu stills ×8 | `nano_banana_2` | 1k, 1:1 | 12.0 |
+| 5 | Sauce bottles ×3 + merch ×2 | `nano_banana_2` | 1k, 3:4 | 7.5 |
+| 6 | `crowd.jpg` (2k) + release cover + torn paper (1k) | `nano_banana_2` | mixed | 5.0 |
+| 7 | Cut-outs ×12 | `remove_background` | — | not priced |
+| — | **Images subtotal** | | | **42.5** |
+| 8 | Steam loop, 5s silent — optional | `kling3_0` | 5s, std, sound off | 7.5 |
+| — | **Total with steam** | | | **50.0** |
 
-Naive equivalent (every shot at 2k, one request each, 8s 1080p steam,
-no reference chaining on the cook frames): **121.0**
-Saving from batching, the 1k tier on square menu stills, and generating
-frame 5 first as the reference for frames 1—4: **75.2**
-
-Balance after: **1,141.8**
+Balance at planning time: **1,187.6**. After: **~1,137** plus whatever the
+twelve background passes come to.
 
 ### Why frame 5 first
 
@@ -74,12 +84,26 @@ the finished burger first and passing it back as the reference for the other
 four is what buys that consistency, and it is cheaper than four independent
 2k generations that then have to be re-rolled until they match.
 
-### Cheaper alternate
+### The cheap version
 
-Dropping the steam loop entirely (the CSS plumes already read well against a
-photographed griddle) takes the total to **41.0**. I would keep it: the heat
-haze behind a cut-out burger is the single thing that stops the hero reading
-as a sticker on a background.
+Skip the steam (**42.5**). The CSS heat plumes already read well and will read
+better still against a photographed griddle; 7.5 credits is a poor trade for a
+layer most visitors will not consciously see. If you want it later it can be
+added on its own without touching anything else.
+
+### The one to spend more on, not less
+
+Frame 5 is the hero product shot, the last frame of the scrub, and the source
+of the Test Kitchen card. If any line here deserves extra passes it is that one
+— at 2 credits a variant, six passes instead of three costs 6 more credits and
+is the cheapest quality decision available.
+
+### Beyond the site
+
+Higgsfield can also produce things this build does not need but a launch would:
+a vertical promo cut for TikTok/Reels, or product-ad frames via
+`marketing_studio_image`. Both are out of scope for the room itself and are
+priced separately if they are ever wanted.
 
 ## Where they go
 
