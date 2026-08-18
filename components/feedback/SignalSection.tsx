@@ -1,0 +1,176 @@
+"use client";
+
+import { useRef } from "react";
+import { ANATOMY, SURFACE } from "@/lib/feedback";
+import { Plate } from "./Plate";
+import { Waveform } from "./Waveform";
+import { useScrollProgress } from "./useScrollProgress";
+
+/**
+ * 02 / THE SIGNAL — "Crisp edges. Heavy feedback."
+ *
+ * The comp's device, built literally: the section is a sheet of the
+ * bone stock with a long diagonal rip torn out of its upper right, and
+ * the macro cross-section shows through the rip. The photograph is
+ * pinned and pushed very slightly under the paper as the visitor
+ * scrolls; the sheet itself drifts a few percent, so the rip travels
+ * over the burger. The fiber layer under the torn edge is what makes
+ * the rip read as torn paper rather than a mask.
+ *
+ * The ingredient callouts sit inside the rip, on the photograph, and
+ * draw themselves outward one at a time. Everything moves on transforms
+ * written straight to the nodes — one scroll listener, no re-renders.
+ */
+
+export function SignalSection() {
+  const sheet = useRef<HTMLImageElement>(null);
+  const photo = useRef<HTMLDivElement>(null);
+  const lines = useRef<(HTMLDivElement | null)[]>([]);
+
+  const { ref } = useScrollProgress<HTMLElement>({
+    onChange: (p) => {
+      const t = Math.min(1, Math.max(0, (p - 0.22) / 0.5));
+
+      // The sheet slides a few percent so the rip moves over the
+      // burger. The tear, its fiber and its shadow are all in the
+      // photograph, so one layer carries the whole device.
+      const drift = (-3.2 + t * 3.2).toFixed(2);
+      sheet.current?.style.setProperty("transform", `translate3d(${drift}%, 0, 0)`);
+
+      // The burger pushes the other way, underneath.
+      photo.current?.style.setProperty(
+        "transform",
+        `translate3d(${(t * -2.5).toFixed(2)}%, 0, 0) scale(${(1.05 + t * 0.05).toFixed(3)})`,
+      );
+
+      lines.current.forEach((node, i) => {
+        if (!node) return;
+        const start = 0.3 + i * 0.12;
+        const drawn = Math.min(1, Math.max(0, (p - start) / 0.12));
+        node.style.setProperty("--fbk-draw", drawn.toFixed(3));
+      });
+    },
+  });
+
+  return (
+    <section
+      ref={ref}
+      id="signal"
+      className="fbk-track relative"
+      style={{ height: "220vh" }}
+      aria-labelledby="signal-heading"
+    >
+      <div className="fbk-stage bg-[#0b0908]">
+        {/* The photograph, pinned under everything — held at the comp's
+            distance: the whole burger sits inside the rip at about 45%
+            of the page rather than a crop filling the stage, its edges
+            melting into the dark so no photo rectangle ever shows. */}
+        <div ref={photo} className="absolute inset-0 bg-[#0b0908] will-change-transform">
+          <div className="absolute -right-[2%] -top-[2%] h-[104%] w-[58%] rotate-[-9deg] scale-[1.06]">
+            <Plate
+              src={SURFACE.anatomy}
+              alt="The Feedback, whole, through the torn sheet"
+              className="h-full w-full"
+              imgClassName="h-full w-full object-cover object-[center_62%]"
+              fallback={<div className="fbk-griddle h-full w-full" />}
+            />
+          </div>
+          <div
+            aria-hidden
+            className="absolute -right-[2%] top-0 h-full w-[58%]"
+            style={{ boxShadow: "inset 0 0 90px 50px #0b0908" }}
+          />
+          {/* A breath of shade in the rip's corner so the callout type
+              stays legible over the brightest part of the crust. */}
+          <div className="absolute inset-0 bg-gradient-to-l from-[#0b0908]/45 via-transparent to-transparent" />
+        </div>
+
+        {/* The sheet itself: a photographed piece of the bone stock with
+            the diagonal rip actually torn out of it — fiber, curl and
+            edge shadow all real. Stretched a little past the left edge
+            so the drift never exposes a seam. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          ref={sheet}
+          src="/images/feedback/paper-sheet-torn.png"
+          alt=""
+          aria-hidden
+          className="absolute inset-y-0 -left-[1%] h-full w-[81%] max-w-none select-none object-fill will-change-transform"
+          style={{
+            transform: "translate3d(-3.2%, 0, 0)",
+            filter: "drop-shadow(10px 0 18px rgba(0,0,0,0.45))",
+          }}
+        />
+
+        {/* The printed side of the sheet. */}
+        <div className="relative z-10 flex h-full flex-col justify-center px-6 sm:px-12 lg:px-16">
+          <div className="max-w-[560px]">
+            <p className="fbk-label flex items-center gap-3 text-[#14100e]/60">
+              <span className="fbk-chip">02</span> The signal
+            </p>
+            <h2
+              id="signal-heading"
+              className="fbk-display mt-6 text-[clamp(38px,6.4vw,84px)] text-[#14100e]"
+            >
+              Crisp edges.
+              <br />
+              Heavy feedback.
+            </h2>
+            <p className="mt-6 max-w-[38ch] text-[15px] leading-relaxed text-[#14100e]/75">
+              Two balls of chuck, pressed flat on a 425° flat top and left
+              alone until the edge is lace. Everything after that is just
+              keeping out of the way.
+            </p>
+          </div>
+
+          {/* The signal, printed on the sheet under the headline. */}
+          <div className="mt-10 h-12 max-w-[560px] text-[#14100e]">
+            <Waveform
+              personality="aggressive"
+              amplitude={0.75}
+              cycles={22}
+              className="h-full w-full"
+              strokeWidth={1.25}
+              height={48}
+            />
+          </div>
+        </div>
+
+        {/* Callouts inside the rip, drawing outward toward the edge. */}
+        <div className="pointer-events-none absolute inset-0 z-10 hidden lg:block">
+          {ANATOMY.map((note, i) => (
+            <div
+              key={note.label}
+              ref={(node) => {
+                lines.current[i] = node;
+              }}
+              className="fbk-cal right-8"
+              style={{ top: `${7 + i * 17}%`, ["--fbk-draw" as string]: "0" }}
+            >
+              <span
+                className="fbk-cal-dot"
+                style={{ transform: "scale(var(--fbk-draw))" }}
+              />
+              <span
+                className="fbk-cal-line"
+                style={{ width: "5.5rem", transform: "scaleX(var(--fbk-draw))" }}
+              />
+              <span
+                className="fbk-label whitespace-nowrap text-[var(--fb-bone)]"
+                style={{
+                  opacity: "var(--fbk-draw)",
+                  transition: "opacity 300ms ease",
+                }}
+              >
+                {note.label}
+                <span className="fbk-mono ml-2 block text-[10px] normal-case tracking-normal text-[rgba(232,225,211,0.55)]">
+                  {note.detail}
+                </span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
