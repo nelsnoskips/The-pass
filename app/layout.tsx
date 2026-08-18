@@ -36,7 +36,23 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://madisonfour.com",
     siteName: "Madison Four",
-    images: [{ url: "/images/hero-pass.jpg", width: 1200, height: 800 }],
+    images: [
+      {
+        url: "/images/og-card.jpg",
+        width: 1200,
+        height: 630,
+        alt: "The Pass by Madison Four — restaurant websites, crafted.",
+      },
+    ],
+  },
+  /* Without this block X falls back to a small thumbnail, which for a
+     studio is the difference between a link that looks like work and a
+     link that looks like a URL. */
+  twitter: {
+    card: "summary_large_image",
+    title: "The Pass by Madison Four",
+    description: "Restaurant websites, crafted.",
+    images: ["/images/og-card.jpg"],
   },
 };
 
