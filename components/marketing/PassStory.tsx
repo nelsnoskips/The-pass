@@ -1,8 +1,11 @@
 import Image from "next/image";
 import { PassMark } from "./PassMark";
 
-const CHEF_IMAGE =
-  "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=1200&q=78&fm=jpg";
+/* The pass itself, under its own lamps — no one in frame. A studio named
+   after the pass should not illustrate it with a stock photograph, and a
+   plate waiting under the light carries "nothing reaches the guest
+   unfinished" better than a stranger standing over it would. */
+const CHEF_IMAGE = "/images/pass-light.jpg";
 
 /**
  * The name, explained: the pass is where nothing reaches the guest
@@ -18,7 +21,7 @@ export function PassStory() {
         <figure className="relative order-last aspect-[4/5] max-h-[640px] overflow-hidden lg:order-first">
           <Image
             src={CHEF_IMAGE}
-            alt="A chef finishing a plated dish beneath the copper heat lamps of the pass"
+            alt="A finished plate waiting under the copper heat lamps of the pass, steam still rising"
             fill
             quality={90}
             sizes="(max-width: 1024px) 100vw, 50vw"

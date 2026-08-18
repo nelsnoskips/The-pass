@@ -1,7 +1,6 @@
 import Image from "next/image";
 
-const IMAGE =
-  "https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?w=1200&q=75&fm=jpg";
+const IMAGE = "/images/dining-daylight.jpg";
 
 /**
  * Digital Experiences — custom restaurant websites built to convert, found
@@ -53,7 +52,7 @@ export function DigitalExperiences() {
         <figure className="relative aspect-[4/3] overflow-hidden lg:aspect-[4/4.4]">
           <Image
             src={IMAGE}
-            alt="A bright, plant-filled dining room set for daytime service"
+            alt="An empty dining room in morning light, tables set and waiting for service"
             fill
             sizes="(max-width: 1024px) 100vw, 50vw"
             className="mk-parallax object-cover"

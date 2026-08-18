@@ -15,6 +15,8 @@ the two do not always agree (see the note at the bottom).
 | 2026-08-18 | HOUSE ISSUE | sidewalk long table | nano_banana_2 | 1k 3:2 | 1.5 | images/house/long-table.jpg | **yes** — generic communal table |
 | 2026-08-18 | HOUSE ISSUE | hero start frame, pass 3 — birds finishing (used) | nano_banana_pro | 2k 16:9 | 2.0 | video/house/rotisserie-poster.jpg | no — brand specific |
 | 2026-08-18 | HOUSE ISSUE | hero video take 2 (used) | seedance1_5 | 4s 720p 16:9 silent, start_image | 2.4 | video/house/rotisserie-scrub.mp4 | no — brand specific |
+| | 2026-08-18 | The Pass (main site) | the pass under its lamps | nano_banana_pro | 2k 4:5 | 2.0 | images/pass-light.jpg | no — brand specific |
+| 2026-08-18 | The Pass (main site) | empty dining room, morning | nano_banana_pro | 2k 4:5 | 2.0 | images/dining-daylight.jpg | **yes** — generic set dining room |
 | | | | | **Total** | **16.8** | | |
 
 Balance 1200 → 1183.2. Planned 16.8, spent 16.8 — but not the way the plan
@@ -56,3 +58,24 @@ position without decoding forward. All-keyframe encoding costs roughly 4× the
 bytes, which is why the resolution is modest — it sits behind a masthead and a
 cutout sandwich. 1.4 MB. At 2× zoom it is indistinguishable from the 1100px
 CRF 26 encode that was 38% larger.
+
+
+## Main site, 2026-08-18
+
+Replaced the two Unsplash hotlinks on madisonfour.com. Both carried a
+credibility problem rather than an aesthetic one: a studio charging four
+figures for bespoke work was illustrating its own founding metaphor —
+the pass — with a photograph any competitor can license for nothing.
+
+Neither replacement contains a person, and that is a rule rather than a
+coincidence. Generated imagery is safe here only where it claims to be
+nowhere in particular: the pass, an empty room, light and steam and
+texture. The moment a generated image implies a real client, real staff,
+or a restaurant this studio actually worked with, it stops being
+atmosphere and becomes a false claim — which is worse than stock, from a
+studio whose line is that nothing reaches the guest unfinished. Test
+Kitchen concepts are exempt: they are labelled concepts, so generating
+their world is honest.
+
+`images.unsplash.com` is gone from next.config remotePatterns as well —
+nothing reaches for it now, so the site should not be permitted to.
