@@ -40,16 +40,6 @@ for x in range(ramp):
     md.line([(x, 0), (x, H)], fill=int(255 * (x / ramp) ** 1.7))
 card.paste(photo, (W - panel_w, 0), mask)
 
-# Close the right edge back into ink. The photograph carries a lit wall
-# at that side, and a card that runs bright to its own border looks
-# cropped out of something larger rather than composed.
-edge = Image.new("RGB", (W, H), INK)
-em = Image.new("L", (W, H), 0)
-ed = ImageDraw.Draw(em)
-for i in range(150):
-    ed.line([(W - 1 - i, 0), (W - 1 - i, H)], fill=int(215 * (1 - i / 150) ** 1.4))
-card.paste(edge, (0, 0), em)
-
 d = ImageDraw.Draw(card)
 
 # --- the pass mark: an opening framed on three sides, four points ------

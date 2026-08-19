@@ -27,7 +27,7 @@ export function PassStory() {
             sizes="(max-width: 1024px) 100vw, 50vw"
             className="mk-parallax object-cover"
           />
-          <div aria-hidden className="absolute inset-0 ring-1 ring-inset ring-[#B79A68]/25" />
+          <div aria-hidden className="absolute inset-0 ring-1 ring-inset ring-[#B79A68]/20" />
         </figure>
 
         <div className="mk-reveal">

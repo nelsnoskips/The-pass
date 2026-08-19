@@ -79,3 +79,20 @@ their world is honest.
 
 `images.unsplash.com` is gone from next.config remotePatterns as well —
 nothing reaches for it now, so the site should not be permitted to.
+
+## Watch the edges of generated stills
+
+`pass-light.jpg` arrived with a pure white 139px border down its sides
+and 30px top and bottom — the model had rendered the scene as a framed
+print rather than as a photograph. Nothing in the prompt asked for it.
+
+It survived into the site as a white stripe down the left edge of the
+Our Story photograph, where it read as a mismatched border, and into the
+social card as a bright band at the right edge, where it was mistaken
+for a lit wall in the room and papered over with a vignette. Both were
+one defect. Cropping the frame off fixed both, and the vignette came
+back out because it had been compensating for something that no longer
+existed.
+
+So: measure the edge rows and columns of every generated still before
+wiring it in. A mean near 254 on any edge is a frame the model added.
