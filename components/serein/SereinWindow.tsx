@@ -29,6 +29,11 @@ import { useEffect, useRef } from "react";
  * Reduced motion, no JavaScript, or a codec the browser will not decode
  * all land on the same place: the night frame, held, with the
  * reservation hero over it.
+ *
+ * The playhead runs past the end of the pin, because the viewport-tall
+ * exit that every sticky stage has is scroll this component still owns.
+ * The film and the planes finish with the pin; the exit drives only the
+ * curtain that takes the room's last light as it leaves.
  */
 
 const FPS = 24;
@@ -102,9 +107,16 @@ export function SereinWindow({
     window.addEventListener("resize", measure);
 
     const loop = () => {
-      const target = Math.min(1, Math.max(0, (window.scrollY - start) / held));
+      /* Progress runs past 1: the pin is only the held part of the
+         wrapper, and the viewport-tall exit after it is scroll the
+         stage still owns. Easing the whole thing and splitting it
+         afterwards keeps one playhead for both. */
+      const vh = window.innerHeight;
+      const span = vh / held;
+      const target = Math.min(1 + span, Math.max(0, (window.scrollY - start) / held));
       eased += (target - eased) * 0.14;
-      const t = eased;
+      const t = Math.min(1, eased);
+      const exit = Math.min(1, Math.max(0, (eased - 1) / span));
 
       stage.style.setProperty("--srn-t", t.toFixed(4));
       /* Under the veil's occlusion, the night grade rises over the
@@ -114,22 +126,17 @@ export function SereinWindow({
         "--srn-night",
         String(Math.min(1, Math.max(0, (t - 0.55) / 0.22))),
       );
-      /* The handoff, in two beats, and both late: the hero has to sit
-         still and finished for a third of the pin before anything
-         starts happening to it. The room goes fully dark over the
-         reservation copy first, and only then does the first course
-         rise out of that black — cross-fading the photograph straight
-         onto the copy shows the tide through the words. */
+      /* The curtain rides the exit, not the pin. Nothing dims while the
+         hero is held — it stays fully lit for every pixel it is on
+         screen — and the room loses its last light only once the stage
+         has started to leave, so the section beneath arrives out of
+         black instead of off a hard edge. Closed well before the stage
+         is gone, so the last thing to cross the fold is ink. */
       stage.style.setProperty(
         "--srn-dark",
-        String(Math.min(1, Math.max(0, (t - 0.93) / 0.04))),
-      );
-      stage.style.setProperty(
-        "--srn-course",
-        String(Math.min(1, Math.max(0, (t - 0.97) / 0.03))),
+        String(Math.min(1, Math.max(0, (exit - 0.08) / 0.5))),
       );
 
-      const vh = window.innerHeight;
       for (const p of planes) {
         // Nearer planes travel further across the same scroll.
         const y = -t * vh * p.speed * p.travel;

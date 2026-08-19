@@ -6,7 +6,6 @@ import { DuskLine } from "@/components/serein/DuskLine";
 
 const NIGHT = "/images/serein/serein-night.jpg";
 const FRAME = "/images/serein/window-frame.png";
-const TIDE = "/images/serein/movement-tide.jpg";
 const THRESHOLD = "/images/serein/threshold.png";
 const ROOM = "/images/serein/room.png";
 
@@ -154,24 +153,8 @@ export default function SereinPage() {
           </div>
 
 
-          {/* The room goes dark over the hero, then the first course
-              rises out of that black. */}
-          <div className="srn-course-black" aria-hidden />
-          <div className="srn-course" aria-hidden>
-            <Image src={TIDE} alt="" fill quality={86} sizes="100vw" />
-            <div className="srn-course-shade" />
-            <div className="srn-course-label">
-              <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
-                <p className="srn-label text-[#C9884B]">Movement I</p>
-                <p className="srn-serif mt-4 text-[clamp(30px,4.4vw,54px)] text-[#E9E5DB]">
-                  Tide
-                </p>
-                <p className="mt-4 max-w-[420px] text-[14px] leading-relaxed text-[#E9E5DB]/65">
-                  Santa Barbara uni, sea lettuce, cold broth of its own shells
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* The room loses its last light as the stage slides away. */}
+          <div className="srn-exit-veil" aria-hidden />
 
           {/* 6 — grain and the serein rain: fixed to the glass. */}
           <div className="srn-fixed srn-grain" aria-hidden />

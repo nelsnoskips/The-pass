@@ -114,39 +114,27 @@
   opacity: calc(0.45 + 0.55 * var(--srn-veil, 0));
 }
 
-/* The handoff dissolves through black. The room goes fully dark over
-   Act III first, and only then does the first course rise out of it —
-   cross-fading the photograph straight onto the copy shows the tide
-   through the words. */
-.srn-course-black {
-  position: absolute; inset: 0; z-index: 6;
+/* The exit curtain. A sticky pin's exit is always exactly one viewport
+   tall, so anything laid over the stage at the end of the pin gets
+   parked full-screen for that whole viewport and then scraped off as a
+   hard-edged band. A course photograph did exactly that, and butted
+   straight into the cream section below.
+
+   So nothing new arrives here. The room simply loses its last light as
+   the stage slides away, and the page beneath arrives out of black
+   rather than off an edge. Driven by the exit rather than the pin, so
+   the hero stays fully lit for every pixel it is actually held. It sits
+   over the grain and the rain too: a curtain that leaves specks of mist
+   floating on the ink has not closed. */
+.srn-exit-veil {
+  position: absolute; inset: 0; z-index: 8;
   background: var(--srn-ink);
   opacity: var(--srn-dark, 0);
   pointer-events: none;
 }
 
-/* The first course arrives once the room is dark. */
-.srn-course {
-  position: absolute; inset: 0; z-index: 7;
-  opacity: var(--srn-course, 0);
-  pointer-events: none;
-}
-.srn-course img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: center 62%;
-}
-.srn-course-shade {
-  position: absolute; inset: 0;
-  background: linear-gradient(to right, rgba(5,7,11,0.94) 0%, rgba(5,7,11,0.66) 42%, rgba(5,7,11,0.3) 100%);
-}
-.srn-course-label {
-  position: absolute; left: 0; bottom: 14%;
-  width: 100%;
-}
-
 /* 5 — grain and interface marks: fixed to the viewport, never moving. */
-.srn-fixed { position: absolute; inset: 0; z-index: 8; pointer-events: none; }
+.srn-fixed { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
 /* The fine rain the room is named for arrives with the night, under the
    veil, rather than over a lit dusk sky where it could not exist. */
 .srn-rain { opacity: var(--srn-night, 0); }
