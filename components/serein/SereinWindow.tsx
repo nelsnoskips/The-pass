@@ -33,7 +33,10 @@ import { useEffect, useRef } from "react";
 
 const FPS = 24;
 
-/** Plane speeds, as fractions of scroll. Nearest moves fastest. */
+/** Plane speeds, as fractions of scroll. Nearest moves fastest.
+ *  The hero plane is deliberately not here: it is the destination the
+ *  scroll is travelling towards, and a destination that drifts is one
+ *  the guest has to chase. */
 const PLANES: { sel: string; speed: number; travel: number }[] = [
   { sel: ".srn-p-view", speed: 0.1, travel: 1 },
   { sel: ".srn-p-frame", speed: 0.24, travel: 1 },
@@ -111,17 +114,19 @@ export function SereinWindow({
         "--srn-night",
         String(Math.min(1, Math.max(0, (t - 0.55) / 0.22))),
       );
-      /* The handoff, in two beats. The room goes fully dark over the
-         reservation hero, and only then does the first course rise out
-         of that black. Cross-fading the photograph straight onto the
-         copy shows the tide through the words. */
+      /* The handoff, in two beats, and both late: the hero has to sit
+         still and finished for a third of the pin before anything
+         starts happening to it. The room goes fully dark over the
+         reservation copy first, and only then does the first course
+         rise out of that black — cross-fading the photograph straight
+         onto the copy shows the tide through the words. */
       stage.style.setProperty(
         "--srn-dark",
-        String(Math.min(1, Math.max(0, (t - 0.88) / 0.06))),
+        String(Math.min(1, Math.max(0, (t - 0.93) / 0.04))),
       );
       stage.style.setProperty(
         "--srn-course",
-        String(Math.min(1, Math.max(0, (t - 0.94) / 0.06))),
+        String(Math.min(1, Math.max(0, (t - 0.97) / 0.03))),
       );
 
       const vh = window.innerHeight;

@@ -71,10 +71,7 @@ export default function SereinPage() {
             />
           </div>
 
-          {/* 4 — the sheer veil, nearest the lens, over everything. */}
-          <div className="srn-plane srn-p-veil" aria-hidden />
-
-          {/* 3 — the typography. */}
+          {/* 3 — the typography of the opening acts. */}
           <div className="srn-plane srn-p-type">
             <div className="srn-acts">
               {/* Act I — the name, and what it means. */}
@@ -100,6 +97,17 @@ export default function SereinPage() {
                 </p>
               </div>
 
+            </div>
+          </div>
+
+          {/* 4 — the sheer veil, nearest the lens, passing over the
+              opening acts but not over the hero. */}
+          <div className="srn-plane srn-p-veil" aria-hidden />
+
+          {/* 5 — the reservation hero: the destination, and the only
+              plane that never moves. */}
+          <div className="srn-plane srn-p-hero">
+            <div className="srn-acts">
               {/* Act III — the resolution: the real, clickable hero. */}
               <div className="srn-act srn-act-final">
                 <div className="srn-final-shade" aria-hidden />
@@ -145,6 +153,7 @@ export default function SereinPage() {
             </div>
           </div>
 
+
           {/* The room goes dark over the hero, then the first course
               rises out of that black. */}
           <div className="srn-course-black" aria-hidden />
@@ -164,7 +173,7 @@ export default function SereinPage() {
             </div>
           </div>
 
-          {/* 5 — grain and the serein rain: fixed to the glass. */}
+          {/* 6 — grain and the serein rain: fixed to the glass. */}
           <div className="srn-fixed srn-grain" aria-hidden />
           <div className="srn-fixed srn-rain" aria-hidden>
             <SereinMist className="h-full w-full" />

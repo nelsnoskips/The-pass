@@ -36,7 +36,7 @@
    than to the room. */
 
 .srn-stagewrap { position: relative; height: 100svh; min-height: 640px; }
-.srn-cine .srn-stagewrap { height: 320vh; min-height: 0; }
+.srn-cine .srn-stagewrap { height: 380vh; min-height: 0; }
 .srn-stage {
   position: sticky;
   top: 0;
@@ -83,8 +83,18 @@
   object-fit: cover; object-position: 68% center;
 }
 
-/* 3 — the typography. */
+/* 3 — the typography of the opening acts. These are atmosphere, so
+   they ride the parallax. */
 .srn-p-type { z-index: 3; }
+
+/* 5 — the reservation hero, and the only plane that never moves.
+   It is the destination rather than the scenery: something a guest
+   reads and clicks, so it has to arrive squarely in the middle of the
+   screen and stay there. Riding the parallax with the other type
+   carried it up under the header and dragged its own shade panel into
+   frame as a lit rectangle behind the room. It sits above the veil so
+   nothing washes across the copy at the moment of the decision. */
+.srn-p-hero { z-index: 5; }
 
 /* 4 — the sheer veil, nearest the lens. A breath of fabric light that
    passes over everything, including the type. */
@@ -109,7 +119,7 @@
    cross-fading the photograph straight onto the copy shows the tide
    through the words. */
 .srn-course-black {
-  position: absolute; inset: 0; z-index: 5;
+  position: absolute; inset: 0; z-index: 6;
   background: var(--srn-ink);
   opacity: var(--srn-dark, 0);
   pointer-events: none;
@@ -117,7 +127,7 @@
 
 /* The first course arrives once the room is dark. */
 .srn-course {
-  position: absolute; inset: 0; z-index: 5;
+  position: absolute; inset: 0; z-index: 7;
   opacity: var(--srn-course, 0);
   pointer-events: none;
 }
@@ -136,7 +146,7 @@
 }
 
 /* 5 — grain and interface marks: fixed to the viewport, never moving. */
-.srn-fixed { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+.srn-fixed { position: absolute; inset: 0; z-index: 8; pointer-events: none; }
 /* The fine rain the room is named for arrives with the night, under the
    veil, rather than over a lit dusk sky where it could not exist. */
 .srn-rain { opacity: var(--srn-night, 0); }
@@ -208,43 +218,43 @@
   /* The backdrop no longer animates here: it is a canvas that paints
      its own light from the scroll, and a plane that transforms while
      its contents change reads as the sky sliding. */
-  /* Every animation here runs the FULL 320vh wrapper and encodes its
+  /* Every animation here runs the FULL 380vh wrapper and encodes its
      holds as keyframe stops. Two rules, both learned the hard way:
 
      This engine does not apply fill outside a scroll animation's range.
      An act whose range ended where the pin ends snapped back to its
      base styles the instant the stage began its exit — Act I flashed
      back over Act III on the way out. So the range covers the whole
-     wrapper, not just the held part, and the last 31.25% is a hold that
-     plays while the stage is already leaving the screen.
+     wrapper, not just the held part, and the tail is a hold that plays
+     while the stage is already leaving the screen.
 
      And the acts are timed against the pin, not the range: the pin is
-     220vh of the 320vh wrapper, so every stop below is its pin-relative
-     percentage scaled by 0.6875. The fallback in SereinMotion measures
-     the pin directly and keeps the unscaled numbers; the two agree on
-     screen. Move one, move the other. */
+     280vh of the 380vh wrapper, so every stop below is its pin-relative
+     percentage scaled by 0.736842. The fallback in SereinMotion measures the
+     pin directly and keeps the unscaled numbers; the two engines agree
+     on screen. Move one, move the other. */
   @keyframes srn-title {
     0% { opacity: 1; transform: none; visibility: visible; }
-    5.5% { opacity: 1; transform: scale(1.03); visibility: visible; }
-    13.75%, 100% { opacity: 0; transform: scale(1.3) translateY(-6%); visibility: hidden; }
+    4.421% { opacity: 1; transform: scale(1.03); visibility: visible; }
+    11.053%, 100% { opacity: 0; transform: scale(1.3) translateY(-6%); visibility: hidden; }
   }
-  /* Act II holds for a quarter of the pin. A promise the guest is meant
-     to read needs longer on screen than it takes to fade in. */
+  /* Act II holds for near a quarter of the pin. A promise the guest is
+     meant to read needs longer on screen than it takes to fade in. */
   @keyframes srn-line {
-    0%, 16.5% { opacity: 0; transform: translateY(64px); visibility: hidden; }
-    22%, 38.5% { opacity: 1; transform: none; visibility: visible; }
-    44%, 100% { opacity: 0; transform: translateY(-64px); visibility: hidden; }
+    0%, 16.211% { opacity: 0; transform: translateY(64px); visibility: hidden; }
+    21.368%, 38.316% { opacity: 1; transform: none; visibility: visible; }
+    42.737%, 100% { opacity: 0; transform: translateY(-64px); visibility: hidden; }
   }
-  /* Act III arrives at 70% of the pin and never leaves: it is the real
-     hero, and it holds clean for a quarter of the pin before the room
-     goes dark over it. */
+  /* Act III is the destination, so it gets the longest hold on the
+     page: in by 67% of the pin, then a full third of the pin sitting
+     still and centred before the room starts to darken over it. */
   @keyframes srn-final {
-    0%, 42.625% { opacity: 0; transform: translateY(48px); visibility: hidden; }
-    48.125%, 100% { opacity: 1; transform: none; visibility: visible; }
+    0%, 44.211% { opacity: 0; transform: translateY(48px); visibility: hidden; }
+    49.368%, 100% { opacity: 1; transform: none; visibility: visible; }
   }
   @keyframes srn-hint {
     0% { opacity: 0.6; }
-    4.125%, 100% { opacity: 0; }
+    3.684%, 100% { opacity: 0; }
   }
 
   /* The handoff is not on this timeline. Once Act III has held, the
@@ -258,7 +268,7 @@
   .srn-cine .srn-hint {
     animation: linear both;
     animation-timeline: scroll(root);
-    animation-range: 0 320vh;
+    animation-range: 0 380vh;
   }
   .srn-cine .srn-act-title { animation-name: srn-title; }
   .srn-cine .srn-act-line { animation-name: srn-line; }

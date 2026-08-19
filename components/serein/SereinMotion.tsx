@@ -24,10 +24,10 @@ const TRACKS: Track[] = [
      the same scroll, so there are no backdrop tracks here. */
   /* These stops mirror the keyframes in serein.css exactly. When one
      moves the other must, or the two engines tell different stories. */
-  { sel: ".srn-act-title", yUnit: "%", kf: [[0, { o: [1, 1], s: [1, 1.03], y: [0, 0] }], [8, { o: [1, 0], s: [1.03, 1.3], y: [0, -6] }], [20, { o: [0, 0], s: [1.3, 1.3], y: [-6, -6] }], [100, {}]] },
-  { sel: ".srn-act-line", yUnit: "px", kf: [[0, { o: [0, 0], y: [64, 64] }], [24, { o: [0, 1], y: [64, 0] }], [32, { o: [1, 1], y: [0, 0] }], [56, { o: [1, 0], y: [0, -64] }], [64, { o: [0, 0], y: [-64, -64] }], [100, {}]] },
-  { sel: ".srn-act-final", yUnit: "px", kf: [[0, { o: [0, 0], y: [48, 48] }], [62, { o: [0, 1], y: [48, 0] }], [70, { o: [1, 1], y: [0, 0] }], [100, {}]] },
-  { sel: ".srn-hint", kf: [[0, { o: [0.6, 0] }], [6, { o: [0, 0] }], [100, {}]] },
+  { sel: ".srn-act-title", yUnit: "%", kf: [[0, { o: [1, 1], s: [1, 1.03], y: [0, 0] }], [6, { o: [1, 0], s: [1.03, 1.3], y: [0, -6] }], [15, { o: [0, 0], s: [1.3, 1.3], y: [-6, -6] }], [100, {}]] },
+  { sel: ".srn-act-line", yUnit: "px", kf: [[0, { o: [0, 0], y: [64, 64] }], [22, { o: [0, 1], y: [64, 0] }], [29, { o: [1, 1], y: [0, 0] }], [52, { o: [1, 0], y: [0, -64] }], [58, { o: [0, 0], y: [-64, -64] }], [100, {}]] },
+  { sel: ".srn-act-final", yUnit: "px", kf: [[0, { o: [0, 0], y: [48, 48] }], [60, { o: [0, 1], y: [48, 0] }], [67, { o: [1, 1], y: [0, 0] }], [100, {}]] },
+  { sel: ".srn-hint", kf: [[0, { o: [0.6, 0] }], [5, { o: [0, 0] }], [100, {}]] },
 ];
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
