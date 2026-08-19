@@ -132,3 +132,26 @@ File went 1.1MB -> 2.4MB, which a full-viewport product demo justifies.
 Note: upscale_video has no get_cost preflight — the price only appears
 in transactions afterwards. At 0.16 credits it is effectively free;
 budget it as noise, not as a line item.
+
+## SEREIN window, 2026-08-19
+
+| Date | Client | Asset | Model | Params | Credits | File | Reusable? |
+|---|---|---|---|---|---|---|---|
+| 2026-08-19 | SEREIN | dusk-to-night window film | seedance1_5 | 8s 720p 16:9 silent, start_image + end_image | 9.6 | video/serein/window-dusk-to-night.mp4 | no — brand specific |
+| 2026-08-19 | SEREIN | upscale to 2K | bytedance_video_upscale | 2k, 24fps, aigc | 0.16 | (folded into the master) | no |
+
+Both endpoints were already owned: the room's own dusk frame (candles
+unlit, ember bright) and its night frame (candles lit). Pinning both is
+what guaranteed the grade shift and the ignition, and it cost nothing
+extra because neither frame had to be generated.
+
+The trade that bought it: the brief asked for a slow dolly forward, but
+a camera move that must return to its start framing reads as drifting
+out and back, and reverse scroll shows it. So the footage is locked off
+and the dolly is a scale on the view plane instead — one real camera
+move that cannot glitch, for free.
+
+`media_import_url` cannot take a .jpg URL: it signs a .png object key
+and then sends image/jpeg, and S3 rejects the mismatch. Use
+`media_upload` with matching filename and content_type, PUT the bytes,
+then `media_confirm`.

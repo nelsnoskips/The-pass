@@ -6,9 +6,9 @@ import { useEffect } from "react";
  * Motion director for SEREIN, per the cinematic-scroll-hero technique.
  * Adds .srn-cine when motion is welcome; runs the damped rAF fallback
  * mirroring the CSS keyframe tables when scroll timelines are
- * unsupported. The hero's backdrop — the painted sky — carries its own
- * scroll loop inside SereinSky; this director only choreographs the
- * acts of type across it.
+ * unsupported. The hero's planes and its film carry their own scroll
+ * loop inside SereinWindow; this director only choreographs the acts of
+ * type moving across them.
  */
 
 type Props = { o?: [number, number]; y?: [number, number]; s?: [number, number] };
@@ -22,9 +22,8 @@ type Track = {
 };
 
 const TRACKS: Track[] = [
-  /* The sky is its own engine: a canvas painting light from the same
-     scroll. No track here — a backdrop that transforms while its
-     contents change reads as the sky sliding. */
+  /* The planes are their own engine: SereinWindow drives all five from
+     the same scroll, so there are no backdrop tracks here. */
   { sel: ".srn-act-title", yUnit: "%", kf: [[0, { o: [1, 1], s: [1, 1.03], y: [0, 0] }], [12, { o: [1, 0], s: [1.03, 1.3], y: [0, -6] }], [37, { o: [0, 0], s: [1.3, 1.3], y: [-6, -6] }], [100, {}]] },
   { sel: ".srn-act-line", yUnit: "px", kf: [[0, { o: [0, 0], y: [64, 64] }], [33, { o: [0, 1], y: [64, 0] }], [50, { o: [1, 1], y: [0, 0] }], [72, { o: [1, 0], y: [0, -64] }], [88, { o: [0, 0], y: [-64, -64] }], [100, {}]] },
   { sel: ".srn-act-final", yUnit: "px", kf: [[0, { o: [0, 0], y: [48, 48] }], [84, { o: [0, 1], y: [48, 0] }], [97, { o: [1, 1], y: [0, 0] }], [100, {}]] },

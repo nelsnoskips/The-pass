@@ -1,10 +1,12 @@
 import Image from "next/image";
 import { SereinMist } from "@/components/serein/SereinMist";
-import { SereinSky } from "@/components/serein/SereinSky";
+import { SereinWindow } from "@/components/serein/SereinWindow";
 import { DuskClock } from "@/components/serein/DuskClock";
 import { DuskLine } from "@/components/serein/DuskLine";
 
 const NIGHT = "/images/serein/serein-night.jpg";
+const FRAME = "/images/serein/window-frame.png";
+const TIDE = "/images/serein/movement-tide.jpg";
 const THRESHOLD = "/images/serein/threshold.png";
 const ROOM = "/images/serein/room.png";
 
@@ -33,12 +35,14 @@ const MOVEMENTS: { n: string; name: string; detail: string }[] = [
 /**
  * SEREIN — a concept room from The Pass Test Kitchen.
  *
- * The hero is the light itself: a painted sky, computed rather than
- * photographed — the sun descends to the water, its glint narrows on
- * the sea, the serein moment compresses at the horizon, stars arrive.
- * Scroll sets the sun. The serein rain begins only once it is down,
- * which is when the phenomenon exists. No photograph, no video file;
- * the cleanest surface the page can carry is type over light.
+ * The hero is a window held open for the length of a scroll. Five
+ * planes answer the same pinned scroll at their own rates — the view
+ * furthest back, the timber in the room, the type between, the sheer
+ * veil nearest the lens, the grain fixed to the glass — and the film
+ * behind them loses its light: dusk deepens, the ember on the horizon
+ * narrows to silver, the candles take, and a curtain breathes across
+ * the lens. The night grade rises under that occlusion, and the first
+ * course arrives as the room finishes going dark.
  */
 export default function SereinPage() {
   return (
@@ -46,90 +50,127 @@ export default function SereinPage() {
       {/* ------------------------------------------------ the film --- */}
       <section id="top" className="srn-stagewrap">
         <div className="srn-stage">
-          {/* The sky. This plane never transforms; the light is the
-              only motion, and it is drawn, not decoded. */}
-          <div className="srn-photo">
-            <SereinSky className="h-full w-full" />
+          {/* 1 — the view: the film, furthest back, moving least. */}
+          <div className="srn-plane srn-p-view">
+            <SereinWindow
+              src="/video/serein/window-dusk-to-night.mp4"
+              poster="/video/serein/window-night.jpg"
+            />
+            <div className="srn-night-grade" aria-hidden />
           </div>
-          {/* The fine rain, gated to after sunset by the sky's clock. */}
-          <div className="srn-rain absolute inset-0 z-[3]" aria-hidden>
-            <SereinMist className="h-full w-full" />
+
+          {/* 2 — the timber lintel and post, standing in the room. */}
+          <div className="srn-plane srn-p-frame" aria-hidden>
+            <Image
+              src={FRAME}
+              alt=""
+              fill
+              priority
+              quality={90}
+              sizes="100vw"
+            />
           </div>
 
-          <div className="srn-acts">
-            {/* Act I — the name, and what it means. */}
-            <div className="srn-act srn-act-title" aria-hidden>
-              <p className="srn-serif srn-wordmark-big text-[#E9E5DB]">SEREIN</p>
-              <p className="mt-8 max-w-[440px] text-[13.5px] leading-relaxed tracking-[0.02em] text-[#E9E5DB]/60">
-                <em className="italic">serein</em> (n.) the fine rain that falls
-                from a clear sky, after sunset
-              </p>
-              <DuskLine />
-            </div>
+          {/* 4 — the sheer veil, nearest the lens, over everything. */}
+          <div className="srn-plane srn-p-veil" aria-hidden />
 
-            {/* Act II — the promise. */}
-            <div className="srn-act srn-act-line" aria-hidden>
-              <p className="srn-serif srn-line-big text-[#E9E5DB]">
-                Ten courses, served as{" "}
-                <em className="italic text-[#C9884B]">the light leaves.</em>
-              </p>
-              <p className="mt-6 max-w-[520px] text-[15px] leading-relaxed text-[#E9E5DB]/70">
-                Dinner begins at dusk and ends in candlelight. The room
-                darkens with the sky, and the menu follows the coast from
-                the ranches down into the water.
-              </p>
-            </div>
+          {/* 3 — the typography. */}
+          <div className="srn-plane srn-p-type">
+            <div className="srn-acts">
+              {/* Act I — the name, and what it means. */}
+              <div className="srn-act srn-act-title" aria-hidden>
+                <p className="srn-serif srn-wordmark-big text-[#E9E5DB]">SEREIN</p>
+                <p className="mt-8 max-w-[440px] text-[13.5px] leading-relaxed tracking-[0.02em] text-[#E9E5DB]/60">
+                  <em className="italic">serein</em> (n.) the fine rain that falls
+                  from a clear sky, after sunset
+                </p>
+                <DuskLine />
+              </div>
 
-            {/* Act III — the resolution: the real, clickable hero. */}
-            <div className="srn-act srn-act-final">
-              <div className="srn-final-shade" aria-hidden />
-              <div className="srn-final-inner">
-                <div className="max-w-[640px]">
-                  <p className="srn-serif text-[clamp(40px,7vw,72px)] tracking-[0.28em] text-[#E9E5DB]">
-                    SEREIN
-                  </p>
-                  <p className="srn-label mt-5 text-[#C9884B]">
-                    Santa Barbara, California
-                  </p>
-                  <h1 className="srn-serif mt-9 text-[clamp(30px,4vw,48px)] leading-[1.08] text-[#E9E5DB]">
-                    Ten courses, served as{" "}
-                    <em className="italic text-[#C9884B]">the light leaves.</em>
-                  </h1>
-                  <p className="mt-6 max-w-[430px] text-[15px] leading-relaxed text-[#E9E5DB]/70">
-                    A thirty-seat coastal tasting room where the ranches of
-                    Santa Barbara meet the Pacific, one evening at a time.
-                  </p>
-                  <div className="mt-10 flex flex-wrap items-center gap-5">
-                    <a
-                      href="/serein/reserve"
-                      className="srn-label group inline-flex items-center gap-3 border border-[#C9884B] px-7 py-4 text-[#E9E5DB] transition-colors hover:bg-[#C9884B] hover:text-[#05070B]"
-                    >
-                      Reserve an Evening
-                      <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">
-                        →
-                      </span>
-                    </a>
-                    <a
-                      href="#menu"
-                      className="srn-label py-4 text-[#E9E5DB]/65 transition-colors hover:text-[#E9E5DB]"
-                    >
-                      The Ten Movements
-                    </a>
+              {/* Act II — the promise. */}
+              <div className="srn-act srn-act-line" aria-hidden>
+                <p className="srn-serif srn-line-big text-[#E9E5DB]">
+                  Ten courses, served as{" "}
+                  <em className="italic text-[#C9884B]">the light leaves.</em>
+                </p>
+                <p className="mt-6 max-w-[520px] text-[15px] leading-relaxed text-[#E9E5DB]/70">
+                  Dinner begins at dusk and ends in candlelight. The room
+                  darkens with the sky, and the menu follows the coast from
+                  the ranches down into the water.
+                </p>
+              </div>
+
+              {/* Act III — the resolution: the real, clickable hero. */}
+              <div className="srn-act srn-act-final">
+                <div className="srn-final-shade" aria-hidden />
+                <div className="srn-final-inner">
+                  <div className="max-w-[640px]">
+                    <p className="srn-serif text-[clamp(40px,7vw,72px)] tracking-[0.28em] text-[#E9E5DB]">
+                      SEREIN
+                    </p>
+                    <p className="srn-label mt-5 text-[#C9884B]">
+                      Santa Barbara, California
+                    </p>
+                    <h1 className="srn-serif mt-9 text-[clamp(30px,4vw,48px)] leading-[1.08] text-[#E9E5DB]">
+                      Ten courses, served as{" "}
+                      <em className="italic text-[#C9884B]">the light leaves.</em>
+                    </h1>
+                    <p className="mt-6 max-w-[430px] text-[15px] leading-relaxed text-[#E9E5DB]/70">
+                      A thirty-seat coastal tasting room where the ranches of
+                      Santa Barbara meet the Pacific, one evening at a time.
+                    </p>
+                    <div className="mt-10 flex flex-wrap items-center gap-5">
+                      <a
+                        href="/serein/reserve"
+                        className="srn-label group inline-flex items-center gap-3 border border-[#C9884B] px-7 py-4 text-[#E9E5DB] transition-colors hover:bg-[#C9884B] hover:text-[#05070B]"
+                      >
+                        Reserve an Evening
+                        <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">
+                          →
+                        </span>
+                      </a>
+                      <a
+                        href="#menu"
+                        className="srn-label py-4 text-[#E9E5DB]/65 transition-colors hover:text-[#E9E5DB]"
+                      >
+                        The Ten Movements
+                      </a>
+                    </div>
+                    <p className="srn-label mt-10 text-[#E9E5DB]/40">
+                      Thursday to Monday · One seating · $210 per guest
+                    </p>
                   </div>
-                  <p className="srn-label mt-12 text-[#E9E5DB]/40">
-                    Thursday to Monday · One seating · $210 per guest
-                  </p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="srn-hint" aria-hidden>
-            <span className="srn-label flex items-center gap-2 text-[#E9E5DB]/60">
-              Scroll
-              <span className="srn-serif text-[16px] leading-none">↓</span>
-            </span>
+          {/* The first course, arriving as the room goes dark. */}
+          <div className="srn-course" aria-hidden>
+            <Image src={TIDE} alt="" fill quality={86} sizes="100vw" />
+            <div className="srn-course-shade" />
+            <div className="srn-course-label">
+              <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
+                <p className="srn-label text-[#C9884B]">Movement I</p>
+                <p className="srn-serif mt-4 text-[clamp(30px,4.4vw,54px)] text-[#E9E5DB]">
+                  Tide
+                </p>
+                <p className="mt-4 max-w-[420px] text-[14px] leading-relaxed text-[#E9E5DB]/65">
+                  Santa Barbara uni, sea lettuce, cold broth of its own shells
+                </p>
+              </div>
+            </div>
           </div>
+
+          {/* 5 — grain and the serein rain: fixed to the glass. */}
+          <div className="srn-fixed srn-grain" aria-hidden />
+          <div className="srn-fixed srn-rain" aria-hidden>
+            <SereinMist className="h-full w-full" />
+          </div>
+
+          <p className="srn-hint srn-label" aria-hidden>
+            Scroll ↓
+          </p>
         </div>
       </section>
 
