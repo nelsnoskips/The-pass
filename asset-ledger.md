@@ -96,3 +96,22 @@ existed.
 
 So: measure the edge rows and columns of every generated still before
 wiring it in. A mean near 254 on any edge is a frame the model added.
+
+## Main site hero, 2026-08-19
+
+| Date | Client | Asset | Model | Params | Credits | File | Reusable? |
+|---|---|---|---|---|---|---|---|
+| 2026-08-19 | The Pass (main site) | dark pass start frame (used) | nano_banana_pro | 2k 16:9 | 2.0 | video/pass poster is its final frame | no — brand specific |
+| 2026-08-19 | The Pass (main site) | "the light comes up" hero film | seedance1_5 | 4s 720p 16:9 silent, start_image | 2.4 | video/pass/pass-light-scrub.mp4 | no — brand specific |
+
+4.4 credits against the plan's 8.4: the still landed first pass (two
+budgeted iterations unspent) and the video charged its usual half-quote.
+The film held for the full four seconds with zero cuts (max inter-frame
+delta 2x median; a cut reads 10-30x) and a monotonic 2.1x luminance
+rise — the light-rising concept is as safe as predicted. The server
+offered its "IN THE DARK" preset for this prompt; declined, because a
+preset's unknown motion cannot honour scrub constraints.
+
+The poster is the clip's FINAL frame, not its first: every no-motion
+path (reduced motion, no JS, crawlers) rests on the finished, lit pass,
+while the film's own frame 0 carries the dark opening in cinematic mode.

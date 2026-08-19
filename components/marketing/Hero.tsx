@@ -1,7 +1,5 @@
-import Image from "next/image";
 import { EmberField } from "./EmberField";
-
-const HERO_IMAGE = "/images/hero-pass.jpg";
+import { ScrubFilm } from "@/components/ScrubFilm";
 
 /**
  * Cinematic hero: a pinned stage scrubbed by scroll. Act I, the wordmark
@@ -15,16 +13,18 @@ export function Hero() {
   return (
     <section className="mk-stagewrap bg-[#0A0A09]">
       <div className="mk-stage bg-[#0A0A09]">
-        {/* The room. */}
+        {/* The pass, on film. Scroll is the playhead: the lamps come up
+            and the room arrives at light as the guest scrubs — the studio
+            doing on its own hero what it sells. The poster is the final,
+            lit frame, so every no-motion path gets the finished pass as
+            the still. This plane never transforms; the film is its only
+            motion. */}
         <div className="mk-act-photo absolute inset-0 z-0" aria-hidden>
-          <Image
-            src={HERO_IMAGE}
-            alt=""
-            fill
-            priority
-            quality={90}
-            sizes="100vw"
-            className="mk-drift object-cover object-center"
+          <ScrubFilm
+            src="/video/pass/pass-light-scrub.mp4"
+            poster="/video/pass/pass-light-poster.jpg"
+            wrapper=".mk-stagewrap"
+            className="h-full w-full object-cover object-center"
           />
         </div>
 

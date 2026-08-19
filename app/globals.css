@@ -177,15 +177,6 @@ body {
 .mk-rise-3 { animation-delay: 0.3s; }
 .mk-rise-4 { animation-delay: 0.45s; }
 
-/* Very slow cinematic drift for hero photography. */
-@keyframes mk-drift {
-  from { transform: scale(1.02) translateX(0); }
-  to { transform: scale(1.08) translateX(-1.5%); }
-}
-.mk-drift {
-  animation: mk-drift 28s ease-in-out infinite alternate;
-}
-
 /* The recurring "pass line" motif — a thin light traveling a hairline rule. */
 @keyframes mk-passline {
   0% { transform: translateX(-100%); }
@@ -323,17 +314,10 @@ body {
 }
 
 @supports (animation-timeline: scroll()) {
-  /* The camera dollies into the room across the whole stage. */
-  @keyframes mk-cine-photo {
-    from { transform: scale(1.04) translateY(0); }
-    to { transform: scale(1.28) translateY(-3%); }
-  }
-  .mk-cine .mk-act-photo {
-    animation: mk-cine-photo linear both;
-    animation-timeline: scroll(root);
-    animation-range: 0 300vh;
-  }
-
+  /* The backdrop no longer dollies: it carries the film now, and a
+     plane that slides while its contents play reads as the video
+     repositioning itself rather than as depth. The film is the
+     camera move. */
   /* The dark veil lifts: the room comes to light. */
   @keyframes mk-cine-veil {
     0% { opacity: 0.82; }
@@ -420,7 +404,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .mk-rise,
-  .mk-drift,
   .mk-passline::after,
   .mk-reveal,
   .mk-parallax,
