@@ -115,3 +115,20 @@ preset's unknown motion cannot honour scrub constraints.
 The poster is the clip's FINAL frame, not its first: every no-motion
 path (reduced motion, no JS, crawlers) rests on the finished, lit pass,
 while the film's own frame 0 carries the dark opening in cinematic mode.
+
+## Upscale, 2026-08-19
+
+| Date | Client | Asset | Model | Params | Credits | File | Reusable? |
+|---|---|---|---|---|---|---|---|
+| 2026-08-19 | The Pass (main site) | hero film upscaled to 2K | bytedance_video_upscale | 2k, 24fps, aigc preset | 0.16 | video/pass/pass-light-scrub.mp4 | no |
+
+The shipped hero was 1024px stretched across a full viewport and read
+as pixelated — dark gradients show compression blocking worst. The fix
+was the playbook's "too soft at full-bleed" row, not a re-generation:
+upscale_video took the original seedance job to 2560x1440 for 0.16
+credits, and the shipped master re-encoded from it at 1440px/CRF 26.
+File went 1.1MB -> 2.4MB, which a full-viewport product demo justifies.
+
+Note: upscale_video has no get_cost preflight — the price only appears
+in transactions afterwards. At 0.16 credits it is effectively free;
+budget it as noise, not as a line item.
