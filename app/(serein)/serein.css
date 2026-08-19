@@ -39,24 +39,29 @@
 /* The three graded frames, stacked. Dusk is the base; golden covers it
    at first light and fades away; night rises over both at the end.
    Dolly transform lives on the wrapper so all frames move as one. */
-.srn-photo { position: absolute; inset: 0; z-index: 0; }
-.srn-photo img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: 68% center; /* keep the sun through vertical crops */
+/* The sky plane. The canvas paints the light; this fallback gradient
+   is the serein moment itself, so a visitor with no JavaScript still
+   stands under the right sky. The plane never transforms. */
+.srn-photo {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    linear-gradient(to bottom,
+      #223a5c 0%, #46496b 40%, #5d5c7e 56%, #d97e4e 63.5%,
+      #1d2a40 64%, #0c1420 100%);
 }
-.srn-img-night { opacity: 1; }   /* still mode shows night: candles lit */
-.srn-img-golden { opacity: 0; }
-.srn-cine .srn-img-night { opacity: 0; }
-.srn-cine .srn-img-golden { opacity: 1; }
 
-.srn-veil {
-  position: absolute; inset: 0; z-index: 2;
-  background: var(--srn-ink);
-  opacity: 0.3;
+/* The serein rain waits for the sun: the sky's loop writes --srn-after
+   (0 before sunset, 1 once it is down) and the rain fades in on it. */
+.srn-rain { opacity: var(--srn-after, 0); transition: opacity 0.4s linear; }
+
+/* The acts sit straight on the painted sky, so their type carries its
+   own soft ground where the sky runs bright. */
+.srn-act-title p, .srn-act-line p {
+  text-shadow: 0 1px 26px rgba(5, 7, 11, 0.55), 0 0 3px rgba(5, 7, 11, 0.3);
 }
-.srn-cine .srn-veil { opacity: 0.62; }
+@media (prefers-reduced-motion: reduce) {
+  .srn-rain { opacity: 0; }
+}
 
 .srn-acts { position: relative; z-index: 5; height: 100%; }
 .srn-act-title, .srn-act-line { display: none; }
@@ -110,72 +115,54 @@
 
 /* --------------------------------------- engine 1: CSS timelines --- */
 @supports (animation-timeline: scroll()) {
-  @keyframes srn-photo-dolly {
-    from { transform: scale(1.04) translateY(0); }
-    to { transform: scale(1.26) translateY(-2.5%); }
-  }
-  @keyframes srn-golden {
-    0%, 8% { opacity: 1; }
-    45%, 100% { opacity: 0; }
-  }
-  @keyframes srn-night {
-    0%, 55% { opacity: 0; }
-    85%, 100% { opacity: 1; }
-  }
-  @keyframes srn-veil {
-    0% { opacity: 0.62; }
-    40% { opacity: 0.26; }
-    100% { opacity: 0.22; }
-  }
+  /* The backdrop no longer animates here: it is a canvas that paints
+     its own light from the scroll, and a plane that transforms while
+     its contents change reads as the sky sliding. */
+  /* Every animation here runs the FULL 400vh and encodes its holds as
+     keyframe stops. This engine does not apply fill outside a scroll
+     animation's range: an act whose range ended at 300vh snapped back
+     to its base styles the moment the stage began its exit, and the
+     dissolve played over the wrong act. One range, holds in keyframes —
+     the same lesson the HOUSE callouts taught. Stops are the old
+     0-300vh percentages scaled by 0.75. */
   @keyframes srn-title {
     0% { opacity: 1; transform: none; visibility: visible; }
-    12% { opacity: 1; transform: scale(1.03); visibility: visible; }
-    37%, 100% { opacity: 0; transform: scale(1.3) translateY(-6%); visibility: hidden; }
+    9% { opacity: 1; transform: scale(1.03); visibility: visible; }
+    27.75%, 100% { opacity: 0; transform: scale(1.3) translateY(-6%); visibility: hidden; }
   }
   @keyframes srn-line {
-    0%, 33% { opacity: 0; transform: translateY(64px); visibility: hidden; }
-    50%, 72% { opacity: 1; transform: none; visibility: visible; }
-    88%, 100% { opacity: 0; transform: translateY(-64px); visibility: hidden; }
+    0%, 24.75% { opacity: 0; transform: translateY(64px); visibility: hidden; }
+    37.5%, 54% { opacity: 1; transform: none; visibility: visible; }
+    66%, 100% { opacity: 0; transform: translateY(-64px); visibility: hidden; }
   }
   @keyframes srn-final {
-    0%, 84% { opacity: 0; transform: translateY(48px); visibility: hidden; }
-    97%, 100% { opacity: 1; transform: none; visibility: visible; }
+    0%, 63% { opacity: 0; transform: translateY(48px); visibility: hidden; }
+    72.75%, 100% { opacity: 1; transform: none; visibility: visible; }
   }
   @keyframes srn-hint {
     0% { opacity: 0.6; }
-    10%, 100% { opacity: 0; }
+    7.5%, 100% { opacity: 0; }
   }
 
   /* The film hands off: once Act III has held, the whole stage recedes
      and dissolves over the final screen of the runway, so the page
-     arrives out of darkness instead of cutting. Its own range, past the
-     end of the act timeline. */
+     arrives out of darkness instead of cutting. Same full range; the
+     exit lives in the last quarter of the stops. */
   @keyframes srn-stage-exit {
-    from { opacity: 1; transform: scale(1) translateY(0); }
-    to { opacity: 0; transform: scale(0.965) translateY(-5%); }
-  }
-  .srn-cine .srn-stage {
-    animation: srn-stage-exit linear both;
-    animation-timeline: scroll(root);
-    animation-range: 300vh 400vh;
+    0%, 75% { opacity: 1; transform: scale(1) translateY(0); }
+    100% { opacity: 0; transform: scale(0.965) translateY(-5%); }
   }
 
-  .srn-cine .srn-photo,
-  .srn-cine .srn-img-golden,
-  .srn-cine .srn-img-night,
-  .srn-cine .srn-veil,
+  .srn-cine .srn-stage,
   .srn-cine .srn-act-title,
   .srn-cine .srn-act-line,
   .srn-cine .srn-act-final,
   .srn-cine .srn-hint {
     animation: linear both;
     animation-timeline: scroll(root);
-    animation-range: 0 300vh;
+    animation-range: 0 400vh;
   }
-  .srn-cine .srn-photo { animation-name: srn-photo-dolly; }
-  .srn-cine .srn-img-golden { animation-name: srn-golden; }
-  .srn-cine .srn-img-night { animation-name: srn-night; }
-  .srn-cine .srn-veil { animation-name: srn-veil; }
+  .srn-cine .srn-stage { animation-name: srn-stage-exit; }
   .srn-cine .srn-act-title { animation-name: srn-title; }
   .srn-cine .srn-act-line { animation-name: srn-line; }
   .srn-cine .srn-act-final { animation-name: srn-final; }
@@ -199,7 +186,7 @@
 .srn-movement:hover { border-color: rgba(201, 136, 75, 0.45); }
 
 @media (prefers-reduced-motion: reduce) {
-  .srn-photo, .srn-img-golden, .srn-img-night, .srn-veil,
+  .srn-photo,
   .srn-act-title, .srn-act-line, .srn-act-final, .srn-hint, .srn-stage {
     animation: none !important;
   }

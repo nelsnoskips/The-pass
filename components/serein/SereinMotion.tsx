@@ -6,9 +6,9 @@ import { useEffect } from "react";
  * Motion director for SEREIN, per the cinematic-scroll-hero technique.
  * Adds .srn-cine when motion is welcome; runs the damped rAF fallback
  * mirroring the CSS keyframe tables when scroll timelines are
- * unsupported. The hero's signature is the day-to-night dissolve:
- * golden frame fades out early, night frame (candles lit) rises late,
- * dusk carries the middle.
+ * unsupported. The hero's backdrop — the painted sky — carries its own
+ * scroll loop inside SereinSky; this director only choreographs the
+ * acts of type across it.
  */
 
 type Props = { o?: [number, number]; y?: [number, number]; s?: [number, number] };
@@ -22,10 +22,9 @@ type Track = {
 };
 
 const TRACKS: Track[] = [
-  { sel: ".srn-photo", yUnit: "%", backdrop: true, kf: [[0, { s: [1.04, 1.26], y: [0, -2.5] }], [100, {}]] },
-  { sel: ".srn-img-golden", backdrop: true, kf: [[0, { o: [1, 1] }], [8, { o: [1, 0] }], [45, { o: [0, 0] }], [100, {}]] },
-  { sel: ".srn-img-night", backdrop: true, kf: [[0, { o: [0, 0] }], [55, { o: [0, 1] }], [85, { o: [1, 1] }], [100, {}]] },
-  { sel: ".srn-veil", backdrop: true, kf: [[0, { o: [0.62, 0.26] }], [40, { o: [0.26, 0.22] }], [100, {}]] },
+  /* The sky is its own engine: a canvas painting light from the same
+     scroll. No track here — a backdrop that transforms while its
+     contents change reads as the sky sliding. */
   { sel: ".srn-act-title", yUnit: "%", kf: [[0, { o: [1, 1], s: [1, 1.03], y: [0, 0] }], [12, { o: [1, 0], s: [1.03, 1.3], y: [0, -6] }], [37, { o: [0, 0], s: [1.3, 1.3], y: [-6, -6] }], [100, {}]] },
   { sel: ".srn-act-line", yUnit: "px", kf: [[0, { o: [0, 0], y: [64, 64] }], [33, { o: [0, 1], y: [64, 0] }], [50, { o: [1, 1], y: [0, 0] }], [72, { o: [1, 0], y: [0, -64] }], [88, { o: [0, 0], y: [-64, -64] }], [100, {}]] },
   { sel: ".srn-act-final", yUnit: "px", kf: [[0, { o: [0, 0], y: [48, 48] }], [84, { o: [0, 1], y: [48, 0] }], [97, { o: [1, 1], y: [0, 0] }], [100, {}]] },

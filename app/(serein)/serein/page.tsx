@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { SereinMist } from "@/components/serein/SereinMist";
+import { SereinSky } from "@/components/serein/SereinSky";
 import { DuskClock } from "@/components/serein/DuskClock";
+import { DuskLine } from "@/components/serein/DuskLine";
 
-const GOLDEN = "/images/serein/serein-golden.jpg";
-const DUSK = "/images/serein/serein-dusk.jpg";
 const NIGHT = "/images/serein/serein-night.jpg";
 const THRESHOLD = "/images/serein/threshold.png";
 const ROOM = "/images/serein/room.png";
@@ -33,11 +33,12 @@ const MOVEMENTS: { n: string; name: string; detail: string }[] = [
 /**
  * SEREIN — a concept room from The Pass Test Kitchen.
  *
- * The hero is a scroll-scrubbed film that loses its light: golden hour
- * dissolves through dusk into candlelit night across three graded frames
- * of one composition, resolving into the conventional reservation hero.
- * Built with the cinematic-scroll-hero technique (dual engine, still
- * frame under reduced motion).
+ * The hero is the light itself: a painted sky, computed rather than
+ * photographed — the sun descends to the water, its glint narrows on
+ * the sea, the serein moment compresses at the horizon, stars arrive.
+ * Scroll sets the sun. The serein rain begins only once it is down,
+ * which is when the phenomenon exists. No photograph, no video file;
+ * the cleanest surface the page can carry is type over light.
  */
 export default function SereinPage() {
   return (
@@ -45,21 +46,15 @@ export default function SereinPage() {
       {/* ------------------------------------------------ the film --- */}
       <section id="top" className="srn-stagewrap">
         <div className="srn-stage">
+          {/* The sky. This plane never transforms; the light is the
+              only motion, and it is drawn, not decoded. */}
           <div className="srn-photo">
-            {/* Dusk is the base layer; golden covers it, night rises over both. */}
-            <Image src={DUSK} alt="" fill priority quality={86} sizes="100vw" className="srn-img-dusk" />
-            <Image src={GOLDEN} alt="" fill priority quality={86} sizes="100vw" className="srn-img-golden" />
-            <Image
-              src={NIGHT}
-              alt="A candlelit stone sill looking out over the Pacific after sunset"
-              fill
-              quality={86}
-              sizes="100vw"
-              className="srn-img-night"
-            />
+            <SereinSky className="h-full w-full" />
           </div>
-          <div className="srn-veil" aria-hidden />
-          <SereinMist className="absolute inset-0 z-[3] h-full w-full" />
+          {/* The fine rain, gated to after sunset by the sky's clock. */}
+          <div className="srn-rain absolute inset-0 z-[3]" aria-hidden>
+            <SereinMist className="h-full w-full" />
+          </div>
 
           <div className="srn-acts">
             {/* Act I — the name, and what it means. */}
@@ -69,6 +64,7 @@ export default function SereinPage() {
                 <em className="italic">serein</em> (n.) the fine rain that falls
                 from a clear sky, after sunset
               </p>
+              <DuskLine />
             </div>
 
             {/* Act II — the promise. */}
