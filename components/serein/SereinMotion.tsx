@@ -16,20 +16,18 @@ type Track = {
   sel: string;
   yUnit?: "px" | "%";
   backdrop?: boolean;
-  /** "acts" runs over 0-300vh; "exit" over 300-400vh. */
-  phase?: "acts" | "exit";
   kf: [number, Props][];
 };
 
 const TRACKS: Track[] = [
   /* The planes are their own engine: SereinWindow drives all five from
      the same scroll, so there are no backdrop tracks here. */
-  { sel: ".srn-act-title", yUnit: "%", kf: [[0, { o: [1, 1], s: [1, 1.03], y: [0, 0] }], [12, { o: [1, 0], s: [1.03, 1.3], y: [0, -6] }], [37, { o: [0, 0], s: [1.3, 1.3], y: [-6, -6] }], [100, {}]] },
-  { sel: ".srn-act-line", yUnit: "px", kf: [[0, { o: [0, 0], y: [64, 64] }], [33, { o: [0, 1], y: [64, 0] }], [50, { o: [1, 1], y: [0, 0] }], [72, { o: [1, 0], y: [0, -64] }], [88, { o: [0, 0], y: [-64, -64] }], [100, {}]] },
-  { sel: ".srn-act-final", yUnit: "px", kf: [[0, { o: [0, 0], y: [48, 48] }], [84, { o: [0, 1], y: [48, 0] }], [97, { o: [1, 1], y: [0, 0] }], [100, {}]] },
-  { sel: ".srn-hint", kf: [[0, { o: [0.6, 0] }], [10, { o: [0, 0] }], [100, {}]] },
-  // The stage recedes and dissolves after the acts have held.
-  { sel: ".srn-stage", yUnit: "%", backdrop: true, phase: "exit", kf: [[0, { o: [1, 0], s: [1, 0.965], y: [0, -5] }], [100, {}]] },
+  /* These stops mirror the keyframes in serein.css exactly. When one
+     moves the other must, or the two engines tell different stories. */
+  { sel: ".srn-act-title", yUnit: "%", kf: [[0, { o: [1, 1], s: [1, 1.03], y: [0, 0] }], [8, { o: [1, 0], s: [1.03, 1.3], y: [0, -6] }], [20, { o: [0, 0], s: [1.3, 1.3], y: [-6, -6] }], [100, {}]] },
+  { sel: ".srn-act-line", yUnit: "px", kf: [[0, { o: [0, 0], y: [64, 64] }], [24, { o: [0, 1], y: [64, 0] }], [32, { o: [1, 1], y: [0, 0] }], [56, { o: [1, 0], y: [0, -64] }], [64, { o: [0, 0], y: [-64, -64] }], [100, {}]] },
+  { sel: ".srn-act-final", yUnit: "px", kf: [[0, { o: [0, 0], y: [48, 48] }], [62, { o: [0, 1], y: [48, 0] }], [70, { o: [1, 1], y: [0, 0] }], [100, {}]] },
+  { sel: ".srn-hint", kf: [[0, { o: [0.6, 0] }], [6, { o: [0, 0] }], [100, {}]] },
 ];
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -82,11 +80,17 @@ export function SereinMotion() {
     let running = false;
 
     const apply = () => {
-      const vh = window.innerHeight;
-      const pActs = clamp01(eased / (vh * 3)) * 100;
-      const pExit = clamp01((eased - vh * 3) / vh) * 100;
+      /* Progress is measured off the pin wrapper, not assumed: the
+         stage height is a design decision that lives in CSS, and this
+         engine has to follow it rather than hold its own copy. */
+      const wrap = document.querySelector(".srn-stagewrap") as HTMLElement | null;
+      const top = wrap ? wrap.getBoundingClientRect().top + window.scrollY : 0;
+      const held = wrap
+        ? Math.max(1, wrap.offsetHeight - window.innerHeight)
+        : window.innerHeight;
+      const pActs = clamp01((eased - top) / held) * 100;
       for (const { track, els } of tracks) {
-        const p100 = track.phase === "exit" ? pExit : pActs;
+        const p100 = pActs;
         let i = 0;
         while (i < track.kf.length - 2 && p100 >= track.kf[i + 1][0]) i++;
         const seg = track.kf[i][1];

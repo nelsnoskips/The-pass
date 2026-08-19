@@ -111,10 +111,17 @@ export function SereinWindow({
         "--srn-night",
         String(Math.min(1, Math.max(0, (t - 0.55) / 0.22))),
       );
-      /* The first course arrives as the room finishes going dark. */
+      /* The handoff, in two beats. The room goes fully dark over the
+         reservation hero, and only then does the first course rise out
+         of that black. Cross-fading the photograph straight onto the
+         copy shows the tide through the words. */
+      stage.style.setProperty(
+        "--srn-dark",
+        String(Math.min(1, Math.max(0, (t - 0.88) / 0.06))),
+      );
       stage.style.setProperty(
         "--srn-course",
-        String(Math.min(1, Math.max(0, (t - 0.8) / 0.16))),
+        String(Math.min(1, Math.max(0, (t - 0.94) / 0.06))),
       );
 
       const vh = window.innerHeight;

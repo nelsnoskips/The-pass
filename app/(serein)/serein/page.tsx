@@ -145,7 +145,9 @@ export default function SereinPage() {
             </div>
           </div>
 
-          {/* The first course, arriving as the room goes dark. */}
+          {/* The room goes dark over the hero, then the first course
+              rises out of that black. */}
+          <div className="srn-course-black" aria-hidden />
           <div className="srn-course" aria-hidden>
             <Image src={TIDE} alt="" fill quality={86} sizes="100vw" />
             <div className="srn-course-shade" />

@@ -36,7 +36,7 @@
    than to the room. */
 
 .srn-stagewrap { position: relative; height: 100svh; min-height: 640px; }
-.srn-cine .srn-stagewrap { height: 220vh; min-height: 0; }
+.srn-cine .srn-stagewrap { height: 320vh; min-height: 0; }
 .srn-stage {
   position: sticky;
   top: 0;
@@ -104,7 +104,18 @@
   opacity: calc(0.45 + 0.55 * var(--srn-veil, 0));
 }
 
-/* The first course arrives as the room finishes going dark. */
+/* The handoff dissolves through black. The room goes fully dark over
+   Act III first, and only then does the first course rise out of it —
+   cross-fading the photograph straight onto the copy shows the tide
+   through the words. */
+.srn-course-black {
+  position: absolute; inset: 0; z-index: 5;
+  background: var(--srn-ink);
+  opacity: var(--srn-dark, 0);
+  pointer-events: none;
+}
+
+/* The first course arrives once the room is dark. */
 .srn-course {
   position: absolute; inset: 0; z-index: 5;
   opacity: var(--srn-course, 0);
@@ -197,38 +208,49 @@
   /* The backdrop no longer animates here: it is a canvas that paints
      its own light from the scroll, and a plane that transforms while
      its contents change reads as the sky sliding. */
-  /* Every animation here runs the FULL 400vh and encodes its holds as
-     keyframe stops. This engine does not apply fill outside a scroll
-     animation's range: an act whose range ended at 300vh snapped back
-     to its base styles the moment the stage began its exit, and the
-     dissolve played over the wrong act. One range, holds in keyframes —
-     the same lesson the HOUSE callouts taught. Stops are the old
-     0-300vh percentages scaled by 0.75. */
+  /* Every animation here runs the FULL 320vh wrapper and encodes its
+     holds as keyframe stops. Two rules, both learned the hard way:
+
+     This engine does not apply fill outside a scroll animation's range.
+     An act whose range ended where the pin ends snapped back to its
+     base styles the instant the stage began its exit — Act I flashed
+     back over Act III on the way out. So the range covers the whole
+     wrapper, not just the held part, and the last 31.25% is a hold that
+     plays while the stage is already leaving the screen.
+
+     And the acts are timed against the pin, not the range: the pin is
+     220vh of the 320vh wrapper, so every stop below is its pin-relative
+     percentage scaled by 0.6875. The fallback in SereinMotion measures
+     the pin directly and keeps the unscaled numbers; the two agree on
+     screen. Move one, move the other. */
   @keyframes srn-title {
     0% { opacity: 1; transform: none; visibility: visible; }
-    9% { opacity: 1; transform: scale(1.03); visibility: visible; }
-    27.75%, 100% { opacity: 0; transform: scale(1.3) translateY(-6%); visibility: hidden; }
+    5.5% { opacity: 1; transform: scale(1.03); visibility: visible; }
+    13.75%, 100% { opacity: 0; transform: scale(1.3) translateY(-6%); visibility: hidden; }
   }
+  /* Act II holds for a quarter of the pin. A promise the guest is meant
+     to read needs longer on screen than it takes to fade in. */
   @keyframes srn-line {
-    0%, 24.75% { opacity: 0; transform: translateY(64px); visibility: hidden; }
-    37.5%, 54% { opacity: 1; transform: none; visibility: visible; }
-    66%, 100% { opacity: 0; transform: translateY(-64px); visibility: hidden; }
+    0%, 16.5% { opacity: 0; transform: translateY(64px); visibility: hidden; }
+    22%, 38.5% { opacity: 1; transform: none; visibility: visible; }
+    44%, 100% { opacity: 0; transform: translateY(-64px); visibility: hidden; }
   }
+  /* Act III arrives at 70% of the pin and never leaves: it is the real
+     hero, and it holds clean for a quarter of the pin before the room
+     goes dark over it. */
   @keyframes srn-final {
-    0%, 63% { opacity: 0; transform: translateY(48px); visibility: hidden; }
-    72.75%, 100% { opacity: 1; transform: none; visibility: visible; }
+    0%, 42.625% { opacity: 0; transform: translateY(48px); visibility: hidden; }
+    48.125%, 100% { opacity: 1; transform: none; visibility: visible; }
   }
   @keyframes srn-hint {
     0% { opacity: 0.6; }
-    7.5%, 100% { opacity: 0; }
+    4.125%, 100% { opacity: 0; }
   }
 
-  /* The film hands off: once Act III has held, the whole stage recedes
-     and dissolves over the final screen of the runway, so the page
-     arrives out of darkness instead of cutting. Same full range; the
-     exit lives in the last quarter of the stops. */
-  /* The stage no longer dissolves on its own: the first course rises
-     over it at 80% and carries the handoff. */
+  /* The handoff is not on this timeline. Once Act III has held, the
+     room darkens to ink over it and the first course rises out of that
+     black — both driven from SereinWindow, which already owns the
+     pin's progress. */
 
   .srn-cine .srn-act-title,
   .srn-cine .srn-act-line,
@@ -236,7 +258,7 @@
   .srn-cine .srn-hint {
     animation: linear both;
     animation-timeline: scroll(root);
-    animation-range: 0 120vh;
+    animation-range: 0 320vh;
   }
   .srn-cine .srn-act-title { animation-name: srn-title; }
   .srn-cine .srn-act-line { animation-name: srn-line; }

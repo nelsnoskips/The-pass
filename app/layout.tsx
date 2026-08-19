@@ -63,6 +63,10 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${dmSerif.variable} ${instrumentSerif.variable} ${inter.variable}`}
+      // Each concept's hero adds its own class here before first paint
+      // so the still frame never flashes. That is a deliberate
+      // divergence from the server's markup, and the only one.
+      suppressHydrationWarning
     >
       <body className="min-h-screen antialiased">{children}</body>
       <GoogleAnalytics gaId="G-FCXWZB4R7M" />
