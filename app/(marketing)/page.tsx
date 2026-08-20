@@ -26,6 +26,10 @@ export default function HomePage() {
             name: "Madison Four",
             url: "https://madisonfour.com",
             email: "hello@madisonfour.com",
+            // The profile that carries the studio's work in public. A
+            // search engine only ties the account to the business if
+            // the site claims it here.
+            sameAs: ["https://www.instagram.com/thepass_madisonfour/"],
             brand: { "@type": "Brand", name: "The Pass by Madison Four" },
             slogan: "Restaurant websites, crafted.",
             description:

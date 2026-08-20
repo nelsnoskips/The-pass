@@ -1,6 +1,26 @@
 import Link from "next/link";
 import { Wordmark } from "./PassMark";
 
+/* Drawn rather than imported: one glyph does not justify an icon
+   dependency, and this one inherits currentColor so it dims and lifts
+   with the link it sits in. */
+function InstagramMark() {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      className="h-[15px] w-[15px]"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 export function MarketingFooter() {
   return (
     <footer className="bg-[#0A0A09] px-5 pb-10 pt-20 sm:px-8">
@@ -17,6 +37,15 @@ export function MarketingFooter() {
               className="mt-5 inline-block text-[13.5px] text-[#B79A68] transition-colors hover:text-[#F1EDE5]"
             >
               hello@madisonfour.com
+            </a>
+            <a
+              href="https://www.instagram.com/thepass_madisonfour/"
+              target="_blank"
+              rel="me noreferrer"
+              className="mt-3 flex w-fit items-center gap-2 text-[13.5px] text-[#F1EDE5]/60 transition-colors hover:text-[#F1EDE5]"
+            >
+              <InstagramMark />
+              @thepass_madisonfour
             </a>
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-x-16 gap-y-3 sm:grid-cols-3">
