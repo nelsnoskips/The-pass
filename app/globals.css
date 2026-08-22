@@ -417,3 +417,75 @@ body {
   }
   .mk-rise { opacity: 1; transform: none; }
 }
+
+/* ------------------------------------------- ambient luminosity --- */
+/* The look this answers to is not WebGL and not 3D in the browser. The
+   sites that have it composite a looping video over the page with
+   mix-blend-mode: screen — the blend is the whole effect, and the video
+   is just a way to feed it moving light.
+   So the blend is what gets borrowed, and the light is painted instead
+   of downloaded. A radial gradient falling off to transparent is its
+   own blur at no cost, and a restaurant page cannot spend a megabyte
+   and an LCP hit on a section whose job is to be read.
+   Three fields, on periods that share no common multiple, so the room
+   never visibly resyncs and starts reading as a loop. Only transform
+   and opacity animate, so this stays on the compositor. */
+.mk-ambience {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.mk-ambience i {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+/* The lamp over the pass. */
+.mk-ambience i:nth-child(1) {
+  width: 78vw; height: 78vw;
+  top: -30%; left: -18%;
+  background: radial-gradient(circle, rgba(183, 154, 104, 0.20) 0%,
+    rgba(183, 154, 104, 0.08) 38%, rgba(183, 154, 104, 0) 68%);
+  animation: mk-drift-a 47s ease-in-out infinite;
+}
+/* The heat of the line, further off. */
+.mk-ambience i:nth-child(2) {
+  width: 66vw; height: 66vw;
+  right: -20%; bottom: -28%;
+  background: radial-gradient(circle, rgba(140, 62, 40, 0.20) 0%,
+    rgba(120, 50, 34, 0.07) 40%, rgba(120, 50, 34, 0) 70%);
+  animation: mk-drift-b 71s ease-in-out infinite;
+}
+/* A cold counterpoint, so the room is lit rather than tinted. Without
+   it the whole section reads as one amber wash. */
+.mk-ambience i:nth-child(3) {
+  width: 54vw; height: 54vw;
+  left: 42%; top: 18%;
+  background: radial-gradient(circle, rgba(96, 116, 138, 0.13) 0%,
+    rgba(96, 116, 138, 0.05) 42%, rgba(96, 116, 138, 0) 72%);
+  animation: mk-drift-c 89s ease-in-out infinite;
+}
+@keyframes mk-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(6%, 4%, 0) scale(1.09); }
+}
+@keyframes mk-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.04); }
+  50%      { transform: translate3d(-7%, -5%, 0) scale(1); }
+}
+@keyframes mk-drift-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(-5%, 6%, 0) scale(1.12); }
+}
+/* Held, not removed. The composition is lit by these; taking them away
+   leaves a flatter section than the one that was designed. */
+@media (prefers-reduced-motion: reduce) {
+  /* :nth-child(n) only to match the specificity of the rules above —
+     a bare `.mk-ambience i` loses to `.mk-ambience i:nth-child(1)` and
+     the fields keep drifting for the people who asked them not to. */
+  .mk-ambience i:nth-child(n) { animation: none; }
+}

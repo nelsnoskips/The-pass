@@ -1,3 +1,4 @@
+import { Ambience } from "./Ambience";
 import Image from "next/image";
 import { PassMark } from "./PassMark";
 
@@ -15,9 +16,10 @@ export function PassStory() {
   return (
     <section
       id="about"
-      className="scroll-mt-24 bg-[#1A1310] px-5 py-24 sm:px-8 sm:py-32"
+      className="relative scroll-mt-24 overflow-hidden bg-[#1A1310] px-5 py-24 sm:px-8 sm:py-32"
     >
-      <div className="mx-auto grid max-w-[1200px] items-center gap-12 lg:grid-cols-2 lg:gap-20">
+      <Ambience />
+      <div className="relative z-[1] mx-auto grid max-w-[1200px] items-center gap-12 lg:grid-cols-2 lg:gap-20">
         <figure className="relative order-last aspect-[4/5] max-h-[640px] overflow-hidden lg:order-first">
           <Image
             src={CHEF_IMAGE}

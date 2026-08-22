@@ -1,3 +1,4 @@
+import { Ambience } from "./Ambience";
 import Image from "next/image";
 import Link from "next/link";
 import { WORK } from "@/lib/work";
@@ -12,9 +13,10 @@ export function TestKitchen() {
   return (
     <section
       id="work"
-      className="scroll-mt-24 bg-[#1A1310] px-5 py-24 sm:px-8 sm:py-32"
+      className="relative scroll-mt-24 overflow-hidden bg-[#1A1310] px-5 py-24 sm:px-8 sm:py-32"
     >
-      <div className="mx-auto max-w-[1400px]">
+      <Ambience />
+      <div className="relative z-[1] mx-auto max-w-[1400px]">
         <p className="mk-label text-[#B79A68]">The Test Kitchen</p>
         <div className="mk-reveal mt-6 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <h2 className="font-editorial text-[38px] leading-[1.06] text-[#F1EDE5] sm:text-[52px]">
