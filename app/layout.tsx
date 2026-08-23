@@ -1,3 +1,4 @@
+import { ViewTransitions } from "@/components/ViewTransitions";
 import type { Metadata } from "next";
 import { DM_Serif_Display, Instrument_Serif, Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
@@ -68,7 +69,10 @@ export default function RootLayout({
       // divergence from the server's markup, and the only one.
       suppressHydrationWarning
     >
-      <body className="min-h-screen antialiased">{children}</body>
+      <body className="min-h-screen antialiased">
+        <ViewTransitions />
+        {children}
+      </body>
       <GoogleAnalytics gaId="G-FCXWZB4R7M" />
     </html>
   );

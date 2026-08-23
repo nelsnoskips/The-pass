@@ -402,7 +402,61 @@ body {
   }
 }
 
+/* ------------------------------------------------ kinetic type --- */
+/* Each unit carries its index, and the index becomes an offset into a
+   timeline. That is the whole stagger: no delays to schedule, no
+   library, no main-thread work — the browser drives it off the line
+   crossing the viewport and scrubs it in reverse on the way back up.
+
+   Ranged over `cover`, and that is the part that has to be right. An
+   `entry` phase lasts exactly one element height, so a 50px word
+   resolves its whole range inside about 23px of scroll and every unit
+   lands at once — the stagger silently collapses. A `cover` phase runs
+   the element's entire crossing, a viewport-height and then some, which
+   is long enough for the offsets to read.
+
+   Each unit keeps its own view timeline rather than sharing a named one
+   off the heading. Units on a line sit at the same height, so their
+   cover phases coincide and the offsets stagger against each other
+   anyway — and an anonymous timeline has no scope to resolve, which is
+   one less thing between the CSS and the compositor.
+
+   Words get a slower cadence than letters because there are fewer of
+   them and each carries more. */
+.kin { display: block; }
+.kin-u { display: inline-block; white-space: pre; }
+.kin-gap { display: inline; white-space: pre; }
+
+@supports (animation-timeline: view()) {
+  .kin-u {
+    animation: kin-set linear both;
+    animation-timeline: view();
+    will-change: transform;
+  }
+  .kin-word .kin-u {
+    animation-range: cover calc(8% + var(--i) * 1.2%)
+                     cover calc(34% + var(--i) * 1.2%);
+  }
+  .kin-char .kin-u {
+    animation-range: cover calc(8% + var(--i) * 0.8%)
+                     cover calc(30% + var(--i) * 0.8%);
+  }
+  /* Rising, and settling out of a slight compression — type being set,
+     rather than a block sliding up. */
+  @keyframes kin-set {
+    from {
+      opacity: 0;
+      transform: translateY(0.42em) scaleY(0.86);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .kin-u,
   .mk-rise,
   .mk-passline::after,
   .mk-reveal,
@@ -497,4 +551,20 @@ body {
    exactly the people who asked them not to. */
 @media (prefers-reduced-motion: reduce) {
   .amb i:nth-child(n) { animation: none; }
+}
+
+/* --------------------------------------------- view transitions --- */
+/* The cross-fade between routes. Kept short and symmetrical: a
+   transition long enough to notice is a transition long enough to
+   resent on the fourth click. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }

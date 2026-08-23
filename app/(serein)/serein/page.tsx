@@ -1,3 +1,4 @@
+import { KineticText } from "@/components/KineticHeading";
 import Image from "next/image";
 import { Ambience } from "@/components/Ambience";
 import { SereinMist } from "@/components/serein/SereinMist";
@@ -318,7 +319,7 @@ export default function SereinPage() {
       </section>
 
       {/* ------------------------------ chapter 04 — the ten movements --- */}
-      <section id="menu" className="relative scroll-mt-16 overflow-hidden bg-[#05070B] px-5 py-24 sm:px-8 sm:py-32">
+      <section id="menu" className="relative scroll-mt-16 bg-[#05070B] px-5 py-24 sm:px-8 sm:py-32">
         <Ambience className="srn-amb" />
         <div className="relative z-[1] mx-auto max-w-[1200px]">
           <p className="srn-chapter-label srn-label text-[#E9E5DB]/45">
@@ -327,10 +328,15 @@ export default function SereinPage() {
           </p>
           <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_1.15fr] lg:gap-20">
             <div>
-              <h2 className="srn-serif text-[clamp(34px,4.5vw,58px)] leading-[1.04] text-[#E9E5DB]">
-                Ten movements.
+              <h2
+                className="kin kin-word srn-serif text-[clamp(34px,4.5vw,58px)] leading-[1.04] text-[#E9E5DB]"
+                aria-label="Ten movements. One current."
+              >
+                <KineticText text="Ten movements." />
                 <br />
-                <em className="italic text-[#C9884B]">One current.</em>
+                <em className="italic text-[#C9884B]">
+                  <KineticText text="One current." start={2} />
+                </em>
               </h2>
               <p className="mt-7 max-w-[400px] text-[15px] leading-relaxed text-[#E9E5DB]/70">
                 A single menu each evening, $210 per guest. Two pairings run
@@ -369,7 +375,7 @@ export default function SereinPage() {
       </section>
 
       {/* -------------------------- the blue hour, the members' circle --- */}
-      <section className="srn-blue relative overflow-hidden border-y border-[#E9E5DB]/12 bg-[#080C13] px-5 py-20 sm:px-8">
+      <section className="srn-blue relative border-y border-[#E9E5DB]/12 bg-[#080C13] px-5 py-20 sm:px-8">
         <Ambience className="srn-amb" />
         <div className="mx-auto grid max-w-[1200px] items-center gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <div>
