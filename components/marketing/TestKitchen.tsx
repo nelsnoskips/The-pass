@@ -1,4 +1,4 @@
-import { Ambience } from "./Ambience";
+import { Ambience } from "@/components/Ambience";
 import Image from "next/image";
 import Link from "next/link";
 import { WORK } from "@/lib/work";

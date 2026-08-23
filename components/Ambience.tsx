@@ -14,10 +14,13 @@
  * It belongs on the dark connective sections and nowhere near a plated
  * dish: light thrown across food photography reads as a colour cast,
  * not as atmosphere.
+ *
+ * Each room sets its own three lights and its own gain in CSS, keyed
+ * off its concept wrapper. This component only places them.
  */
-export function Ambience() {
+export function Ambience({ className = "" }: { className?: string }) {
   return (
-    <div className="mk-ambience" aria-hidden>
+    <div className={`amb ${className}`.trim()} aria-hidden>
       <i /><i /><i />
     </div>
   );

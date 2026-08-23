@@ -1,4 +1,4 @@
-import { Ambience } from "./Ambience";
+import { Ambience } from "@/components/Ambience";
 import Image from "next/image";
 import { PassMark } from "./PassMark";
 

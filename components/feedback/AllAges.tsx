@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Ambience } from "@/components/Ambience";
 import Link from "next/link";
 import { EVENT, LOYALTY, MERCH, money } from "@/lib/feedback";
 import { Plate } from "./Plate";
@@ -48,6 +49,7 @@ export function AllAges() {
       className="relative overflow-hidden bg-[#0b0908]"
       aria-labelledby="allages-heading"
     >
+      <Ambience className="fbk-amb" />
       {/* The room, pushed into very slowly while it is on screen. */}
       <div className="absolute inset-0">
         <Plate

@@ -269,3 +269,10 @@
 
 /* The rubber stamp: outlined, set on the angle a hand would leave it. */
 .hse-stamp { transform: rotate(-6deg); letter-spacing: 0.2em; }
+
+/* No ambient fields on this one, deliberately.
+   HOUSE ISSUE is a print brand end to end — flat stock, hard edges, ink
+   that does not glow — and its only large dark field is a product grid
+   sitting on bright bone backgrounds. Light thrown across that reads as
+   a colour cast on the goods, and light thrown across newsprint reads
+   as a mistake. The other three rooms are lit; this one is printed. */

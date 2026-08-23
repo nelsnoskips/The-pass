@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Ambience } from "@/components/Ambience";
 import { SereinMist } from "@/components/serein/SereinMist";
 import { SereinWindow } from "@/components/serein/SereinWindow";
 import { DuskClock } from "@/components/serein/DuskClock";
@@ -317,8 +318,9 @@ export default function SereinPage() {
       </section>
 
       {/* ------------------------------ chapter 04 — the ten movements --- */}
-      <section id="menu" className="scroll-mt-16 bg-[#05070B] px-5 py-24 sm:px-8 sm:py-32">
-        <div className="mx-auto max-w-[1200px]">
+      <section id="menu" className="relative scroll-mt-16 overflow-hidden bg-[#05070B] px-5 py-24 sm:px-8 sm:py-32">
+        <Ambience className="srn-amb" />
+        <div className="relative z-[1] mx-auto max-w-[1200px]">
           <p className="srn-chapter-label srn-label text-[#E9E5DB]/45">
             <span>04</span>
             <span>The Menu</span>
@@ -367,7 +369,8 @@ export default function SereinPage() {
       </section>
 
       {/* -------------------------- the blue hour, the members' circle --- */}
-      <section className="srn-blue border-y border-[#E9E5DB]/12 bg-[#080C13] px-5 py-20 sm:px-8">
+      <section className="srn-blue relative overflow-hidden border-y border-[#E9E5DB]/12 bg-[#080C13] px-5 py-20 sm:px-8">
+        <Ambience className="srn-amb" />
         <div className="mx-auto grid max-w-[1200px] items-center gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <div>
             <p className="srn-label text-[#6E8CA6]">The Blue Hour</p>
