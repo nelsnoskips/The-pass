@@ -16,10 +16,24 @@ export async function generateMetadata({
   const { slug } = await params;
   const work = getWork(slug);
   if (!work) return {};
+  /* The canonical has to be set here. Next inherits `alternates` from
+     the root layout, which points at "/", so without this every case
+     page told Google it was a duplicate of the homepage — three
+     portfolio pages, listed in the sitemap, quietly asking not to be
+     indexed. */
+  const url = `/work/${work.slug}`;
+  const description = `${work.tagline} ${work.segment} in ${work.place} — the brief, the build, and the three decisions behind it.`;
   return {
     title: `${work.name} — a concept room by The Pass`,
-    description: work.tagline,
-    openGraph: { images: [work.image] },
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${work.name} — ${work.tagline}`,
+      description,
+      url,
+      type: "article",
+      images: [work.image],
+    },
   };
 }
 
@@ -159,6 +173,44 @@ export default async function WorkCasePage({
           </div>
         </div>
       </section>
+      <script
+        type="application/ld+json"
+        /* A case page is a described piece of work, so it says so: the
+           thing itself, who made it, and where it sits in the site. The
+           breadcrumb is what earns the "The Pass > Work > NAME" line
+           under the result instead of a bare URL. */
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "CreativeWork",
+                name: work.name,
+                headline: `${work.name} — ${work.tagline}`,
+                abstract: work.tagline,
+                description: work.brief,
+                url: `https://madisonfour.com/work/${work.slug}`,
+                image: `https://madisonfour.com${work.image}`,
+                genre: work.segment,
+                locationCreated: work.place,
+                creator: {
+                  "@type": "Organization",
+                  name: "Madison Four",
+                  url: "https://madisonfour.com",
+                },
+              },
+              {
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "The Pass", item: "https://madisonfour.com" },
+                  { "@type": "ListItem", position: 2, name: "Selected Work", item: "https://madisonfour.com/#work" },
+                  { "@type": "ListItem", position: 3, name: work.name },
+                ],
+              },
+            ],
+          }),
+        }}
+      />
     </>
   );
 }
