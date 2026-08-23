@@ -3,8 +3,10 @@ import { Disciplines } from "@/components/marketing/Disciplines";
 import { DigitalExperiences } from "@/components/marketing/DigitalExperiences";
 import { Packages } from "@/components/marketing/Packages";
 import { TestKitchen } from "@/components/marketing/TestKitchen";
+import { Faq } from "@/components/marketing/Faq";
 import { PassStory } from "@/components/marketing/PassStory";
 import { Consultation } from "@/components/marketing/Consultation";
+import { FAQS } from "@/lib/faq";
 
 export default function HomePage() {
   return (
@@ -15,6 +17,7 @@ export default function HomePage() {
       <TestKitchen />
       <Packages />
       <PassStory />
+      <Faq />
       <Consultation />
       <script
         type="application/ld+json"
@@ -78,6 +81,24 @@ export default function HomePage() {
                 },
               },
             ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        /* Generated from the same array the section renders, because
+           Google requires the markup to match the visible copy and two
+           hand-kept copies of nine answers drift the first time a price
+           moves. */
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: FAQS.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
           }),
         }}
       />
