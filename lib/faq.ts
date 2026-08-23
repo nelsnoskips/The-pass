@@ -28,6 +28,10 @@ export const FAQS: Faq[] = [
     a: "No. Every site is designed and built from nothing, with no templates and nothing off the shelf. A template makes your restaurant look like every other restaurant that bought it, and it puts a ceiling on speed and on what the site can be made to do.",
   },
   {
+    q: "Do you work with restaurants anywhere in the United States?",
+    a: "Yes. The studio works with restaurants across the United States and the work is done remotely — calls, shared files and a review link from the first conversation through to launch, so where the room is has no bearing on what gets built. Search is still tuned to your own market: local intent, your city, your neighbourhood, the streets guests actually type.",
+  },
+  {
     q: "Do I still need a website if my restaurant is on Instagram and Google?",
     a: "Yes, because those are rented and a website is owned. A social profile cannot take a reservation on your terms, cannot be found for the searches that matter, and can change its rules or its reach without asking you. Your site is the one place where the menu, the hours and the booking are yours.",
   },
