@@ -23,6 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
+    // The intake is a real destination, not just a form the nav hides.
+    { url: "https://madisonfour.com/brief", lastModified: built, changeFrequency: "monthly", priority: 0.8 },
     { url: "https://madisonfour.com/privacy", lastModified: built, changeFrequency: "yearly", priority: 0.2 },
     { url: "https://madisonfour.com/terms", lastModified: built, changeFrequency: "yearly", priority: 0.2 },
   ];
