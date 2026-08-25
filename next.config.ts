@@ -10,6 +10,20 @@ const nextConfig: NextConfig = {
     // the default 75. Next only honours qualities declared here.
     qualities: [75, 82, 84, 86, 88, 90],
   },
+  async rewrites() {
+    return {
+      afterFiles: [
+        {
+          // Client spec builds are static exports dropped into
+          // public/spec/<name>/. Next serves public files only on
+          // exact match, so the bare folder URL needs pointing at its
+          // own index.html; generic so the next spec needs no config.
+          source: "/spec/:name",
+          destination: "/spec/:name/index.html",
+        },
+      ],
+    };
+  },
   async redirects() {
     return [
       {
