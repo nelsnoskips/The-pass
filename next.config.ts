@@ -19,6 +19,14 @@ const nextConfig: NextConfig = {
         destination: "https://cal.com/the-pass-team-ht7tto/book",
         permanent: false,
       },
+      {
+        // Renamed before it was ever sent out, but the old path was
+        // live and verified for a few minutes — worth a redirect
+        // rather than trusting nobody bookmarked it.
+        source: "/proposals/orravan",
+        destination: "/proposals/hals",
+        permanent: false,
+      },
     ];
   },
 };

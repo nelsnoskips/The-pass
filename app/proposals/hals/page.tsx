@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./orravan.css";
+import "./hals.css";
 
 /**
  * A one-off quote, not a page of the studio's own site — hence its own
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description:
     "Private events pages, the pop-up, and ongoing care — a proposal prepared for Orravan Mechanical, Inc.",
   robots: { index: false, follow: false },
-  alternates: { canonical: "/proposals/orravan" },
+  alternates: { canonical: "/proposals/hals" },
 };
 
 export default function OrravanProposalPage() {
