@@ -21,6 +21,15 @@ const nextConfig: NextConfig = {
           source: "/spec/:name",
           destination: "/spec/:name/index.html",
         },
+        {
+          // The same for routes inside a spec — /spec/orravan/team and
+          // anything else the export produces as its own folder. These
+          // rules run afterFiles, so a real asset underneath the spec
+          // (an image, a _next chunk) is served directly and never
+          // reaches this; only folder URLs fall through.
+          source: "/spec/:name/:sub+",
+          destination: "/spec/:name/:sub+/index.html",
+        },
       ],
     };
   },
