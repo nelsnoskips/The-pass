@@ -38,11 +38,11 @@ const nextConfig: NextConfig = {
       // /book is now a real page with the scheduler embedded on-domain,
       // so the old external redirect is gone — printed links still work.
       {
-        // Renamed before it was ever sent out, but the old path was
-        // live and verified for a few minutes — worth a redirect
-        // rather than trusting nobody bookmarked it.
+        // This used to point at /proposals/hals, which is a different
+        // client's quote entirely. Anyone at Orravan guessing their own
+        // name in the URL would have been handed someone else's pricing.
         source: "/proposals/orravan",
-        destination: "/proposals/hals",
+        destination: "/proposals/orravan-redesign",
         permanent: false,
       },
     ];

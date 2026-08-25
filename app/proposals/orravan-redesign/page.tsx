@@ -2,14 +2,12 @@ import type { Metadata } from "next";
 import "../proposal.css";
 
 /**
- * The second quote to Orravan, and it has to be read next to the first.
+ * Orravan's quote, against the brief Alex sent.
  *
- * /proposals/hals is the same company — Attn: Sam Janco — and it already
- * says the new site is free and ongoing care is $300 a month. That offer
- * stands here. What this prices is only the work the brief adds on top
- * of it: ServiceTrade, booking, payments, and the portal. Quoting the
- * whole thing again at a new number would look like the first offer had
- * been withdrawn.
+ * The mock is already built and is theirs either way — the studio's
+ * usual shape, and the reason the number below is only the integration
+ * work and the care. ServiceTrade, booking and payments are the parts
+ * that are genuinely new engineering rather than pages.
  */
 const CLIENT = {
   company: "Orravan Mechanical",
@@ -66,9 +64,10 @@ export default function OrravanRedesignProposal() {
         </div>
 
         <div className="orv-context">
-          <p className="orv-label">Where this sits</p>
+          <p className="orv-label">A note on the numbers</p>
           <div className="orv-prose">
-            <p>You already have a quote from us. The site itself is <strong>built and free</strong>, and ongoing care was quoted at <strong>$300 a month</strong>. That doesn&rsquo;t change. What&rsquo;s priced below is only the work your brief adds to it &mdash; the ServiceTrade connection, booking, payments, and bringing the customer portal across.</p>
+            <p>The studio lists at <strong>$3,000&ndash;$4,000</strong> for a custom build and <strong>$900 a month</strong> for ongoing care. That&rsquo;s public on our site, and I&rsquo;d rather tell you myself than have you find it and wonder which number is real.</p>
+            <p style={{ marginTop: ".8rem" }}>The redesign itself is <strong>already built and yours</strong> &mdash; you have been looking at it. What&rsquo;s priced below is the work your brief adds on top: the ServiceTrade connection, booking, payments, and carrying the customer portal across.</p>
           </div>
         </div>
       </section>
@@ -89,7 +88,7 @@ export default function OrravanRedesignProposal() {
                 <tr>
                   <td>The redesign &mdash; home, about,<br />services, contact</td>
                   <td className="orv-list-price">$3,000&ndash;$4,000</td>
-                  <td className="orv-your-price"><span className="orv-incl">Already yours</span></td>
+                  <td className="orv-your-price"><span className="orv-incl">Free</span></td>
                 </tr>
                 <tr>
                   <td>ServiceTrade connection</td>
@@ -115,7 +114,7 @@ export default function OrravanRedesignProposal() {
             </table>
 
             <div className="orv-includes">
-              <p>Care covers hosting, security, content and page updates, and ongoing search work. It&rsquo;s $450 rather than the $300 already quoted because the site now has live integrations to keep running &mdash; a booking flow and a payment path that break loudly if nobody is watching them.</p>
+              <p>Care covers hosting, security, content and page updates, and ongoing search work. It sits above our usual rate for a brochure site because yours will not be one &mdash; a booking flow, a payment path and a live ServiceTrade link all break loudly if nobody is watching them.</p>
               <p style={{ marginTop: ".7rem" }}>Additional pages beyond the five are <strong>$100 each</strong>, one&nbsp;time.</p>
             </div>
 
