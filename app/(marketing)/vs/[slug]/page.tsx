@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { COMPARISONS, getComparison } from "@/lib/comparisons";
+import { COMPARISONS, getComparison, LAST_REVIEWED } from "@/lib/comparisons";
 
 export function generateStaticParams() {
   return COMPARISONS.map((c) => ({ slug: c.slug }));
@@ -37,8 +37,67 @@ export default async function ComparisonPage({
   const cmp = getComparison(slug);
   if (!cmp) notFound();
 
+  const pageUrl = `https://madisonfour.com/vs/${cmp.slug}`;
+  // FAQPage no longer earns Google rich results (retired May 2026) but is
+  // still parsed by AI answer engines and Bing; only visible FAQs are
+  // marked up. Entity + freshness fields carry the rest.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": pageUrl,
+        url: pageUrl,
+        name: cmp.metaTitle,
+        description: cmp.metaDescription,
+        dateModified: LAST_REVIEWED,
+        author: { "@type": "Organization", name: "The Pass by Madison Four" },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "The Pass by Madison Four",
+            item: "https://madisonfour.com",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: `The Pass vs ${cmp.competitor}`,
+            item: pageUrl,
+          },
+        ],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: cmp.faqs.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      },
+      {
+        "@type": "Service",
+        name: "Custom restaurant website design",
+        serviceType: "Website design for restaurants",
+        provider: {
+          "@type": "Organization",
+          name: "The Pass by Madison Four",
+          url: "https://madisonfour.com",
+        },
+        areaServed: "Los Angeles, CA",
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Dark typographic hero */}
       <section className="bg-[#0A0A09]">
         <div className="mx-auto max-w-[1200px] px-5 pb-20 pt-36 sm:px-8 sm:pt-40">
@@ -109,8 +168,11 @@ export default async function ComparisonPage({
       {/* Comparison table */}
       <section className="bg-[#0A0A09] px-5 py-24 sm:px-8 sm:py-28">
         <div className="mx-auto max-w-[1200px]">
-          <p className="mk-label text-[#B79A68]">Side by side</p>
-          <div className="mt-10 overflow-x-auto">
+          <p className="mk-label text-[#B79A68]">The short version</p>
+          <p className="mt-6 max-w-[880px] font-editorial text-[clamp(19px,2vw,25px)] leading-[1.4] text-[#F1EDE5]/90">
+            {cmp.verdict}
+          </p>
+          <div className="mt-14 overflow-x-auto">
             <table className="w-full min-w-[640px] border-collapse text-left">
               <thead>
                 <tr className="border-b border-[#B79A68]/30">
@@ -154,6 +216,27 @@ export default async function ComparisonPage({
           <p className="max-w-[620px] text-[15.5px] leading-relaxed text-[#1A1310]/80">
             {cmp.whenTheyAreRight}
           </p>
+        </div>
+      </section>
+
+      {/* FAQ — visible copy mirrored in the FAQPage structured data */}
+      <section className="bg-[#F1EDE5] px-5 pb-24 text-[#0A0A09] sm:px-8 sm:pb-28">
+        <div className="mx-auto max-w-[1200px]">
+          <p className="mk-label border-t border-[#0A0A09]/15 pt-14 text-[#4B1719]">
+            Common questions
+          </p>
+          <div className="mt-10 grid gap-x-14 gap-y-12 lg:grid-cols-2">
+            {cmp.faqs.map((f) => (
+              <div key={f.q}>
+                <h2 className="font-editorial text-[20px] leading-snug">
+                  {f.q}
+                </h2>
+                <p className="mt-4 text-[14.5px] leading-relaxed text-[#1A1310]/75">
+                  {f.a}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

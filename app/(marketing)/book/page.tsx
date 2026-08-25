@@ -37,6 +37,31 @@ export default function BookPage() {
       </section>
       <section className="bg-[#F1EDE5] px-5 py-16 sm:px-8 sm:py-20">
         <div className="mx-auto max-w-[1100px]">
+          {/* What-to-expect strip: reassurance beside the calendar lifts
+              completed bookings — say what happens, with whom, and after. */}
+          <div className="mb-14 grid gap-x-12 gap-y-8 text-[#0A0A09] sm:grid-cols-3">
+            {[
+              [
+                "The fifteen minutes",
+                "We pull up your current website together and walk through it: what's working, what's costing you guests, and what we'd change first. No slides, no pitch deck.",
+              ],
+              [
+                "Who you'll meet",
+                "Nelson — the studio's founder, based in Torrance, with over ten years in marketing and creative design. You talk to the person who'd do the work.",
+              ],
+              [
+                "What happens after",
+                "If it's useful, we follow up with one designed page of your site — seen, not imagined. If it's not a fit, you keep the notes. No obligation either way.",
+              ],
+            ].map(([title, body]) => (
+              <div key={title} className="border-t border-[#0A0A09]/15 pt-5">
+                <h2 className="mk-label text-[#4B1719]">{title}</h2>
+                <p className="mt-3 text-[14px] leading-relaxed text-[#1A1310]/75">
+                  {body}
+                </p>
+              </div>
+            ))}
+          </div>
           <CalEmbed />
         </div>
       </section>
