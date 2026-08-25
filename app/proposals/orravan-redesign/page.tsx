@@ -4,10 +4,10 @@ import "../proposal.css";
 /**
  * Orravan's quote, against the brief Alex sent.
  *
- * The mock is already built and is theirs either way — the studio's
- * usual shape, and the reason the number below is only the integration
- * work and the care. ServiceTrade, booking and payments are the parts
- * that are genuinely new engineering rather than pages.
+ * They already run booking, payments and ServiceTrade, so none of those
+ * is a build — each is a connection to something that exists, priced
+ * flat at $500. The redesign is the actual work and carries the actual
+ * number. Half of the one-time total falls due on signing.
  */
 const CLIENT = {
   company: "Orravan Mechanical",
@@ -67,7 +67,7 @@ export default function OrravanRedesignProposal() {
           <p className="orv-label">A note on the numbers</p>
           <div className="orv-prose">
             <p>The studio lists at <strong>$3,000&ndash;$4,000</strong> for a custom build and <strong>$900 a month</strong> for ongoing care. That&rsquo;s public on our site, and I&rsquo;d rather tell you myself than have you find it and wonder which number is real.</p>
-            <p style={{ marginTop: ".8rem" }}>The redesign itself is <strong>already built and yours</strong> &mdash; you have been looking at it. What&rsquo;s priced below is the work your brief adds on top: the ServiceTrade connection, booking, payments, and carrying the customer portal across.</p>
+            <p style={{ marginTop: ".8rem" }}>You already run booking, payments and ServiceTrade, so none of those is a build from scratch &mdash; each is a connection to something you already pay for, and each is priced flat. The redesign is the work.</p>
           </div>
         </div>
       </section>
@@ -76,8 +76,9 @@ export default function OrravanRedesignProposal() {
         <div className="orv-options">
           <div className="orv-option orv-b" style={{ gridColumn: "1 / -1" }}>
             <p className="orv-kicker">The build</p>
-            <h2>What the brief adds</h2>
-            <p className="orv-rate">$3,600<span className="orv-cadence"> one time</span> &mdash; then $450 / month</p>
+            <h2>What it comes to</h2>
+            <p className="orv-rate">$4,000<span className="orv-cadence"> one time</span> &mdash; then $300 / month</p>
+            <p className="orv-gift-note">$2,000 due on signing, the balance on launch.</p>
 
             <table className="orv-pricing">
               <caption>Scope and pricing against list</caption>
@@ -86,39 +87,44 @@ export default function OrravanRedesignProposal() {
               </thead>
               <tbody>
                 <tr>
-                  <td>The redesign &mdash; home, about,<br />services, contact</td>
+                  <td>The redesign &mdash; home, about,<br />services, contact, portal</td>
                   <td className="orv-list-price">$3,000&ndash;$4,000</td>
-                  <td className="orv-your-price"><span className="orv-incl">Free</span></td>
+                  <td className="orv-your-price">$2,500</td>
                 </tr>
                 <tr>
-                  <td>ServiceTrade connection</td>
-                  <td className="orv-list-price">$3,200</td>
-                  <td className="orv-your-price">$2,400</td>
+                  <td>Booking &mdash; connected to<br />what you already use</td>
+                  <td className="orv-list-price">$900</td>
+                  <td className="orv-your-price">$500</td>
                 </tr>
                 <tr>
-                  <td>Booking + payments</td>
-                  <td className="orv-list-price">$1,800</td>
-                  <td className="orv-your-price">$1,200</td>
+                  <td>Payments &mdash; connected</td>
+                  <td className="orv-list-price">$900</td>
+                  <td className="orv-your-price">$500</td>
                 </tr>
                 <tr>
-                  <td>Customer portal, carried across</td>
-                  <td className="orv-list-price">$1,400</td>
-                  <td className="orv-your-price"><span className="orv-incl">Included</span></td>
+                  <td>ServiceTrade &mdash; connected,<br />portal included</td>
+                  <td className="orv-list-price">$900</td>
+                  <td className="orv-your-price">$500</td>
+                </tr>
+                <tr className="orv-total">
+                  <td>One time</td>
+                  <td className="orv-list-price">$5,700&ndash;$6,700</td>
+                  <td className="orv-your-price">$4,000</td>
                 </tr>
                 <tr>
                   <td>Ongoing care</td>
                   <td className="orv-list-price">$900/mo</td>
-                  <td className="orv-your-price">$450/mo</td>
+                  <td className="orv-your-price">$300/mo</td>
                 </tr>
               </tbody>
             </table>
 
             <div className="orv-includes">
-              <p>Care covers hosting, security, content and page updates, and ongoing search work. It sits above our usual rate for a brochure site because yours will not be one &mdash; a booking flow, a payment path and a live ServiceTrade link all break loudly if nobody is watching them.</p>
-              <p style={{ marginTop: ".7rem" }}>Additional pages beyond the five are <strong>$100 each</strong>, one&nbsp;time.</p>
+              <p>Care covers hosting, security, content and page updates, and ongoing search work &mdash; including keeping the three connections alive, which is the part that breaks loudly if nobody is watching it.</p>
+              <p style={{ marginTop: ".7rem" }}>Additional pages beyond the five are <strong>$250 each</strong>, one&nbsp;time.</p>
             </div>
 
-            <p className="orv-fine">Half on start, half on launch. Care is month to month.</p>
+            <p className="orv-fine">50% deposit on signing, balance on launch. Care is month to month and starts when the site goes live.</p>
           </div>
         </div>
 
@@ -134,7 +140,8 @@ export default function OrravanRedesignProposal() {
         </div>
         <div className="orv-prose">
           <p>You said no AI images, and the mock you&rsquo;ve been looking at is full of them &mdash; the building cutaway, the equipment, the team. They were placeholders to prove the layout, and every one comes out.</p>
-          <p style={{ marginTop: ".8rem" }}>What replaces them is a half-day shoot: your plant rooms, your rooftop units, your crew. That&rsquo;s the one thing I&rsquo;d push you on, because the Therma page you flagged works entirely on the strength of real faces. Budget <strong>$900</strong> for a local photographer, or supply your own and it costs nothing.</p>
+          <p style={{ marginTop: ".8rem" }}>What replaces them is a half-day shoot: your plant rooms, your rooftop units, your crew. That&rsquo;s the one thing I&rsquo;d push you on, because the Therma page you flagged works entirely on the strength of real faces.</p>
+          <p style={{ marginTop: ".8rem" }}>If you have a photographer who can shoot it and send the files over, that costs you nothing extra and is the fastest route. If not, I&rsquo;ll arrange one and come back with a figure &mdash; I&rsquo;d rather price it against a real shot list than guess at one here.</p>
         </div>
       </section>
 

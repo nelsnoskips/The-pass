@@ -227,6 +227,15 @@
     vertical-align: top;
   }
   table.orv-pricing tr:last-child td { border-bottom: none; }
+  /* The subtotal line. Four one-time items is enough that a reader
+     should not have to add them up themselves. */
+  table.orv-pricing tr.orv-total td {
+    border-top: 1.5px solid var(--rule);
+    border-bottom: none;
+    padding-top: .8rem;
+    font-weight: 700;
+  }
+  table.orv-pricing tr.orv-total td:first-child { font-weight: 600; }
   .orv-list-price { text-decoration: line-through; color: var(--ink-faint); white-space: nowrap; }
   .orv-your-price { font-weight: 700; color: var(--accent, var(--gold-deep)); white-space: nowrap; }
   .orv-incl {
