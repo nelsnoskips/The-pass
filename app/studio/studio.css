@@ -1,0 +1,84 @@
+/*
+ * The studio. One person's working surface, not a product — so it is
+ * dense, monochrome, and has no onboarding. Scoped to .st-*.
+ */
+.st-shell {
+  --ink: #14110d;
+  --paper: #f4f1ea;
+  --card: #fffdf8;
+  --line: rgba(20, 17, 13, .14);
+  --soft: rgba(20, 17, 13, .58);
+  --gold: #b79a68;
+  --green: #2f6f4f;
+  --red: #a4342a;
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+.st-wrap { max-width: 1120px; margin-inline: auto; padding: clamp(1.2rem, 3vw, 2.2rem); }
+
+.st-top {
+  display: flex; align-items: baseline; gap: 1rem 1.5rem; flex-wrap: wrap;
+  border-bottom: 1px solid var(--line); padding-bottom: 1rem; margin-bottom: 1.6rem;
+}
+.st-top h1 { font-family: var(--font-dm-serif), Georgia, serif; font-size: 30px; margin-right: auto; }
+.st-eyebrow { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
+.st-top a, .st-top button { font-size: 12.5px; color: var(--soft); }
+.st-top a:hover { color: var(--ink); }
+
+.st-grid { display: grid; gap: 1rem; }
+.st-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 2px;
+  padding: 1rem 1.1rem;
+}
+.st-card h2 { font-family: var(--font-dm-serif), Georgia, serif; font-size: 19px; }
+
+.st-row {
+  display: grid; grid-template-columns: 1fr auto; gap: .6rem 1rem;
+  align-items: start; padding: .85rem 0; border-bottom: 1px solid var(--line);
+}
+.st-row:last-child { border-bottom: 0; }
+.st-row-main { min-width: 0; }
+.st-row-main strong { font-size: 15px; }
+.st-row-meta { font-size: 12px; color: var(--soft); margin-top: .2rem; }
+.st-row-side { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; justify-content: flex-end; }
+
+.st-chip {
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  padding: .22rem .5rem; border: 1px solid var(--line); border-radius: 2px; white-space: nowrap;
+}
+.st-chip[data-tone="hot"]  { background: var(--gold); border-color: var(--gold); color: #14110d; }
+.st-chip[data-tone="live"] { background: var(--green); border-color: var(--green); color: #fff; }
+
+.st-btn {
+  font-size: 12.5px; font-weight: 600; padding: .45rem .85rem;
+  background: var(--ink); color: var(--paper); border-radius: 2px; display: inline-block;
+}
+.st-btn[data-ghost] { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+
+.st-form { display: grid; gap: .8rem; }
+.st-field { display: grid; gap: .25rem; }
+.st-field span { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
+.st-field input, .st-field textarea, .st-field select {
+  font: inherit; font-size: 13.5px; padding: .5rem .6rem;
+  border: 1px solid var(--line); border-radius: 2px; background: #fff; color: inherit;
+  width: 100%; box-sizing: border-box;
+}
+.st-two { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.st-note { font-size: 12.5px; color: var(--soft); line-height: 1.55; }
+.st-error { font-size: 12.5px; color: var(--red); }
+.st-ok { font-size: 12.5px; color: var(--green); }
+
+.st-login { min-height: 100dvh; display: grid; place-items: center; padding: 2rem; }
+.st-login-card { width: min(420px, 100%); }
+
+.st-items { display: grid; gap: .5rem; }
+.st-item { display: grid; grid-template-columns: 1.6fr 1fr 1fr auto; gap: .4rem; align-items: center; }
+.st-item input { font-size: 12.5px; }
+
+@media (max-width: 720px) {
+  .st-two, .st-item { grid-template-columns: 1fr; }
+  .st-row { grid-template-columns: 1fr; }
+  .st-row-side { justify-content: flex-start; }
+}
