@@ -8,6 +8,11 @@ import "../proposal.css";
  * is a build — each is a connection to something that exists, priced
  * flat at $500. The redesign is the actual work and carries the actual
  * number. Half of the one-time total falls due on signing.
+ *
+ * Nothing has been delivered to this client. There is a mock, built to
+ * show the shape of the thing, and no page here may imply otherwise —
+ * an earlier draft said the redesign was "already built and yours",
+ * which would have been read as a site that exists and is paid for.
  */
 const CLIENT = {
   company: "Orravan Mechanical",
@@ -68,6 +73,7 @@ export default function OrravanRedesignProposal() {
           <div className="orv-prose">
             <p>The studio lists at <strong>$3,000&ndash;$4,000</strong> for a custom build and <strong>$900 a month</strong> for ongoing care. That&rsquo;s public on our site, and I&rsquo;d rather tell you myself than have you find it and wonder which number is real.</p>
             <p style={{ marginTop: ".8rem" }}>You already run booking, payments and ServiceTrade, so none of those is a build from scratch &mdash; each is a connection to something you already pay for, and each is priced flat. The redesign is the work.</p>
+            <p style={{ marginTop: ".8rem" }}>Danny put us in touch, and I&rsquo;d love to do this one.</p>
           </div>
         </div>
       </section>
@@ -139,7 +145,7 @@ export default function OrravanRedesignProposal() {
           <div className="orv-hr"></div>
         </div>
         <div className="orv-prose">
-          <p>You said no AI images, and the mock you&rsquo;ve been looking at is full of them &mdash; the building cutaway, the equipment, the team. They were placeholders to prove the layout, and every one comes out.</p>
+          <p>You said no AI images. The mock I&rsquo;ve put together to show the shape of it is full of them &mdash; the building cutaway, the equipment, the team. They are placeholders to prove the layout, and every one of them comes out before anything goes live.</p>
           <p style={{ marginTop: ".8rem" }}>What replaces them is a half-day shoot: your plant rooms, your rooftop units, your crew. That&rsquo;s the one thing I&rsquo;d push you on, because the Therma page you flagged works entirely on the strength of real faces.</p>
           <p style={{ marginTop: ".8rem" }}>If you have a photographer who can shoot it and send the files over, that costs you nothing extra and is the fastest route. If not, I&rsquo;ll arrange one and come back with a figure &mdash; I&rsquo;d rather price it against a real shot list than guess at one here.</p>
         </div>
