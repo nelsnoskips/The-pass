@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./hals.css";
+import "../proposal.css";
 
 /**
  * A one-off quote, not a page of the studio's own site — hence its own

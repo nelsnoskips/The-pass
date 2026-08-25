@@ -1,9 +1,17 @@
 /*
- * Scoped to .orv-* throughout — every class from the original prefixed
- * by hand, so nothing here can collide with the rest of the site's
- * global stylesheet. Fonts reuse the site's own next/font variables
- * (--font-dm-serif, --font-instrument, --font-inter) rather than a
- * second Google Fonts request for faces already loaded.
+ * The proposal template, shared by every page under /proposals.
+ *
+ * Scoped to .orv-* throughout — the prefix is historical, from the
+ * first quote this was written for, and kept because renaming it buys
+ * nothing and risks a live client-facing page. Read it as "proposal".
+ * Nothing here can collide with the site's global stylesheet.
+ *
+ * Fonts reuse the site's own next/font variables (--font-dm-serif,
+ * --font-instrument, --font-inter) rather than a second Google Fonts
+ * request for faces already loaded.
+ *
+ * Editing this changes every proposal at once. That is the point — but
+ * check the others still read correctly before pushing a change.
  */
 
 /*
