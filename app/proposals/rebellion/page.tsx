@@ -105,6 +105,7 @@ export default function RebellionProposalPage() {
 
             <div className="orv-includes">
               <p>Hosting, security, menu and hours updates, content changes, and ongoing search work so the pages actually get found.</p>
+              <p style={{ marginTop: ".7rem" }}>Additional pages beyond the site as built are <strong>$100 each</strong>, one&nbsp;time.</p>
             </div>
 
             <p className="orv-fine">Month to month, nothing upfront.</p>
