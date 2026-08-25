@@ -1,0 +1,164 @@
+/*
+ * The review workspace.
+ *
+ * Scoped to .rv-* and deliberately plain: this chrome sits around a
+ * client's own website, and anything with personality here competes
+ * with the thing being reviewed. Paper stock and one gold accent,
+ * borrowed from the proposal template so the two client-facing
+ * surfaces feel like the same studio.
+ */
+.rv-shell {
+  --gold: #b79a68;
+  --ink: #14110d;
+  --paper: #f4f1ea;
+  --line: rgba(20, 17, 13, .14);
+  --soft: rgba(20, 17, 13, .58);
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+.rv-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  flex-wrap: wrap;
+  padding: .75rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+  background: #fffdf8;
+}
+.rv-id { display: grid; line-height: 1.25; margin-right: auto; }
+.rv-id strong { font-size: 15px; }
+.rv-eyebrow {
+  font-size: 10.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+.rv-modes { display: flex; border: 1px solid var(--line); border-radius: 2px; overflow: hidden; }
+.rv-modes button {
+  padding: .5rem .9rem;
+  font-size: 12.5px;
+  border-right: 1px solid var(--line);
+  background: transparent;
+}
+.rv-modes button:last-child { border-right: 0; }
+.rv-modes button[data-on] { background: var(--ink); color: var(--paper); }
+
+.rv-submit {
+  padding: .58rem 1.2rem;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 2px;
+}
+.rv-submit:disabled { opacity: .35; cursor: not-allowed; }
+
+.rv-hint {
+  padding: .5rem 1.1rem;
+  font-size: 12.5px;
+  color: var(--soft);
+  border-bottom: 1px solid var(--line);
+  background: #fffdf8;
+}
+
+/* Both children need min-width:0. A grid item defaults to min-width
+   auto, which means it refuses to shrink below its content and the
+   sidebar's long text runs off the edge of the window instead of
+   wrapping inside its column. */
+.rv-body { flex: 1; display: grid; grid-template-columns: 1fr minmax(0, 340px); min-height: 0; }
+.rv-body > * { min-width: 0; }
+
+.rv-frame { position: relative; background: #fff; }
+.rv-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+.rv-blocked {
+  position: absolute; inset: 0; z-index: 2;
+  display: grid; place-items: center; padding: 2rem;
+  background: rgba(244, 241, 234, .96);
+  text-align: center;
+}
+.rv-blocked p { max-width: 40ch; font-size: 14px; color: var(--soft); }
+
+.rv-side {
+  border-left: 1px solid var(--line);
+  background: #fffdf8;
+  overflow-y: auto;
+  padding: 1rem 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+}
+.rv-side-head { display: flex; align-items: center; justify-content: space-between; }
+.rv-count {
+  font-size: 11px; font-weight: 600;
+  min-width: 20px; text-align: center;
+  padding: .1rem .4rem;
+  background: var(--gold); color: #14110d; border-radius: 2px;
+}
+.rv-empty { font-size: 13px; color: var(--soft); line-height: 1.55; }
+
+.rv-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; }
+.rv-list li {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: .65rem .7rem;
+  background: #fff;
+}
+.rv-list li[data-on] { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(183,154,104,.2); }
+.rv-list-head { display: flex; align-items: center; gap: .5rem; }
+.rv-num {
+  width: 20px; height: 20px; line-height: 20px; text-align: center;
+  font-size: 11px; font-weight: 600; border-radius: 2px;
+  background: var(--gold); color: #14110d;
+}
+.rv-num[data-kind="edit"] { background: #2f6f4f; color: #fff; }
+.rv-kind { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--soft); }
+.rv-list-head button { margin-left: auto; font-size: 16px; line-height: 1; color: var(--soft); }
+
+.rv-context {
+  font-size: 12px; color: var(--soft); margin-top: .45rem;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.rv-diff { margin-top: .45rem; display: grid; gap: .2rem; font-size: 12px; }
+.rv-diff p { line-height: 1.4; overflow-wrap: anywhere; }
+.rv-diff span {
+  display: inline-block; min-width: 34px;
+  font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--soft);
+}
+.rv-list textarea, .rv-author input {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box; margin-top: .5rem;
+  font: inherit; font-size: 12.5px;
+  padding: .45rem .5rem;
+  border: 1px solid var(--line); border-radius: 2px;
+  background: #fff; color: inherit;
+  resize: vertical;
+}
+.rv-author { display: grid; gap: .25rem; margin-top: auto; padding-top: .6rem; }
+.rv-author span { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
+.rv-error { font-size: 12.5px; color: #a4342a; }
+.rv-fine { font-size: 10.5px; color: var(--soft); }
+
+.rv-done {
+  min-height: 100dvh;
+  display: grid; align-content: center; justify-items: start;
+  gap: .8rem; padding: clamp(2rem, 8vw, 6rem);
+  background: #f4f1ea; color: #14110d;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+.rv-done h1 { font-family: var(--font-dm-serif), Georgia, serif; font-size: clamp(30px, 4vw, 48px); }
+.rv-done p { max-width: 46ch; color: rgba(20,17,13,.62); line-height: 1.65; }
+.rv-done .rv-eyebrow { color: rgba(20,17,13,.5); }
+
+@media (max-width: 860px) {
+  .rv-body { grid-template-columns: 1fr; grid-template-rows: 55vh 1fr; }
+  .rv-side { border-left: 0; border-top: 1px solid var(--line); }
+}
