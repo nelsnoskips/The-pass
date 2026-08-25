@@ -25,6 +25,18 @@ const inter = Inter({
   display: "swap",
 });
 
+/* The measurement ID can be overridden per environment, but falls back
+   to the studio's own property so a missing variable can never silently
+   switch analytics off in production.
+
+   The gate is what stops `next dev` counting as real sessions — every
+   local page load was landing in the same property as live traffic,
+   which quietly inflates users and wrecks engagement rates. A local
+   production build still reports, which is what you want when checking
+   the tag itself. */
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? "G-FCXWZB4R7M";
+const GA_ENABLED = process.env.NODE_ENV === "production" && GA_ID.length > 0;
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://madisonfour.com"),
   title: "The Pass by Madison Four | Restaurant Websites, Crafted.",
@@ -73,7 +85,7 @@ export default function RootLayout({
         <ViewTransitions />
         {children}
       </body>
-      <GoogleAnalytics gaId="G-FCXWZB4R7M" />
+      {GA_ENABLED && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
 }
