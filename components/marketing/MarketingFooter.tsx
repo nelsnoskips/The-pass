@@ -34,6 +34,20 @@ export function MarketingFooter() {
                 {label}
               </a>
             ))}
+            {[
+              ["Book a First Look", "/book"],
+              ["vs SpotHopper", "/vs/spothopper"],
+              ["vs Owner.com", "/vs/owner"],
+              ["vs BentoBox", "/vs/bentobox"],
+            ].map(([label, href]) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-[13px] text-[#F1EDE5]/60 transition-colors hover:text-[#F1EDE5]"
+              >
+                {label}
+              </Link>
+            ))}
             <Link
               href="/portal"
               className="flex items-center gap-1.5 text-[13px] text-[#F1EDE5]/60 transition-colors hover:text-[#F1EDE5]"

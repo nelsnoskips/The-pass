@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { COMPARISONS } from "@/lib/comparisons";
 import { WORK } from "@/lib/work";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -15,6 +16,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `https://madisonfour.com/work/${w.slug}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,
+    })),
+    {
+      url: "https://madisonfour.com/book",
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    // Comparison pages double as ad landing pages and organic answers for
+    // "[platform] alternative" searches.
+    ...COMPARISONS.map((c) => ({
+      url: `https://madisonfour.com/vs/${c.slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
     })),
     { url: "https://madisonfour.com/privacy", changeFrequency: "yearly", priority: 0.2 },
     { url: "https://madisonfour.com/terms", changeFrequency: "yearly", priority: 0.2 },
