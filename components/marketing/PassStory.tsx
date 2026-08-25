@@ -1,3 +1,5 @@
+import { KineticText } from "@/components/KineticHeading";
+import { Ambience } from "@/components/Ambience";
 import Image from "next/image";
 import { PassMark } from "./PassMark";
 
@@ -15,9 +17,10 @@ export function PassStory() {
   return (
     <section
       id="about"
-      className="scroll-mt-24 bg-[#1A1310] px-5 py-24 sm:px-8 sm:py-32"
+      className="relative scroll-mt-24 bg-[#1A1310] px-5 py-24 sm:px-8 sm:py-32"
     >
-      <div className="mx-auto grid max-w-[1200px] items-center gap-12 lg:grid-cols-2 lg:gap-20">
+      <Ambience />
+      <div className="relative z-[1] mx-auto grid max-w-[1200px] items-center gap-12 lg:grid-cols-2 lg:gap-20">
         <figure className="relative order-last aspect-[4/5] max-h-[640px] overflow-hidden lg:order-first">
           <Image
             src={CHEF_IMAGE}
@@ -32,9 +35,14 @@ export function PassStory() {
 
         <div className="mk-reveal">
           <PassMark size={30} color="#B79A68" />
-          <h2 className="mt-8 font-editorial text-[38px] leading-[1.08] text-[#F1EDE5] sm:text-[46px]">
-            In every kitchen, there is a place where nothing reaches the guest{" "}
-            <em className="italic text-[#B79A68]">unfinished.</em>
+          <h2
+            className="kin kin-word mt-8 font-editorial text-[38px] leading-[1.08] text-[#F1EDE5] sm:text-[46px]"
+            aria-label="In every kitchen, there is a place where nothing reaches the guest unfinished."
+          >
+            <KineticText text="In every kitchen, there is a place where nothing reaches the guest" />{" "}
+            <em className="italic text-[#B79A68]">
+              <KineticText text="unfinished." start={12} />
+            </em>
           </h2>
           <div className="mt-8 space-y-5 text-[15px] leading-relaxed text-[#F1EDE5]/70">
             <p>

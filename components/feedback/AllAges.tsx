@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Ambience } from "@/components/Ambience";
+import { KineticText } from "@/components/KineticHeading";
 import Link from "next/link";
 import { EVENT, LOYALTY, MERCH, money } from "@/lib/feedback";
 import { Plate } from "./Plate";
@@ -45,11 +47,18 @@ export function AllAges() {
     <section
       ref={ref}
       id="all-ages"
-      className="relative overflow-hidden bg-[#0b0908]"
+      className="relative bg-[#0b0908]"
       aria-labelledby="allages-heading"
     >
-      {/* The room, pushed into very slowly while it is on screen. */}
-      <div className="absolute inset-0">
+      <Ambience className="fbk-amb" />
+      {/* The room, pushed into very slowly while it is on screen. The
+          clip lives here rather than on the section: `overflow: hidden`
+          makes an element a scroll container, and a scroll container
+          becomes the reference for every view timeline beneath it — so
+          clipping the section pinned the headline's own timeline and
+          its stagger collapsed. Only the layers that actually overflow
+          are clipped. */}
+      <div className="absolute inset-0 overflow-hidden">
         <Plate
           src={EVENT.image}
           alt="A packed all-ages room at the counter"
@@ -84,11 +93,12 @@ export function AllAges() {
         <div className="mt-8 grid gap-8 xl:grid-cols-[1fr_auto] xl:items-start">
           <h2
             id="allages-heading"
-            className="fbk-display text-[clamp(34px,3.8vw,56px)]"
+            className="kin kin-char fbk-display text-[clamp(34px,3.8vw,56px)]"
+            aria-label="All ages. All volume."
           >
-            All ages.
+            <KineticText text="All ages." by="char" />
             <br />
-            All volume.
+            <KineticText text="All volume." by="char" start={9} />
           </h2>
 
           {/* The pass. Ten stamps, and the card knows where it is. */}

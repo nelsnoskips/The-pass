@@ -307,3 +307,13 @@
   .srn-tier { border-top: none; border-left: 1px solid rgba(233, 229, 219, 0.14); padding: 0 0 0 2.5rem; }
   .srn-tier:first-child { border-left: none; padding-left: 0; }
 }
+
+/* The room's own light, for the ambient fields. One warm and two cold,
+   because this room is named for what happens after the sun goes: the
+   candle is the only warm thing left in it. */
+.srn-amb {
+  --amb-1: 201 136 75;   /* candlelight */
+  --amb-2: 110 140 166;  /* the blue hour, off the water */
+  --amb-3: 143 163 176;  /* sea mist */
+  --amb-gain: 0.95;
+}

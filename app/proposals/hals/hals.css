@@ -1,0 +1,327 @@
+/*
+ * Scoped to .orv-* throughout — every class from the original prefixed
+ * by hand, so nothing here can collide with the rest of the site's
+ * global stylesheet. Fonts reuse the site's own next/font variables
+ * (--font-dm-serif, --font-instrument, --font-inter) rather than a
+ * second Google Fonts request for faces already loaded.
+ */
+
+/*
+    A quote a person can forward and a person can print. Documents don't
+    get a hero — they get a masthead, a clear number, and a signature —
+    so the craft here goes into the pricing tables and the type rhythm
+    rather than into a big opening move.
+
+    Committed to one visual world on purpose: paper. This is a letter
+    with a price on it, not a product page, so it takes the studio's
+    own bone-and-ink stock rather than switching for a screen theme.
+    Background and every color are painted explicitly below so the page
+    holds regardless of the viewer's host theme.
+  */
+  :root {
+    --ink:        #0a0a09;
+    --ink-soft:   rgba(10, 10, 9, .66);
+    --ink-faint:  rgba(10, 10, 9, .40);
+    --paper:      #f1ede5;
+    --card:       #fbf8f2;
+    --rule:       rgba(10, 10, 9, .14);
+    --rule-soft:  rgba(10, 10, 9, .08);
+    --gold:       #b79a68;
+    --gold-deep:  #8f6f42;
+    --wine:       #4b1719;
+    --sage:       #5f7f57;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    background-image:
+      radial-gradient(120% 90% at 50% -10%, rgba(183,154,104,.07), transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    color: var(--ink);
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--gold); color: var(--paper); }
+
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--gold-deep);
+    outline-offset: 3px;
+  }
+
+  .orv-wrap {
+    max-width: 840px;
+    margin: 0 auto;
+    padding: clamp(2.2rem, 5vw, 4.6rem) clamp(1.4rem, 4vw, 1.6rem) clamp(3rem, 6vw, 5rem);
+  }
+
+  .orv-label {
+    font-family: var(--font-inter), sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-dm-serif), Georgia, serif;
+    font-weight: 400;
+    line-height: 1.1;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  em { font-family: var(--font-instrument), Georgia, serif; font-style: italic; }
+
+  p { margin: 0; }
+  .orv-prose p + p { margin-top: .9em; }
+  .orv-prose { max-width: 62ch; font-size: 15.5px; line-height: 1.68; color: var(--ink-soft); }
+
+  /* ---------------------------------------------------- masthead --- */
+  .orv-masthead {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    padding-bottom: 2.4rem;
+    border-bottom: 1px solid var(--rule);
+    animation: orv-rise .7s cubic-bezier(.19,1,.22,1) both;
+  }
+  .orv-brandmark { display: flex; align-items: center; gap: 12px; }
+  .orv-brandmark .orv-name {
+    font-family: var(--font-dm-serif), serif;
+    font-size: 19px;
+    line-height: 1.15;
+  }
+  .orv-brandmark .orv-sub {
+    font-family: var(--font-instrument), serif;
+    font-style: italic;
+    font-size: 13.5px;
+    color: var(--gold-deep);
+  }
+  .orv-meta { text-align: right; font-size: 13.5px; color: var(--ink-soft); }
+  .orv-meta .orv-label { display: block; color: var(--ink-faint); margin-bottom: 2px; }
+  .orv-meta .orv-row + .orv-row { margin-top: 10px; }
+
+  /* -------------------------------------------------------- intro --- */
+  .orv-intro {
+    padding-top: clamp(2.4rem, 5vw, 3.4rem);
+    animation: orv-rise .8s .08s cubic-bezier(.19,1,.22,1) both;
+  }
+  .orv-intro .orv-label { color: var(--wine); }
+  h1 {
+    margin-top: .9rem;
+    font-size: clamp(28px, 4.4vw, 40px);
+    max-width: 20ch;
+  }
+  .orv-greeting {
+    margin-top: 1.9rem;
+    font-size: 16.5px;
+    color: var(--ink);
+  }
+  .orv-intro .orv-prose { margin-top: 1rem; }
+
+  /* ---------------------------------------------------- context box - */
+  .orv-context {
+    margin-top: 2.6rem;
+    padding: 1.5rem 1.7rem;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--gold);
+    animation: orv-rise .8s .14s cubic-bezier(.19,1,.22,1) both;
+  }
+  .orv-context .orv-label { color: var(--gold-deep); }
+  .orv-context .orv-prose { margin-top: .7rem; color: var(--ink-soft); font-size: 14.5px; }
+  .orv-context strong { color: var(--ink); font-weight: 600; }
+
+  /* --------------------------------------------------- section head - */
+  section { margin-top: clamp(3.2rem, 6vw, 4.4rem); }
+  .orv-section-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.6rem; }
+  .orv-section-head .orv-label { color: var(--ink-faint); white-space: nowrap; }
+  .orv-section-head .orv-hr { flex: 1; height: 1px; background: var(--rule); }
+
+  /* --------------------------------------------------------- options */
+  .orv-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.6rem;
+  }
+  @media (max-width: 780px) { .orv-options { grid-template-columns: 1fr; } }
+
+  .orv-option {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--accent, var(--gold));
+    padding: 1.9rem 1.7rem 1.8rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .orv-option.orv-b { --accent: var(--wine); }
+
+  .orv-option .orv-kicker {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent, var(--gold-deep));
+  }
+  .orv-option h2 { font-size: 24px; margin-top: .5rem; }
+  .orv-option .orv-rate {
+    margin-top: .35rem;
+    font-family: var(--font-inter), sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .orv-option .orv-rate .orv-cadence { font-weight: 500; color: var(--ink-faint); }
+  /* The one thing on this page that isn't a price: the build already
+     happened and carries no strings, so it gets said once, plainly,
+     in the same register as the "Included" badge rather than buried
+     in a table cell where it would read as a bundled perk. */
+  .orv-option .orv-gift-note {
+    margin-top: .5rem;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--sage);
+  }
+
+  table.orv-pricing {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.4rem;
+    font-variant-numeric: tabular-nums;
+  }
+  table.orv-pricing caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  table.orv-pricing th {
+    text-align: left;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding-bottom: .5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  table.orv-pricing th:last-child, table.orv-pricing td:last-child { text-align: right; }
+  table.orv-pricing td {
+    padding: .62rem 0;
+    border-bottom: 1px solid var(--rule-soft);
+    font-size: 14px;
+    vertical-align: top;
+  }
+  table.orv-pricing tr:last-child td { border-bottom: none; }
+  .orv-list-price { text-decoration: line-through; color: var(--ink-faint); white-space: nowrap; }
+  .orv-your-price { font-weight: 700; color: var(--accent, var(--gold-deep)); white-space: nowrap; }
+  .orv-incl {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--sage);
+  }
+
+  .orv-option .orv-includes {
+    margin-top: 1.5rem;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .orv-option .orv-includes p + p { margin-top: .55em; }
+  .orv-option .orv-fine {
+    margin-top: auto;
+    padding-top: 1.4rem;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    line-height: 1.5;
+  }
+
+  .orv-pullquote {
+    margin-top: 2.2rem;
+    padding-left: 1.5rem;
+    border-left: 2px solid var(--wine);
+  }
+  .orv-pullquote p {
+    font-family: var(--font-instrument), serif;
+    font-style: italic;
+    font-size: clamp(19px, 2.6vw, 24px);
+    line-height: 1.42;
+    color: var(--wine);
+    max-width: 34ch;
+  }
+
+  /* ------------------------------------------------------------ cta - */
+  .orv-cta-row {
+    margin-top: 1.6rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.6rem;
+  }
+  .orv-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    padding: .85rem 1.5rem;
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    border: 1px solid var(--ink);
+    transition: background .18s ease, color .18s ease;
+  }
+  .orv-btn:hover { background: transparent; color: var(--ink); }
+  .orv-btn.orv-ghost {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--rule);
+  }
+  .orv-btn.orv-ghost:hover { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+  .orv-btn svg { width: 13px; height: 13px; transition: transform .25s ease; }
+  .orv-btn:hover svg { transform: translateX(3px); }
+
+  .orv-sign {
+    margin-top: 3.2rem;
+    padding-top: 1.8rem;
+    border-top: 1px solid var(--rule);
+  }
+  .orv-sign .orv-name { font-family: var(--font-dm-serif), serif; font-size: 20px; }
+  .orv-sign .orv-role { font-family: var(--font-instrument), serif; font-style: italic; font-size: 14px; color: var(--gold-deep); margin-top: 2px; }
+  .orv-sign .orv-contact { margin-top: .6rem; font-size: 13px; color: var(--ink-faint); }
+  .orv-sign .orv-contact a { color: var(--ink-soft); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+
+  footer {
+    margin-top: 4.2rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .6rem;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    letter-spacing: .03em;
+  }
+
+  @keyframes orv-rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; }
+  }
+
+  @media print {
+    body { background: #fff; }
+    .orv-cta-row { display: none; }
+  }

@@ -1,3 +1,4 @@
+import { ViewTransitions } from "@/components/ViewTransitions";
 import type { Metadata } from "next";
 import { DM_Serif_Display, Instrument_Serif, Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://madisonfour.com"),
   title: "The Pass by Madison Four | Restaurant Websites, Crafted.",
   description:
-    "The Pass by Madison Four is a design studio for restaurants: custom websites, search and AI visibility, and guest-first digital experiences.",
+    "The Pass by Madison Four builds custom restaurant websites across the United States — engineered for search, AI answers, and turning lookers into guests.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "The Pass by Madison Four",
@@ -68,7 +69,10 @@ export default function RootLayout({
       // divergence from the server's markup, and the only one.
       suppressHydrationWarning
     >
-      <body className="min-h-screen antialiased">{children}</body>
+      <body className="min-h-screen antialiased">
+        <ViewTransitions />
+        {children}
+      </body>
       <GoogleAnalytics gaId="G-FCXWZB4R7M" />
     </html>
   );

@@ -648,3 +648,14 @@
   to { width: 96%; }
 }
 .fbk-creep { animation: fbk-creep 40s linear infinite; }
+
+/* The loudest room of the four, and the only one that wants to be
+   pushed past the studio's own gain. Fire and amber off the griddle,
+   with a cold steel counterpoint so the section reads as lit rather
+   than simply red. */
+.fbk-amb {
+  --amb-1: 226 59 46;    /* the red */
+  --amb-2: 232 163 61;   /* griddle amber */
+  --amb-3: 80 104 124;   /* cold steel */
+  --amb-gain: 1.15;
+}

@@ -10,6 +10,43 @@ const nextConfig: NextConfig = {
     // the default 75. Next only honours qualities declared here.
     qualities: [75, 82, 84, 86, 88, 90],
   },
+  async rewrites() {
+    return {
+      afterFiles: [
+        {
+          // Client spec builds are static exports dropped into
+          // public/spec/<name>/. Next serves public files only on
+          // exact match, so the bare folder URL needs pointing at its
+          // own index.html; generic so the next spec needs no config.
+          source: "/spec/:name",
+          destination: "/spec/:name/index.html",
+        },
+        {
+          // The same for routes inside a spec — /spec/orravan/team and
+          // anything else the export produces as its own folder. These
+          // rules run afterFiles, so a real asset underneath the spec
+          // (an image, a _next chunk) is served directly and never
+          // reaches this; only folder URLs fall through.
+          source: "/spec/:name/:sub+",
+          destination: "/spec/:name/:sub+/index.html",
+        },
+      ],
+    };
+  },
+  async redirects() {
+    return [
+      // /book is now a real page with the scheduler embedded on-domain,
+      // so the old external redirect is gone — printed links still work.
+      {
+        // Renamed before it was ever sent out, but the old path was
+        // live and verified for a few minutes — worth a redirect
+        // rather than trusting nobody bookmarked it.
+        source: "/proposals/orravan",
+        destination: "/proposals/hals",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
