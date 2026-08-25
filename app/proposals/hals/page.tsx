@@ -2,20 +2,29 @@ import type { Metadata } from "next";
 import "../proposal.css";
 
 /**
- * A one-off quote, not a page of the studio's own site — hence its own
- * scoped stylesheet and its own noindex rather than reusing the
- * marketing chrome. Ported from the artifact draft; every number and
- * word here is what was actually sent, not a template.
+ * Hal's quote — private events, the pop-up, ongoing care.
+ *
+ * A one-off document, not a page of the studio's own site, hence the
+ * shared proposal stylesheet and the noindex it inherits rather than
+ * the marketing chrome. Every number and word is what was actually
+ * sent, not a template.
+ *
+ * This page named Orravan Mechanical in its masthead, title and footer
+ * for a while. Orravan is a different client — a mechanical contractor,
+ * whose own quote is at /proposals/orravan-redesign — and the mix-up
+ * also had /proposals/orravan redirecting here, at another company's
+ * pricing. Both are fixed; the note stays as a warning that the two
+ * are easy to confuse.
  */
 export const metadata: Metadata = {
-  title: "Proposal for Orravan Mechanical | The Pass by Madison Four",
+  title: "Proposal for Hal's | The Pass by Madison Four",
   description:
-    "Private events pages, the pop-up, and ongoing care — a proposal prepared for Orravan Mechanical, Inc.",
+    "Private events pages, the pop-up, and ongoing care — a proposal prepared for Hal's.",
   robots: { index: false, follow: false },
   alternates: { canonical: "/proposals/hals" },
 };
 
-export default function OrravanProposalPage() {
+export default function HalsProposalPage() {
   return (
     <div className="orv-wrap">
 
@@ -36,7 +45,7 @@ export default function OrravanProposalPage() {
         <div className="orv-meta">
           <div className="orv-row">
             <span className="orv-label">Prepared for</span>
-            Orravan Mechanical, Inc. — Attn: Sam Janco
+            Hal&rsquo;s &mdash; Attn: Sam Janco
           </div>
           <div className="orv-row">
             <span className="orv-label">Date · Valid</span>
@@ -182,7 +191,7 @@ export default function OrravanProposalPage() {
 
       <footer>
         <span>The Pass by Madison Four</span>
-        <span>Prepared for Orravan Mechanical, Inc. &middot; not a binding invoice</span>
+        <span>Prepared for Hal&rsquo;s &middot; not a binding invoice</span>
       </footer>
 
     </div>
