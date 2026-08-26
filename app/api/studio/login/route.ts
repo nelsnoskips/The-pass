@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isConfigured } from "@/lib/db";
 import { sendMail, mailConfigured } from "@/lib/email";
 import { allowedEmails, isAllowed, issueLoginToken } from "@/lib/studio/session";
+import { siteLink } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -21,13 +22,13 @@ export async function POST(req: Request) {
 
   // Always answer the same way. Telling an unknown address that it is
   // unknown turns this form into a way to enumerate who works here.
-  const generic = NextResponse.redirect(new URL("/studio/login?sent=1", req.url), 303);
+  const generic = NextResponse.redirect(siteLink(req, "/studio/login?sent=1"), 303);
   if (!email || !isAllowed(email)) return generic;
 
   const token = await issueLoginToken(email);
   if (!token) return generic;
 
-  const link = new URL(`/api/studio/verify?token=${token}`, req.url).toString();
+  const link = siteLink(req, `/api/studio/verify?token=${token}`).toString();
 
   if (!mailConfigured()) {
     // Without a mail provider the link would be unreachable, so it goes
