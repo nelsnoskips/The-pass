@@ -17,11 +17,34 @@ export const SESSION_COOKIE = "pass-studio";
 const SESSION_DAYS = 30;
 const LINK_MINUTES = 20;
 
+/** Blank counts as unset, so an empty variable falls through instead
+ *  of silently locking everyone out — "" is not nullish, so ?? alone
+ *  would stop at it. */
+const present = (v: string | undefined) => {
+  const t = v?.trim();
+  return t && t.length > 0 ? t : undefined;
+};
+
 export function allowedEmails(): string[] {
-  return (process.env.STUDIO_ALLOWED_EMAILS ?? process.env.STUDIO_EMAIL ?? "")
+  const raw = present(process.env.STUDIO_ALLOWED_EMAILS) ?? present(process.env.STUDIO_EMAIL) ?? "";
+  return raw
     .split(",")
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean);
+}
+
+/**
+ * Which of the studio's variables the running server can actually see.
+ * Names and presence only, never values. A login page that says
+ * "nobody is allowed in" and stops is a dead end; one that says which
+ * key is missing is a five-second fix.
+ */
+export function configReport() {
+  return [
+    ["STUDIO_ALLOWED_EMAILS", Boolean(present(process.env.STUDIO_ALLOWED_EMAILS))],
+    ["STUDIO_EMAIL", Boolean(present(process.env.STUDIO_EMAIL))],
+    ["RESEND_API_KEY", Boolean(present(process.env.RESEND_API_KEY))],
+  ] as const;
 }
 
 export function isAllowed(email: string) {

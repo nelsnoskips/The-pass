@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getSessionEmail, allowedEmails } from "@/lib/studio/session";
+import { getSessionEmail, allowedEmails, configReport } from "@/lib/studio/session";
 import { isConfigured } from "@/lib/db";
 import { mailConfigured } from "@/lib/email";
 import "../studio.css";
@@ -34,9 +34,22 @@ export default async function StudioLogin({
             <code>npm run db:migrate</code>, and this page will start working.
           </p>
         ) : !anyone ? (
-          <p className="st-note" style={{ marginTop: ".9rem" }}>
-            Nobody is allowed in yet. Set <code>STUDIO_ALLOWED_EMAILS</code> to your address.
-          </p>
+          <>
+            <p className="st-note" style={{ marginTop: ".9rem" }}>
+              Nobody is allowed in yet. Set <code>STUDIO_ALLOWED_EMAILS</code> to your address,
+              then redeploy.
+            </p>
+            <p className="st-note" style={{ marginTop: ".7rem" }}>
+              What this server can see right now:
+            </p>
+            <ul className="st-note" style={{ margin: ".35rem 0 0", paddingLeft: "1.1rem" }}>
+              {configReport().map(([key, set]) => (
+                <li key={key}>
+                  <code>{key}</code> — {set ? "set" : "not set"}
+                </li>
+              ))}
+            </ul>
+          </>
         ) : sent ? (
           <>
             <p className="st-ok" style={{ marginTop: ".9rem" }}>
