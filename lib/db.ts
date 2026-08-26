@@ -18,8 +18,28 @@ declare global {
   var __passSql: ReturnType<typeof postgres> | undefined;
 }
 
+/**
+ * Netlify's own Neon extension provisions a database and sets
+ * NETLIFY_DATABASE_URL itself, and then refuses to let you create a
+ * DATABASE_URL by hand because it owns that name. Reading either means
+ * the app works whether the database was attached through Netlify or
+ * set up directly in Neon, and nobody has to discover which.
+ *
+ * Preference order puts the hand-set variable first: if someone has
+ * deliberately pointed this at a specific database, that beats whatever
+ * an integration provisioned.
+ */
+export function databaseUrl() {
+  return (
+    process.env.DATABASE_URL ??
+    process.env.NETLIFY_DATABASE_URL ??
+    process.env.NETLIFY_DATABASE_URL_UNPOOLED ??
+    undefined
+  );
+}
+
 function create() {
-  const url = process.env.DATABASE_URL;
+  const url = databaseUrl();
   if (!url) return undefined;
   return postgres(url, {
     // Neon and most managed Postgres require TLS; a local socket does not.
@@ -43,4 +63,4 @@ export function db() {
   return sql;
 }
 
-export const isConfigured = () => Boolean(process.env.DATABASE_URL);
+export const isConfigured = () => Boolean(databaseUrl());
