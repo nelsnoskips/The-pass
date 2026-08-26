@@ -23,6 +23,7 @@ export type Client = {
   contact_email: string | null;
   segment: string | null;
   notes: string | null;
+  archived_at: string | null;
   created_at: string;
 };
 
@@ -33,6 +34,7 @@ export type Project = {
   stage: ProjectStage;
   mock_path: string | null;
   live_url: string | null;
+  status_token: string | null;
   monthly_fee: string | null;
   created_at: string;
   updated_at: string;
@@ -47,6 +49,7 @@ export type ReviewRound = {
   note: string | null;
   created_at: string;
   submitted_at: string | null;
+  seen_at: string | null;
 };
 
 export type ReviewComment = {

@@ -1,0 +1,56 @@
+/*
+ * The client's status page. Same paper and gold as the proposals and
+ * the review tool, because those three are everything a client ever
+ * sees from the studio and they should look like one company.
+ */
+.cs-shell {
+  --gold: #b79a68; --ink: #14110d; --paper: #f4f1ea; --card: #fffdf8;
+  --line: rgba(20,17,13,.14); --soft: rgba(20,17,13,.58); --green: #2f6f4f;
+  min-height: 100dvh; background: var(--paper); color: var(--ink);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+.cs-wrap { max-width: 760px; margin-inline: auto; padding: clamp(2rem, 6vw, 4.5rem) clamp(1.2rem, 4vw, 2rem); }
+.cs-eyebrow { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
+.cs-wrap h1 {
+  font-family: var(--font-dm-serif), Georgia, serif;
+  font-size: clamp(30px, 4.4vw, 46px); line-height: 1.05; margin: .5rem 0 0;
+}
+.cs-sub { color: var(--soft); margin-top: .9rem; font-size: 15.5px; line-height: 1.6; }
+
+/* The stage rail: where the job is, at a glance, without a legend. */
+.cs-rail { display: grid; gap: 0; margin-top: 2.4rem; border-top: 1px solid var(--line); }
+.cs-step {
+  display: grid; grid-template-columns: 28px 1fr; gap: .9rem;
+  padding: .95rem 0; border-bottom: 1px solid var(--line); align-items: baseline;
+}
+.cs-dot {
+  width: 11px; height: 11px; border-radius: 50%; margin: .35rem auto 0;
+  border: 1.5px solid var(--line); background: transparent;
+}
+.cs-step[data-state="done"]    .cs-dot { background: var(--green); border-color: var(--green); }
+.cs-step[data-state="current"] .cs-dot { background: var(--gold); border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(183,154,104,.22); }
+.cs-step strong { font-size: 15px; }
+.cs-step[data-state="todo"] strong { color: var(--soft); font-weight: 500; }
+.cs-step span { display: block; font-size: 13px; color: var(--soft); margin-top: .2rem; }
+
+.cs-rounds { margin-top: 2.4rem; display: grid; gap: .7rem; }
+.cs-round {
+  border: 1px solid var(--line); background: var(--card);
+  border-radius: 2px; padding: .95rem 1.1rem;
+  display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: baseline;
+}
+.cs-round strong { font-size: 14.5px; margin-right: auto; }
+.cs-chip {
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  padding: .2rem .5rem; border: 1px solid var(--line); border-radius: 2px; white-space: nowrap;
+}
+.cs-chip[data-tone="open"] { background: var(--gold); border-color: var(--gold); color: #14110d; }
+.cs-chip[data-tone="done"] { background: var(--green); border-color: var(--green); color: #fff; }
+.cs-btn {
+  font-size: 12.5px; font-weight: 600; padding: .45rem .9rem;
+  background: var(--ink); color: var(--paper); border-radius: 2px;
+}
+.cs-foot { margin-top: 2.6rem; padding-top: 1.4rem; border-top: 1px solid var(--line);
+  font-size: 12.5px; color: var(--soft); line-height: 1.6; }
+.cs-foot a { text-decoration: underline; }

@@ -140,3 +140,37 @@ create table if not exists sessions (
 );
 
 create index if not exists sessions_expiry_idx on sessions(expires_at);
+
+-- ------------------------------------------------ added after launch --
+-- Written as guarded ALTERs rather than edits to the CREATE statements
+-- above, so a database that already has data can be brought forward by
+-- running this file again.
+
+-- A durable per-project token for the client's own status page. Unlike
+-- a review token, which belongs to one round and is closed with it,
+-- this one stays valid for the life of the project so a client can
+-- bookmark "where are we at" and it keeps working.
+alter table projects add column if not exists status_token text unique;
+
+-- When the studio last opened a submitted round. This is what makes
+-- "new" mean new — a count of unresolved comments says how much work
+-- is outstanding, which is a different question from whether anything
+-- has arrived since you last looked.
+alter table review_rounds add column if not exists seen_at timestamptz;
+
+-- Archived clients drop out of the board but keep their history. The
+-- alternative, deleting them, loses the record of work actually done.
+alter table clients add column if not exists archived_at timestamptz;
+
+create index if not exists clients_archived_idx on clients(archived_at);
+
+-- Backfill status tokens for any project created before this existed.
+update projects
+set status_token = encode(gen_random_bytes(18), 'base64')
+where status_token is null;
+
+-- base64 can contain / and +, which are awkward in a URL. Normalise to
+-- the url-safe alphabet rather than asking every reader to escape them.
+update projects
+set status_token = replace(replace(replace(status_token, '/', '_'), '+', '-'), '=', '')
+where status_token like '%/%' or status_token like '%+%' or status_token like '%=%';

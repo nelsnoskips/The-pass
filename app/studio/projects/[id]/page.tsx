@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getSessionEmail } from "@/lib/studio/session";
-import { getProject } from "@/lib/studio/clients";
+import { getProject, markRoundsSeen, statusTokenFor } from "@/lib/studio/clients";
 import { openRoundAction, resolveCommentAction, setStageAction } from "@/lib/studio/actions";
 import { STAGE_LABELS, STAGE_ORDER } from "@/lib/studio/types";
 import { isConfigured } from "@/lib/db";
@@ -23,6 +23,12 @@ export default async function ProjectPage({
   const data = await getProject(id);
   if (!data) notFound();
   const { project, rounds, comments } = data;
+
+  // Opening the project is the act that makes its submitted rounds stop
+  // being new. Doing it here rather than behind a button means the
+  // marker cannot go stale while the work is obviously in hand.
+  await markRoundsSeen(id);
+  const statusToken = await statusTokenFor(id);
 
   const open = comments.filter((c) => !c.resolved);
   const done = comments.filter((c) => c.resolved);
@@ -51,10 +57,20 @@ export default async function ProjectPage({
                 </div>
                 {liveRound && (
                   <div className="st-row-meta" style={{ marginTop: ".4rem" }}>
-                    Link:{" "}
+                    Review link:{" "}
                     <a href={`/review/${liveRound.token}`} target="_blank" rel="noopener">
                       /review/{liveRound.token}
                     </a>
+                  </div>
+                )}
+                {statusToken && (
+                  <div className="st-row-meta" style={{ marginTop: ".4rem" }}>
+                    Client status page:{" "}
+                    <a href={`/status/${statusToken}`} target="_blank" rel="noopener">
+                      /status/{statusToken}
+                    </a>
+                    <br />
+                    Safe to send once and forget — it stays valid and updates itself.
                   </div>
                 )}
               </div>

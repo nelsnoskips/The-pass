@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionEmail } from "@/lib/studio/session";
 import { getProposal } from "@/lib/studio/proposals";
+import { listClients } from "@/lib/studio/clients";
 import { saveProposalAction } from "@/lib/studio/actions";
 import { isConfigured } from "@/lib/db";
 import "../../studio.css";
@@ -31,7 +32,10 @@ export default async function NewProposal({
   if (!(await getSessionEmail())) redirect("/studio/login");
 
   const { slug, taken } = await searchParams;
-  const existing = slug ? await getProposal(slug) : null;
+  const [existing, clients] = await Promise.all([
+    slug ? getProposal(slug) : Promise.resolve(null),
+    listClients(),
+  ]);
   const rows = existing?.line_items?.length ? existing.line_items : [];
   const blanks = Math.max(0, 5 - rows.length);
 
@@ -69,6 +73,16 @@ export default async function NewProposal({
                   <input name="contact_name" defaultValue={existing?.contact_name ?? ""} placeholder="Leave blank to omit" />
                 </label>
               </div>
+
+              <label className="st-field">
+                <span>Client</span>
+                <select name="client_id" defaultValue={existing?.client_id ?? ""}>
+                  <option value="">Not linked to a client</option>
+                  {clients.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </label>
 
               <label className="st-field">
                 <span>Headline</span>

@@ -3,7 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSessionEmail } from "./session";
-import { createClient, createProject, openRound, setCommentResolved, setStage } from "./clients";
+import {
+  archiveClient, createClient, createProject, deleteClient,
+  openRound, setCommentResolved, setStage,
+} from "./clients";
 import { RESERVED_SLUGS, slugify, upsertProposal } from "./proposals";
 import type { ProjectStage, ProposalLineItem } from "./types";
 
@@ -81,6 +84,34 @@ export async function resolveCommentAction(form: FormData) {
   revalidatePath("/studio");
 }
 
+export async function archiveClientAction(form: FormData) {
+  await requireStudio();
+  const id = str(form, "client_id");
+  if (!id) return;
+  await archiveClient(id, str(form, "archived") === "1");
+  revalidatePath("/studio");
+  redirect("/studio");
+}
+
+/**
+ * Delete cascades through projects, rounds and comments, so the form
+ * requires the client's name to be typed back. A confirm dialog is a
+ * reflex; typing the name is a decision.
+ */
+export async function deleteClientAction(form: FormData) {
+  await requireStudio();
+  const id = str(form, "client_id");
+  const typed = str(form, "confirm_name");
+  const actual = str(form, "client_name");
+  if (!id || !typed || !actual) return;
+  if (typed.trim().toLowerCase() !== actual.trim().toLowerCase()) {
+    redirect(`/studio/clients/${id}?mismatch=1`);
+  }
+  await deleteClient(id);
+  revalidatePath("/studio");
+  redirect("/studio");
+}
+
 /**
  * Line items arrive as three parallel arrays rather than a nested
  * structure, because that is what a plain HTML form can express. Rows
@@ -128,6 +159,7 @@ export async function saveProposalAction(form: FormData) {
     footnote: str(form, "footnote"),
     pullquote: str(form, "pullquote"),
     validDays: num(form, "valid_days") ?? 30,
+    clientId: str(form, "client_id"),
   });
 
   revalidatePath(`/proposals/${slug}`);
