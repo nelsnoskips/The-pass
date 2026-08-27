@@ -174,3 +174,20 @@ where status_token is null;
 update projects
 set status_token = replace(replace(replace(status_token, '/', '_'), '+', '-'), '=', '')
 where status_token like '%/%' or status_token like '%+%' or status_token like '%=%';
+
+-- Electronic signatures on hosted agreements. The row is the record of
+-- who accepted which agreement and when; the emails that go out are
+-- notifications, not the record. Slug identifies the agreement page
+-- (e.g. orravan-agreement) so one table serves every future client.
+create table if not exists agreement_signatures (
+  id bigint generated always as identity primary key,
+  agreement_slug text not null,
+  signer_name text not null,
+  signer_title text,
+  signer_email text not null,
+  user_agent text,
+  signed_at timestamptz not null default now()
+);
+
+create index if not exists agreement_signatures_slug_idx
+  on agreement_signatures(agreement_slug);

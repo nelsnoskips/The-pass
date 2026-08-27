@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../proposal.css";
+import { SignBlock } from "./SignBlock";
 
 /**
  * The scope & agreement for Orravan, hosted like the proposal so Alex
@@ -148,21 +149,17 @@ export default function OrravanAgreement() {
         <p>Designer is an independent contractor, not an employee, and this is not a work-for-hire arrangement except as expressly assigned in Section 6. Neither party is liable for delay caused by events beyond its reasonable control. This Agreement is the entire agreement between the parties regarding the Project and may be amended only in writing. If any provision is unenforceable, the remainder stands. This Agreement is governed by California law; venue is Los Angeles County. The parties will attempt to mediate any dispute before litigation, and the prevailing party in any action is entitled to reasonable attorneys&rsquo; fees. This Agreement may be signed in counterparts, including by electronic signature &mdash; a signed PDF or a written email confirmation of acceptance from an authorized representative counts.</p>
       </div>
 
-      <div style={{ marginTop: "3.5rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3rem" }}>
+      <div style={{ marginTop: "3.5rem", display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "3rem", alignItems: "start" }}>
         <div>
-          <div style={{ borderTop: "1px solid var(--ink)", paddingTop: ".6rem", marginTop: "2.2rem" }}>
+          <div style={{ borderTop: "1px solid var(--ink)", paddingTop: ".6rem", marginTop: ".4rem" }}>
             <strong>Nelson Schnebelen</strong>
             <div style={{ fontSize: 13, color: "var(--ink-soft)" }}>an individual dba Madison Four</div>
-            <div style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: ".5rem" }}>Date: ____________________</div>
+            <div style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: ".5rem" }}>
+              Countersigns by email on receipt of Client&rsquo;s signature.
+            </div>
           </div>
         </div>
-        <div>
-          <div style={{ borderTop: "1px solid var(--ink)", paddingTop: ".6rem", marginTop: "2.2rem" }}>
-            <strong>Name / Title: ____________________</strong>
-            <div style={{ fontSize: 13, color: "var(--ink-soft)" }}>for Orravan Mechanical</div>
-            <div style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: ".5rem" }}>Date: ____________________</div>
-          </div>
-        </div>
+        <SignBlock slug="orravan-agreement" />
       </div>
 
       <div className="orv-sign" style={{ marginTop: "3rem" }}>
