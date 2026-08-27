@@ -6,7 +6,8 @@ import "../proposal.css";
  * gets a link, not an attachment. Terms mirror the accepted proposal
  * exactly ($4,000 · $2,000/$2,000 · $300/mo care); the page prints
  * cleanly for signature. Three revision rounds included, $125 per
- * round after — set with Nelson on 26 Aug 2026.
+ * round after — set with Nelson on 26 Aug 2026. Scope covers all nine
+ * live pages found in the 27 Aug audit of orravan.ai, held at $4,000.
  */
 const CLIENT = {
   company: "Orravan Mechanical",
@@ -77,7 +78,8 @@ export default function OrravanAgreement() {
       <SectionHead n="01" title="Project and scope" />
       <div className="orv-prose">
         <p>Designer will redesign, design, and develop Client&rsquo;s website (the &ldquo;Project&rdquo;), consisting of:</p>
-        <p><strong>Five pages</strong> &mdash; Home, About, Services, Contact, and Portal. Additional pages are $250 each, one time, by written request.</p>
+        <p><strong>Nine pages</strong> &mdash; Home, About, Team, Services, Building Automation Systems, HVAC Systems, Support, Contact (with the request-a-quote form folded in), and Service Portal. This covers every live page on the current site; pages beyond these are $250 each, one time, by written request.</p>
+        <p><strong>Redirects</strong> &mdash; every current URL (including /request-quote) will permanently redirect to its new home, so existing search standing carries over. The current Inventory page is a &ldquo;coming soon&rdquo; placeholder and is not part of the redesign &mdash; it will redirect to Services, and a future product catalog, if Client builds one, is a separate project. Client will confirm whether the Account page can be retired or pointed at the Service Portal.</p>
         <p><strong>Three integrations</strong> &mdash; connection of Client&rsquo;s existing booking, payments, and ServiceTrade services into the new website. Each integration connects a service Client already operates; new service subscriptions or accounts are Client&rsquo;s responsibility.</p>
         <p><strong>Three design concepts</strong> &mdash; Designer will present three initial design concepts (homepage-level compositions). Client selects one, which Designer develops into the full website. Additional concepts beyond three are $500 each. Unselected concepts remain Designer&rsquo;s property (Section 6).</p>
         <p><strong>Three rounds of revisions</strong> to the selected concept are included. Additional revision rounds are $125 per round. Requests outside the scope above proceed by written change order agreed before the work begins.</p>
@@ -86,7 +88,7 @@ export default function OrravanAgreement() {
 
       <SectionHead n="02" title="Fees and payment" />
       <div className="orv-prose">
-        <p>The total fee for the Project is <strong>$4,000</strong>, comprising $2,500 for design and development of the five pages and $500 for each of the three integrations.</p>
+        <p>The total fee for the Project is <strong>$4,000</strong>, comprising $2,500 for design and development of the nine pages and $500 for each of the three integrations.</p>
         <p><strong>$2,000 is due on signing.</strong> Work begins when this deposit is received. The deposit is non-refundable once concept work has been presented, except as provided in Section 9.</p>
         <p><strong>$2,000 is due at launch</strong>, payable when the completed website is made live or delivered for Client hosting, whichever occurs first.</p>
         <p>Invoices are due within 15 days. Overdue amounts accrue interest at 1.5% per month, and Designer may suspend work and withhold launch or delivery of files while any amount is overdue.</p>
