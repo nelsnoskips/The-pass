@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { getSessionEmail } from "@/lib/studio/session";
 import { Suspense } from "react";
 import { Sidebar } from "@/components/shell/Sidebar";
 import { Topbar } from "@/components/shell/Topbar";
@@ -14,9 +16,19 @@ export const metadata = {
   title: "The Pass — Restaurant Marketing Intelligence",
 };
 
+/* A page whose output depends on who is asking cannot be prerendered:
+   at build time there is no cookie, so the session check would bake in
+   its own redirect and serve that to everyone, signed in or not. */
+export const dynamic = "force-dynamic";
+
 export default async function AppLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // The real gate. Middleware only proves a cookie is present; this
+  // proves it is a live session for an allowed address, because it can
+  // reach the database and the edge runtime cannot.
+  if (!(await getSessionEmail())) redirect("/studio/login");
+
   const user = await getCurrentUser();
   const anchor = demoAnchor();
   const locations = getLocations(user);

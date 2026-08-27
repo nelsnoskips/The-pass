@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Wordmark } from "@/components/marketing/PassMark";
 import { PortalNav } from "@/components/portal/PortalNav";
 import { getPortalClient } from "@/lib/portal";
+import { redirect } from "next/navigation";
+import { getSessionEmail } from "@/lib/studio/session";
 
 export const metadata = {
   title: "Project Room — The Pass",
@@ -13,9 +15,20 @@ export const metadata = {
  * than the marketing dashboard. Design clients see their project here;
  * clients who also run The Pass marketing get a bridge to /dashboard.
  */
-export default function PortalLayout({
+/* A page whose output depends on who is asking cannot be prerendered:
+   at build time there is no cookie, so the session check would bake in
+   its own redirect and serve that to everyone, signed in or not. */
+export const dynamic = "force-dynamic";
+
+export default async function PortalLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // The real gate. Middleware only proves a cookie is present; this
+  // proves it is a live session, because it can reach the database and
+  // the edge runtime cannot. When the portal grows real client logins
+  // this becomes a client-session check rather than a studio one.
+  if (!(await getSessionEmail())) redirect("/studio/login");
+
   const client = getPortalClient();
 
   return (

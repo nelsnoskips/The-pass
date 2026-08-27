@@ -1,6 +1,7 @@
 import { randomBytes, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
+import { SESSION_COOKIE } from "./cookie";
 
 /**
  * Studio login: a magic link, and a session row.
@@ -13,7 +14,9 @@ import { db } from "@/lib/db";
  * users table, because this is a studio of one or two people and a
  * table would be a signup form nobody should ever see.
  */
-export const SESSION_COOKIE = "pass-studio";
+// Re-exported so existing imports keep working; defined in
+// cookie.ts because middleware cannot import this module.
+export { SESSION_COOKIE } from "./cookie";
 const SESSION_DAYS = 30;
 const LINK_MINUTES = 20;
 
