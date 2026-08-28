@@ -52,7 +52,7 @@ export default async function NewClient() {
             <h2>First project</h2>
             <p className="st-note" style={{ margin: ".4rem 0 .8rem" }}>
               Optional. The mock path is where the built site lives on this domain, e.g.
-              <code> /spec/orravan-v1</code> — that is what the review link frames.
+              <code> /orravan-v1</code> — that is what the review link frames.
             </p>
             <div className="st-form">
               <label className="st-field">

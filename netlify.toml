@@ -9,9 +9,9 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# The Orravan v1 mock moved to its versioned path; links already sent
-# to the client keep resolving.
+# Mocks live at /{client}-v{n}; the /spec/orravan URL already in front
+# of the client keeps resolving.
 [[redirects]]
   from = "/spec/orravan/*"
-  to = "/spec/orravan-v1/:splat"
+  to = "/orravan-v1/:splat"
   status = 301
