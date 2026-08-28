@@ -217,7 +217,8 @@ body {
    the story is working, emerald once it is verified. */
 .o-rail {
   position: fixed;
-  left: 13px;
+  left: 18px;
+  transition: opacity 300ms ease;
   top: 50%;
   z-index: 40;
   display: none;
@@ -251,7 +252,7 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: 18px;
 }
 .o-rail button {
   display: flex;
@@ -260,11 +261,11 @@ body {
   padding: 2px;
 }
 .o-rail-dot {
-  width: 7px;
-  height: 7px;
+  width: 3px;
+  height: 3px;
   border-radius: 9999px;
-  background: rgba(23, 24, 26, 0.22);
-  transition: background 200ms ease, transform 200ms ease;
+  background: rgba(23, 24, 26, 0.12);
+  transition: background 200ms ease;
 }
 .o-rail-num {
   font-size: 10px;
@@ -276,7 +277,6 @@ body {
 .o-rail button:hover .o-rail-num { opacity: 1; transform: none; }
 .o-rail button[data-active="true"] .o-rail-dot {
   background: var(--thread-blue);
-  transform: scale(1.5);
 }
 .o-rail button[data-active="true"][data-verified="true"] .o-rail-dot {
   background: var(--thread-green);
@@ -443,4 +443,43 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .o-donut { animation: none; }
+}
+
+/* --- the page-level service thread ----------------------------------- */
+
+.o-thread {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 25;
+  display: none;
+  pointer-events: none;
+}
+@media (min-width: 1024px) {
+  .o-thread { display: block; }
+}
+
+/* --- the hero headline ------------------------------------------------ */
+
+.o-hero-title {
+  font-size: clamp(4.5rem, 5.2vw, 7.75rem);
+  line-height: 0.82;
+  letter-spacing: -0.025em;
+}
+.o-hero-line { display: block; }
+@media (min-width: 900px) {
+  .o-hero-line { white-space: nowrap; }
+}
+@media (max-width: 899px) {
+  .o-hero-title { font-size: clamp(2.75rem, 10vw, 4.25rem); }
+}
+
+/* --- small screens: stacked, thumbable CTAs --------------------------- */
+
+@media (max-width: 639px) {
+  main .o-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
 }

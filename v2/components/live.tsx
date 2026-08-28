@@ -41,6 +41,7 @@ export function LivePlate({
      currently showing. */
   useEffect(() => {
     if (!parallax) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const node = host.current;
     if (!node) return;
     let frame = 0;

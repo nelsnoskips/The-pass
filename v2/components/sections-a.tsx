@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { HERO, INCIDENT, SPACES } from "@/lib/site";
-import { asset } from "@/lib/images";
-import { ParallaxY, Plate, Reveal, SignalLine, usePointerDepth } from "./ui";
+import { ParallaxY, Plate, Reveal, usePointerDepth } from "./ui";
 import { LivePlate } from "./live";
+import { ThreadPoint } from "./thread";
 
 /* ------------------------------------------------------------ hero --- */
 
@@ -16,24 +16,16 @@ import { LivePlate } from "./live";
 export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden bg-bone">
-      <div className="relative mx-auto min-h-[560px] max-w-[1440px] lg:min-h-[640px]">
-        {/* The panel, edge to edge. */}
-        <LivePlate
-          slot="hero-technician"
-          video="/images/hero-live.mp4"
-          parallax={26}
-          className="absolute inset-y-0 right-0 hidden w-[58%] overflow-hidden lg:block"
-          imgClassName="h-full w-full object-cover"
-        />
-
-        <div className="relative z-10 max-w-[560px] px-5 pb-16 pt-16 lg:px-10 lg:pt-24">
+      {/* One viewport after the header: copy 42, photograph 58. */}
+      <div className="relative grid lg:min-h-[calc(100vh-100px)] lg:grid-cols-[42%_58%]">
+        <div className="relative z-10 flex flex-col justify-center px-5 py-14 lg:px-10">
           <Reveal>
             <p className="o-label text-ink-mute">{HERO.eyebrow}</p>
-            <h1 className="o-display mt-5 text-[clamp(44px,5.4vw,74px)]">
-              <span className="o-mask">
+            <h1 className="o-display o-hero-title mt-5">
+              <span className="o-mask o-hero-line">
                 <span>{HERO.headA}</span>
               </span>
-              <span className="o-mask o-mask-2 text-signal">
+              <span className="o-mask o-mask-2 o-hero-line text-signal">
                 <span>{HERO.headB}</span>
               </span>
             </h1>
@@ -45,6 +37,18 @@ export function Hero() {
               <a href="#close" className="o-btn o-btn-ghost">{HERO.secondary} <span className="o-arrow">→</span></a>
             </div>
           </Reveal>
+        </div>
+
+        <div className="relative hidden min-h-[520px] overflow-hidden lg:block">
+          <LivePlate
+            slot="hero-technician"
+            video="/images/hero-live.mp4"
+            parallax={9}
+            className="absolute inset-0"
+            imgClassName="h-full w-full object-cover"
+          />
+          {/* The thread begins at the technician's hands on the panel. */}
+          <ThreadPoint x={0.44} y={0.74} node />
         </div>
 
         {/* Phones get the photo below the words instead of beside. */}
@@ -69,7 +73,9 @@ export function Hero() {
 export function S1Building() {
   return (
     <section id="s1" data-rail="01" className="relative bg-bone">
-      <div className="grid items-stretch lg:grid-cols-[minmax(320px,1fr)_2.1fr]">
+      {/* Copy 28 / building 52 / legend 20 — the whole sectional model,
+          never cropped, the legend outside the artwork. */}
+      <div className="grid items-stretch lg:grid-cols-[28%_1fr]">
         <div className="flex items-center px-5 py-10 lg:px-10">
           <SectionIntro
             n="01"
@@ -78,29 +84,35 @@ export function S1Building() {
           />
         </div>
 
-        <div className="o-panel grid min-h-[420px] sm:grid-cols-[2fr_1fr]">
-          <div className="relative min-h-[300px]">
-            <SignalLine className="inset-x-0 top-[30%] z-10 mix-blend-screen" />
-            <LivePlate
-              slot="building-section"
-              video="/images/building-live.mp4"
-              parallax={20}
-              className="absolute inset-0 overflow-hidden"
-              imgClassName="h-full w-full object-cover"
-            />
-            <FloorLights />
+        <div className="o-panel grid min-h-[440px] sm:grid-cols-[2.6fr_1fr]">
+          <div className="relative flex min-h-[320px] items-center justify-center py-4">
+            <div className="relative h-[420px] w-full">
+              <LivePlate
+                slot="building-section"
+                video="/images/building-live.mp4"
+                className="absolute inset-0"
+                imgClassName="h-full w-full object-contain"
+              />
+              <FloorLights />
+              {/* The thread enters at the occupied floor and drops
+                  through the building. */}
+              <ThreadPoint x={0.5} y={0.1} node />
+              <ThreadPoint x={0.5} y={0.94} />
+            </div>
           </div>
           <ul className="flex flex-col justify-center gap-6 border-l border-rule-dark px-6 py-8">
             {SPACES.map((space, i) => (
-              <Reveal key={space.label} delay={i * 110}>
-                <li className="flex items-center gap-3.5">
-                  <SpaceIcon kind={space.icon} lit={i === 3} />
-                  <span>
-                    <span className="o-label block text-[10px] text-bone">{space.label}</span>
-                    <span className="text-xs text-bone/60">{space.detail}</span>
+              <li key={space.label}>
+                <Reveal delay={i * 180}>
+                  <span className="flex items-center gap-3.5">
+                    <SpaceIcon kind={space.icon} lit={i === 3} />
+                    <span>
+                      <span className="o-label block text-[10px] text-bone">{space.label}</span>
+                      <span className="text-xs text-bone/60">{space.detail}</span>
+                    </span>
                   </span>
-                </li>
-              </Reveal>
+                </Reveal>
+              </li>
             ))}
           </ul>
         </div>
@@ -132,11 +144,16 @@ export function S2Equipment() {
             imgClassName="h-full w-full object-cover"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[rgba(14,15,17,0.78)] via-transparent to-transparent" />
-        <SignalLine className="inset-x-0 top-[56%] z-10 mix-blend-screen" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[rgba(14,15,17,0.55)] via-transparent to-transparent" />
+        {/* The thread crosses through the machinery, clear of the copy
+            panel and the technicians on the right, then leaves at the
+            bottom-left so the drop into 03 stays in the dark seam. */}
+        <ThreadPoint x={0.5} y={0.55} node />
+        <ThreadPoint x={0.262} y={0.94} />
 
         <div className="relative z-10 flex min-h-[460px] flex-col px-5 py-10 lg:px-10">
-          <div className="max-w-[380px]">
+          {/* The copy holds a controlled dark panel of its own. */}
+          <div className="max-w-[400px] bg-[rgba(10,11,13,0.55)] p-6 backdrop-blur-[2px]">
             <p className="o-num text-[40px] text-bone/40">02</p>
             <h2 className="o-display mt-1 text-[clamp(28px,2.6vw,40px)] text-bone">
               Down to
@@ -148,12 +165,16 @@ export function S2Equipment() {
               them—working from the same information.
             </p>
           </div>
-          {/* The three layers, spaced down the band the way the mock
-              floats them on the photograph. */}
+          {/* Air, water, control reveal one at a time as the thread
+              passes through each system. */}
           <ul className="mb-2 mt-auto space-y-7 pt-10">
-            {["Air", "Water", "Control"].map((layer) => (
-              <li key={layer} className="o-label text-[10px] tracking-[0.2em] text-bone/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">
-                {layer}
+            {["Air", "Water", "Control"].map((layer, i) => (
+              <li key={layer}>
+                <Reveal delay={260 * i}>
+                  <span className="o-label text-[10px] tracking-[0.2em] text-bone/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">
+                    {layer}
+                  </span>
+                </Reveal>
               </li>
             ))}
           </ul>
@@ -167,25 +188,23 @@ export function S2Equipment() {
 /* ----------------------------------------------- 03 · the briefing --- */
 
 /**
- * The briefing is one dark panel bleeding to the right edge: the board
- * on the left of it, the people reading it on the right, flush.
+ * The approved section-03 background is the whole band: dark negative
+ * space left and center, the facility leader and specialist anchored
+ * far right, faces whole. The briefing interface is sharp HTML over
+ * the dark space — nothing baked in, no second photograph.
  */
 export function S3Briefing() {
   return (
     <section data-rail="03" className="o-panel relative overflow-hidden">
-      {/* The room behind the briefing, generated to the mock's backdrop:
-          the ops floor out of focus, almost black. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={asset("/images/briefing-bg.jpg")}
-        alt=""
-        aria-hidden
-        className="absolute inset-0 h-full w-full object-cover"
-        onError={(event) => {
-          (event.target as HTMLImageElement).style.display = "none";
-        }}
+      <Plate
+        slot="briefing-band"
+        className="absolute inset-0"
+        imgClassName="h-full w-full object-cover object-[75%_50%]"
       />
-      <div className="absolute inset-0 bg-[rgba(12,13,15,0.6)]" />
+      {/* Legibility scrim over the empty left only. */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[rgba(10,11,13,0.55)] via-[rgba(10,11,13,0.2)] to-transparent" />
+      {/* Down the dark seam between the intro and the board. */}
+      <ThreadPoint x={0.262} y={0.9} node />
 
       <div className="relative grid items-stretch lg:grid-cols-[minmax(300px,1fr)_2.6fr]">
         <div className="flex items-center px-5 py-10 lg:px-10">
@@ -202,10 +221,11 @@ export function S3Briefing() {
           />
         </div>
 
-        <Reveal className="grid min-h-[400px] items-stretch lg:grid-cols-[2fr_1fr]">
-          {/* The briefing as the command center's wall display. */}
-          <div className="my-8 flex flex-col justify-center border border-[#1d2a45] bg-gradient-to-b from-[#0a1120] to-[#0b0e15] shadow-[0_0_60px_rgba(43,107,255,0.16),0_30px_70px_rgba(0,0,0,0.55)]">
-            <div className="flex items-center justify-between border-b border-[#1d2a45] px-6 py-3.5">
+        {/* Wide and low over the dark space; the readers keep the far
+            right of the frame to themselves. */}
+        <Reveal className="flex min-h-[460px] items-center py-10 pr-5 lg:pr-0">
+          <div className="flex w-full flex-col justify-center rounded-[2px] border border-white/[0.12] bg-[rgba(8,10,14,0.72)] shadow-[0_30px_70px_rgba(0,0,0,0.5)] backdrop-blur-[2px] lg:w-[74%]">
+            <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-3.5">
               <p className="o-label text-[10px] text-bone/70">
                 Intelligent service briefing
               </p>
@@ -217,22 +237,22 @@ export function S3Briefing() {
                 Live
               </p>
             </div>
-            <div className="grid gap-x-0 gap-y-7 p-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-y-0 xl:divide-x xl:divide-[#1d2a45] xl:p-0 xl:py-6 [&>div]:xl:px-5">
-              <Briefed label="What changed" order={1}>
+            <div className="grid gap-x-0 gap-y-7 p-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-y-0 xl:divide-x xl:divide-white/[0.08] xl:p-0 xl:py-6 [&>div]:xl:px-5">
+              <Briefed label="What changed">
                 {INCIDENT.what}
                 <span className="mt-1.5 block text-[11px] text-bone/45">{INCIDENT.since}</span>
               </Briefed>
-              <Briefed label="Why it matters" order={2}>
+              <Briefed label="Why it matters">
                 {INCIDENT.why[0]}
                 <span className="mt-1.5 block text-bone/70">{INCIDENT.why[1]}</span>
               </Briefed>
-              <Briefed label="Recommended response" order={3}>
+              <Briefed label="Recommended response">
                 {INCIDENT.response}
                 <span className="o-stamp-priority o-label mt-2 block text-[10px] text-warn">
                   Priority: {INCIDENT.priority}
                 </span>
               </Briefed>
-              <Briefed label="Assigned specialist" order={4}>
+              <Briefed label="Assigned specialist">
                 <span className="flex items-center gap-2.5">
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-signal/25 text-[12px] font-bold text-bone">
                     MS
@@ -245,7 +265,7 @@ export function S3Briefing() {
                   </span>
                 </span>
               </Briefed>
-              <Briefed label="Status" order={5}>
+              <Briefed label="Status">
                 <span className="flex items-center gap-3">
                   {/* The mock's progress donut, slowly turning. */}
                   <svg viewBox="0 0 28 28" className="o-donut h-8 w-8" aria-hidden>
@@ -266,15 +286,6 @@ export function S3Briefing() {
               </Briefed>
             </div>
           </div>
-
-          {/* The people reading it — framed on them, flush to the edge. */}
-          <LivePlate
-            slot="briefing-viewers"
-            video="/images/briefing-live.mp4"
-            parallax={14}
-            className="hidden min-h-[400px] overflow-hidden lg:block"
-            imgClassName="h-full w-full object-cover object-[72%_center]"
-          />
         </Reveal>
       </div>
 
@@ -339,7 +350,7 @@ function FloorLights() {
           ([entry]) => {
             if (!entry.isIntersecting) return;
             observer.disconnect();
-            [1, 2, 3].forEach((n) => setTimeout(() => setStage(n), 300 + n * 420));
+            [1, 2, 3].forEach((n) => setTimeout(() => setStage(n), 200 + n * 180));
           },
           { threshold: 0.5 },
         );

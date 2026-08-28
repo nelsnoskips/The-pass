@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CLOSE, RECORD, TEAM } from "@/lib/site";
 import { SectionIntro } from "./sections-a";
+import { ThreadPoint } from "./thread";
 import { DeepSeam, ParallaxY, Plate, Reveal } from "./ui";
 
 /* --------------------------------------------------- 08 · the team --- */
@@ -11,7 +12,9 @@ export function S8Team() {
   return (
     <section data-rail="08" className="relative bg-bone">
       <div className="py-10 pl-5 lg:pl-10">
-        <div className="grid items-start gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1fr] lg:pr-0">
+        <div className="relative grid items-start gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1fr] lg:pr-0">
+          {/* Down the gutter between the copy and the photograph. */}
+          <ThreadPoint x={0.258} y={0.5} />
           <SectionIntro
             n="08"
             title={<>The thread is only as strong as the team.</>}
@@ -25,8 +28,8 @@ export function S8Team() {
           />
 
           {/* The seam: the frame opens as the section arrives while the
-              photograph counter-drifts on a deeper layer. */}
-          <DeepSeam className="min-h-[380px]" drift={46}>
+              photograph drifts very slightly on a deeper layer. */}
+          <DeepSeam className="min-h-[380px]" drift={10}>
             <Plate
               slot="team-table"
               className="h-full"
@@ -55,15 +58,17 @@ export function S9Record() {
 
           <Reveal>
             <ParallaxY by={10}>
-            <div className="o-card overflow-hidden">
+            <div className="o-card relative overflow-hidden">
               <p className="o-label border-b border-rule px-6 py-3.5 text-[10px] text-ink-mute">
                 Service record
               </p>
-              <div className="grid gap-8 p-6 lg:grid-cols-[220px_1fr_190px]">
+              <div className="grid gap-6 p-6 lg:grid-cols-[minmax(150px,0.8fr)_minmax(0,2.3fr)_minmax(150px,0.9fr)]">
                 <RecordTimeline />
                 <RecordTable />
                 <RecordDocs />
               </div>
+              {/* Down the card's own left padding gutter. */}
+              <ThreadPoint x={0.013} y={0.85} node />
             </div>
             </ParallaxY>
           </Reveal>
@@ -110,12 +115,19 @@ function RecordTimeline() {
 
 function RecordTable() {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[380px] text-left text-[12px]">
+    <div>
+      {/* Desktop: a fixed-layout table that always fits its column —
+          no internal horizontal scrolling. */}
+      <table className="hidden w-full table-fixed text-left text-[12px] md:table">
         <thead>
           <tr className="o-label text-[9px] text-ink-mute">
-            {["Event", "Details", "By", "Time"].map((h) => (
-              <th key={h} className="border-b border-rule pb-2.5 pr-4 font-semibold">
+            {["Event", "Details", "By", "Time"].map((h, i) => (
+              <th
+                key={h}
+                className={`border-b border-rule pb-2.5 pr-3 font-semibold [overflow-wrap:anywhere] ${
+                  i === 1 ? "w-[42%]" : ""
+                }`}
+              >
                 {h}
               </th>
             ))}
@@ -124,16 +136,31 @@ function RecordTable() {
         <tbody>
           {RECORD.rows.map((row) => (
             <tr key={row.event} className="align-top">
-              <td className="border-b border-rule/60 py-2.5 pr-4 font-semibold text-ink">
+              <td className="border-b border-rule/60 py-2.5 pr-3 font-semibold text-ink [overflow-wrap:anywhere]">
                 {row.event}
               </td>
-              <td className="border-b border-rule/60 py-2.5 pr-4 text-ink-soft">{row.details}</td>
-              <td className="border-b border-rule/60 py-2.5 pr-4 text-ink-mute">{row.by}</td>
+              <td className="border-b border-rule/60 py-2.5 pr-3 text-ink-soft [overflow-wrap:anywhere]">{row.details}</td>
+              <td className="border-b border-rule/60 py-2.5 pr-3 text-ink-mute [overflow-wrap:anywhere]">{row.by}</td>
               <td className="o-num border-b border-rule/60 py-2.5 text-ink-mute">{row.time}</td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* Phones: each event as a labeled card instead of a squeezed
+          table. */}
+      <ul className="space-y-3 md:hidden">
+        {RECORD.rows.map((row) => (
+          <li key={row.event} className="border border-rule p-3.5">
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="text-[13px] font-semibold text-ink">{row.event}</span>
+              <span className="o-num text-[12px] text-ink-mute">{row.time}</span>
+            </div>
+            <p className="mt-1 text-[12px] text-ink-soft">{row.details}</p>
+            <p className="o-label mt-1.5 text-[9px] text-ink-mute">{row.by}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -185,6 +212,8 @@ export function S10Close() {
               className="o-check-ring relative flex h-32 w-32 shrink-0 items-center justify-center rounded-full border-[6px]"
               style={{ borderColor: seen ? "var(--thread-green)" : "var(--rule)" }}
             >
+              {/* The thread's destination. */}
+              <ThreadPoint x={0.5} y={-0.15} node green />
               {/* The one drawn line that belongs: the signature. */}
               <svg viewBox="0 0 40 40" className="h-16 w-16 text-ink" fill="none" aria-hidden>
                 <path

@@ -1,6 +1,7 @@
 import { Footer, TopBar } from "@/components/chrome";
 import { ScrollRail } from "@/components/rail";
 import { ServiceClock } from "@/components/clock";
+import { ServiceThread } from "@/components/thread";
 import { Hero, S1Building, S2Equipment, S3Briefing } from "@/components/sections-a";
 import { S4Response, S5Verified, S6Services, S7Flow } from "@/components/sections-b";
 import { S8Team, S9Record, S10Close } from "@/components/sections-c";
@@ -21,7 +22,8 @@ export default function Page() {
       <TopBar />
       <ScrollRail />
       <ServiceClock />
-      <main>
+      <main className="relative">
+        <ServiceThread />
         <Hero />
         <S1Building />
         <S2Equipment />

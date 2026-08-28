@@ -19,6 +19,7 @@ export function ScrollRail() {
   const [stops, setStops] = useState<{ n: string; el: HTMLElement }[]>([]);
   const [active, setActive] = useState(0);
   const fill = useRef<HTMLDivElement>(null);
+  const nav = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const sections = Array.from(
@@ -39,7 +40,20 @@ export function ScrollRail() {
       sections.forEach((el, i) => {
         if (el.getBoundingClientRect().top <= mid) current = i;
       });
+      // At the very bottom the last, short section is the one on screen
+      // even if its top never crossed the midline.
+      if (doc.scrollTop + doc.clientHeight >= doc.scrollHeight - 4) {
+        current = sections.length - 1;
+      }
       setActive((prev) => (prev === current ? prev : current));
+
+      // The rail stops before the footer: fade out as it arrives.
+      const footer = document.querySelector("footer");
+      if (footer && nav.current) {
+        const inView = footer.getBoundingClientRect().top < window.innerHeight * 0.72;
+        nav.current.style.opacity = inView ? "0" : "1";
+        nav.current.style.pointerEvents = inView ? "none" : "";
+      }
     };
     const onScroll = () => {
       if (queued) return;
@@ -59,7 +73,7 @@ export function ScrollRail() {
   if (stops.length === 0) return null;
 
   return (
-    <nav aria-label="Page sections" className="o-rail">
+    <nav ref={nav} aria-label="Page sections" className="o-rail">
       <div className="o-rail-track">
         <div ref={fill} className="o-rail-fill" />
       </div>

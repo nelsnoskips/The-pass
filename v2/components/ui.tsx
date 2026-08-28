@@ -30,6 +30,7 @@ export function Plate({
 
   const host = useSectionProgress<HTMLDivElement>((p) => {
     if (!parallax || !img.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const y = (p - 0.5) * -2 * parallax;
     img.current.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0) scale(${(
       1 + (parallax * 2.4) / 600
@@ -219,6 +220,7 @@ export function ParallaxY({
 }) {
   const inner = useRef<HTMLDivElement>(null);
   const ref = useSectionProgress<HTMLDivElement>((p) => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     inner.current?.style.setProperty(
       "transform",
       `translate3d(0, ${((p - 0.5) * 2 * by).toFixed(1)}px, 0)`,
@@ -233,47 +235,6 @@ export function ParallaxY({
   );
 }
 
-
-/* -------------------------------------------------------- SignalLine --- */
-
-/** The mock's signal line, horizontal only: a glowing hairline that
-    draws across the section as it arrives, a pulse of light traveling
-    its length. Blue while working, green once verified. */
-export function SignalLine({
-  color = "blue",
-  className,
-}: {
-  color?: "blue" | "green";
-  className?: string;
-}) {
-  const line = useRef<HTMLDivElement>(null);
-  const ref = useSectionProgress<HTMLDivElement>((p) => {
-    line.current?.style.setProperty(
-      "transform",
-      `scaleX(${Math.min(1, p / 0.6).toFixed(3)})`,
-    );
-  });
-  const tone = color === "green" ? "var(--thread-green)" : "var(--thread-blue)";
-  return (
-    <div
-      ref={ref}
-      aria-hidden
-      className={`pointer-events-none absolute h-[2px] ${className ?? ""}`}
-    >
-      <div
-        ref={line}
-        className="relative h-full w-full origin-left overflow-hidden"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${tone} 10%, ${tone} 90%, transparent)`,
-          boxShadow: `0 0 14px ${tone}, 0 0 4px ${tone}`,
-          willChange: "transform",
-        }}
-      >
-        <span className="o-line-pulse" />
-      </div>
-    </div>
-  );
-}
 
 /* ---------------------------------------------------------- DeepSeam --- */
 
@@ -306,9 +267,10 @@ export function DeepSeam({
       "clip-path",
       `inset(${y.toFixed(2)}% ${x.toFixed(2)}% ${y.toFixed(2)}% ${x.toFixed(2)}%)`,
     );
+    // Very subtle horizontal drift, capped at a 2% scale.
     depth.current?.style.setProperty(
       "transform",
-      `translate3d(0, ${((p - 0.5) * -2 * drift).toFixed(1)}px, 0)`,
+      `translate3d(${((p - 0.5) * 2 * drift).toFixed(1)}px, 0, 0) scale(1.02)`,
     );
   });
   return (

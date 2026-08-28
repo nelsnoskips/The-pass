@@ -11,9 +11,31 @@ import { Plate } from "./ui";
  * per practice, always in reach.
  */
 export function TopBar() {
+  /* Past the hero the main row tightens and the service subnav folds
+     away; the header stays sticky the whole way. */
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    let queued = false;
+    const read = () => {
+      queued = false;
+      setCompact(window.scrollY > window.innerHeight * 0.85);
+    };
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(read);
+    };
+    read();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-rule bg-[rgba(247,245,239,0.92)] backdrop-blur">
-      <div className="mx-auto flex max-w-[1280px] items-center gap-6 px-5 py-3 lg:px-8">
+    <header className="sticky top-0 z-50 border-b border-rule bg-[rgba(247,245,239,0.92)] backdrop-blur-sm">
+      <div
+        className="mx-auto flex max-w-[1280px] items-center gap-6 px-5 transition-[height] duration-300 lg:px-8"
+        style={{ height: compact ? 58 : 72 }}
+      >
         <a href="#top" aria-label="Orravan home" className="shrink-0">
           <Logo className="h-7" />
         </a>
@@ -26,7 +48,7 @@ export function TopBar() {
               className="o-label flex items-center gap-1 text-ink-soft transition-colors hover:text-signal"
             >
               {menu}
-              <svg viewBox="0 0 8 5" className="w-2 opacity-50" aria-hidden>
+              <svg viewBox="0 0 8 5" className="w-2.5 opacity-40" aria-hidden>
                 <path d="M0 0 L4 5 L8 0" fill="currentColor" />
               </svg>
             </button>
@@ -43,8 +65,11 @@ export function TopBar() {
         </div>
       </div>
 
-      <div className="hidden border-t border-rule/60 lg:block">
-        <div className="mx-auto flex max-w-[1280px] justify-center gap-10 px-8 py-1.5">
+      <div
+        className="hidden overflow-hidden border-t border-rule/60 transition-[height,opacity] duration-300 lg:block"
+        style={{ height: compact ? 0 : 28, opacity: compact ? 0 : 1 }}
+      >
+        <div className="mx-auto flex h-[28px] max-w-[1280px] items-center justify-center gap-10 px-8">
           {NAV.quick.map((item) => (
             <a
               key={item}

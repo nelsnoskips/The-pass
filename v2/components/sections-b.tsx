@@ -3,8 +3,10 @@
 import { FLOW, RESPONSE, SERVICES, VERIFIED } from "@/lib/site";
 import { useState } from "react";
 import { LivePlate } from "./live";
+import { asset } from "@/lib/images";
 import { SectionIntro } from "./sections-a";
-import { Plate, Reveal, SignalLine } from "./ui";
+import { ThreadPoint } from "./thread";
+import { Plate, Reveal } from "./ui";
 
 /* -------------------------------------------- 04 · the response --- */
 
@@ -19,14 +21,17 @@ export function S4Response() {
             copy="The right people. The right action. Confirmed."
           />
 
-          {/* The mock's frame: the three moments cut at a slant, the
-              signal line running through all of them. */}
+          {/* The mock's frame: the three moments cut at a gentle slant,
+              the thread travelling beneath them with a node per panel. */}
           <div className="relative">
-            <div className="grid gap-2 sm:grid-cols-3 sm:px-4">
+            {/* The descent from 03 lands in the bone corner before the
+                under-card run begins. */}
+            <ThreadPoint x={0.004} y={1.06} />
+            <div className="grid gap-2 min-[900px]:grid-cols-3 min-[900px]:px-4">
               {RESPONSE.map((step, i) => (
-                <Reveal key={step.time} delay={i * 140}>
-                  <article className="relative min-h-[300px] overflow-hidden sm:-skew-x-[8deg]">
-                    <div className="absolute inset-y-0 -inset-x-14 sm:skew-x-[8deg]">
+                <Reveal key={step.time} delay={i * 300}>
+                  <article className="relative min-h-[300px] overflow-hidden min-[900px]:-skew-x-[5deg]">
+                    <div className="absolute inset-y-0 -inset-x-10 min-[900px]:skew-x-[5deg]">
                       <Plate
                         slot={step.slot}
                         parallax={12}
@@ -35,16 +40,17 @@ export function S4Response() {
                       />
                       <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-[rgba(17,18,20,0.85)] via-[rgba(17,18,20,0.45)] to-transparent" />
                     </div>
-                    <div className="relative p-4 sm:skew-x-[8deg] sm:px-8">
+                    <div className="relative p-4 min-[900px]:skew-x-[5deg] min-[900px]:px-7">
                       <span className="o-num text-[15px] text-bone">{step.time}</span>
                       <p className="o-label pt-1 text-[10px] text-bone">{step.who}</p>
                       <p className="pt-0.5 text-[12px] text-bone/75">{step.did}</p>
                     </div>
+                    {/* The thread runs underneath the card. */}
+                    <ThreadPoint x={0.5} y={1.06} node />
                   </article>
                 </Reveal>
               ))}
             </div>
-            <SignalLine className="inset-x-0 top-[48%] z-10 hidden mix-blend-screen sm:block" />
           </div>
         </div>
       </div>
@@ -71,42 +77,36 @@ export function S5Verified() {
             copy="Comfort restored. Systems balanced. Documentation complete."
             aside={
               <ul className="mt-8 grid grid-cols-3 gap-3">
-                {VERIFIED.chips.map((chip) => (
+                {VERIFIED.chips.map((chip, i) => (
                   <li key={chip} className="text-center">
-                    <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full border border-ink/25 text-verified">
-                      <Check className="h-4 w-4" />
-                    </span>
-                    <span className="o-label mt-2 block text-[8.5px] leading-tight text-ink-mute">
-                      {chip}
-                    </span>
+                    <Reveal delay={700 + i * 250}>
+                      <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full border border-ink/25 text-verified">
+                        <Check className="h-4 w-4" />
+                      </span>
+                      <span className="o-label mt-2 block text-[8.5px] leading-tight text-ink-mute">
+                        {chip}
+                      </span>
+                    </Reveal>
                   </li>
                 ))}
               </ul>
             }
           />
 
+          {/* The approved lobby, once, continuous: seated client left,
+              open lobby center, specialist far right. The verification
+              point lives in the opening — the thread turns green here. */}
           <Reveal className="relative">
-            {/* One continuous band: the office flows into the leader on
-                the right, a soft shadow seam instead of a hard cut. */}
-            <div className="relative grid min-h-[380px] sm:grid-cols-[1.5fr_1fr]">
+            <div className="relative min-h-[420px] overflow-hidden">
               <Plate
-                slot="verified-office"
-                parallax={24}
-                className="overflow-hidden"
-                imgClassName="h-full w-full object-cover object-[20%_center]"
+                slot="verified-band"
+                parallax={12}
+                className="absolute inset-0"
+                imgClassName="h-full w-full object-cover object-[50%_50%]"
               />
-              <div className="relative hidden overflow-hidden sm:block">
-                <Plate
-                  slot="response-leader"
-                  parallax={14}
-                  className="absolute inset-0"
-                  imgClassName="h-full w-full object-cover object-[60%_center]"
-                />
-                <div className="absolute inset-y-0 left-0 w-14 bg-gradient-to-r from-black/30 to-transparent" />
-              </div>
-              <SignalLine color="green" className="inset-x-0 bottom-[15%] z-10 mix-blend-screen" />
+              <ThreadPoint x={0.52} y={0.56} node green />
+              <VerifiedCard />
             </div>
-            <VerifiedCard />
           </Reveal>
         </div>
       </div>
@@ -128,7 +128,7 @@ function VerifiedCard() {
         );
         observer.observe(node);
       }}
-      className={`absolute bottom-10 right-[31%] w-[210px] bg-white p-3.5 shadow-[0_18px_40px_rgba(23,24,26,0.25)] ${
+      className={`absolute bottom-[22%] left-[52%] w-[210px] rounded-[2px] bg-white p-3.5 shadow-[0_18px_40px_rgba(23,24,26,0.25)] ${
         seen ? "o-stamped" : "opacity-0"
       }`}
     >
@@ -152,14 +152,18 @@ export function S6Services() {
   return (
     <section id="services" data-rail="06" className="relative bg-bone">
       <div className="py-10 pl-5 lg:pl-10">
-        <div className="grid items-stretch gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1.2fr_1fr] lg:pr-0">
+        <div className="relative grid items-stretch gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1.35fr_1fr] lg:pr-0">
+          {/* A short continuation down the seam between the accordion
+              and the ops room. */}
+          <ThreadPoint x={0.69} y={0.5} node />
           <SectionIntro
             n="06"
             title={<>One thread. Every Orravan service.</>}
             copy="Whichever system needs attention, it is the same intelligence, the same people, the same record."
           />
 
-          <div className="divide-y divide-rule border-y border-rule">
+          {/* Fixed floor so an opening item never moves the section. */}
+          <div className="min-h-[420px] divide-y divide-rule self-start border-y border-rule">
             {SERVICES.map((service, i) => {
               const isOpen = open === i;
               return (
@@ -176,8 +180,8 @@ export function S6Services() {
                     <span className="text-lg leading-none text-ink-mute">{isOpen ? "–" : "+"}</span>
                   </button>
                   <div
-                    className="grid overflow-hidden transition-[grid-template-rows] duration-300"
-                    style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+                    className="grid overflow-hidden transition-[grid-template-rows,opacity] duration-300"
+                    style={{ gridTemplateRows: isOpen ? "1fr" : "0fr", opacity: isOpen ? 1 : 0 }}
                   >
                     <div className="min-h-0">
                       <p className="pb-2 text-[13px] leading-relaxed text-ink-soft">
@@ -195,13 +199,15 @@ export function S6Services() {
 
           {/* The ops room holds the full height of the section. */}
           <Reveal className="h-full">
-            <LivePlate
-              slot="services-control"
-              video="/images/monitoring-live.mp4"
-              parallax={16}
-              className="h-full min-h-[360px] overflow-hidden"
-              imgClassName="h-full w-full object-cover"
-            />
+            <div className="relative h-full min-h-[420px] overflow-hidden">
+              <LivePlate
+                slot="services-control"
+                video="/images/monitoring-live.mp4"
+                parallax={16}
+                className="absolute inset-0"
+                imgClassName="h-full w-full object-cover"
+              />
+            </div>
           </Reveal>
         </div>
       </div>
@@ -238,17 +244,34 @@ export function S7Flow() {
             }
           />
 
-          {/* The strip runs the full height of the text beside it, one
-              flowing row. */}
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {/* Four tiles, one row, identical aspect; the thread passes
+              beneath with a node per tile. The Orravan mark rides the
+              van as an overlay — never baked into the photograph. */}
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {FLOW.stops.map((slot, i) => (
-              <Reveal key={slot} delay={i * 120} className="h-full">
-                <Plate
-                  slot={slot}
-                  parallax={10}
-                  className="h-full min-h-[240px] overflow-hidden"
-                  imgClassName="h-full w-full object-cover"
-                />
+              <Reveal key={slot} delay={i * 120}>
+                <div className="relative aspect-[4/5] w-full overflow-hidden">
+                  <Plate
+                    slot={slot}
+                    parallax={10}
+                    className="absolute inset-0"
+                    imgClassName={`h-full w-full object-cover ${
+                      slot === "flow-van" ? "object-[15%_50%]" : ""
+                    }`}
+                  />
+                  {slot === "flow-van" && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={asset("/images/15-official-orravan-logo.png")}
+                      alt=""
+                      aria-hidden
+                      className="absolute right-[8%] top-[42%] w-[36%] opacity-85 mix-blend-multiply"
+                    />
+                  )}
+                  {/* Beneath the tile; the chain runs right-to-left so
+                      the thread arrives from the ops room cleanly. */}
+                  <ThreadPoint x={0.5} y={1.05 + (3 - i) * 0.006} node />
+                </div>
               </Reveal>
             ))}
           </div>

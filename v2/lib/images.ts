@@ -55,6 +55,16 @@ export const IMAGES: Record<string, Slot> = {
     alt: "A technician at the controls racks",
     brief: "Tech at glowing control racks, seen from behind/side. Tall crop.",
   },
+  "briefing-band": {
+    src: "/images/section-03-intelligence-briefing-background.jpg",
+    alt: "The facility leader and specialist reading the service briefing",
+    brief: "Approved section-03 background: dark negative space left and center, the two readers anchored far right.",
+  },
+  "verified-band": {
+    src: "/images/section-05-verified-lobby-continuous.jpg",
+    alt: "The verified lobby: the client seated, the specialist confirming on a tablet",
+    brief: "Approved section-05 continuous lobby: seated client left, open lobby center, specialist with tablet far right.",
+  },
   "briefing-viewers": {
     src: "/images/04-intelligence-briefing-people.png",
     alt: "A facility leader and specialist reading the service briefing",
