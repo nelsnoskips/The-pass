@@ -35,6 +35,11 @@ export const IMAGES: Record<string, Slot> = {
     alt: "Cross-section of an occupied building, floor by floor",
     brief: "Building cut-away / floor grid: occupied floors above, plant below. Dark, wide.",
   },
+  "equipment-wide": {
+    src: "/images/equipment-wide.png",
+    alt: "The plant, wide: air falling from the duct, chillers, and the control racks",
+    brief: "The mock's full section-02 panorama, regenerated at resolution: duct airflow left, plant center, racks right.",
+  },
   "equipment-air": {
     src: "/images/03-equipment-room.png",
     alt: "An air handler, airflow made visible",

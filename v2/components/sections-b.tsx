@@ -11,8 +11,8 @@ import { Plate, Reveal, SignalLine } from "./ui";
 export function S4Response() {
   return (
     <section data-rail="04" className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 py-10 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[1fr_2.1fr]">
+      <div className="py-10 pl-5 lg:pl-10">
+        <div className="grid gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1fr] lg:pr-0">
           <SectionIntro
             n="04"
             title={<>The thread becomes a response.</>}
@@ -58,8 +58,8 @@ export function S4Response() {
 export function S5Verified() {
   return (
     <section data-rail="05" className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 py-10 lg:px-8">
-        <div className="grid items-center gap-8 lg:grid-cols-[1fr_1.6fr]">
+      <div className="py-10 pl-5 lg:pl-10">
+        <div className="grid items-start gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1fr] lg:pr-0">
           <SectionIntro
             n="05"
             title={
@@ -151,8 +151,8 @@ export function S6Services() {
 
   return (
     <section id="services" data-rail="06" className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 py-10 lg:px-8">
-        <div className="grid items-stretch gap-8 lg:grid-cols-[1fr_1.3fr_1.1fr]">
+      <div className="py-10 pl-5 lg:pl-10">
+        <div className="grid items-stretch gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1.2fr_1fr] lg:pr-0">
           <SectionIntro
             n="06"
             title={<>One thread. Every Orravan service.</>}
@@ -215,8 +215,8 @@ export function S6Services() {
 export function S7Flow() {
   return (
     <section data-rail="07" className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 py-10 lg:px-8">
-        <div className="grid items-stretch gap-8 lg:grid-cols-[1fr_2.4fr]">
+      <div className="py-10 pl-5 lg:pl-10">
+        <div className="grid items-stretch gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1fr] lg:pr-0">
           <SectionIntro
             n="07"
             title={<>The part is already in the flow.</>}

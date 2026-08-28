@@ -10,8 +10,8 @@ import { DeepSeam, ParallaxY, Plate, Reveal } from "./ui";
 export function S8Team() {
   return (
     <section data-rail="08" className="relative bg-bone">
-      <div className="mx-auto max-w-[1440px] py-10 pl-5 lg:pl-10">
-        <div className="grid items-center gap-8 lg:grid-cols-[minmax(320px,1fr)_2.3fr]">
+      <div className="py-10 pl-5 lg:pl-10">
+        <div className="grid items-start gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1fr] lg:pr-0">
           <SectionIntro
             n="08"
             title={<>The thread is only as strong as the team.</>}
@@ -45,8 +45,8 @@ export function S8Team() {
 export function S9Record() {
   return (
     <section id="record" data-rail="09" className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 py-10 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[1fr_2.3fr]">
+      <div className="px-5 py-10 lg:px-10">
+        <div className="grid gap-8 lg:grid-cols-[minmax(260px,340px)_1fr]">
           <SectionIntro
             n="09"
             title={<>Different buildings. One standard of response.</>}
@@ -166,8 +166,8 @@ export function S10Close() {
 
   return (
     <section id="close" data-rail="10" className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 pb-16 pt-10 lg:px-8">
-        <div className="grid items-center gap-8 lg:grid-cols-[1fr_1.5fr]">
+      <div className="px-5 pb-16 pt-10 lg:px-10">
+        <div className="grid items-center gap-8 lg:grid-cols-[minmax(260px,340px)_1fr]">
           <SectionIntro n="10" title={<>The full thread. In your hands.</>} copy={CLOSE.copy} />
 
           <div className="flex flex-col items-center gap-8 lg:flex-row lg:justify-center">

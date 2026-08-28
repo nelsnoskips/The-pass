@@ -431,3 +431,16 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .o-line-pulse { animation: none; opacity: 0; }
 }
+
+/* --- the briefing's progress donut ----------------------------------- */
+
+.o-donut {
+  animation: o-turn 6s linear infinite;
+  transform-origin: center;
+}
+@keyframes o-turn {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .o-donut { animation: none; }
+}

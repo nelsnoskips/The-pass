@@ -26,7 +26,7 @@ export function Hero() {
           imgClassName="h-full w-full object-cover"
         />
 
-        <div className="relative z-10 max-w-[560px] px-5 pb-16 pt-16 lg:px-10 lg:pt-24 xl:pl-16">
+        <div className="relative z-10 max-w-[560px] px-5 pb-16 pt-16 lg:px-10 lg:pt-24">
           <Reveal>
             <p className="o-label text-ink-mute">{HERO.eyebrow}</p>
             <h1 className="o-display mt-5 text-[clamp(44px,5.4vw,74px)]">
@@ -121,34 +121,38 @@ export function S2Equipment() {
   const depth = usePointerDepth<HTMLDivElement>(7);
   return (
     <section data-rail="02" className="o-panel relative">
-      <div ref={depth} className="relative min-h-[480px] overflow-hidden">
-        {/* One continuous plate: air handler, chiller loop, and the
-            technician at the racks — the mock's band, unseamed. */}
-        <div data-depth className="absolute -inset-4 will-change-transform">
+      <div ref={depth} className="relative min-h-[460px] overflow-hidden">
+        {/* The mock's wide shot, whole: the duct and its falling air on
+            the left, the plant in the middle, the racks on the right. */}
+        <div data-depth className="absolute -inset-1 will-change-transform">
           <LivePlate
-            slot="equipment-air"
-            video="/images/equipment-live.mp4"
+            slot="equipment-wide"
+            video="/images/equipment-wide-live.mp4"
             className="absolute inset-0"
             imgClassName="h-full w-full object-cover"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[rgba(14,15,17,0.86)] via-[rgba(14,15,17,0.25)] to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[rgba(14,15,17,0.78)] via-transparent to-transparent" />
         <SignalLine className="inset-x-0 top-[56%] z-10 mix-blend-screen" />
 
-        <div className="relative flex min-h-[480px] max-w-[440px] flex-col justify-center p-6 lg:p-12">
-          <p className="o-num text-[40px] text-bone/40">02</p>
-          <h2 className="o-display mt-1 text-[clamp(28px,2.6vw,40px)] text-bone">
-            Down to
-            <br />
-            the equipment.
-          </h2>
-          <p className="mt-4 max-w-[28ch] text-[13px] leading-relaxed text-bone/70">
-            Mechanical systems, automation and the people who service
-            them—working from the same information.
-          </p>
-          <ul className="mt-8 space-y-2.5">
+        <div className="relative z-10 flex min-h-[460px] flex-col px-5 py-10 lg:px-10">
+          <div className="max-w-[380px]">
+            <p className="o-num text-[40px] text-bone/40">02</p>
+            <h2 className="o-display mt-1 text-[clamp(28px,2.6vw,40px)] text-bone">
+              Down to
+              <br />
+              the equipment.
+            </h2>
+            <p className="mt-4 max-w-[28ch] text-[13px] leading-relaxed text-bone/70">
+              Mechanical systems, automation and the people who service
+              them—working from the same information.
+            </p>
+          </div>
+          {/* The three layers, spaced down the band the way the mock
+              floats them on the photograph. */}
+          <ul className="mb-2 mt-auto space-y-7 pt-10">
             {["Air", "Water", "Control"].map((layer) => (
-              <li key={layer} className="o-label border-l-2 border-signal pl-3 text-[10px] text-bone/85">
+              <li key={layer} className="o-label text-[10px] tracking-[0.2em] text-bone/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">
                 {layer}
               </li>
             ))}
@@ -198,12 +202,22 @@ export function S3Briefing() {
           />
         </div>
 
-        <Reveal className="grid min-h-[400px] items-stretch lg:grid-cols-[1.7fr_1fr]">
-          <div className="my-8 flex flex-col justify-center border border-rule-dark bg-[rgba(9,10,12,0.82)] shadow-[0_30px_70px_rgba(0,0,0,0.5)] backdrop-blur-[2px]">
-            <p className="o-label border-b border-rule-dark px-6 py-3.5 text-[10px] text-bone/70">
-              Intelligent service briefing
-            </p>
-            <div className="grid gap-x-6 gap-y-7 p-6 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal className="grid min-h-[400px] items-stretch lg:grid-cols-[2fr_1fr]">
+          {/* The briefing as the command center's wall display. */}
+          <div className="my-8 flex flex-col justify-center border border-[#1d2a45] bg-gradient-to-b from-[#0a1120] to-[#0b0e15] shadow-[0_0_60px_rgba(43,107,255,0.16),0_30px_70px_rgba(0,0,0,0.55)]">
+            <div className="flex items-center justify-between border-b border-[#1d2a45] px-6 py-3.5">
+              <p className="o-label text-[10px] text-bone/70">
+                Intelligent service briefing
+              </p>
+              <p className="o-label flex items-center gap-2 text-[9px] text-signal">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute h-full w-full animate-ping rounded-full bg-signal/60" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-signal" />
+                </span>
+                Live
+              </p>
+            </div>
+            <div className="grid gap-x-0 gap-y-7 p-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-y-0 xl:divide-x xl:divide-[#1d2a45] xl:p-0 xl:py-6 [&>div]:xl:px-5">
               <Briefed label="What changed" order={1}>
                 {INCIDENT.what}
                 <span className="mt-1.5 block text-[11px] text-bone/45">{INCIDENT.since}</span>
@@ -232,12 +246,22 @@ export function S3Briefing() {
                 </span>
               </Briefed>
               <Briefed label="Status" order={5}>
-                <span className="o-label inline-flex items-center gap-2 text-[10px] text-verified">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute h-full w-full animate-ping rounded-full bg-verified/60" />
-                    <span className="h-2 w-2 rounded-full bg-verified" />
-                  </span>
-                  {INCIDENT.status}
+                <span className="flex items-center gap-3">
+                  {/* The mock's progress donut, slowly turning. */}
+                  <svg viewBox="0 0 28 28" className="o-donut h-8 w-8" aria-hidden>
+                    <circle cx="14" cy="14" r="11" fill="none" stroke="#1d2a45" strokeWidth="4" />
+                    <circle
+                      cx="14"
+                      cy="14"
+                      r="11"
+                      fill="none"
+                      stroke="var(--signal)"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      strokeDasharray="46 24"
+                    />
+                  </svg>
+                  <span className="o-label text-[10px] text-verified">{INCIDENT.status}</span>
                 </span>
               </Briefed>
             </div>
