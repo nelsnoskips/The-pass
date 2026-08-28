@@ -2,7 +2,7 @@
 
 import { HERO, INCIDENT, SPACES } from "@/lib/site";
 import { Thread } from "./thread";
-import { Plate, Reveal } from "./ui";
+import { ParallaxY, Plate, Reveal } from "./ui";
 
 /* The thread's hand-off points between sections, in % of width. Each
    section enters where the one above exited, so ten segments read as
@@ -138,54 +138,42 @@ export function S1Building() {
 export function S2Equipment() {
   return (
     <section className="o-panel relative">
-      <div className="grid min-h-[440px] md:grid-cols-3">
-        <div className="relative overflow-hidden">
-          <Plate
-            slot="equipment-air"
-            parallax={22}
-            className="absolute inset-0"
-            imgClassName="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[rgba(17,18,20,0.88)] via-[rgba(17,18,20,0.45)] to-transparent" />
-          <div className="relative flex h-full min-h-[320px] flex-col justify-center p-6 lg:p-10">
-            <p className="o-num text-[40px] text-bone/40">02</p>
-            <h2 className="o-display mt-1 text-[clamp(26px,2.4vw,36px)] text-bone">
-              Down to
-              <br />
-              the equipment.
-            </h2>
-            <p className="mt-4 max-w-[26ch] text-[13px] leading-relaxed text-bone/70">
-              Mechanical systems, automation and the people who service
-              them—working from the same information.
-            </p>
-            <ul className="mt-7 space-y-2">
-              {["Air", "Water", "Control"].map((layer) => (
-                <li key={layer} className="o-label border-l-2 border-signal pl-3 text-[10px] text-bone/85">
-                  {layer}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+      <div className="relative min-h-[480px] overflow-hidden">
+        {/* One continuous plate: air handler, chiller loop, and the
+            technician at the racks — the mock's band, unseamed. */}
+        <Plate
+          slot="equipment-air"
+          parallax={26}
+          className="absolute inset-0"
+          imgClassName="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[rgba(14,15,17,0.86)] via-[rgba(14,15,17,0.25)] to-transparent" />
 
-        <Plate
-          slot="equipment-plant"
-          parallax={18}
-          className="min-h-[260px] overflow-hidden"
-          imgClassName="h-full w-full object-cover"
-        />
-        <Plate
-          slot="equipment-racks"
-          parallax={14}
-          className="min-h-[260px] overflow-hidden"
-          imgClassName="h-full w-full object-cover"
-        />
+        <div className="relative flex min-h-[480px] max-w-[440px] flex-col justify-center p-6 lg:p-12">
+          <p className="o-num text-[40px] text-bone/40">02</p>
+          <h2 className="o-display mt-1 text-[clamp(28px,2.6vw,40px)] text-bone">
+            Down to
+            <br />
+            the equipment.
+          </h2>
+          <p className="mt-4 max-w-[28ch] text-[13px] leading-relaxed text-bone/70">
+            Mechanical systems, automation and the people who service
+            them—working from the same information.
+          </p>
+          <ul className="mt-8 space-y-2.5">
+            {["Air", "Water", "Control"].map((layer) => (
+              <li key={layer} className="o-label border-l-2 border-signal pl-3 text-[10px] text-bone/85">
+                {layer}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
-      {/* Threading the pipes: across all three layers. */}
+      {/* Threading the pipes, over to the racks the technician has open. */}
       <Thread
-        d={`M${X.s1Out} 0 C ${X.s1Out} 14, 40 22, 48 36 C 58 52, 70 40, 78 52 C 84 61, 70 74, ${X.s2Out} 100`}
-        nodes={[[48, 36, 0.4], [78, 52, 0.62]]}
+        d={`M${X.s1Out} 0 C ${X.s1Out} 14, 40 24, 50 38 C 62 54, 76 42, 84 54 C 89 62, 72 76, ${X.s2Out} 100`}
+        nodes={[[50, 38, 0.4], [84, 54, 0.64]]}
         className="hidden lg:block"
       />
     </section>
@@ -295,8 +283,10 @@ export function SectionIntro({
 }) {
   return (
     <Reveal className="max-w-[420px]">
-      <p className={`o-num text-[44px] ${dark ? "text-bone/30" : "text-ink/25"}`}>{n}</p>
-      <h2 className={`o-display mt-2 text-[clamp(26px,2.6vw,38px)] ${dark ? "text-bone" : ""}`}>
+      <ParallaxY by={18}>
+        <p className={`o-num text-[44px] ${dark ? "text-bone/30" : "text-ink/25"}`}>{n}</p>
+      </ParallaxY>
+      <h2 className={`o-display mt-1 text-[clamp(26px,2.6vw,38px)] ${dark ? "text-bone" : ""}`}>
         {title}
       </h2>
       <p className={`mt-4 text-[14px] leading-relaxed ${dark ? "text-bone/65" : "text-ink-soft"}`}>

@@ -82,12 +82,12 @@ export function Thread({ d, nodes = [], color = "signal", className, span = 0.82
         frame = requestAnimationFrame(tick);
         if (!visible || drawn.current < 0.12 || !pulse.current) return;
         if (!start) start = now;
-        const t = ((now - start) / 2600) % 1;
+        const t = ((now - start) / 3800) % 1;
         const l = length.current;
         // From the segment's start to the tip of whatever is drawn.
         const travel = l * drawn.current * t;
         pulse.current.style.strokeDashoffset = `${l - travel}`;
-        pulse.current.style.opacity = t > 0.9 ? `${(1 - t) * 10}` : "0.9";
+        pulse.current.style.opacity = t > 0.88 ? `${(1 - t) * 4.5}` : "0.55";
       };
       frame = requestAnimationFrame(tick);
       const cleanupIo = io;
@@ -120,20 +120,20 @@ export function Thread({ d, nodes = [], color = "signal", className, span = 0.82
 
   const stroke =
     color === "verified"
-      ? "var(--verified)"
+      ? "var(--thread-green)"
       : color === "transition"
         ? "url(#o-thread-transition)"
-        : "var(--signal)";
-  const nodeColor = color === "signal" ? "var(--signal)" : "var(--verified)";
+        : "var(--thread-blue)";
+  const nodeColor = color === "signal" ? "var(--thread-blue)" : "var(--thread-green)";
 
   return (
     <div ref={ref} className={`o-thread ${className ?? ""}`} aria-hidden>
       <svg ref={svg} className="h-full w-full overflow-visible">
         <defs>
           <linearGradient id="o-thread-transition" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--signal)" />
-            <stop offset="62%" stopColor="var(--signal)" />
-            <stop offset="88%" stopColor="var(--verified)" />
+            <stop offset="0%" stopColor="var(--thread-blue)" />
+            <stop offset="62%" stopColor="var(--thread-blue)" />
+            <stop offset="88%" stopColor="var(--thread-green)" />
           </linearGradient>
         </defs>
 
@@ -142,17 +142,17 @@ export function Thread({ d, nodes = [], color = "signal", className, span = 0.82
           ref={glow}
           fill="none"
           stroke={stroke}
-          strokeWidth={11}
+          strokeWidth={6}
           strokeLinecap="round"
-          opacity={0.42}
-          style={{ filter: "blur(4px)" }}
+          opacity={0.16}
+          style={{ filter: "blur(2.5px)" }}
         />
-        <path ref={path} fill="none" stroke={stroke} strokeWidth={3} strokeLinecap="round" />
+        <path ref={path} fill="none" stroke={stroke} strokeWidth={2} strokeLinecap="round" />
         <path
           ref={pulse}
           fill="none"
-          stroke="#dbe7ff"
-          strokeWidth={3.4}
+          stroke="#8fb0ee"
+          strokeWidth={2.4}
           strokeLinecap="round"
           opacity={0}
           style={{ mixBlendMode: "screen" }}

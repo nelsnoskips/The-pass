@@ -1,27 +1,24 @@
-# Orravan — asset drop
+# Orravan — Exact Mock Image Assets
 
-Upload the service-thread asset library into this folder. Each slot
-below renders a composed placeholder until its file exists, so partial
-uploads are fine and nothing breaks while files land.
+These standalone masters correspond directly to the imagery in the approved `EVERY SIGNAL HAS A NEXT MOVE` homepage mock.
 
-Preferred filenames (or upload with your names and we remap in
-lib/images.ts — either works):
+## Files
 
-- logo-orravan.png        — the script wordmark, transparent
-- hero-technician.jpg     — tech at the open controls panel, tablet
-- building-section.jpg    — the building cut-away, floor by floor
-- equipment-plant.jpg     — mechanical room, wide
-- equipment-racks.jpg     — tech at the control racks, tall
-- briefing-viewers.jpg    — two people at the briefing screen
-- response-remote.jpg     — remote specialist, headset, ops room
-- response-field.jpg      — field tech in the equipment bay
-- response-leader.jpg     — facility leader with tablet, bright space
-- verified-office.jpg     — comfortable working office, very wide
-- services-control.jpg    — the Orravan ops room
-- flow-warehouse.jpg      — part pulled from shelving
-- flow-parts.jpg          — fabricated panels/parts, dark ground
-- flow-scan.jpg           — part scanned into the job
-- flow-van.jpg            — the Orravan van
-- team-table.jpg          — the team around the drawings, wide
+- `00-approved-mock-reference.png`
+- `01-hero-safe-technician.png`
+- `02-building-sectional-cutaway.png`
+- `03-equipment-room.png`
+- `04-intelligence-briefing-people.png`
+- `05-response-remote-specialist.png`
+- `06-response-field-technician.png`
+- `07-response-facility-leader.png`
+- `08-verified-lobby.png`
+- `09-remote-monitoring-room.png`
+- `10-inventory-technician.png`
+- `11-control-components.png`
+- `12-on-site-technician.png`
+- `13-service-van.png`
+- `14-team-planning.png`
+- `15-official-orravan-logo.png`
 
-JPEG ~85 quality, 2000px+ long edge. PNG only for the logo.
+The blue/green service thread, briefing dashboard, verification card, service record, text, buttons and navigation should be rendered in HTML/CSS/SVG so they remain sharp and animated. The hero preserves the approved composition while keeping the technician clear of the panel.

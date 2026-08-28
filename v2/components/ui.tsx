@@ -186,3 +186,33 @@ export function useSectionProgress<T extends HTMLElement>(
 
   return ref;
 }
+
+
+/* -------------------------------------------------------- ParallaxY --- */
+
+/** A slow vertical counter-drift for non-photo elements — numerals and
+    panels — so the page has depth between layers, not just in frames. */
+export function ParallaxY({
+  by = 14,
+  children,
+  className,
+}: {
+  by?: number;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const inner = useRef<HTMLDivElement>(null);
+  const ref = useSectionProgress<HTMLDivElement>((p) => {
+    inner.current?.style.setProperty(
+      "transform",
+      `translate3d(0, ${((p - 0.5) * 2 * by).toFixed(1)}px, 0)`,
+    );
+  });
+  return (
+    <div ref={ref} className={className}>
+      <div ref={inner} style={{ willChange: "transform" }}>
+        {children}
+      </div>
+    </div>
+  );
+}

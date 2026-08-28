@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CLOSE, RECORD, TEAM } from "@/lib/site";
 import { X, SectionIntro } from "./sections-a";
 import { Thread } from "./thread";
-import { Plate, Reveal } from "./ui";
+import { ParallaxY, Plate, Reveal } from "./ui";
 
 /* --------------------------------------------------- 08 · the team --- */
 
@@ -59,6 +59,7 @@ export function S9Record() {
           />
 
           <Reveal>
+            <ParallaxY by={10}>
             <div className="o-card overflow-hidden">
               <p className="o-label border-b border-rule px-6 py-3.5 text-[10px] text-ink-mute">
                 Service record
@@ -69,6 +70,7 @@ export function S9Record() {
                 <RecordDocs />
               </div>
             </div>
+            </ParallaxY>
           </Reveal>
         </div>
       </div>

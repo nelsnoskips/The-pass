@@ -21,9 +21,15 @@
   /* The signal. Blue while we're working, green when it's verified. */
   --signal: #2b6bff;
   --signal-soft: rgba(43, 107, 255, 0.12);
-  --verified: #74b833;
-  --verified-soft: rgba(116, 184, 51, 0.14);
+  --verified: #4e9e5f;
+  --verified-soft: rgba(78, 158, 95, 0.14);
   --warn: #e8892f;
+
+  /* The thread's own tones: a step deeper and drier than the UI blue
+     and green, so the line reads as a drafted schematic over the
+     photography rather than as neon laid on top of it. */
+  --thread-blue: #3564d4;
+  --thread-green: #4d9a5f;
 
   --dur-ui: 200ms;
   --dur-reveal: 640ms;
@@ -182,16 +188,16 @@ body {
 /* Thread nodes: dim until the line arrives, then lit with one pulse. */
 .o-node {
   position: absolute;
-  width: 9px;
-  height: 9px;
+  width: 7px;
+  height: 7px;
   border-radius: 9999px;
   transform: translate(-50%, -50%);
-  background: rgba(120, 124, 134, 0.5);
+  background: rgba(120, 124, 134, 0.4);
   transition: background 240ms ease, box-shadow 240ms ease;
 }
 .o-node[data-lit="true"] {
-  background: var(--o-node-color, var(--signal));
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18), 0 0 12px 2px var(--o-node-color, var(--signal));
+  background: var(--o-node-color, var(--thread-blue));
+  box-shadow: 0 0 0 2px rgba(247, 245, 239, 0.35);
 }
 .o-node[data-lit="true"]::after {
   content: "";
