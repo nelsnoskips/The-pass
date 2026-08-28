@@ -177,7 +177,7 @@ export function S3Briefing() {
           the ops floor out of focus, almost black. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={asset("/images/briefing-bg.png")}
+        src={asset("/images/briefing-bg.jpg")}
         alt=""
         aria-hidden
         className="absolute inset-0 h-full w-full object-cover"
