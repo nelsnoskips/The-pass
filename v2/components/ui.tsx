@@ -232,3 +232,68 @@ export function ParallaxY({
     </div>
   );
 }
+
+
+/* ------------------------------------------------------ PointerDepth --- */
+
+/** The dark bands answer the cursor: the photograph shifts a few pixels
+    against the overlaid type. Desktop, fine pointers only. */
+export function usePointerDepth<T extends HTMLElement>(strength = 6) {
+  const host = useRef<T>(null);
+  const target = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const node = host.current;
+    if (!node) return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    target.current = node.querySelector<HTMLElement>("[data-depth]");
+    let frame = 0;
+    let x = 0;
+    let y = 0;
+    let dx = 0;
+    let dy = 0;
+    let running = false;
+
+    const tick = () => {
+      dx += (x - dx) * 0.08;
+      dy += (y - dy) * 0.08;
+      target.current?.style.setProperty(
+        "transform",
+        `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0) scale(1.03)`,
+      );
+      if (Math.abs(x - dx) > 0.05 || Math.abs(y - dy) > 0.05) {
+        frame = requestAnimationFrame(tick);
+      } else {
+        running = false;
+      }
+    };
+    const kick = () => {
+      if (!running) {
+        running = true;
+        frame = requestAnimationFrame(tick);
+      }
+    };
+    const move = (event: PointerEvent) => {
+      const rect = node.getBoundingClientRect();
+      x = ((event.clientX - rect.left) / rect.width - 0.5) * -2 * strength;
+      y = ((event.clientY - rect.top) / rect.height - 0.5) * -2 * strength;
+      kick();
+    };
+    const leave = () => {
+      x = 0;
+      y = 0;
+      kick();
+    };
+    node.addEventListener("pointermove", move);
+    node.addEventListener("pointerleave", leave);
+    return () => {
+      cancelAnimationFrame(frame);
+      node.removeEventListener("pointermove", move);
+      node.removeEventListener("pointerleave", leave);
+    };
+  }, [strength]);
+
+  return host;
+}

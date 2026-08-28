@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { HERO, INCIDENT, SPACES } from "@/lib/site";
-import { ParallaxY, Plate, Reveal } from "./ui";
+import { ParallaxY, Plate, Reveal, usePointerDepth } from "./ui";
+import { LivePlate } from "./live";
 
 /* ------------------------------------------------------------ hero --- */
 
@@ -15,8 +17,9 @@ export function Hero() {
     <section id="top" className="relative overflow-hidden bg-bone">
       <div className="relative mx-auto min-h-[560px] max-w-[1440px] lg:min-h-[640px]">
         {/* The panel, edge to edge. */}
-        <Plate
+        <LivePlate
           slot="hero-technician"
+          video="/images/hero-live.mp4"
           parallax={26}
           className="absolute inset-y-0 right-0 hidden w-[58%] overflow-hidden lg:block"
           imgClassName="h-full w-full object-cover"
@@ -75,12 +78,15 @@ export function S1Building() {
         </div>
 
         <div className="o-panel grid min-h-[420px] sm:grid-cols-[2fr_1fr]">
-          <Plate
-            slot="building-section"
-            parallax={20}
-            className="min-h-[300px] overflow-hidden"
-            imgClassName="h-full w-full object-cover"
-          />
+          <div className="relative min-h-[300px]">
+            <Plate
+              slot="building-section"
+              parallax={20}
+              className="absolute inset-0 overflow-hidden"
+              imgClassName="h-full w-full object-cover"
+            />
+            <FloorLights />
+          </div>
           <ul className="flex flex-col justify-center gap-6 border-l border-rule-dark px-6 py-8">
             {SPACES.map((space, i) => (
               <Reveal key={space.label} delay={i * 110}>
@@ -109,17 +115,20 @@ export function S1Building() {
  * behind a scrim, the thread weaving through the machinery.
  */
 export function S2Equipment() {
+  const depth = usePointerDepth<HTMLDivElement>(7);
   return (
     <section data-rail="02" className="o-panel relative">
-      <div className="relative min-h-[480px] overflow-hidden">
+      <div ref={depth} className="relative min-h-[480px] overflow-hidden">
         {/* One continuous plate: air handler, chiller loop, and the
             technician at the racks — the mock's band, unseamed. */}
-        <Plate
-          slot="equipment-air"
-          parallax={26}
-          className="absolute inset-0"
-          imgClassName="h-full w-full object-cover"
-        />
+        <div data-depth className="absolute -inset-4 will-change-transform">
+          <LivePlate
+            slot="equipment-air"
+            video="/images/equipment-live.mp4"
+            className="absolute inset-0"
+            imgClassName="h-full w-full object-cover"
+          />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-r from-[rgba(14,15,17,0.86)] via-[rgba(14,15,17,0.25)] to-transparent" />
 
         <div className="relative flex min-h-[480px] max-w-[440px] flex-col justify-center p-6 lg:p-12">
@@ -170,27 +179,27 @@ export function S3Briefing() {
           />
         </div>
 
-        <div className="o-panel grid min-h-[400px] xl:grid-cols-[1.7fr_1fr]">
+        <Reveal className="o-panel grid min-h-[400px] xl:grid-cols-[1.7fr_1fr]">
           <div className="flex flex-col justify-center">
             <p className="o-label border-b border-rule-dark px-6 py-3.5 text-[10px] text-bone/70">
               Intelligent service briefing
             </p>
             <div className="grid gap-x-6 gap-y-7 p-6 sm:grid-cols-2 lg:grid-cols-3">
-              <Briefed label="What changed">
+              <Briefed label="What changed" order={1}>
                 {INCIDENT.what}
                 <span className="mt-1.5 block text-[11px] text-bone/45">{INCIDENT.since}</span>
               </Briefed>
-              <Briefed label="Why it matters">
+              <Briefed label="Why it matters" order={2}>
                 {INCIDENT.why[0]}
                 <span className="mt-1.5 block text-bone/70">{INCIDENT.why[1]}</span>
               </Briefed>
-              <Briefed label="Recommended response">
+              <Briefed label="Recommended response" order={3}>
                 {INCIDENT.response}
-                <span className="o-label mt-2 block text-[10px] text-warn">
+                <span className="o-stamp-priority o-label mt-2 block text-[10px] text-warn">
                   Priority: {INCIDENT.priority}
                 </span>
               </Briefed>
-              <Briefed label="Assigned specialist">
+              <Briefed label="Assigned specialist" order={4}>
                 <span className="flex items-center gap-2.5">
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-signal/25 text-[12px] font-bold text-bone">
                     MS
@@ -203,7 +212,7 @@ export function S3Briefing() {
                   </span>
                 </span>
               </Briefed>
-              <Briefed label="Status">
+              <Briefed label="Status" order={5}>
                 <span className="o-label inline-flex items-center gap-2 text-[10px] text-verified">
                   <span className="relative flex h-2 w-2">
                     <span className="absolute h-full w-full animate-ping rounded-full bg-verified/60" />
@@ -221,7 +230,7 @@ export function S3Briefing() {
             className="hidden min-h-[400px] overflow-hidden border-l border-rule-dark xl:block"
             imgClassName="h-full w-full object-cover"
           />
-        </div>
+        </Reveal>
       </div>
 
     </section>
@@ -261,11 +270,41 @@ export function SectionIntro({
   );
 }
 
-function Briefed({ label, children }: { label: string; children: React.ReactNode }) {
+function Briefed({ label, children, order }: { label: string; children: React.ReactNode; order?: number }) {
   return (
-    <div>
+    <div className={order ? `o-brief-item o-brief-${order}` : undefined}>
       <p className="o-label mb-2 text-[9px] text-bone/45">{label}</p>
       <div className="text-[13px] leading-snug text-bone/90">{children}</div>
+    </div>
+  );
+}
+
+/**
+ * The cut-away's floors illuminate top to bottom as the section
+ * arrives — the signal finding its floor.
+ */
+function FloorLights() {
+  const [stage, setStage] = useState(0);
+  return (
+    <div
+      aria-hidden
+      ref={(node) => {
+        if (!node) return;
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (!entry.isIntersecting) return;
+            observer.disconnect();
+            [1, 2, 3].forEach((n) => setTimeout(() => setStage(n), 300 + n * 420));
+          },
+          { threshold: 0.5 },
+        );
+        observer.observe(node);
+      }}
+      className="pointer-events-none absolute inset-0"
+    >
+      <span className="o-floor" data-lit={stage >= 1} style={{ top: "6%", height: "27%" }} />
+      <span className="o-floor" data-lit={stage >= 2} style={{ top: "38%", height: "27%" }} />
+      <span className="o-floor" data-lit={stage >= 3} style={{ top: "70%", height: "26%" }} />
     </div>
   );
 }

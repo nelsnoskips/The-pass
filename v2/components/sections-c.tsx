@@ -180,12 +180,20 @@ export function S10Close() {
                 );
                 observer.observe(node);
               }}
-              className={`relative flex h-32 w-32 shrink-0 items-center justify-center rounded-full border-[6px] border-signal ${
-                seen ? "o-stamped" : "opacity-0"
-              }`}
+              data-in={seen}
+              className="o-check-ring relative flex h-32 w-32 shrink-0 items-center justify-center rounded-full border-[6px]"
+              style={{ borderColor: seen ? "var(--thread-green)" : "var(--rule)" }}
             >
+              {/* The one drawn line that belongs: the signature. */}
               <svg viewBox="0 0 40 40" className="h-16 w-16 text-ink" fill="none" aria-hidden>
-                <path d="M8 22 L17 30 L33 10" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  className="o-check-path"
+                  d="M8 22 L17 30 L33 10"
+                  stroke="currentColor"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </div>
 
