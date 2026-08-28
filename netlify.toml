@@ -8,3 +8,10 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# The Orravan v1 mock moved to its versioned path; links already sent
+# to the client keep resolving.
+[[redirects]]
+  from = "/spec/orravan/*"
+  to = "/spec/orravan-v1/:splat"
+  status = 301
