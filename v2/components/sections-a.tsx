@@ -1,24 +1,7 @@
 "use client";
 
 import { HERO, INCIDENT, SPACES } from "@/lib/site";
-import { Thread } from "./thread";
 import { ParallaxY, Plate, Reveal } from "./ui";
-
-/* The thread's hand-off points between sections, in % of width. Each
-   section enters where the one above exited, so ten segments read as
-   one continuous line down the page. */
-export const X = {
-  heroOut: 58,
-  s1Out: 46,
-  s2Out: 60,
-  s3Out: 64,
-  s4Out: 30,
-  s5Out: 72,
-  s6Out: 22,
-  s7Out: 88,
-  s8Out: 50,
-  s9Out: 42,
-} as const;
 
 /* ------------------------------------------------------------ hero --- */
 
@@ -39,20 +22,23 @@ export function Hero() {
           imgClassName="h-full w-full object-cover"
         />
 
-        <div className="relative z-10 max-w-[520px] px-5 pb-16 pt-16 lg:px-10 lg:pt-24">
+        <div className="relative z-10 max-w-[560px] px-5 pb-16 pt-16 lg:px-10 lg:pt-24 xl:pl-16">
           <Reveal>
             <p className="o-label text-ink-mute">{HERO.eyebrow}</p>
             <h1 className="o-display mt-5 text-[clamp(44px,5.4vw,74px)]">
-              {HERO.headA}
-              <br />
-              <span className="text-signal">{HERO.headB}</span>
+              <span className="o-mask">
+                <span>{HERO.headA}</span>
+              </span>
+              <span className="o-mask o-mask-2 text-signal">
+                <span>{HERO.headB}</span>
+              </span>
             </h1>
             <p className="mt-6 max-w-[34ch] text-[15px] leading-relaxed text-ink-soft">
               {HERO.body}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href="#s1" className="o-btn">{HERO.primary}</a>
-              <a href="#close" className="o-btn o-btn-ghost">{HERO.secondary} →</a>
+              <a href="#close" className="o-btn o-btn-ghost">{HERO.secondary} <span className="o-arrow">→</span></a>
             </div>
           </Reveal>
         </div>
@@ -65,13 +51,6 @@ export function Hero() {
         />
       </div>
 
-      {/* The signal starts at the technician's hand in the wiring and
-          cascades down through the photograph into the building. */}
-      <Thread
-        d={`M71 34 C 74 44, 66 52, 67 62 C 68 72, 58 82, ${X.heroOut} 100`}
-        nodes={[[71, 34, 0.14], [67, 62, 0.55]]}
-        className="hidden lg:block"
-      />
     </section>
   );
 }
@@ -85,7 +64,7 @@ export function Hero() {
  */
 export function S1Building() {
   return (
-    <section id="s1" className="relative bg-bone">
+    <section id="s1" data-rail="01" className="relative bg-bone">
       <div className="grid items-stretch lg:grid-cols-[minmax(320px,1fr)_2.1fr]">
         <div className="flex items-center px-5 py-14 lg:px-10">
           <SectionIntro
@@ -118,12 +97,6 @@ export function S1Building() {
         </div>
       </div>
 
-      {/* Down through the floors of the cut-away. */}
-      <Thread
-        d={`M${X.heroOut} 0 C ${X.heroOut} 14, 50 24, 54 42 C 58 62, 44 76, ${X.s1Out} 100`}
-        nodes={[[54, 42, 0.45], [48, 72, 0.7]]}
-        className="hidden lg:block"
-      />
     </section>
   );
 }
@@ -137,7 +110,7 @@ export function S1Building() {
  */
 export function S2Equipment() {
   return (
-    <section className="o-panel relative">
+    <section data-rail="02" className="o-panel relative">
       <div className="relative min-h-[480px] overflow-hidden">
         {/* One continuous plate: air handler, chiller loop, and the
             technician at the racks — the mock's band, unseamed. */}
@@ -170,12 +143,6 @@ export function S2Equipment() {
         </div>
       </div>
 
-      {/* Threading the pipes, over to the racks the technician has open. */}
-      <Thread
-        d={`M${X.s1Out} 0 C ${X.s1Out} 14, 40 24, 50 38 C 62 54, 76 42, 84 54 C 89 62, 72 76, ${X.s2Out} 100`}
-        nodes={[[50, 38, 0.4], [84, 54, 0.64]]}
-        className="hidden lg:block"
-      />
     </section>
   );
 }
@@ -188,7 +155,7 @@ export function S2Equipment() {
  */
 export function S3Briefing() {
   return (
-    <section className="relative bg-bone">
+    <section data-rail="03" className="relative bg-bone">
       <div className="grid items-stretch lg:grid-cols-[minmax(320px,1fr)_2.4fr]">
         <div className="flex items-center px-5 py-14 lg:px-10">
           <SectionIntro
@@ -257,11 +224,6 @@ export function S3Briefing() {
         </div>
       </div>
 
-      <Thread
-        d={`M${X.s2Out} 0 C ${X.s2Out} 14, 72 28, 70 50 C 68 72, ${X.s3Out} 84, ${X.s3Out} 100`}
-        nodes={[[70, 50, 0.5]]}
-        className="hidden lg:block"
-      />
     </section>
   );
 }
@@ -287,7 +249,9 @@ export function SectionIntro({
         <p className={`o-num text-[44px] ${dark ? "text-bone/30" : "text-ink/25"}`}>{n}</p>
       </ParallaxY>
       <h2 className={`o-display mt-1 text-[clamp(26px,2.6vw,38px)] ${dark ? "text-bone" : ""}`}>
-        {title}
+        <span className="o-mask">
+          <span>{title}</span>
+        </span>
       </h2>
       <p className={`mt-4 text-[14px] leading-relaxed ${dark ? "text-bone/65" : "text-ink-soft"}`}>
         {copy}

@@ -35,6 +35,22 @@ export function Plate({
       1 + (parallax * 2.4) / 600
     ).toFixed(3)})`;
   });
+  const [entered, setEntered] = useState(false);
+  useEffect(() => {
+    const node = host.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setEntered(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   if (!meta) return null;
 
@@ -61,7 +77,7 @@ export function Plate({
   }
 
   return (
-    <div ref={host} className={className}>
+    <div ref={host} data-in={entered} className={`o-settle ${className ?? ""}`}>
       {/* Plain img: half these files do not exist until the library is
           uploaded, and the fallback depends on catching the error. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}

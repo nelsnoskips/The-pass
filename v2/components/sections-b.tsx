@@ -2,15 +2,14 @@
 
 import { FLOW, RESPONSE, SERVICES, VERIFIED } from "@/lib/site";
 import { useState } from "react";
-import { X, SectionIntro } from "./sections-a";
-import { Thread } from "./thread";
+import { SectionIntro } from "./sections-a";
 import { Plate, Reveal } from "./ui";
 
 /* -------------------------------------------- 04 · the response --- */
 
 export function S4Response() {
   return (
-    <section className="relative bg-bone">
+    <section data-rail="04" className="relative bg-bone">
       <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_2.1fr]">
           <SectionIntro
@@ -41,14 +40,6 @@ export function S4Response() {
         </div>
       </div>
 
-      {/* The hand-off section: the line weaves through all three cards
-          and leaves green — the work is done, awaiting verification. */}
-      <Thread
-        color="transition"
-        d={`M${X.s3Out} 0 C ${X.s3Out} 12, 40 22, 42 38 C 44 52, 62 48, 68 60 C 74 72, ${X.s4Out} 82, ${X.s4Out} 100`}
-        nodes={[[42, 38, 0.36], [68, 60, 0.62], [30, 92, 0.9]]}
-        className="hidden lg:block"
-      />
     </section>
   );
 }
@@ -57,7 +48,7 @@ export function S4Response() {
 
 export function S5Verified() {
   return (
-    <section className="relative bg-bone">
+    <section data-rail="05" className="relative bg-bone">
       <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.6fr]">
           <SectionIntro
@@ -105,12 +96,6 @@ export function S5Verified() {
         </div>
       </div>
 
-      <Thread
-        color="verified"
-        d={`M${X.s4Out} 0 C ${X.s4Out} 16, 60 26, 66 46 C 72 66, ${X.s5Out} 78, ${X.s5Out} 100`}
-        nodes={[[66, 46, 0.5]]}
-        className="hidden lg:block"
-      />
     </section>
   );
 }
@@ -150,7 +135,7 @@ export function S6Services() {
   const [open, setOpen] = useState(0);
 
   return (
-    <section id="services" className="relative bg-bone">
+    <section id="services" data-rail="06" className="relative bg-bone">
       <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
         <div className="grid items-start gap-10 lg:grid-cols-[1fr_1.4fr_1fr]">
           <SectionIntro
@@ -204,11 +189,6 @@ export function S6Services() {
         </div>
       </div>
 
-      <Thread
-        color="verified"
-        d={`M${X.s5Out} 0 C ${X.s5Out} 20, 40 30, 34 52 C 28 72, ${X.s6Out} 80, ${X.s6Out} 100`}
-        className="hidden lg:block"
-      />
     </section>
   );
 }
@@ -217,7 +197,7 @@ export function S6Services() {
 
 export function S7Flow() {
   return (
-    <section className="relative bg-bone">
+    <section data-rail="07" className="relative bg-bone">
       <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_2.4fr]">
           <SectionIntro
@@ -256,13 +236,6 @@ export function S7Flow() {
         </div>
       </div>
 
-      {/* The logistics rail: the line runs flat through all four stops. */}
-      <Thread
-        color="verified"
-        d={`M${X.s6Out} 0 C ${X.s6Out} 18, 32 30, 44 48 L 86 48 C 94 48, ${X.s7Out} 72, ${X.s7Out} 100`}
-        nodes={[[48, 48, 0.42], [61, 48, 0.54], [74, 48, 0.66], [86, 48, 0.78]]}
-        className="hidden lg:block"
-      />
     </section>
   );
 }

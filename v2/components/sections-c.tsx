@@ -2,15 +2,14 @@
 
 import { useState } from "react";
 import { CLOSE, RECORD, TEAM } from "@/lib/site";
-import { X, SectionIntro } from "./sections-a";
-import { Thread } from "./thread";
+import { SectionIntro } from "./sections-a";
 import { ParallaxY, Plate, Reveal } from "./ui";
 
 /* --------------------------------------------------- 08 · the team --- */
 
 export function S8Team() {
   return (
-    <section className="relative bg-bone">
+    <section data-rail="08" className="relative bg-bone">
       <div className="mx-auto max-w-[1440px] py-16 pl-5 lg:pl-10">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(320px,1fr)_2.3fr]">
           <SectionIntro
@@ -36,11 +35,6 @@ export function S8Team() {
         </div>
       </div>
 
-      <Thread
-        color="verified"
-        d={`M${X.s7Out} 0 C ${X.s7Out} 18, 70 30, 60 50 C 52 68, ${X.s8Out} 80, ${X.s8Out} 100`}
-        className="hidden lg:block"
-      />
     </section>
   );
 }
@@ -49,7 +43,7 @@ export function S8Team() {
 
 export function S9Record() {
   return (
-    <section id="record" className="relative bg-bone">
+    <section id="record" data-rail="09" className="relative bg-bone">
       <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_2.3fr]">
           <SectionIntro
@@ -75,11 +69,6 @@ export function S9Record() {
         </div>
       </div>
 
-      <Thread
-        color="verified"
-        d={`M${X.s8Out} 0 C ${X.s8Out} 16, 34 28, 30 50 C 26 72, ${X.s9Out} 82, ${X.s9Out} 100`}
-        className="hidden lg:block"
-      />
     </section>
   );
 }
@@ -175,7 +164,7 @@ export function S10Close() {
   const [seen, setSeen] = useState(false);
 
   return (
-    <section id="close" className="relative bg-bone">
+    <section id="close" data-rail="10" className="relative bg-bone">
       <div className="mx-auto max-w-[1280px] px-5 pb-24 pt-16 lg:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.5fr]">
           <SectionIntro n="10" title={<>The full thread. In your hands.</>} copy={CLOSE.copy} />
@@ -211,13 +200,6 @@ export function S10Close() {
         </div>
       </div>
 
-      {/* The last segment lands on the check dead-centre of the ring. */}
-      <Thread
-        color="verified"
-        d={`M${X.s9Out} 0 C ${X.s9Out} 22, 52 30, 56 48 C 59 60, 57 64, 57 70`}
-        span={0.7}
-        className="hidden lg:block"
-      />
     </section>
   );
 }

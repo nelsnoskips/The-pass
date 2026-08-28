@@ -208,3 +208,110 @@ body {
   transform-origin: center;
   animation: o-node-pulse 900ms ease-out 1;
 }
+
+
+/* ---------------------------------------------------- the rail --- */
+
+/* The thread as an instrument: a hairline down the left edge that
+   fills with the visitor's descent, one stop per section. Blue while
+   the story is working, emerald once it is verified. */
+.o-rail {
+  position: fixed;
+  left: 13px;
+  top: 50%;
+  z-index: 40;
+  display: none;
+  transform: translateY(-50%);
+}
+@media (min-width: 1280px) {
+  .o-rail { display: block; }
+}
+.o-rail-track {
+  position: absolute;
+  left: 5px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: rgba(23, 24, 26, 0.14);
+}
+.o-rail-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: top center;
+  transform: scaleY(0);
+  background: linear-gradient(
+    to bottom,
+    var(--thread-blue) 0%,
+    var(--thread-blue) 42%,
+    var(--thread-green) 58%,
+    var(--thread-green) 100%
+  );
+}
+.o-rail ol {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+.o-rail button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px;
+}
+.o-rail-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: rgba(23, 24, 26, 0.22);
+  transition: background 200ms ease, transform 200ms ease;
+}
+.o-rail-num {
+  font-size: 10px;
+  color: var(--ink-mute);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.o-rail button:hover .o-rail-num { opacity: 1; transform: none; }
+.o-rail button[data-active="true"] .o-rail-dot {
+  background: var(--thread-blue);
+  transform: scale(1.5);
+}
+.o-rail button[data-active="true"][data-verified="true"] .o-rail-dot {
+  background: var(--thread-green);
+}
+.o-rail button[data-active="true"] .o-rail-num {
+  opacity: 1;
+  transform: none;
+  color: var(--ink);
+}
+
+/* ------------------------------------------- masked line reveals --- */
+
+/* Headlines rise from behind their own baseline — the reveal reads as
+   typesetting, not as fading. */
+.o-mask { display: block; overflow: hidden; }
+.o-mask > span {
+  display: block;
+  transform: translateY(112%);
+  transition: transform 750ms var(--ease-out);
+}
+[data-in="true"] .o-mask > span,
+.o-reveal[data-in="true"] .o-mask > span { transform: none; }
+.o-mask-2 > span { transition-delay: 90ms; }
+.o-mask-3 > span { transition-delay: 180ms; }
+
+/* Photography settles as it enters: a breath of scale, then still. */
+.o-settle { transform: scale(1.05); transition: transform 1100ms var(--ease-out); }
+.o-settle[data-in="true"] { transform: scale(1); }
+
+/* The arrow in a button leads the hover. */
+.o-btn .o-arrow { display: inline-block; transition: transform 180ms var(--ease-out); }
+.o-btn:hover .o-arrow { transform: translateX(3px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .o-mask > span { transform: none !important; transition: none; }
+  .o-settle { transform: none !important; transition: none; }
+  .o-rail-fill { transform: scaleY(1) !important; }
+}
