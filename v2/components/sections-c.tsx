@@ -33,7 +33,7 @@ export function S8Team() {
             <Plate
               slot="team-table"
               className="h-full"
-              imgClassName="h-full w-full object-cover"
+              imgClassName="h-full w-full object-cover object-[center_30%]"
             />
           </DeepSeam>
         </div>

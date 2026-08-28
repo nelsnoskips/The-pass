@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { HERO, INCIDENT, SPACES } from "@/lib/site";
 import { ParallaxY, Plate, Reveal, usePointerDepth } from "./ui";
 import { LivePlate } from "./live";
@@ -84,23 +83,22 @@ export function S1Building() {
           />
         </div>
 
-        <div className="o-panel grid min-h-[440px] sm:grid-cols-[2.6fr_1fr]">
-          <div className="relative flex min-h-[320px] items-center justify-center py-4">
-            <div className="relative h-[420px] w-full">
+        <div className="grid min-h-[440px] sm:grid-cols-[2.6fr_1fr]">
+          {/* The model whole, on the page's own ivory — its white
+              surround bleeds straight into the background. */}
+          <div className="relative flex min-h-[320px] items-center justify-center bg-bone py-6">
+            <div className="relative h-[430px] w-full">
               <LivePlate
                 slot="building-section"
                 video="/images/building-live.mp4"
                 className="absolute inset-0"
                 imgClassName="h-full w-full object-contain"
               />
-              <FloorLights />
-              {/* The thread enters at the occupied floor and drops
-                  through the building. */}
               <ThreadPoint x={0.5} y={0.1} node />
               <ThreadPoint x={0.5} y={0.94} />
             </div>
           </div>
-          <ul className="flex flex-col justify-center gap-6 border-l border-rule-dark px-6 py-8">
+          <ul className="o-panel flex flex-col justify-center gap-6 px-6 py-8">
             {SPACES.map((space, i) => (
               <li key={space.label}>
                 <Reveal delay={i * 180}>
@@ -199,7 +197,7 @@ export function S3Briefing() {
       <Plate
         slot="briefing-band"
         className="absolute inset-0"
-        imgClassName="h-full w-full object-cover object-[75%_50%]"
+        imgClassName="h-full w-full object-cover object-[75%_12%]"
       />
       {/* Legibility scrim over the empty left only. */}
       <div className="absolute inset-0 bg-gradient-to-r from-[rgba(10,11,13,0.55)] via-[rgba(10,11,13,0.2)] to-transparent" />
@@ -331,36 +329,6 @@ function Briefed({ label, children, order }: { label: string; children: React.Re
     <div className={order ? `o-brief-item o-brief-${order}` : undefined}>
       <p className="o-label mb-2 text-[9px] text-bone/45">{label}</p>
       <div className="text-[13px] leading-snug text-bone/90">{children}</div>
-    </div>
-  );
-}
-
-/**
- * The cut-away's floors illuminate top to bottom as the section
- * arrives — the signal finding its floor.
- */
-function FloorLights() {
-  const [stage, setStage] = useState(0);
-  return (
-    <div
-      aria-hidden
-      ref={(node) => {
-        if (!node) return;
-        const observer = new IntersectionObserver(
-          ([entry]) => {
-            if (!entry.isIntersecting) return;
-            observer.disconnect();
-            [1, 2, 3].forEach((n) => setTimeout(() => setStage(n), 200 + n * 180));
-          },
-          { threshold: 0.5 },
-        );
-        observer.observe(node);
-      }}
-      className="pointer-events-none absolute inset-0"
-    >
-      <span className="o-floor" data-lit={stage >= 1} style={{ top: "6%", height: "27%" }} />
-      <span className="o-floor" data-lit={stage >= 2} style={{ top: "38%", height: "27%" }} />
-      <span className="o-floor" data-lit={stage >= 3} style={{ top: "70%", height: "26%" }} />
     </div>
   );
 }

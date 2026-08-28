@@ -280,10 +280,11 @@ export function DeepSeam({
         className="absolute inset-0 overflow-hidden"
         style={{ willChange: "clip-path" }}
       >
-        {/* Oversized on the vertical so the drift never shows an edge. */}
+        {/* Oversized on the horizontal only, so the sideways drift never
+            shows an edge and nobody's head is cropped. */}
         <div
           ref={depth}
-          className="absolute inset-x-0 -inset-y-16"
+          className="absolute inset-y-0 -inset-x-10"
           style={{ willChange: "transform" }}
         >
           {children}

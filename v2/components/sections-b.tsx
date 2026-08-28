@@ -97,13 +97,17 @@ export function S5Verified() {
               open lobby center, specialist far right. The verification
               point lives in the opening — the thread turns green here. */}
           <Reveal className="relative">
-            <div className="relative min-h-[420px] overflow-hidden">
-              <Plate
-                slot="verified-band"
-                parallax={12}
-                className="absolute inset-0"
-                imgClassName="h-full w-full object-cover object-[50%_50%]"
-              />
+            <div className="relative min-h-[440px] overflow-hidden">
+              {/* Cropped in from both sides so the seated client and the
+                  specialist anchor the frame the way the mock does. */}
+              <div className="absolute inset-y-0 -inset-x-[9%]">
+                <Plate
+                  slot="verified-band"
+                  parallax={12}
+                  className="absolute inset-0"
+                  imgClassName="h-full w-full object-cover object-[50%_8%]"
+                />
+              </div>
               <ThreadPoint x={0.52} y={0.56} node green />
               <VerifiedCard />
             </div>
@@ -128,7 +132,7 @@ function VerifiedCard() {
         );
         observer.observe(node);
       }}
-      className={`absolute bottom-[22%] left-[52%] w-[210px] rounded-[2px] bg-white p-3.5 shadow-[0_18px_40px_rgba(23,24,26,0.25)] ${
+      className={`absolute bottom-[24%] right-[15%] w-[215px] rounded-[2px] bg-white p-3.5 shadow-[0_18px_40px_rgba(23,24,26,0.25)] ${
         seen ? "o-stamped" : "opacity-0"
       }`}
     >
