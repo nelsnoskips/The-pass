@@ -18,7 +18,13 @@ export function TopBar() {
     let queued = false;
     const read = () => {
       queued = false;
-      setCompact(window.scrollY > window.innerHeight * 0.85);
+      /* Hysteresis: shrinking the header shifts the page ~70px, so a
+         single threshold would flip back and forth under the scroll.
+         Collapse well past the hero, expand only well before it. */
+      const y = window.scrollY;
+      setCompact((prev) =>
+        prev ? y > window.innerHeight * 0.5 : y > window.innerHeight * 0.95,
+      );
     };
     const onScroll = () => {
       if (queued) return;

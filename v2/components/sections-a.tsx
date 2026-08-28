@@ -83,11 +83,12 @@ export function S1Building() {
           />
         </div>
 
-        <div className="grid min-h-[440px] sm:grid-cols-[2.6fr_1fr]">
+        <div className="grid min-h-[460px] sm:grid-cols-[1.7fr_1fr]">
           {/* The model whole, on the page's own ivory — its white
-              surround bleeds straight into the background. */}
+              surround bleeds straight into the background, the charcoal
+              slab flush against it. */}
           <div className="relative flex min-h-[320px] items-center justify-center bg-bone py-6">
-            <div className="relative h-[430px] w-full">
+            <div className="relative h-[450px] w-full">
               <LivePlate
                 slot="building-section"
                 video="/images/building-live.mp4"
@@ -98,7 +99,7 @@ export function S1Building() {
               <ThreadPoint x={0.5} y={0.94} />
             </div>
           </div>
-          <ul className="o-panel flex flex-col justify-center gap-6 px-6 py-8">
+          <ul className="o-panel flex flex-col justify-center gap-7 px-8 py-10 lg:px-12">
             {SPACES.map((space, i) => (
               <li key={space.label}>
                 <Reveal delay={i * 180}>
@@ -197,7 +198,7 @@ export function S3Briefing() {
       <Plate
         slot="briefing-band"
         className="absolute inset-0"
-        imgClassName="h-full w-full object-cover object-[75%_12%]"
+        imgClassName="h-full w-full object-cover object-[75%_0%]"
       />
       {/* Legibility scrim over the empty left only. */}
       <div className="absolute inset-0 bg-gradient-to-r from-[rgba(10,11,13,0.55)] via-[rgba(10,11,13,0.2)] to-transparent" />

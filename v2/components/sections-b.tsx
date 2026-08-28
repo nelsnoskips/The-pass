@@ -30,13 +30,14 @@ export function S4Response() {
             <div className="grid gap-2 min-[900px]:grid-cols-3 min-[900px]:px-4">
               {RESPONSE.map((step, i) => (
                 <Reveal key={step.time} delay={i * 300}>
-                  <article className="relative min-h-[300px] overflow-hidden min-[900px]:-skew-x-[5deg]">
+                  <article className="relative min-h-[320px] overflow-hidden min-[900px]:-skew-x-[5deg]">
                     <div className="absolute inset-y-0 -inset-x-10 min-[900px]:skew-x-[5deg]">
+                      {/* Top-anchored so heads are never clipped at any
+                          viewport width. */}
                       <Plate
                         slot={step.slot}
-                        parallax={12}
                         className="absolute inset-0"
-                        imgClassName="h-full w-full object-cover"
+                        imgClassName="h-full w-full object-cover object-top"
                       />
                       <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-[rgba(17,18,20,0.85)] via-[rgba(17,18,20,0.45)] to-transparent" />
                     </div>
@@ -96,18 +97,15 @@ export function S5Verified() {
           {/* The approved lobby, once, continuous: seated client left,
               open lobby center, specialist far right. The verification
               point lives in the opening — the thread turns green here. */}
+          {/* The photograph as supplied, uncropped at every width: the
+              seated client left, the specialist right, nobody cut. */}
           <Reveal className="relative">
-            <div className="relative min-h-[440px] overflow-hidden">
-              {/* Cropped in from both sides so the seated client and the
-                  specialist anchor the frame the way the mock does. */}
-              <div className="absolute inset-y-0 -inset-x-[9%]">
-                <Plate
-                  slot="verified-band"
-                  parallax={12}
-                  className="absolute inset-0"
-                  imgClassName="h-full w-full object-cover object-[50%_8%]"
-                />
-              </div>
+            <div className="relative overflow-hidden">
+              <Plate
+                slot="verified-band"
+                className="w-full"
+                imgClassName="h-auto w-full"
+              />
               <ThreadPoint x={0.52} y={0.56} node green />
               <VerifiedCard />
             </div>

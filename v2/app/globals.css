@@ -240,13 +240,7 @@ body {
   inset: 0;
   transform-origin: top center;
   transform: scaleY(0);
-  background: linear-gradient(
-    to bottom,
-    var(--thread-blue) 0%,
-    var(--thread-blue) 42%,
-    var(--thread-green) 58%,
-    var(--thread-green) 100%
-  );
+  background: rgba(23, 24, 26, 0.35);
 }
 .o-rail ol {
   position: relative;
@@ -276,10 +270,7 @@ body {
 }
 .o-rail button:hover .o-rail-num { opacity: 1; transform: none; }
 .o-rail button[data-active="true"] .o-rail-dot {
-  background: var(--thread-blue);
-}
-.o-rail button[data-active="true"][data-verified="true"] .o-rail-dot {
-  background: var(--thread-green);
+  background: var(--ink);
 }
 .o-rail button[data-active="true"] .o-rail-num {
   opacity: 1;
