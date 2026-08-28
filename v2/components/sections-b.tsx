@@ -12,7 +12,7 @@ import { Plate, Reveal } from "./ui";
 
 export function S4Response() {
   return (
-    <section data-rail="04" className="relative bg-bone">
+    <section data-rail="04" className="relative overflow-x-clip bg-bone">
       <div className="py-10 pl-5 lg:pl-10">
         <div className="grid gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1fr] lg:pr-0">
           <SectionIntro
@@ -27,10 +27,10 @@ export function S4Response() {
             {/* The descent from 03 lands in the bone corner before the
                 under-card run begins. */}
             <ThreadPoint x={0.004} y={1.06} />
-            <div className="grid gap-2 min-[900px]:grid-cols-3 min-[900px]:px-4">
+            <div className="grid gap-2 min-[900px]:grid-cols-3 min-[900px]:px-8">
               {RESPONSE.map((step, i) => (
                 <Reveal key={step.time} delay={i * 300}>
-                  <article className="relative min-h-[320px] overflow-hidden min-[900px]:-skew-x-[5deg]">
+                  <article className="relative min-h-[320px] overflow-hidden min-[900px]:h-[23vw] min-[900px]:-skew-x-[5deg]">
                     <div className="absolute inset-y-0 -inset-x-10 min-[900px]:skew-x-[5deg]">
                       {/* Top-anchored so heads are never clipped at any
                           viewport width. */}

@@ -132,7 +132,7 @@ export function S2Equipment() {
   const depth = usePointerDepth<HTMLDivElement>(7);
   return (
     <section data-rail="02" className="o-panel relative">
-      <div ref={depth} className="relative min-h-[460px] overflow-hidden">
+      <div ref={depth} className="relative min-h-[max(460px,30vw)] overflow-hidden">
         {/* The mock's wide shot, whole: the duct and its falling air on
             the left, the plant in the middle, the racks on the right. */}
         <div data-depth className="absolute -inset-1 will-change-transform">
@@ -150,7 +150,7 @@ export function S2Equipment() {
         <ThreadPoint x={0.5} y={0.55} node />
         <ThreadPoint x={0.262} y={0.94} />
 
-        <div className="relative z-10 flex min-h-[460px] flex-col px-5 py-10 lg:px-10">
+        <div className="relative z-10 flex min-h-[max(460px,30vw)] flex-col px-5 py-10 lg:px-10">
           {/* The copy holds a controlled dark panel of its own. */}
           <div className="max-w-[400px] bg-[rgba(10,11,13,0.55)] p-6 backdrop-blur-[2px]">
             <p className="o-num text-[40px] text-bone/40">02</p>
@@ -205,7 +205,9 @@ export function S3Briefing() {
       {/* Down the dark seam between the intro and the board. */}
       <ThreadPoint x={0.262} y={0.9} node />
 
-      <div className="relative grid items-stretch lg:grid-cols-[minmax(300px,1fr)_2.6fr]">
+      {/* Height scales with width so the crop is identical on every
+          screen: both readers head-to-chest, never clipped. */}
+      <div className="relative grid items-stretch min-h-[max(460px,31vw)] lg:grid-cols-[minmax(300px,1fr)_2.6fr]">
         <div className="flex items-center px-5 py-10 lg:px-10">
           <SectionIntro
             dark

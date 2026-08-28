@@ -29,7 +29,9 @@ export function S8Team() {
 
           {/* The seam: the frame opens as the section arrives while the
               photograph drifts very slightly on a deeper layer. */}
-          <DeepSeam className="min-h-[380px]" drift={10}>
+          {/* Width-proportional height: everyone head-to-hands at every
+              screen size, the trim only at the table's lower edge. */}
+          <DeepSeam className="min-h-[380px] lg:h-[33vw]" drift={10}>
             <Plate
               slot="team-table"
               className="h-full"
