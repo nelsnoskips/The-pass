@@ -74,14 +74,14 @@ export function Logo({ className, light = false }: { className?: string; light?:
     const probe = new Image();
     probe.onload = () => setState("art");
     probe.onerror = () => setState("script");
-    probe.src = asset("/images/18-official-orravan-logo.png");
+    probe.src = asset("/images/15-official-orravan-logo.png");
   }, []);
 
   if (state === "art") {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={asset("/images/18-official-orravan-logo.png")}
+        src={asset("/images/15-official-orravan-logo.png")}
         alt="Orravan"
         className={className}
         style={light ? { filter: "invert(1) brightness(1.6)" } : undefined}

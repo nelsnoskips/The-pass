@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { CLOSE, RECORD, TEAM } from "@/lib/site";
 import { SectionIntro } from "./sections-a";
-import { ParallaxY, Plate, Reveal } from "./ui";
+import { DeepSeam, ParallaxY, Plate, Reveal } from "./ui";
 
 /* --------------------------------------------------- 08 · the team --- */
 
 export function S8Team() {
   return (
     <section data-rail="08" className="relative bg-bone">
-      <div className="mx-auto max-w-[1440px] py-16 pl-5 lg:pl-10">
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(320px,1fr)_2.3fr]">
+      <div className="mx-auto max-w-[1440px] py-10 pl-5 lg:pl-10">
+        <div className="grid items-center gap-8 lg:grid-cols-[minmax(320px,1fr)_2.3fr]">
           <SectionIntro
             n="08"
             title={<>The thread is only as strong as the team.</>}
@@ -24,14 +24,15 @@ export function S8Team() {
             }
           />
 
-          <Reveal>
+          {/* The seam: the frame opens as the section arrives while the
+              photograph counter-drifts on a deeper layer. */}
+          <DeepSeam className="min-h-[380px]" drift={46}>
             <Plate
               slot="team-table"
-              parallax={22}
-              className="min-h-[380px] overflow-hidden"
+              className="h-full"
               imgClassName="h-full w-full object-cover"
             />
-          </Reveal>
+          </DeepSeam>
         </div>
       </div>
 
@@ -44,8 +45,8 @@ export function S8Team() {
 export function S9Record() {
   return (
     <section id="record" data-rail="09" className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[1fr_2.3fr]">
+      <div className="mx-auto max-w-[1280px] px-5 py-10 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[1fr_2.3fr]">
           <SectionIntro
             n="09"
             title={<>Different buildings. One standard of response.</>}
@@ -165,8 +166,8 @@ export function S10Close() {
 
   return (
     <section id="close" data-rail="10" className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 pb-24 pt-16 lg:px-8">
-        <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.5fr]">
+      <div className="mx-auto max-w-[1280px] px-5 pb-16 pt-10 lg:px-8">
+        <div className="grid items-center gap-8 lg:grid-cols-[1fr_1.5fr]">
           <SectionIntro n="10" title={<>The full thread. In your hands.</>} copy={CLOSE.copy} />
 
           <div className="flex flex-col items-center gap-8 lg:flex-row lg:justify-center">

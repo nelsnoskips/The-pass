@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { HERO, INCIDENT, SPACES } from "@/lib/site";
-import { ParallaxY, Plate, Reveal, usePointerDepth } from "./ui";
+import { asset } from "@/lib/images";
+import { ParallaxY, Plate, Reveal, SignalLine, usePointerDepth } from "./ui";
 import { LivePlate } from "./live";
 
 /* ------------------------------------------------------------ hero --- */
@@ -69,7 +70,7 @@ export function S1Building() {
   return (
     <section id="s1" data-rail="01" className="relative bg-bone">
       <div className="grid items-stretch lg:grid-cols-[minmax(320px,1fr)_2.1fr]">
-        <div className="flex items-center px-5 py-14 lg:px-10">
+        <div className="flex items-center px-5 py-10 lg:px-10">
           <SectionIntro
             n="01"
             title={<>The signal enters the building.</>}
@@ -79,8 +80,10 @@ export function S1Building() {
 
         <div className="o-panel grid min-h-[420px] sm:grid-cols-[2fr_1fr]">
           <div className="relative min-h-[300px]">
-            <Plate
+            <SignalLine className="inset-x-0 top-[30%] z-10 mix-blend-screen" />
+            <LivePlate
               slot="building-section"
+              video="/images/building-live.mp4"
               parallax={20}
               className="absolute inset-0 overflow-hidden"
               imgClassName="h-full w-full object-cover"
@@ -130,6 +133,7 @@ export function S2Equipment() {
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-[rgba(14,15,17,0.86)] via-[rgba(14,15,17,0.25)] to-transparent" />
+        <SignalLine className="inset-x-0 top-[56%] z-10 mix-blend-screen" />
 
         <div className="relative flex min-h-[480px] max-w-[440px] flex-col justify-center p-6 lg:p-12">
           <p className="o-num text-[40px] text-bone/40">02</p>
@@ -164,10 +168,25 @@ export function S2Equipment() {
  */
 export function S3Briefing() {
   return (
-    <section data-rail="03" className="relative bg-bone">
-      <div className="grid items-stretch lg:grid-cols-[minmax(320px,1fr)_2.4fr]">
-        <div className="flex items-center px-5 py-14 lg:px-10">
+    <section data-rail="03" className="o-panel relative overflow-hidden">
+      {/* The room behind the briefing, generated to the mock's backdrop:
+          the ops floor out of focus, almost black. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={asset("/images/briefing-bg.png")}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 h-full w-full object-cover"
+        onError={(event) => {
+          (event.target as HTMLImageElement).style.display = "none";
+        }}
+      />
+      <div className="absolute inset-0 bg-[rgba(12,13,15,0.6)]" />
+
+      <div className="relative grid items-stretch lg:grid-cols-[minmax(300px,1fr)_2.6fr]">
+        <div className="flex items-center px-5 py-10 lg:px-10">
           <SectionIntro
+            dark
             n="03"
             title={<>Thousands of signals. One clear next move.</>}
             copy="Complex signals become clear language and a plan built for your building."
@@ -179,8 +198,8 @@ export function S3Briefing() {
           />
         </div>
 
-        <Reveal className="o-panel grid min-h-[400px] xl:grid-cols-[1.7fr_1fr]">
-          <div className="flex flex-col justify-center">
+        <Reveal className="grid min-h-[400px] items-stretch lg:grid-cols-[1.7fr_1fr]">
+          <div className="my-8 flex flex-col justify-center border border-rule-dark bg-[rgba(9,10,12,0.82)] shadow-[0_30px_70px_rgba(0,0,0,0.5)] backdrop-blur-[2px]">
             <p className="o-label border-b border-rule-dark px-6 py-3.5 text-[10px] text-bone/70">
               Intelligent service briefing
             </p>
@@ -224,11 +243,13 @@ export function S3Briefing() {
             </div>
           </div>
 
-          <Plate
+          {/* The people reading it — framed on them, flush to the edge. */}
+          <LivePlate
             slot="briefing-viewers"
+            video="/images/briefing-live.mp4"
             parallax={14}
-            className="hidden min-h-[400px] overflow-hidden border-l border-rule-dark xl:block"
-            imgClassName="h-full w-full object-cover"
+            className="hidden min-h-[400px] overflow-hidden lg:block"
+            imgClassName="h-full w-full object-cover object-[72%_center]"
           />
         </Reveal>
       </div>

@@ -412,3 +412,22 @@ body {
   .o-check-path { stroke-dashoffset: 0 !important; transition: none; }
   .o-clock-dot { animation: none !important; }
 }
+
+/* --- the signal line's traveling pulse ------------------------------- */
+
+.o-line-pulse {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -90px;
+  width: 90px;
+  opacity: 0.85;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  animation: o-pulse 4.2s linear infinite;
+}
+@keyframes o-pulse {
+  to { left: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .o-line-pulse { animation: none; opacity: 0; }
+}

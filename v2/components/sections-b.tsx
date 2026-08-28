@@ -2,40 +2,49 @@
 
 import { FLOW, RESPONSE, SERVICES, VERIFIED } from "@/lib/site";
 import { useState } from "react";
+import { LivePlate } from "./live";
 import { SectionIntro } from "./sections-a";
-import { Plate, Reveal } from "./ui";
+import { Plate, Reveal, SignalLine } from "./ui";
 
 /* -------------------------------------------- 04 · the response --- */
 
 export function S4Response() {
   return (
     <section data-rail="04" className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[1fr_2.1fr]">
+      <div className="mx-auto max-w-[1280px] px-5 py-10 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[1fr_2.1fr]">
           <SectionIntro
             n="04"
             title={<>The thread becomes a response.</>}
             copy="The right people. The right action. Confirmed."
           />
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            {RESPONSE.map((step, i) => (
-              <Reveal key={step.time} delay={i * 140}>
-                <article className="relative min-h-[300px] overflow-hidden">
-                  <Plate
-                    slot={step.slot}
-                    parallax={12}
-                    className="absolute inset-0"
-                    imgClassName="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-[rgba(17,18,20,0.85)] via-[rgba(17,18,20,0.45)] to-transparent p-4 pb-10">
-                    <span className="o-num text-[15px] text-bone">{step.time}</span>
-                    <p className="o-label pt-1 text-[10px] text-bone">{step.who}</p>
-                    <p className="pt-0.5 text-[12px] text-bone/75">{step.did}</p>
-                  </div>
-                </article>
-              </Reveal>
-            ))}
+          {/* The mock's frame: the three moments cut at a slant, the
+              signal line running through all of them. */}
+          <div className="relative">
+            <div className="grid gap-2 sm:grid-cols-3 sm:px-4">
+              {RESPONSE.map((step, i) => (
+                <Reveal key={step.time} delay={i * 140}>
+                  <article className="relative min-h-[300px] overflow-hidden sm:-skew-x-[8deg]">
+                    <div className="absolute inset-y-0 -inset-x-14 sm:skew-x-[8deg]">
+                      <Plate
+                        slot={step.slot}
+                        parallax={12}
+                        className="absolute inset-0"
+                        imgClassName="h-full w-full object-cover"
+                      />
+                      <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-[rgba(17,18,20,0.85)] via-[rgba(17,18,20,0.45)] to-transparent" />
+                    </div>
+                    <div className="relative p-4 sm:skew-x-[8deg] sm:px-8">
+                      <span className="o-num text-[15px] text-bone">{step.time}</span>
+                      <p className="o-label pt-1 text-[10px] text-bone">{step.who}</p>
+                      <p className="pt-0.5 text-[12px] text-bone/75">{step.did}</p>
+                    </div>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+            <SignalLine className="inset-x-0 top-[48%] z-10 hidden mix-blend-screen sm:block" />
           </div>
         </div>
       </div>
@@ -49,8 +58,8 @@ export function S4Response() {
 export function S5Verified() {
   return (
     <section data-rail="05" className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
-        <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.6fr]">
+      <div className="mx-auto max-w-[1280px] px-5 py-10 lg:px-8">
+        <div className="grid items-center gap-8 lg:grid-cols-[1fr_1.6fr]">
           <SectionIntro
             n="05"
             title={
@@ -77,19 +86,25 @@ export function S5Verified() {
           />
 
           <Reveal className="relative">
-            <div className="grid min-h-[380px] sm:grid-cols-[1.6fr_1fr]">
+            {/* One continuous band: the office flows into the leader on
+                the right, a soft shadow seam instead of a hard cut. */}
+            <div className="relative grid min-h-[380px] sm:grid-cols-[1.5fr_1fr]">
               <Plate
                 slot="verified-office"
                 parallax={24}
                 className="overflow-hidden"
-                imgClassName="h-full w-full object-cover"
+                imgClassName="h-full w-full object-cover object-[20%_center]"
               />
-              <Plate
-                slot="response-leader"
-                parallax={14}
-                className="hidden overflow-hidden sm:block"
-                imgClassName="h-full w-full object-cover"
-              />
+              <div className="relative hidden overflow-hidden sm:block">
+                <Plate
+                  slot="response-leader"
+                  parallax={14}
+                  className="absolute inset-0"
+                  imgClassName="h-full w-full object-cover object-[60%_center]"
+                />
+                <div className="absolute inset-y-0 left-0 w-14 bg-gradient-to-r from-black/30 to-transparent" />
+              </div>
+              <SignalLine color="green" className="inset-x-0 bottom-[15%] z-10 mix-blend-screen" />
             </div>
             <VerifiedCard />
           </Reveal>
@@ -113,7 +128,7 @@ function VerifiedCard() {
         );
         observer.observe(node);
       }}
-      className={`absolute bottom-8 right-[30%] w-[230px] bg-white p-4 shadow-[0_18px_40px_rgba(23,24,26,0.25)] ${
+      className={`absolute bottom-10 right-[31%] w-[210px] bg-white p-3.5 shadow-[0_18px_40px_rgba(23,24,26,0.25)] ${
         seen ? "o-stamped" : "opacity-0"
       }`}
     >
@@ -136,8 +151,8 @@ export function S6Services() {
 
   return (
     <section id="services" data-rail="06" className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
-        <div className="grid items-start gap-10 lg:grid-cols-[1fr_1.4fr_1fr]">
+      <div className="mx-auto max-w-[1280px] px-5 py-10 lg:px-8">
+        <div className="grid items-stretch gap-8 lg:grid-cols-[1fr_1.3fr_1.1fr]">
           <SectionIntro
             n="06"
             title={<>One thread. Every Orravan service.</>}
@@ -178,11 +193,13 @@ export function S6Services() {
             })}
           </div>
 
-          <Reveal>
-            <Plate
+          {/* The ops room holds the full height of the section. */}
+          <Reveal className="h-full">
+            <LivePlate
               slot="services-control"
+              video="/images/monitoring-live.mp4"
               parallax={16}
-              className="min-h-[280px] overflow-hidden"
+              className="h-full min-h-[360px] overflow-hidden"
               imgClassName="h-full w-full object-cover"
             />
           </Reveal>
@@ -198,8 +215,8 @@ export function S6Services() {
 export function S7Flow() {
   return (
     <section data-rail="07" className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[1fr_2.4fr]">
+      <div className="mx-auto max-w-[1280px] px-5 py-10 lg:px-8">
+        <div className="grid items-stretch gap-8 lg:grid-cols-[1fr_2.4fr]">
           <SectionIntro
             n="07"
             title={<>The part is already in the flow.</>}
@@ -221,13 +238,15 @@ export function S7Flow() {
             }
           />
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {/* The strip runs the full height of the text beside it, one
+              flowing row. */}
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {FLOW.stops.map((slot, i) => (
-              <Reveal key={slot} delay={i * 120}>
+              <Reveal key={slot} delay={i * 120} className="h-full">
                 <Plate
                   slot={slot}
                   parallax={10}
-                  className="h-48 overflow-hidden sm:h-60"
+                  className="h-full min-h-[240px] overflow-hidden"
                   imgClassName="h-full w-full object-cover"
                 />
               </Reveal>
