@@ -208,7 +208,7 @@ export function S3Briefing() {
       {/* Height scales with width so the crop is identical on every
           screen: both readers head-to-chest, never clipped. */}
       <div className="relative grid items-stretch min-h-[max(460px,31vw)] lg:grid-cols-[minmax(300px,1fr)_2.6fr]">
-        <div className="flex items-center px-5 py-10 lg:px-10">
+        <div className="flex items-center px-5 py-10 lg:px-10 min-[1700px]:items-end min-[1700px]:pb-[4.5vw]">
           <SectionIntro
             dark
             n="03"
@@ -222,10 +222,11 @@ export function S3Briefing() {
           />
         </div>
 
-        {/* Wide and low over the dark space; the readers keep the far
-            right of the frame to themselves. */}
-        <Reveal className="flex min-h-[460px] items-center py-10 pr-5 lg:pr-0">
-          <div className="flex w-full flex-col justify-center rounded-[2px] border border-white/[0.12] bg-[rgba(8,10,14,0.72)] shadow-[0_30px_70px_rgba(0,0,0,0.5)] backdrop-blur-[2px] lg:w-[74%]">
+        {/* Wide and low over the dark space, anchored toward the lower
+            band so the section reads top-to-bottom; the readers keep
+            the far right of the frame to themselves. */}
+        <Reveal className="flex min-h-[460px] items-center py-10 pr-5 lg:pr-0 min-[1700px]:items-end min-[1700px]:pb-[4.5vw]">
+          <div className="flex w-full flex-col justify-center rounded-[2px] border border-white/[0.12] bg-[rgba(8,10,14,0.72)] shadow-[0_30px_70px_rgba(0,0,0,0.5)] backdrop-blur-[2px] lg:w-[85%] min-[1700px]:w-[70%]">
             <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-3.5">
               <p className="o-label text-[10px] text-bone/70">
                 Intelligent service briefing
@@ -238,7 +239,7 @@ export function S3Briefing() {
                 Live
               </p>
             </div>
-            <div className="grid gap-x-0 gap-y-7 p-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-y-0 xl:divide-x xl:divide-white/[0.08] xl:p-0 xl:py-6 [&>div]:xl:px-5">
+            <div className="grid gap-x-0 gap-y-7 p-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-y-0 xl:divide-x xl:divide-white/[0.08] xl:p-0 xl:py-8 [&>div]:xl:px-6">
               <Briefed label="What changed">
                 {INCIDENT.what}
                 <span className="mt-1.5 block text-[11px] text-bone/45">{INCIDENT.since}</span>
@@ -331,7 +332,7 @@ function Briefed({ label, children, order }: { label: string; children: React.Re
   return (
     <div className={order ? `o-brief-item o-brief-${order}` : undefined}>
       <p className="o-label mb-2 text-[9px] text-bone/45">{label}</p>
-      <div className="text-[13px] leading-snug text-bone/90">{children}</div>
+      <div className="text-[13px] leading-snug text-bone/90 min-[1700px]:text-[14.5px]">{children}</div>
     </div>
   );
 }
