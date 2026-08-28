@@ -13,6 +13,7 @@
 
 export const ORRAVAN = {
   name: "Orravan",
+  fullName: "Orravan Mechanical",
   tagline: "One building / One service thread",
   place: "Long Beach, CA",
   phone: "562.421.7378",

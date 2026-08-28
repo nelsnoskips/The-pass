@@ -12,9 +12,9 @@ const script = Kaushan_Script({
 });
 
 export const metadata: Metadata = {
-  title: "Orravan — Every Signal Has a Next Move",
+  title: "Orravan Mechanical | Every Signal Has a Next Move",
   description:
-    "Orravan connects the person servicing the system to the intelligence operating the building — and stays with it through resolution. Building automation, HVAC, monitoring and inventory. Long Beach, CA.",
+    "Orravan connects the person servicing the system to the intelligence operating the building — and stays with it through resolution. Commercial HVAC, controls and monitoring. Long Beach, CA.",
   robots: { index: false, follow: false },
 };
 
