@@ -130,18 +130,29 @@ function VerifiedCard() {
         );
         observer.observe(node);
       }}
-      className={`absolute bottom-[24%] right-[15%] w-[215px] rounded-[2px] bg-white p-3.5 shadow-[0_18px_40px_rgba(23,24,26,0.25)] ${
+      className={`absolute right-[7%] top-[40%] w-[235px] rounded-[2px] border border-white/15 bg-[rgba(18,28,22,0.55)] p-4 backdrop-blur-[3px] ${
         seen ? "o-stamped" : "opacity-0"
       }`}
+      style={{
+        /* The mock's treatment: translucent, fading into the photo. */
+        maskImage:
+          "linear-gradient(to bottom, black 78%, rgba(0,0,0,0.55) 100%)",
+        WebkitMaskImage:
+          "linear-gradient(to bottom, black 78%, rgba(0,0,0,0.55) 100%)",
+      }}
     >
-      <span className="flex items-center gap-2">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-verified text-white">
+      <span className="flex items-start justify-between gap-2">
+        <span>
+          <span className="o-label block text-[11px] tracking-[0.18em] text-[#8fd6a4]">
+            Verified
+          </span>
+          <span className="o-num mt-1 block text-[12px] text-white/75">{VERIFIED.time}</span>
+        </span>
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-verified text-white shadow-[0_0_18px_rgba(77,154,95,0.5)]">
           <Check className="h-4 w-4" />
         </span>
-        <span className="o-label text-[10px] text-verified">Verified</span>
-        <span className="o-num ml-auto text-[12px] text-ink-mute">{VERIFIED.time}</span>
       </span>
-      <p className="mt-2.5 text-[12px] leading-snug text-ink-soft">{VERIFIED.note}</p>
+      <p className="mt-2 text-[12px] leading-snug text-white/90">{VERIFIED.note}</p>
     </div>
   );
 }

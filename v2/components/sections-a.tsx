@@ -1,7 +1,7 @@
 "use client";
 
 import { HERO, INCIDENT, SPACES } from "@/lib/site";
-import { ParallaxY, Plate, Reveal, usePointerDepth } from "./ui";
+import { ParallaxY, Plate, Reveal } from "./ui";
 import { LivePlate } from "./live";
 import { ThreadPoint } from "./thread";
 
@@ -129,30 +129,26 @@ export function S1Building() {
  * behind a scrim, the thread weaving through the machinery.
  */
 export function S2Equipment() {
-  const depth = usePointerDepth<HTMLDivElement>(7);
   return (
     <section data-rail="02" className="o-panel relative">
-      <div ref={depth} className="relative min-h-[max(460px,30vw)] overflow-hidden">
+      <div className="relative min-h-[max(460px,30vw)] overflow-hidden">
         {/* The mock's wide shot, whole: the duct and its falling air on
-            the left, the plant in the middle, the racks on the right. */}
-        <div data-depth className="absolute -inset-1 will-change-transform">
-          <LivePlate
-            slot="equipment-wide"
-            video="/images/equipment-wide-live.mp4"
-            className="absolute inset-0"
-            imgClassName="h-full w-full object-cover"
-          />
-        </div>
+            the left, the plant in the middle, the racks on the right.
+            The photograph carries the band by itself — no hover motion,
+            no labels over it. */}
+        <LivePlate
+          slot="equipment-wide"
+          video="/images/equipment-wide-live.mp4"
+          className="absolute inset-0"
+          imgClassName="h-full w-full object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-r from-[rgba(14,15,17,0.55)] via-transparent to-transparent" />
-        {/* The thread crosses through the machinery, clear of the copy
-            panel and the technicians on the right, then leaves at the
-            bottom-left so the drop into 03 stays in the dark seam. */}
         <ThreadPoint x={0.5} y={0.55} node />
         <ThreadPoint x={0.262} y={0.94} />
 
         <div className="relative z-10 flex min-h-[max(460px,30vw)] flex-col px-5 py-10 lg:px-10">
           {/* The copy holds a controlled dark panel of its own. */}
-          <div className="max-w-[400px] bg-[rgba(10,11,13,0.55)] p-6 backdrop-blur-[2px]">
+          <div className="max-w-[400px] self-start bg-[rgba(10,11,13,0.55)] p-6 backdrop-blur-[2px]">
             <p className="o-num text-[40px] text-bone/40">02</p>
             <h2 className="o-display mt-1 text-[clamp(28px,2.6vw,40px)] text-bone">
               Down to
@@ -164,19 +160,6 @@ export function S2Equipment() {
               them—working from the same information.
             </p>
           </div>
-          {/* Air, water, control reveal one at a time as the thread
-              passes through each system. */}
-          <ul className="mb-2 mt-auto space-y-7 pt-10">
-            {["Air", "Water", "Control"].map((layer, i) => (
-              <li key={layer}>
-                <Reveal delay={260 * i}>
-                  <span className="o-label text-[10px] tracking-[0.2em] text-bone/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">
-                    {layer}
-                  </span>
-                </Reveal>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
 
@@ -226,7 +209,7 @@ export function S3Briefing() {
             band so the section reads top-to-bottom; the readers keep
             the far right of the frame to themselves. */}
         <Reveal className="flex min-h-[460px] items-center py-10 pr-5 lg:pr-0 min-[1700px]:items-end min-[1700px]:pb-[4.5vw]">
-          <div className="flex w-full flex-col justify-center rounded-[2px] border border-white/[0.12] bg-[rgba(8,10,14,0.72)] shadow-[0_30px_70px_rgba(0,0,0,0.5)] backdrop-blur-[2px] lg:w-[85%] min-[1700px]:w-[70%]">
+          <div className="flex w-full flex-col justify-center rounded-[2px] border border-white/[0.12] bg-[rgba(8,10,14,0.72)] shadow-[0_30px_70px_rgba(0,0,0,0.5)] backdrop-blur-[2px] lg:w-[64%] min-[1700px]:w-[48%]">
             <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-3.5">
               <p className="o-label text-[10px] text-bone/70">
                 Intelligent service briefing
@@ -239,7 +222,9 @@ export function S3Briefing() {
                 Live
               </p>
             </div>
-            <div className="grid gap-x-0 gap-y-7 p-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-y-0 xl:divide-x xl:divide-white/[0.08] xl:p-0 xl:py-8 [&>div]:xl:px-6">
+            {/* Two rows of three, so the board stays compact and never
+                reaches the readers' faces. */}
+            <div className="grid gap-x-0 gap-y-7 p-6 sm:grid-cols-2 xl:grid-cols-3 xl:gap-y-8 xl:divide-x xl:divide-white/[0.08] xl:p-0 xl:py-8 [&>div]:xl:px-6 [&>div:nth-child(4)]:xl:border-l-0">
               <Briefed label="What changed">
                 {INCIDENT.what}
                 <span className="mt-1.5 block text-[11px] text-bone/45">{INCIDENT.since}</span>
