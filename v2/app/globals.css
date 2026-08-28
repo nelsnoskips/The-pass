@@ -135,7 +135,6 @@ body {
 .o-card {
   background: #fff;
   border: 1px solid var(--rule);
-  border-radius: 6px;
 }
 .o-card-dark {
   background: var(--panel-soft);

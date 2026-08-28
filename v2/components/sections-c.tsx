@@ -11,8 +11,8 @@ import { Plate, Reveal } from "./ui";
 export function S8Team() {
   return (
     <section className="relative bg-bone">
-      <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
-        <div className="grid items-center gap-10 lg:grid-cols-[1fr_2fr]">
+      <div className="mx-auto max-w-[1440px] py-16 pl-5 lg:pl-10">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(320px,1fr)_2.3fr]">
           <SectionIntro
             n="08"
             title={<>The thread is only as strong as the team.</>}
@@ -29,7 +29,7 @@ export function S8Team() {
             <Plate
               slot="team-table"
               parallax={22}
-              className="min-h-[300px] overflow-hidden rounded-md"
+              className="min-h-[380px] overflow-hidden"
               imgClassName="h-full w-full object-cover"
             />
           </Reveal>

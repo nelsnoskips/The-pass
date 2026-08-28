@@ -142,12 +142,12 @@ export function Thread({ d, nodes = [], color = "signal", className, span = 0.82
           ref={glow}
           fill="none"
           stroke={stroke}
-          strokeWidth={7}
+          strokeWidth={11}
           strokeLinecap="round"
-          opacity={0.3}
+          opacity={0.42}
           style={{ filter: "blur(4px)" }}
         />
-        <path ref={path} fill="none" stroke={stroke} strokeWidth={2.4} strokeLinecap="round" />
+        <path ref={path} fill="none" stroke={stroke} strokeWidth={3} strokeLinecap="round" />
         <path
           ref={pulse}
           fill="none"

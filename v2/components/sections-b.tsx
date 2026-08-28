@@ -19,22 +19,21 @@ export function S4Response() {
             copy="The right people. The right action. Confirmed."
           />
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-3">
             {RESPONSE.map((step, i) => (
               <Reveal key={step.time} delay={i * 140}>
-                <article className="o-card overflow-hidden">
-                  <div className="flex items-baseline justify-between px-4 pt-3.5">
-                    <span className="o-num text-[15px] text-ink">{step.time}</span>
-                    <span className="o-label text-[9px] text-ink-mute">{`0${i + 1}`}</span>
-                  </div>
-                  <p className="o-label px-4 pt-1 text-[10px] text-signal">{step.who}</p>
-                  <p className="px-4 pb-3 pt-0.5 text-[12px] text-ink-soft">{step.did}</p>
+                <article className="relative min-h-[300px] overflow-hidden">
                   <Plate
                     slot={step.slot}
-                    parallax={10}
-                    className="h-36 overflow-hidden"
+                    parallax={12}
+                    className="absolute inset-0"
                     imgClassName="h-full w-full object-cover"
                   />
+                  <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-[rgba(17,18,20,0.85)] via-[rgba(17,18,20,0.45)] to-transparent p-4 pb-10">
+                    <span className="o-num text-[15px] text-bone">{step.time}</span>
+                    <p className="o-label pt-1 text-[10px] text-bone">{step.who}</p>
+                    <p className="pt-0.5 text-[12px] text-bone/75">{step.did}</p>
+                  </div>
                 </article>
               </Reveal>
             ))}
@@ -87,12 +86,20 @@ export function S5Verified() {
           />
 
           <Reveal className="relative">
-            <Plate
-              slot="verified-office"
-              parallax={24}
-              className="min-h-[320px] overflow-hidden rounded-md"
-              imgClassName="h-full w-full object-cover"
-            />
+            <div className="grid min-h-[380px] sm:grid-cols-[1.6fr_1fr]">
+              <Plate
+                slot="verified-office"
+                parallax={24}
+                className="overflow-hidden"
+                imgClassName="h-full w-full object-cover"
+              />
+              <Plate
+                slot="response-leader"
+                parallax={14}
+                className="hidden overflow-hidden sm:block"
+                imgClassName="h-full w-full object-cover"
+              />
+            </div>
             <VerifiedCard />
           </Reveal>
         </div>
@@ -121,7 +128,7 @@ function VerifiedCard() {
         );
         observer.observe(node);
       }}
-      className={`absolute bottom-6 right-6 w-[230px] rounded-md bg-white p-4 shadow-[0_18px_40px_rgba(23,24,26,0.25)] ${
+      className={`absolute bottom-8 right-[30%] w-[230px] bg-white p-4 shadow-[0_18px_40px_rgba(23,24,26,0.25)] ${
         seen ? "o-stamped" : "opacity-0"
       }`}
     >
@@ -190,7 +197,7 @@ export function S6Services() {
             <Plate
               slot="services-control"
               parallax={16}
-              className="min-h-[240px] overflow-hidden rounded-md"
+              className="min-h-[280px] overflow-hidden"
               imgClassName="h-full w-full object-cover"
             />
           </Reveal>
@@ -240,7 +247,7 @@ export function S7Flow() {
                 <Plate
                   slot={slot}
                   parallax={10}
-                  className="h-40 overflow-hidden rounded-md sm:h-48"
+                  className="h-48 overflow-hidden sm:h-60"
                   imgClassName="h-full w-full object-cover"
                 />
               </Reveal>
@@ -252,8 +259,8 @@ export function S7Flow() {
       {/* The logistics rail: the line runs flat through all four stops. */}
       <Thread
         color="verified"
-        d={`M${X.s6Out} 0 C ${X.s6Out} 20, 30 34, 42 44 L 84 44 C 92 44, ${X.s7Out} 70, ${X.s7Out} 100`}
-        nodes={[[46, 44, 0.42], [59, 44, 0.54], [72, 44, 0.66], [84, 44, 0.78]]}
+        d={`M${X.s6Out} 0 C ${X.s6Out} 18, 32 30, 44 48 L 86 48 C 94 48, ${X.s7Out} 72, ${X.s7Out} 100`}
+        nodes={[[48, 48, 0.42], [61, 48, 0.54], [74, 48, 0.66], [86, 48, 0.78]]}
         className="hidden lg:block"
       />
     </section>
