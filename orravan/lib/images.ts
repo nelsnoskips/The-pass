@@ -8,6 +8,10 @@
  * step.
  */
 
+/** Every asset URL goes through here so a based build stays whole. */
+export const asset = (path: string) =>
+  `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${path}`;
+
 export type Slot = {
   src: string;
   alt: string;
@@ -22,37 +26,37 @@ export const IMAGES: Record<string, Slot> = {
     brief: "The script wordmark, transparent background. SVG or wide PNG.",
   },
   "hero-technician": {
-    src: "/images/hero-technician.jpg",
+    src: "/images/hero-technician.webp",
     alt: "An Orravan technician at an open controls panel, tablet in hand",
     brief: "Technician in black Orravan shirt at an open electrical/controls panel, tablet in hand, portrait-ish crop, light industrial interior.",
   },
   "building-section": {
-    src: "/images/building-section.jpg",
+    src: "/images/building-section.webp",
     alt: "Cross-section of an occupied building, floor by floor",
     brief: "Building cut-away / floor grid: occupied floors above, plant below. Dark, wide.",
   },
   "equipment-plant": {
-    src: "/images/equipment-plant.jpg",
+    src: "/images/equipment-plant.webp",
     alt: "Mechanical plant: pipes, pumps and air handlers",
     brief: "Dark mechanical room, chillers and piping, moody single-source light. Very wide.",
   },
   "equipment-racks": {
-    src: "/images/equipment-racks.jpg",
+    src: "/images/equipment-racks.webp",
     alt: "A technician at the controls racks",
     brief: "Tech at glowing control racks, seen from behind/side. Tall crop.",
   },
   "briefing-viewers": {
-    src: "/images/briefing-viewers.jpg",
+    src: "/images/briefing-viewers.webp",
     alt: "A facility leader and specialist reading the service briefing",
     brief: "Two people in front of a large dark dashboard screen, warm office light.",
   },
   "response-remote": {
-    src: "/images/response-remote.jpg",
+    src: "/images/response-remote.webp",
     alt: "Remote specialist confirming the diagnosis",
     brief: "Specialist with headset at multi-screen desk, dark ops room.",
   },
   "response-field": {
-    src: "/images/response-field.jpg",
+    src: "/images/response-field.webp",
     alt: "Field technician correcting the equipment",
     brief: "Tech in cap working in an equipment bay, hands on the system.",
   },
@@ -62,7 +66,7 @@ export const IMAGES: Record<string, Slot> = {
     brief: "Facility leader with tablet in a bright lobby/office, relieved calm.",
   },
   "verified-office": {
-    src: "/images/verified-office.jpg",
+    src: "/images/verified-office.webp",
     alt: "A comfortable, working office",
     brief: "Bright occupied office, people working comfortably, daylight. Very wide.",
   },
@@ -72,7 +76,7 @@ export const IMAGES: Record<string, Slot> = {
     brief: "Person with tablet by a window, Orravan shirt, green-checked UI visible.",
   },
   "services-control": {
-    src: "/images/services-control.jpg",
+    src: "/images/services-control.webp",
     alt: "The Orravan operations room",
     brief: "Ops room with several specialists at screens, dark, blue glow.",
   },
@@ -82,7 +86,7 @@ export const IMAGES: Record<string, Slot> = {
     brief: "Warehouse tech pulling a part from shelving.",
   },
   "flow-parts": {
-    src: "/images/flow-parts.jpg",
+    src: "/images/flow-parts.webp",
     alt: "Fabricated panels and parts",
     brief: "Panels/parts as product shots on dark ground.",
   },
@@ -97,7 +101,7 @@ export const IMAGES: Record<string, Slot> = {
     brief: "White Orravan van, side view, on the move.",
   },
   "team-table": {
-    src: "/images/team-table.jpg",
+    src: "/images/team-table.webp",
     alt: "The Orravan team around a set of drawings",
     brief: "6-8 people in Orravan black around a big table of drawings, wide.",
   },

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { IMAGES } from "@/lib/images";
+import { IMAGES, asset } from "@/lib/images";
 
 /* ------------------------------------------------------------ Plate --- */
 
@@ -56,7 +56,7 @@ export function Plate({
         ref={(node) => {
           if (node?.complete && node.naturalWidth === 0) setMissing(true);
         }}
-        src={meta.src}
+        src={asset(meta.src)}
         alt={meta.alt}
         className={imgClassName}
         onError={() => setMissing(true)}

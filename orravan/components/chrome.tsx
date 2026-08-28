@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FOOTER, NAV, ORRAVAN } from "@/lib/site";
+import { asset } from "@/lib/images";
 import { Plate } from "./ui";
 
 /**
@@ -73,14 +74,14 @@ export function Logo({ className, light = false }: { className?: string; light?:
     const probe = new Image();
     probe.onload = () => setState("art");
     probe.onerror = () => setState("script");
-    probe.src = "/images/logo-orravan.png";
+    probe.src = asset("/images/logo-orravan.png");
   }, []);
 
   if (state === "art") {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src="/images/logo-orravan.png"
+        src={asset("/images/logo-orravan.png")}
         alt="Orravan"
         className={className}
         style={light ? { filter: "invert(1) brightness(1.6)" } : undefined}
