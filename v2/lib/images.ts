@@ -21,52 +21,57 @@ export type Slot = {
 
 export const IMAGES: Record<string, Slot> = {
   logo: {
-    src: "/images/logo-orravan.png",
+    src: "/images/18-official-orravan-logo.png",
     alt: "Orravan",
     brief: "The script wordmark, transparent background. SVG or wide PNG.",
   },
   "hero-technician": {
-    src: "/images/hero-technician.webp",
+    src: "/images/01-hero-safe-technician.png",
     alt: "An Orravan technician at an open controls panel, tablet in hand",
     brief: "Technician in black Orravan shirt at an open electrical/controls panel, tablet in hand, portrait-ish crop, light industrial interior.",
   },
   "building-section": {
-    src: "/images/building-section.webp",
+    src: "/images/02-connected-building-section.png",
     alt: "Cross-section of an occupied building, floor by floor",
     brief: "Building cut-away / floor grid: occupied floors above, plant below. Dark, wide.",
   },
+  "equipment-air": {
+    src: "/images/03-air-handler-airflow.png",
+    alt: "An air handler, airflow made visible",
+    brief: "The air layer of section 02.",
+  },
   "equipment-plant": {
-    src: "/images/equipment-plant.webp",
+    src: "/images/04-chiller-water-loop.png",
     alt: "Mechanical plant: pipes, pumps and air handlers",
     brief: "Dark mechanical room, chillers and piping, moody single-source light. Very wide.",
   },
   "equipment-racks": {
-    src: "/images/equipment-racks.webp",
+    src: "/images/05-controls-cabinet.png",
     alt: "A technician at the controls racks",
     brief: "Tech at glowing control racks, seen from behind/side. Tall crop.",
   },
   "briefing-viewers": {
-    src: "/images/briefing-viewers.webp",
+    src: "/images/06-client-intelligence-briefing.png",
     alt: "A facility leader and specialist reading the service briefing",
     brief: "Two people in front of a large dark dashboard screen, warm office light.",
   },
   "response-remote": {
-    src: "/images/response-remote.webp",
+    src: "/images/07-remote-operations-specialist.png",
     alt: "Remote specialist confirming the diagnosis",
     brief: "Specialist with headset at multi-screen desk, dark ops room.",
   },
   "response-field": {
-    src: "/images/response-field.webp",
+    src: "/images/08-field-response-technician.png",
     alt: "Field technician correcting the equipment",
     brief: "Tech in cap working in an equipment bay, hands on the system.",
   },
   "response-leader": {
-    src: "/images/response-leader.jpg",
+    src: "/images/16-client-portal-people-plate.png",
     alt: "Facility leader receiving confirmation",
     brief: "Facility leader with tablet in a bright lobby/office, relieved calm.",
   },
   "verified-office": {
-    src: "/images/verified-office.webp",
+    src: "/images/09-restored-building-outcome.png",
     alt: "A comfortable, working office",
     brief: "Bright occupied office, people working comfortably, daylight. Very wide.",
   },
@@ -81,27 +86,27 @@ export const IMAGES: Record<string, Slot> = {
     brief: "Ops room with several specialists at screens, dark, blue glow.",
   },
   "flow-warehouse": {
-    src: "/images/flow-warehouse.jpg",
+    src: "/images/10-parts-inventory-technician.png",
     alt: "Emergency inventory being pulled",
     brief: "Warehouse tech pulling a part from shelving.",
   },
   "flow-parts": {
-    src: "/images/flow-parts.webp",
+    src: "/images/11-controls-components.png",
     alt: "Fabricated panels and parts",
     brief: "Panels/parts as product shots on dark ground.",
   },
   "flow-scan": {
-    src: "/images/flow-scan.jpg",
+    src: "/images/12-panel-fabrication.png",
     alt: "A part scanned into the job",
     brief: "Hands scanning a labeled part with a phone.",
   },
   "flow-van": {
-    src: "/images/flow-van.jpg",
+    src: "/images/13-service-van.png",
     alt: "An Orravan van on its way",
     brief: "White Orravan van, side view, on the move.",
   },
   "team-table": {
-    src: "/images/team-table.webp",
+    src: "/images/14-team-collaboration.png",
     alt: "The Orravan team around a set of drawings",
     brief: "6-8 people in Orravan black around a big table of drawings, wide.",
   },

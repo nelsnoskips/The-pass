@@ -47,6 +47,7 @@ export function Hero() {
         <div className="relative min-h-[380px] lg:min-h-[520px]">
           <Plate
             slot="hero-technician"
+            parallax={26}
             className="absolute inset-0 overflow-hidden rounded-md"
             imgClassName="h-full w-full object-cover"
           />
@@ -56,8 +57,8 @@ export function Hero() {
       {/* The signal leaves the panel the technician has open and heads
           for the building: the story starts here. */}
       <Thread
-        d={`M62 34 C 58 48, 66 58, 60 70 C 55 80, ${X.heroOut} 90, ${X.heroOut} 100`}
-        nodes={[[62, 34, 0.12]]}
+        d={`M76 30 C 70 44, 66 56, 61 68 C 56 80, ${X.heroOut} 90, ${X.heroOut} 100`}
+        nodes={[[76, 30, 0.12]]}
         className="hidden lg:block"
       />
     </section>
@@ -80,7 +81,8 @@ export function S1Building() {
           <div className="o-panel relative grid gap-0 overflow-hidden rounded-md lg:grid-cols-[1.6fr_1fr]">
             <Plate
               slot="building-section"
-              className="min-h-[300px]"
+              parallax={20}
+              className="min-h-[300px] overflow-hidden"
               imgClassName="h-full w-full object-cover opacity-90"
             />
             <ul className="flex flex-col justify-center gap-5 p-6">
@@ -118,29 +120,31 @@ export function S2Equipment() {
           dark
           title={<>Down to the equipment.</>}
           copy="Mechanical systems, automation and the people who service them—working from the same information."
-          aside={
-            <ul className="mt-8 space-y-2">
-              {["Air", "Water", "Control"].map((layer) => (
-                <li key={layer} className="o-label border-l-2 border-signal/60 pl-3 text-[10px] text-bone/70">
-                  {layer}
-                </li>
-              ))}
-            </ul>
-          }
         />
 
-        <Reveal className="grid gap-3 sm:grid-cols-[1.7fr_1fr]">
-          <Plate
-            slot="equipment-plant"
-            className="min-h-[280px] overflow-hidden rounded-md"
-            imgClassName="h-full w-full object-cover"
-          />
-          <Plate
-            slot="equipment-racks"
-            className="min-h-[280px] overflow-hidden rounded-md"
-            imgClassName="h-full w-full object-cover"
-          />
-        </Reveal>
+        {/* The client shot this section as the mock labels it: one
+            photograph per layer — air, water, control. */}
+        <div className="grid gap-3 sm:grid-cols-3">
+          {(
+            [
+              ["Air", "equipment-air", 24],
+              ["Water", "equipment-plant", 18],
+              ["Control", "equipment-racks", 12],
+            ] as const
+          ).map(([label, slot, depth], i) => (
+            <Reveal key={slot} delay={i * 120} className="relative">
+              <Plate
+                slot={slot}
+                parallax={depth}
+                className="h-[300px] overflow-hidden rounded-md"
+                imgClassName="h-full w-full object-cover"
+              />
+              <span className="o-label absolute bottom-3 left-3 border-l-2 border-signal bg-[rgba(23,24,26,0.55)] px-2.5 py-1 text-[10px] text-bone backdrop-blur-sm">
+                {label}
+              </span>
+            </Reveal>
+          ))}
+        </div>
       </div>
 
       <Thread
@@ -220,6 +224,7 @@ export function S3Briefing() {
             <Reveal delay={140} className="mt-3 flex justify-end">
               <Plate
                 slot="briefing-viewers"
+                parallax={12}
                 className="h-40 w-full max-w-[380px] overflow-hidden rounded-md"
                 imgClassName="h-full w-full object-cover"
               />

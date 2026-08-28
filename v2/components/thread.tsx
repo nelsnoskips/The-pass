@@ -36,9 +36,11 @@ export function Thread({ d, nodes = [], color = "signal", className, span = 0.82
   const svg = useRef<SVGSVGElement>(null);
   const path = useRef<SVGPathElement>(null);
   const glow = useRef<SVGPathElement>(null);
+  const pulse = useRef<SVGPathElement>(null);
   const nodeRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const length = useRef(1);
   const drawn = useRef(0);
+  const cleanup = useRef<(() => void) | null>(null);
 
   /* Scale the %-space path into the section's pixels, re-measure, and
      keep the current draw state. */
@@ -51,7 +53,7 @@ export function Thread({ d, nodes = [], color = "signal", className, span = 0.82
       if (!w || !h) return;
       const px = scalePath(d, w / 100, h / 100);
       svg.current?.setAttribute("viewBox", `0 0 ${w} ${h}`);
-      for (const p of [path.current, glow.current]) p?.setAttribute("d", px);
+      for (const p of [path.current, glow.current, pulse.current]) p?.setAttribute("d", px);
       const l = path.current?.getTotalLength() ?? 1;
       length.current = l;
       for (const p of [path.current, glow.current]) {
@@ -59,12 +61,49 @@ export function Thread({ d, nodes = [], color = "signal", className, span = 0.82
         p.style.strokeDasharray = `${l}`;
         p.style.strokeDashoffset = `${l * (1 - drawn.current)}`;
       }
+      if (pulse.current) {
+        pulse.current.style.strokeDasharray = `${l * 0.05} ${l * 1.05}`;
+        pulse.current.style.strokeDashoffset = `${l}`;
+      }
     };
+
+    /* A signal travels the drawn portion of the line, over and over —
+       the page's premise made visible. One rAF, alive only on screen,
+       and never under reduced motion. */
+    let frame = 0;
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      let visible = false;
+      const io = new IntersectionObserver(([e]) => {
+        visible = e.isIntersecting;
+      });
+      if (svg.current) io.observe(svg.current);
+      let start = 0;
+      const tick = (now: number) => {
+        frame = requestAnimationFrame(tick);
+        if (!visible || drawn.current < 0.12 || !pulse.current) return;
+        if (!start) start = now;
+        const t = ((now - start) / 2600) % 1;
+        const l = length.current;
+        // From the segment's start to the tip of whatever is drawn.
+        const travel = l * drawn.current * t;
+        pulse.current.style.strokeDashoffset = `${l - travel}`;
+        pulse.current.style.opacity = t > 0.9 ? `${(1 - t) * 10}` : "0.9";
+      };
+      frame = requestAnimationFrame(tick);
+      const cleanupIo = io;
+      cleanup.current = () => {
+        cancelAnimationFrame(frame);
+        cleanupIo.disconnect();
+      };
+    }
 
     rebuild();
     const observer = new ResizeObserver(rebuild);
     observer.observe(host);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      cleanup.current?.();
+    };
   }, [d]);
 
   const ref = useSectionProgress<HTMLDivElement>((p) => {
@@ -109,6 +148,15 @@ export function Thread({ d, nodes = [], color = "signal", className, span = 0.82
           style={{ filter: "blur(4px)" }}
         />
         <path ref={path} fill="none" stroke={stroke} strokeWidth={2.4} strokeLinecap="round" />
+        <path
+          ref={pulse}
+          fill="none"
+          stroke="#dbe7ff"
+          strokeWidth={3.4}
+          strokeLinecap="round"
+          opacity={0}
+          style={{ mixBlendMode: "screen" }}
+        />
       </svg>
 
       {/* Nodes live outside the SVG so they stay round at any size. */}

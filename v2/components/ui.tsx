@@ -15,13 +15,26 @@ export function Plate({
   slot,
   className,
   imgClassName,
+  parallax = 0,
 }: {
   slot: string;
   className?: string;
   imgClassName?: string;
+  /** Pixels of vertical drift across the section's travel. The image is
+      oversized to cover the drift, so the frame never shows an edge. */
+  parallax?: number;
 }) {
   const meta = IMAGES[slot];
   const [missing, setMissing] = useState(false);
+  const img = useRef<HTMLImageElement>(null);
+
+  const host = useSectionProgress<HTMLDivElement>((p) => {
+    if (!parallax || !img.current) return;
+    const y = (p - 0.5) * -2 * parallax;
+    img.current.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0) scale(${(
+      1 + (parallax * 2.4) / 600
+    ).toFixed(3)})`;
+  });
 
   if (!meta) return null;
 
@@ -48,17 +61,19 @@ export function Plate({
   }
 
   return (
-    <div className={className}>
+    <div ref={host} className={className}>
       {/* Plain img: half these files do not exist until the library is
           uploaded, and the fallback depends on catching the error. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={(node) => {
+          img.current = node;
           if (node?.complete && node.naturalWidth === 0) setMissing(true);
         }}
         src={asset(meta.src)}
         alt={meta.alt}
         className={imgClassName}
+        style={parallax ? { willChange: "transform" } : undefined}
         onError={() => setMissing(true)}
         loading="lazy"
         decoding="async"

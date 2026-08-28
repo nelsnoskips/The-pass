@@ -31,7 +31,8 @@ export function S4Response() {
                   <p className="px-4 pb-3 pt-0.5 text-[12px] text-ink-soft">{step.did}</p>
                   <Plate
                     slot={step.slot}
-                    className="h-36"
+                    parallax={10}
+                    className="h-36 overflow-hidden"
                     imgClassName="h-full w-full object-cover"
                   />
                 </article>
@@ -88,6 +89,7 @@ export function S5Verified() {
           <Reveal className="relative">
             <Plate
               slot="verified-office"
+              parallax={24}
               className="min-h-[320px] overflow-hidden rounded-md"
               imgClassName="h-full w-full object-cover"
             />
@@ -187,6 +189,7 @@ export function S6Services() {
           <Reveal>
             <Plate
               slot="services-control"
+              parallax={16}
               className="min-h-[240px] overflow-hidden rounded-md"
               imgClassName="h-full w-full object-cover"
             />
@@ -236,6 +239,7 @@ export function S7Flow() {
               <Reveal key={slot} delay={i * 120}>
                 <Plate
                   slot={slot}
+                  parallax={10}
                   className="h-40 overflow-hidden rounded-md sm:h-48"
                   imgClassName="h-full w-full object-cover"
                 />

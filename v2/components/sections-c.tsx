@@ -28,6 +28,7 @@ export function S8Team() {
           <Reveal>
             <Plate
               slot="team-table"
+              parallax={22}
               className="min-h-[300px] overflow-hidden rounded-md"
               imgClassName="h-full w-full object-cover"
             />
