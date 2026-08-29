@@ -19,6 +19,7 @@ export const ORRAVAN = {
 
 export const NAV = {
   menus: ["Intelligence", "Services", "Industries", "Company"],
+  quick: ["Automation", "HVAC", "Monitoring", "Inventory"],
   portal: "Service Portal",
   request: "Request Service",
 } as const;
@@ -26,8 +27,12 @@ export const NAV = {
 /** The entrance: blue plate, mark, two doors, then the headline. */
 export const ENTRANCE = {
   cue: "Scroll to enter",
-  headA: "The building knows.",
-  headB: "Now you do.",
+  headA: "The building",
+  headB: "knows. Now you do.",
+  body:
+    "Orravan.ai unites building intelligence, automation and expert service to turn signal into action—so your people, your systems and your building perform at their best.",
+  primary: "Start a project",
+  secondary: "Request immediate service",
   /** Live conditions floating behind the mark. */
   chips: [
     { label: "Air quality", state: "Good" },
@@ -187,10 +192,7 @@ export const RECORD = {
 } as const;
 
 export const CLOSE = {
-  head: ["What could your", "building tell you?"],
-  copy: "Start with one signal. Keep the whole record.",
-  primary: "Request service",
-  secondary: "Talk to our team",
+  head: ["What could your", "building do better?"],
 } as const;
 
 export const FOOTER = {
@@ -202,4 +204,5 @@ export const FOOTER = {
     { title: "Company", links: ["About", "Our team", "Careers", "Contact"] },
   ],
   social: ["LinkedIn", "YouTube", "X"],
+  copyright: "© 2025 Orravan.ai, Inc. All rights reserved.",
 } as const;

@@ -519,9 +519,13 @@ body {
   will-change: transform, opacity;
 }
 .o-layer img { position: absolute; inset: 0; width: 100%; height: 100%; }
-.o-layer-blueprint img { object-fit: cover; opacity: 0.55; }
-.o-layer-building img { object-fit: contain; object-position: right bottom; }
-.o-layer-leader img { object-fit: contain; object-position: left bottom; }
+.o-layer-blueprint img { object-fit: cover; opacity: 0.5; }
+.o-layer-building,
+.o-layer-leader { inset: auto 0 0 0; height: 88%; }
+.o-layer-building { left: 51%; right: 7%; height: 84%; bottom: 6%; }
+.o-layer-leader { left: 36%; right: 24%; height: 100%; }
+.o-layer-building img { object-fit: contain; object-position: center bottom; }
+.o-layer-leader img { object-fit: contain; object-position: center bottom; }
 @media (max-width: 1023px) {
   .o-layer-leader, .o-layer-building { display: none; }
 }
@@ -565,34 +569,47 @@ body {
   color: rgba(255, 255, 255, 0.62);
 }
 
-.o-entrance-centre {
+.o-entry {
   position: relative;
   z-index: 3;
   display: grid;
   justify-items: center;
   padding: 0 20px;
   text-align: center;
+  will-change: transform, opacity;
 }
-.o-entrance-mark,
-.o-entrance-head { grid-area: 1 / 1; will-change: transform, opacity; }
-.o-entrance-mark img {
-  width: clamp(240px, 30vw, 520px);
-  height: auto;
+.o-entry-mark { width: clamp(240px, 30vw, 520px); height: auto; }
+
+.o-hero {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  padding: 0 20px;
+  opacity: 0;
+  will-change: opacity;
 }
-.o-entrance-head h1 {
+@media (min-width: 1024px) { .o-hero { padding: 0 40px; } }
+.o-hero h1 {
   font-family: var(--font-display);
   font-weight: 400;
   text-transform: uppercase;
   line-height: 0.84;
   letter-spacing: 0.005em;
-  font-size: clamp(3rem, 7.2vw, 8rem);
+  font-size: clamp(2.9rem, 5.6vw, 6.4rem);
   color: #fff;
+  max-width: 12ch;
 }
-.o-entrance-head .o-mask > span { color: #fff; }
-.o-entrance-head .o-mask-2 > span { color: rgba(255, 255, 255, 0.66); }
+.o-hero p {
+  margin-top: 22px;
+  max-width: 42ch;
+  font-size: clamp(0.95rem, 1.05vw, 1.08rem);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.82);
+}
+.o-hero-doors { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
 
 .o-doors {
-  grid-area: 2 / 1;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -619,7 +636,6 @@ body {
 .o-btn-solid:hover { background: rgba(255, 255, 255, 0.88); }
 
 .o-cue {
-  grid-area: 3 / 1;
   display: flex;
   flex-direction: column;
   align-items: center;

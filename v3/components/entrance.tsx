@@ -54,6 +54,7 @@ export function Entrance() {
     /** The finished hero: what reduced motion sees on arrival. */
     const settle = () => {
       entry.current?.style.setProperty("opacity", "0");
+      entry.current?.style.setProperty("pointer-events", "none");
       entry.current?.style.setProperty("transform", "translate3d(0,-24px,0)");
       doors.current?.style.setProperty("transform", "translate3d(0,-24px,0)");
       cue.current?.style.setProperty("opacity", "0");
@@ -61,7 +62,10 @@ export function Entrance() {
         layer.current?.style.setProperty("opacity", "1");
         layer.current?.style.setProperty("transform", "none");
       }
-      if (copy.current) copy.current.dataset.in = "true";
+      if (copy.current) {
+        copy.current.style.setProperty("opacity", "1");
+        copy.current.dataset.in = "true";
+      }
       chips.current?.style.setProperty("opacity", "1");
       document.documentElement.dataset.entered = "true";
     };
@@ -84,6 +88,7 @@ export function Entrance() {
       // 2 — the handoff: 0 to 25vh, fade and rise 24px.
       const handoff = ease(clamp(y / (vh * 0.25)));
       entry.current?.style.setProperty("opacity", `${1 - handoff}`);
+      entry.current?.style.setProperty("pointer-events", handoff > 0.75 ? "none" : "auto");
       entry.current?.style.setProperty(
         "transform",
         `translate3d(0, ${(-24 * handoff).toFixed(1)}px, 0)`,
@@ -117,7 +122,12 @@ export function Entrance() {
       );
 
       // 4 — the copy reveals by line once the entry has cleared.
-      if (copy.current) copy.current.dataset.in = handoff > 0.72 ? "true" : "false";
+      if (copy.current) {
+        const shown = ease(clamp((y - vh * 0.1) / (vh * 0.18)));
+        copy.current.style.setProperty("opacity", `${shown}`);
+        copy.current.style.setProperty("pointer-events", shown > 0.3 ? "auto" : "none");
+        copy.current.dataset.in = handoff > 0.6 ? "true" : "false";
+      }
       chips.current?.style.setProperty("opacity", `${ease(clamp((y - vh * 0.2) / (vh * 0.3)))}`);
 
       document.documentElement.dataset.entered = handoff > 0.72 ? "true" : "false";
@@ -180,39 +190,36 @@ export function Entrance() {
           ))}
         </ul>
 
-        <div className="o-entrance-centre">
-          {/* The entry layer: the official mark, nothing else. */}
-          <div ref={entry} className="o-entrance-mark">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={asset(IMAGES["logo-reverse"].src)} alt={IMAGES["logo-reverse"].alt} />
-          </div>
-
-          {/* The hero copy, revealed line by line behind a clip mask. */}
-          <div ref={copy} className="o-entrance-head" data-in="false">
-            <h1>
-              <span className="o-mask">
-                <span>{ENTRANCE.headA}</span>
-              </span>
-              <span className="o-mask o-mask-2">
-                <span>{ENTRANCE.headB}</span>
-              </span>
-            </h1>
-          </div>
-
+        {/* The entry: the mark, two doors, the cue. Centred. */}
+        <div ref={entry} className="o-entry">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="o-entry-mark"
+            src={asset(IMAGES["logo-reverse"].src)}
+            alt={IMAGES["logo-reverse"].alt}
+          />
           <div ref={doors} className="o-doors">
-            <a href="#record" className="o-btn-line">
-              {NAV.portal}
-            </a>
-            <a href="#close" className="o-btn-solid">
-              {NAV.request}
-            </a>
+            <a href="#record" className="o-btn-line">{NAV.portal}</a>
+            <a href="#close" className="o-btn-solid">{NAV.request}</a>
           </div>
-
           <div ref={cue} className="o-cue" aria-hidden>
             <span>{ENTRANCE.cue}</span>
             <svg viewBox="0 0 16 9" width="16" height="9" fill="none">
               <path d="M1 1 L8 8 L15 1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
             </svg>
+          </div>
+        </div>
+
+        {/* The hero the entry hands over to. Left column. */}
+        <div ref={copy} className="o-hero" data-in="false">
+          <h1>
+            <span className="o-mask"><span>{ENTRANCE.headA}</span></span>
+            <span className="o-mask o-mask-2"><span>{ENTRANCE.headB}</span></span>
+          </h1>
+          <p>{ENTRANCE.body}</p>
+          <div className="o-hero-doors">
+            <a href="#close" className="o-btn-solid">{ENTRANCE.primary}</a>
+            <a href="#close" className="o-btn-line">{ENTRANCE.secondary}</a>
           </div>
         </div>
       </div>

@@ -46,6 +46,21 @@ export function TopBar() {
           </a>
         </div>
       </div>
+
+      {/* The practice row, as in the reference. */}
+      <div className="hidden border-t border-rule/70 lg:block">
+        <div className="mx-auto flex max-w-[1600px] justify-center gap-14 px-10 py-2">
+          {NAV.quick.map((item) => (
+            <a
+              key={item}
+              href="#services"
+              className="o-label text-[10px] text-ink-mute transition-colors hover:text-[var(--orravan-blue)]"
+            >
+              {item}
+            </a>
+          ))}
+        </div>
+      </div>
     </header>
   );
 }
@@ -62,11 +77,11 @@ export function Logo({ className, reverse = false }: { className?: string; rever
 
 export function Footer() {
   return (
-    <footer className="bg-[#111214] text-bone">
+    <footer className="bg-paper text-ink">
       <div className="mx-auto grid max-w-[1600px] gap-10 px-5 py-14 lg:grid-cols-[minmax(240px,320px)_1fr] lg:px-10">
         <div>
-          <Logo reverse className="h-8" />
-          <p className="o-label mt-5 text-[9.5px] leading-relaxed text-bone/45">
+          <Logo className="h-8" />
+          <p className="o-label mt-5 text-[9.5px] leading-relaxed text-ink-mute">
             Automation · HVAC · Monitoring · Inventory
           </p>
         </div>
@@ -74,11 +89,11 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-[repeat(2,minmax(0,1fr))_auto]">
           {FOOTER.columns.map((column) => (
             <div key={column.title}>
-              <p className="o-label text-[9.5px] text-bone/50">{column.title}</p>
+              <p className="o-label text-[9.5px] text-ink-mute">{column.title}</p>
               <ul className="mt-3 space-y-2">
                 {column.links.map((link) => (
                   <li key={link}>
-                    <a href="#top" className="text-[13px] text-bone/75 transition-colors hover:text-white">
+                    <a href="#top" className="text-[13px] text-ink-soft transition-colors hover:text-[var(--orravan-blue)]">
                       {link}
                     </a>
                   </li>
@@ -88,10 +103,10 @@ export function Footer() {
           ))}
 
           <div className="sm:text-right">
-            <a href={`tel:${ORRAVAN.phone.replace(/\D/g, "")}`} className="block text-[13px] text-bone/75 hover:text-white">
+            <a href={`tel:${ORRAVAN.phone.replace(/\D/g, "")}`} className="block text-[13px] text-ink-soft hover:text-[var(--orravan-blue)]">
               {ORRAVAN.phone}
             </a>
-            <a href={`mailto:${ORRAVAN.email}`} className="mt-2 block text-[13px] text-bone/75 hover:text-white">
+            <a href={`mailto:${ORRAVAN.email}`} className="mt-2 block text-[13px] text-ink-soft hover:text-[var(--orravan-blue)]">
               {ORRAVAN.email}
             </a>
             <ul className="mt-4 flex gap-2 sm:justify-end">
@@ -100,7 +115,7 @@ export function Footer() {
                   <a
                     href="#top"
                     aria-label={name}
-                    className="flex h-8 w-8 items-center justify-center border border-bone/20 text-[10px] text-bone/70 transition-colors hover:border-bone/50 hover:text-white"
+                    className="flex h-8 w-8 items-center justify-center border border-rule text-[10px] text-ink-soft transition-colors hover:border-[var(--orravan-blue)] hover:text-[var(--orravan-blue)]"
                   >
                     {name === "LinkedIn" ? "in" : name === "YouTube" ? "▶" : "✕"}
                   </a>
@@ -111,12 +126,12 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-bone/10">
-        <div className="mx-auto flex max-w-[1600px] flex-wrap justify-between gap-3 px-5 py-4 text-[11px] text-bone/45 lg:px-10">
-          <span>© {ORRAVAN.name}. All rights reserved. {ORRAVAN.license}</span>
+      <div className="border-t border-rule">
+        <div className="mx-auto flex max-w-[1600px] flex-wrap justify-between gap-3 px-5 py-4 text-[11px] text-ink-mute lg:px-10">
+          <span>{FOOTER.copyright}</span>
           <span className="flex gap-5">
-            <a href="#top" className="hover:text-bone/80">Privacy Policy</a>
-            <a href="#top" className="hover:text-bone/80">Terms of Use</a>
+            <a href="#top" className="hover:text-ink">Privacy Policy</a>
+            <a href="#top" className="hover:text-ink">Terms of Use</a>
           </span>
         </div>
       </div>

@@ -228,28 +228,16 @@ function Mark({ done }: { done: boolean }) {
 
 export function Close() {
   return (
-    <section id="close" className="relative overflow-x-clip bg-[var(--orravan-blue)] text-white">
-      <div className="grid gap-8 px-5 py-16 lg:grid-cols-[minmax(240px,320px)_1fr] lg:gap-10 lg:px-10">
+    <section id="close" className="relative overflow-x-clip bg-paper">
+      <div className="px-5 pb-6 pt-16 lg:px-10 lg:pb-10 lg:pt-24">
         <Reveal>
-          <h2 className="o-display text-[clamp(3rem,5.5vw,6rem)] leading-[0.88] tracking-[0.004em]">
+          <h2 className="o-display text-[clamp(2.4rem,4.6vw,4.6rem)] leading-[0.88] tracking-[0.004em] text-ink">
             {CLOSE.head.map((line) => (
               <span key={line} className="block">
                 {line}
               </span>
             ))}
           </h2>
-        </Reveal>
-
-        <Reveal delay={120} className="flex flex-col justify-center gap-6">
-          <p className="max-w-[38ch] text-[15px] leading-relaxed text-white/75">{CLOSE.copy}</p>
-          <div className="flex flex-wrap gap-3">
-            <a href="#top" className="o-btn-solid">
-              {CLOSE.primary}
-            </a>
-            <a href="#top" className="o-btn-line">
-              {CLOSE.secondary}
-            </a>
-          </div>
         </Reveal>
       </div>
     </section>
