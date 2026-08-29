@@ -1,20 +1,28 @@
 import type { Metadata } from "next";
-import { Inter, Kaushan_Script, Oswald } from "next/font/google";
+import { Bebas_Neue, IBM_Plex_Mono, Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const oswald = Oswald({ subsets: ["latin"], variable: "--font-oswald", display: "swap" });
-const script = Kaushan_Script({
+/* The brand system's three voices: Bebas for the big condensed
+   headlines, Inter for everything a person reads or clicks, Plex Mono
+   for the technical register — eyebrows, states, timestamps. */
+const bebas = Bebas_Neue({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-script",
+  variable: "--font-bebas",
+  display: "swap",
+});
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const plex = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-plex",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Orravan Mechanical | Every Signal Has a Next Move",
+  title: "Orravan | The Building Knows. Now You Do.",
   description:
-    "Orravan connects the person servicing the system to the intelligence operating the building — and stays with it through resolution. Commercial HVAC, controls and monitoring. Long Beach, CA.",
+    "Orravan turns what your building already knows into plain language, a clear priority and a recommended next step — then documents the resolution. Building automation, HVAC, remote monitoring and inventory.",
   robots: { index: false, follow: false },
 };
 
@@ -22,7 +30,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${oswald.variable} ${script.variable}`}>
+    <html lang="en" className={`${inter.variable} ${bebas.variable} ${plex.variable}`}>
       <body>{children}</body>
     </html>
   );

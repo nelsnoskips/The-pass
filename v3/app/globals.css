@@ -8,22 +8,22 @@
    ========================================================================== */
 
 :root {
-  --bone: #f0ede6;
-  --paper: #f7f5ef;
-  --ink: #17181a;
-  --ink-soft: #33343a;
-  --ink-mute: #71727a;
-  --panel: #1b1c1f;
-  --panel-soft: #232428;
-  --rule: #d9d4c8;
+  --bone: #f3f0e8;
+  --paper: #faf8f2;
+  --ink: #111417;
+  --ink-soft: #333a41;
+  --ink-mute: #8c959e;
+  --panel: #171c22;
+  --panel-soft: #1f252c;
+  --rule: #d7d4cc;
   --rule-dark: #34353a;
 
   /* The signal. Blue while we're working, green when it's verified. */
-  --signal: #2b6bff;
-  --signal-soft: rgba(43, 107, 255, 0.12);
-  --verified: #4e9e5f;
+  --signal: #245fce;
+  --signal-soft: rgba(36, 95, 206, 0.12);
+  --verified: #4d9a5f;
   --verified-soft: rgba(78, 158, 95, 0.14);
-  --warn: #e8892f;
+  --warn: #e5a43a;
 
   /* The thread's own tones: a step deeper and drier than the UI blue
      and green, so the line reads as a drafted schematic over the
@@ -33,7 +33,7 @@
 
   --dur-ui: 200ms;
   --dur-reveal: 640ms;
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @theme inline {
@@ -51,8 +51,9 @@
   --color-warn: var(--warn);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-oswald), "Arial Narrow", sans-serif;
-  --font-script: var(--font-script), cursive;
+  --font-display: var(--font-bebas), "Arial Narrow", sans-serif;
+  --font-technical: var(--font-plex), ui-monospace, monospace;
+  
 }
 
 body {
@@ -66,23 +67,25 @@ body {
 
 .o-display {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 400;
   text-transform: uppercase;
   line-height: 0.94;
   letter-spacing: 0.005em;
 }
 .o-label {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  font-family: var(--font-technical);
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .o-num {
-  font-family: var(--font-display);
+  font-family: var(--font-technical);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
-.o-script { font-family: var(--font-script); }
+.o-script { font-family: var(--font-technical); font-weight: 600; }
 
 /* --------------------------------------------------------- controls --- */
 
@@ -480,19 +483,20 @@ body {
    ========================================================================== */
 
 :root {
-  --orravan-blue: #1b4ed8;
-  --orravan-blue-deep: #143aa8;
+  --orravan-blue: #245fce;
+  --orravan-blue-dark: #1e52b5;
+  --orravan-blue-deep: #103d91;
 }
 
 @theme inline {
   --color-orravan: var(--orravan-blue);
 }
 
-/* --- the entrance ----------------------------------------------------- */
+/* --- the entry and the hero it hands over to ------------------------- */
 
 .o-entrance {
   position: relative;
-  min-height: 172vh;
+  min-height: 148vh;
   background: var(--orravan-blue);
 }
 .o-entrance-stage {
@@ -502,50 +506,24 @@ body {
   place-items: center;
   height: 100vh;
   overflow: hidden;
-  background:
-    radial-gradient(120% 90% at 50% 40%, rgba(255, 255, 255, 0.1), transparent 60%),
-    linear-gradient(180deg, var(--orravan-blue) 0%, var(--orravan-blue-deep) 100%);
+  background: var(--orravan-blue);
 }
 
-.o-plane {
+/* Three independent layers. Blueprint covers; the two cut-outs are
+   contained so alpha edges are never clipped. */
+.o-layer {
   position: absolute;
   inset: 0;
+  opacity: 0;
   pointer-events: none;
   will-change: transform, opacity;
 }
-.o-plane-building img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(1) contrast(1.15);
-}
-.o-plane-leader {
-  display: none;
-}
-@media (min-width: 1024px) {
-  .o-plane-leader {
-    display: block;
-    left: auto;
-    right: 0;
-    width: 42%;
-  }
-  .o-plane-leader img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 60% 20%;
-    /* Fades into the plate instead of sitting on it as a rectangle. */
-    mask-image: linear-gradient(90deg, transparent, black 42%),
-      linear-gradient(180deg, black 68%, transparent);
-    mask-composite: intersect;
-    -webkit-mask-image: linear-gradient(90deg, transparent, black 42%),
-      linear-gradient(180deg, black 68%, transparent);
-    -webkit-mask-composite: source-in;
-  }
+.o-layer img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.o-layer-blueprint img { object-fit: cover; opacity: 0.55; }
+.o-layer-building img { object-fit: contain; object-position: right bottom; }
+.o-layer-leader img { object-fit: contain; object-position: left bottom; }
+@media (max-width: 1023px) {
+  .o-layer-leader, .o-layer-building { display: none; }
 }
 
 .o-chips {
@@ -555,41 +533,36 @@ body {
   z-index: 2;
   display: none;
   transform: translateY(-50%);
-  gap: 12px;
+  gap: 10px;
+  opacity: 0;
   will-change: opacity;
 }
-@media (min-width: 1280px) {
-  .o-chips { display: grid; }
-}
+@media (min-width: 1280px) { .o-chips { display: grid; } }
 .o-chips li {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-width: 210px;
-  padding: 11px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(3px);
+  min-width: 208px;
+  padding: 10px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(16, 61, 145, 0.5);
 }
-.o-chip-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 9999px;
-  background: #7fe0a0;
-  box-shadow: 0 0 10px rgba(127, 224, 160, 0.8);
-}
+.o-chip-dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--verified); }
 .o-chip-label {
   display: block;
+  font-family: var(--font-technical);
   font-size: 10px;
-  letter-spacing: 0.16em;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.92);
 }
 .o-chip-state {
   display: block;
   margin-top: 2px;
+  font-family: var(--font-technical);
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .o-entrance-centre {
@@ -601,27 +574,22 @@ body {
   text-align: center;
 }
 .o-entrance-mark,
-.o-entrance-head {
-  grid-area: 1 / 1;
-  will-change: transform, opacity;
-}
+.o-entrance-head { grid-area: 1 / 1; will-change: transform, opacity; }
 .o-entrance-mark img {
-  width: clamp(240px, 32vw, 560px);
-  /* The mark ships as dark artwork; on the plate it is white. */
-  filter: brightness(0) invert(1);
+  width: clamp(240px, 30vw, 520px);
+  height: auto;
 }
-.o-entrance-head {
+.o-entrance-head h1 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: -0.02em;
-  line-height: 0.88;
-  font-size: clamp(2.6rem, 5.4vw, 5.6rem);
+  line-height: 0.84;
+  letter-spacing: 0.005em;
+  font-size: clamp(3rem, 7.2vw, 8rem);
   color: #fff;
-  opacity: 0;
 }
-.o-entrance-head span { display: block; }
-.o-entrance-head span:last-child { color: rgba(255, 255, 255, 0.62); }
+.o-entrance-head .o-mask > span { color: #fff; }
+.o-entrance-head .o-mask-2 > span { color: rgba(255, 255, 255, 0.66); }
 
 .o-doors {
   grid-area: 2 / 1;
@@ -629,7 +597,7 @@ body {
   flex-wrap: wrap;
   justify-content: center;
   gap: 14px;
-  margin-top: clamp(28px, 4vw, 52px);
+  margin-top: clamp(30px, 4.5vw, 56px);
   will-change: transform;
 }
 .o-btn-line,
@@ -641,19 +609,13 @@ body {
   padding: 0 26px;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  transition: background var(--dur-ui) ease, color var(--dur-ui) ease;
+  transition: background 200ms var(--ease-out), color 200ms var(--ease-out);
 }
-.o-btn-line {
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  color: #fff;
-}
+.o-btn-line { border: 1px solid rgba(255, 255, 255, 0.75); color: #fff; }
 .o-btn-line:hover { background: rgba(255, 255, 255, 0.12); }
-.o-btn-solid {
-  background: #fff;
-  color: var(--orravan-blue);
-}
+.o-btn-solid { background: #fff; color: var(--orravan-blue); }
 .o-btn-solid:hover { background: rgba(255, 255, 255, 0.88); }
 
 .o-cue {
@@ -662,16 +624,14 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  margin-top: clamp(26px, 4vw, 46px);
+  margin-top: clamp(26px, 4vw, 44px);
+  font-family: var(--font-technical);
   font-size: 10px;
-  letter-spacing: 0.2em;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.72);
-}
-.o-cue svg { animation: o-nudge 2.2s ease-in-out infinite; }
-@keyframes o-nudge {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(4px); }
+  color: rgba(255, 255, 255, 0.7);
+  will-change: opacity;
 }
 
 /* --- the navigation waits for the entrance ---------------------------- */

@@ -23,13 +23,13 @@ export function Services() {
       />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 lg:pr-10">
-        {SERVICES.items.map((item, i) => (
-          <Reveal key={item.name} delay={i * 110}>
+        {SERVICES.items.map((item) => (
+          <Reveal key={item.name}>
             <article className="flex h-full flex-col">
               <Plate
                 slot={item.slot}
                 parallax={8}
-                className="h-[max(160px,11vw)] overflow-hidden"
+                className="aspect-[4/5] overflow-hidden"
                 imgClassName="h-full w-full object-cover"
               />
               <div className="flex flex-1 flex-col border border-t-0 border-rule bg-bone p-4">
@@ -67,12 +67,12 @@ export function Difference() {
       />
 
       <div className="grid gap-3 sm:grid-cols-2">
-        {["difference-software", "difference-experience"].map((slot, i) => (
-          <Reveal key={slot} delay={i * 140}>
+        {["difference-software", "difference-experience"].map((slot) => (
+          <Reveal key={slot}>
             <Plate
               slot={slot}
               parallax={12}
-              className="h-[max(260px,20vw)] overflow-hidden"
+              className="aspect-[3/2] overflow-hidden"
               imgClassName="h-full w-full object-cover object-top"
             />
           </Reveal>
@@ -109,7 +109,7 @@ export function Team() {
         <Plate
           slot="team"
           parallax={10}
-          className="h-[max(300px,26vw)] overflow-hidden"
+          className="aspect-[16/9] overflow-hidden"
           imgClassName="h-full w-full object-cover object-[center_12%]"
         />
       </Reveal>
@@ -152,7 +152,7 @@ export function Industries() {
 
         {/* Every panel stays mounted so switching is a cross-fade, not a
             reflow — the section never jumps as tabs change. */}
-        <div className="relative mt-4 h-[max(240px,18vw)] overflow-hidden">
+        <div className="relative mt-4 aspect-[3/2] overflow-hidden">
           {INDUSTRIES.tabs.map((tab, i) => (
             <div
               key={tab.name}
@@ -193,7 +193,7 @@ export function Record() {
           <ol className="grid gap-y-6 p-5 sm:grid-cols-2 lg:grid-cols-5 lg:gap-x-0 lg:divide-x lg:divide-rule [&>li]:lg:px-4 [&>li:first-child]:lg:pl-0">
             {RECORD.steps.map((step, i) => (
               <li key={step.stage}>
-                <Reveal delay={i * 130}>
+                <Reveal>
                   <span className="flex items-center gap-2">
                     <Mark done={i > 1} />
                     <span className="o-label text-[9.5px] text-ink">{step.stage}</span>
@@ -231,7 +231,7 @@ export function Close() {
     <section id="close" className="relative overflow-x-clip bg-[var(--orravan-blue)] text-white">
       <div className="grid gap-8 px-5 py-16 lg:grid-cols-[minmax(240px,320px)_1fr] lg:gap-10 lg:px-10">
         <Reveal>
-          <h2 className="o-display text-[clamp(30px,3.1vw,48px)] leading-[0.92] tracking-[-0.02em]">
+          <h2 className="o-display text-[clamp(3rem,5.5vw,6rem)] leading-[0.88] tracking-[0.004em]">
             {CLOSE.head.map((line) => (
               <span key={line} className="block">
                 {line}

@@ -5,38 +5,45 @@ import { ENTRANCE, NAV } from "@/lib/site";
 import { IMAGES, asset } from "@/lib/images";
 
 /**
- * The entrance.
+ * The blue entry and the hero it hands over to.
  *
- * A full blue plate with the mark centred, the building just readable
- * behind it. One short scroll — about 70vh, a single flick — carries
- * the mark up and away, separates the building and the facility leader
- * into depth planes, lands the headline, and hands the page over to the
- * navigation.
+ * Entry: a full Orravan-blue viewport, the official mark centred, and
+ * exactly two actions. Between 0 and 25vh of scroll the entry layer
+ * fades and rises 24px and the blueprint field appears underneath.
+ * The hero copy then reveals line by line behind a clip mask, and the
+ * navigation takes the page.
+ *
+ * The hero is three independent layers moving at different rates —
+ * blueprint slowest, facility leader nearly with the page, building
+ * cut-away fastest — with the whole budget kept under 48px of travel,
+ * plus a few pixels of pointer depth. Restraint is the point: this is
+ * depth, not a ride.
+ *
+ * The two actions never fade out and never leave the pointer's reach;
+ * they are the same two doors in the entry and in the hero, so they
+ * rise with the entry layer but hold full opacity throughout.
  *
  * Everything is written straight to the DOM on animation frames, so the
- * scrub costs no React renders. The two doors stay mounted and hittable
- * the whole way through: they only drift, they never fade or lift out
- * of the pointer's way.
- *
- * Reduced motion skips the sequence entirely — the plate is one screen
- * tall and shows the finished hero on arrival.
+ * scrub costs no React renders. Reduced motion gets the finished hero
+ * immediately, with no scrubbing and no parallax.
  */
 
-/** Smooth the raw scroll fraction so the sequence eases, not ramps. */
 const ease = (t: number) => 1 - Math.pow(1 - t, 3);
-/** Map p onto [from, to] and clamp: each act owns a slice of the scrub. */
-const at = (p: number, from: number, to: number) =>
-  Math.min(1, Math.max(0, (p - from) / (to - from)));
+const clamp = (t: number) => Math.min(1, Math.max(0, t));
+
+/** Travel budget for the whole hero, in pixels. Stays under 48. */
+const TRAVEL = 44;
 
 export function Entrance() {
   const section = useRef<HTMLElement>(null);
-  const mark = useRef<HTMLDivElement>(null);
-  const cue = useRef<HTMLDivElement>(null);
-  const building = useRef<HTMLDivElement>(null);
-  const leader = useRef<HTMLDivElement>(null);
-  const headline = useRef<HTMLDivElement>(null);
-  const chips = useRef<HTMLUListElement>(null);
+  const entry = useRef<HTMLDivElement>(null);
   const doors = useRef<HTMLDivElement>(null);
+  const blueprint = useRef<HTMLDivElement>(null);
+  const leader = useRef<HTMLDivElement>(null);
+  const building = useRef<HTMLDivElement>(null);
+  const copy = useRef<HTMLDivElement>(null);
+  const chips = useRef<HTMLUListElement>(null);
+  const cue = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const node = section.current;
@@ -46,17 +53,16 @@ export function Entrance() {
 
     /** The finished hero: what reduced motion sees on arrival. */
     const settle = () => {
-      mark.current?.style.setProperty("opacity", "0");
-      mark.current?.style.setProperty("transform", "translate3d(0,-30px,0)");
+      entry.current?.style.setProperty("opacity", "0");
+      entry.current?.style.setProperty("transform", "translate3d(0,-24px,0)");
+      doors.current?.style.setProperty("transform", "translate3d(0,-24px,0)");
       cue.current?.style.setProperty("opacity", "0");
-      building.current?.style.setProperty("opacity", "0.22");
-      building.current?.style.setProperty("transform", "translate3d(0,0,0) scale(1)");
-      leader.current?.style.setProperty("opacity", "0.55");
-      leader.current?.style.setProperty("transform", "translate3d(0,0,0)");
-      headline.current?.style.setProperty("opacity", "1");
-      headline.current?.style.setProperty("transform", "translate3d(0,0,0)");
+      for (const layer of [blueprint, leader, building]) {
+        layer.current?.style.setProperty("opacity", "1");
+        layer.current?.style.setProperty("transform", "none");
+      }
+      if (copy.current) copy.current.dataset.in = "true";
       chips.current?.style.setProperty("opacity", "1");
-      doors.current?.style.setProperty("transform", "translate3d(0,0,0)");
       document.documentElement.dataset.entered = "true";
     };
 
@@ -67,53 +73,54 @@ export function Entrance() {
 
     let frame = 0;
     let queued = false;
+    let px = 0;
+    let py = 0;
 
     const read = () => {
       queued = false;
-      const rect = node.getBoundingClientRect();
-      const travel = node.offsetHeight - window.innerHeight;
-      const p = travel > 0 ? Math.min(1, Math.max(0, -rect.top / travel)) : 0;
+      const vh = window.innerHeight;
+      const y = Math.max(0, -node.getBoundingClientRect().top);
 
-      // 1-5 — the mark rises a little and goes.
-      const gone = ease(at(p, 0, 0.45));
-      mark.current?.style.setProperty("opacity", `${1 - gone}`);
-      mark.current?.style.setProperty(
+      // 2 — the handoff: 0 to 25vh, fade and rise 24px.
+      const handoff = ease(clamp(y / (vh * 0.25)));
+      entry.current?.style.setProperty("opacity", `${1 - handoff}`);
+      entry.current?.style.setProperty(
         "transform",
-        `translate3d(0, ${(-42 * gone).toFixed(1)}px, 0) scale(${(1 - 0.06 * gone).toFixed(3)})`,
+        `translate3d(0, ${(-24 * handoff).toFixed(1)}px, 0)`,
       );
-      cue.current?.style.setProperty("opacity", `${1 - ease(at(p, 0, 0.18))}`);
-
-      // 6 — the building and the leader separate into depth planes.
-      const back = ease(at(p, 0, 0.85));
-      building.current?.style.setProperty("opacity", `${(0.1 + 0.12 * back).toFixed(3)}`);
-      building.current?.style.setProperty(
-        "transform",
-        `translate3d(0, ${(46 * (1 - back)).toFixed(1)}px, 0) scale(${(1.07 - 0.07 * back).toFixed(3)})`,
-      );
-      const front = ease(at(p, 0.22, 0.85));
-      leader.current?.style.setProperty("opacity", `${(0.55 * front).toFixed(3)}`);
-      leader.current?.style.setProperty(
-        "transform",
-        `translate3d(${(70 * (1 - front)).toFixed(1)}px, ${(-18 * (1 - front)).toFixed(1)}px, 0)`,
-      );
-
-      // 7 — the headline lands.
-      const said = ease(at(p, 0.34, 0.72));
-      headline.current?.style.setProperty("opacity", `${said}`);
-      headline.current?.style.setProperty(
-        "transform",
-        `translate3d(0, ${(26 * (1 - said)).toFixed(1)}px, 0)`,
-      );
-      chips.current?.style.setProperty("opacity", `${ease(at(p, 0.4, 0.95))}`);
-
-      // The doors drift with the headline — never out of reach.
+      // The doors rise with the entry but keep their opacity and their
+      // hit area — they are the hero's actions too.
       doors.current?.style.setProperty(
         "transform",
-        `translate3d(0, ${(18 * ease(at(p, 0, 0.6))).toFixed(1)}px, 0)`,
+        `translate3d(0, ${(-24 * handoff).toFixed(1)}px, 0)`,
       );
 
-      // 8 — the navigation takes over.
-      document.documentElement.dataset.entered = p > 0.55 ? "true" : "false";
+      cue.current?.style.setProperty("opacity", `${1 - ease(clamp(y / (vh * 0.12)))}`);
+
+      // 3 — the hero's three layers, each at its own rate.
+      const q = clamp(y / (vh * 0.6));
+      const depth = ease(clamp(y / (vh * 0.3)));
+      blueprint.current?.style.setProperty("opacity", `${depth}`);
+      blueprint.current?.style.setProperty(
+        "transform",
+        `translate3d(${(px * 0.4).toFixed(1)}px, ${(q * -TRAVEL * 0.18 + py * 0.4).toFixed(1)}px, 0)`,
+      );
+      leader.current?.style.setProperty("opacity", `${depth}`);
+      leader.current?.style.setProperty(
+        "transform",
+        `translate3d(${(px * 1).toFixed(1)}px, ${(q * TRAVEL * 0.05 + py).toFixed(1)}px, 0)`,
+      );
+      building.current?.style.setProperty("opacity", `${depth}`);
+      building.current?.style.setProperty(
+        "transform",
+        `translate3d(${(px * 1.6).toFixed(1)}px, ${(q * TRAVEL * 0.42 + py * 1.6).toFixed(1)}px, 0)`,
+      );
+
+      // 4 — the copy reveals by line once the entry has cleared.
+      if (copy.current) copy.current.dataset.in = handoff > 0.72 ? "true" : "false";
+      chips.current?.style.setProperty("opacity", `${ease(clamp((y - vh * 0.2) / (vh * 0.3)))}`);
+
+      document.documentElement.dataset.entered = handoff > 0.72 ? "true" : "false";
     };
 
     const onScroll = () => {
@@ -122,13 +129,23 @@ export function Entrance() {
       frame = requestAnimationFrame(read);
     };
 
+    /* A few pixels of pointer depth, fine pointers only. */
+    const onPointer = (event: PointerEvent) => {
+      px = (event.clientX / window.innerWidth - 0.5) * -8;
+      py = (event.clientY / window.innerHeight - 0.5) * -5;
+      onScroll();
+    };
+    const fine = window.matchMedia("(pointer: fine)").matches;
+
     read();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    if (fine) node.addEventListener("pointermove", onPointer);
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      node.removeEventListener("pointermove", onPointer);
       delete document.documentElement.dataset.entered;
     };
   }, []);
@@ -136,22 +153,21 @@ export function Entrance() {
   return (
     <section ref={section} id="top" className="o-entrance">
       <div className="o-entrance-stage">
-        {/* The building, deep behind everything. */}
-        <div ref={building} className="o-plane o-plane-building">
+        {/* The hero, three independent layers. */}
+        <div ref={blueprint} className="o-layer o-layer-blueprint">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={asset(IMAGES["entrance-building"].src)} alt="" aria-hidden />
+          <img src={asset(IMAGES["hero-blueprint"].src)} alt="" aria-hidden />
+        </div>
+        <div ref={building} className="o-layer o-layer-building">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={asset(IMAGES["hero-building"].src)} alt={IMAGES["hero-building"].alt} />
+        </div>
+        <div ref={leader} className="o-layer o-layer-leader">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={asset(IMAGES["hero-leader"].src)} alt={IMAGES["hero-leader"].alt} />
         </div>
 
-        {/* The facility leader, the nearer plane. */}
-        <div ref={leader} className="o-plane o-plane-leader">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={asset(IMAGES["entrance-leader"].src)}
-            alt={IMAGES["entrance-leader"].alt}
-          />
-        </div>
-
-        {/* What the building is saying, quietly, throughout. */}
+        {/* What the building is saying, in the technical register. */}
         <ul ref={chips} className="o-chips" aria-label="Live conditions">
           {ENTRANCE.chips.map((chip) => (
             <li key={chip.label}>
@@ -165,21 +181,29 @@ export function Entrance() {
         </ul>
 
         <div className="o-entrance-centre">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <div ref={mark} className="o-entrance-mark">
-            <img src={asset(IMAGES.logo.src)} alt="Orravan" />
+          {/* The entry layer: the official mark, nothing else. */}
+          <div ref={entry} className="o-entrance-mark">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={asset(IMAGES["logo-reverse"].src)} alt={IMAGES["logo-reverse"].alt} />
           </div>
 
-          <h1 ref={headline} className="o-entrance-head">
-            <span>{ENTRANCE.headA}</span>
-            <span>{ENTRANCE.headB}</span>
-          </h1>
+          {/* The hero copy, revealed line by line behind a clip mask. */}
+          <div ref={copy} className="o-entrance-head" data-in="false">
+            <h1>
+              <span className="o-mask">
+                <span>{ENTRANCE.headA}</span>
+              </span>
+              <span className="o-mask o-mask-2">
+                <span>{ENTRANCE.headB}</span>
+              </span>
+            </h1>
+          </div>
 
           <div ref={doors} className="o-doors">
-            <a href="#record" className="o-btn o-btn-line">
+            <a href="#record" className="o-btn-line">
               {NAV.portal}
             </a>
-            <a href="#close" className="o-btn o-btn-solid">
+            <a href="#close" className="o-btn-solid">
               {NAV.request}
             </a>
           </div>

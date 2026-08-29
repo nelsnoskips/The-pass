@@ -10,10 +10,10 @@ import { IMAGES, asset } from "@/lib/images";
  */
 export function TopBar() {
   return (
-    <header className="o-bar fixed inset-x-0 top-0 z-50 border-b border-rule bg-[rgba(247,245,239,0.93)] backdrop-blur-sm">
+    <header className="o-bar fixed inset-x-0 top-0 z-50 border-b border-rule bg-[color-mix(in_srgb,var(--paper)_96%,transparent)] ">
       <div className="mx-auto flex h-[64px] max-w-[1600px] items-center gap-8 px-5 lg:px-10">
         <a href="#top" aria-label={`${ORRAVAN.name} home`} className="shrink-0">
-          <Logo className="h-7" />
+          <Logo className="h-8" />
         </a>
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Main">
@@ -52,15 +52,11 @@ export function TopBar() {
 
 /** The official mark, with the script wordmark standing in until the
     artwork resolves — the bar is never waiting on a file. */
-export function Logo({ className, light = false }: { className?: string; light?: boolean }) {
+export function Logo({ className, reverse = false }: { className?: string; reverse?: boolean }) {
+  const mark = IMAGES[reverse ? "logo-reverse" : "logo-light"];
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={asset(IMAGES.logo.src)}
-      alt={ORRAVAN.name}
-      className={className}
-      style={light ? { filter: "brightness(0) invert(1)" } : undefined}
-    />
+    <img src={asset(mark.src)} alt={mark.alt} className={className} />
   );
 }
 
@@ -69,7 +65,7 @@ export function Footer() {
     <footer className="bg-[#111214] text-bone">
       <div className="mx-auto grid max-w-[1600px] gap-10 px-5 py-14 lg:grid-cols-[minmax(240px,320px)_1fr] lg:px-10">
         <div>
-          <Logo light className="h-8" />
+          <Logo reverse className="h-8" />
           <p className="o-label mt-5 text-[9.5px] leading-relaxed text-bone/45">
             Automation · HVAC · Monitoring · Inventory
           </p>

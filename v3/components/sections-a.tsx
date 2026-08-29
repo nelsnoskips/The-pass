@@ -43,7 +43,7 @@ export function Head({
 }) {
   return (
     <Reveal className="lg:pt-2">
-      <h2 className="o-display text-[clamp(30px,3.1vw,48px)] leading-[0.92] tracking-[-0.02em]">
+      <h2 className="o-display text-[clamp(3rem,5.5vw,6rem)] leading-[0.88] tracking-[0.004em]">
         {lines.map((line) => (
           <span key={line} className="block">
             {line}
@@ -73,9 +73,9 @@ export function OneView() {
 
       <div className="relative grid items-center gap-6 lg:grid-cols-[minmax(280px,400px)_1fr]">
         <ul className="relative z-10 grid gap-3">
-          {VIEW.layers.map((layer, i) => (
+          {VIEW.layers.map((layer) => (
             <li key={layer.label}>
-              <Reveal delay={i * 120}>
+              <Reveal>
                 <span className="flex items-center justify-between gap-5 border border-rule bg-bone px-5 py-4">
                   <span>
                     <span className="o-label block text-[10px] text-ink">{layer.label}</span>
@@ -95,7 +95,7 @@ export function OneView() {
           <Plate
             slot="view-building"
             parallax={14}
-            className="h-[max(300px,24vw)] overflow-hidden shadow-[0_30px_70px_rgba(23,24,26,0.16)]"
+            className="aspect-[16/9] overflow-hidden"
             imgClassName="h-full w-full object-cover object-top"
           />
         </Reveal>
@@ -224,9 +224,9 @@ export function ToDecision() {
       />
 
       <div className="grid gap-3 sm:grid-cols-3 lg:pr-10">
-        {DECISION.steps.map((step, i) => (
-          <Reveal key={step.n} delay={i * 160}>
-            <article className="relative h-[max(280px,20vw)] overflow-hidden">
+        {DECISION.steps.map((step) => (
+          <Reveal key={step.n}>
+            <article className="relative aspect-[4/5] overflow-hidden">
               <Plate
                 slot={step.slot}
                 parallax={10}
@@ -254,7 +254,7 @@ export function Resolution() {
       <Head lines={RESOLUTION.head} copy={RESOLUTION.copy} />
 
       <Reveal className="relative">
-        <div className="relative h-[max(320px,25vw)] overflow-hidden">
+        <div className="relative aspect-[16/9] overflow-hidden">
           <Plate
             slot="resolution-people"
             parallax={12}

@@ -18,7 +18,7 @@ export const ORRAVAN = {
 } as const;
 
 export const NAV = {
-  menus: ["Solutions", "Industries", "Company"],
+  menus: ["Intelligence", "Services", "Industries", "Company"],
   portal: "Service Portal",
   request: "Request Service",
 } as const;
