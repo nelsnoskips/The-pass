@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CLOSE, DIFFERENCE, INDUSTRIES, RECORD, SERVICES, TEAM } from "@/lib/site";
+import { DIFFERENCE, INDUSTRIES, RECORD, SERVICES, TEAM } from "@/lib/site";
 import { Band, Head } from "./sections-a";
 import { Plate, Reveal } from "./ui";
 
@@ -224,22 +224,3 @@ function Mark({ done }: { done: boolean }) {
   );
 }
 
-/* ------------------------------------------------------- the close --- */
-
-export function Close() {
-  return (
-    <section id="close" className="relative overflow-x-clip bg-paper">
-      <div className="px-5 pb-6 pt-16 lg:px-10 lg:pb-10 lg:pt-24">
-        <Reveal>
-          <h2 className="o-display text-[clamp(2.4rem,4.6vw,4.6rem)] leading-[0.88] tracking-[0.004em] text-ink">
-            {CLOSE.head.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
-            ))}
-          </h2>
-        </Reveal>
-      </div>
-    </section>
-  );
-}

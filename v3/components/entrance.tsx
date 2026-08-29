@@ -44,6 +44,7 @@ export function Entrance() {
   const copy = useRef<HTMLDivElement>(null);
   const chips = useRef<HTMLUListElement>(null);
   const cue = useRef<HTMLDivElement>(null);
+  const spark = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const node = section.current;
@@ -74,6 +75,51 @@ export function Entrance() {
       settle();
       return;
     }
+
+    /* The field the hero disperses into: a few dozen motes of light that
+       lift and fade as the composition comes apart. Seeded once, drawn
+       only while the departure is actually running. */
+    const MOTES = 150;
+    const motes = Array.from({ length: MOTES }, () => ({
+      x: Math.random(),
+      y: 0.12 + Math.random() * 0.95,
+      r: 0.8 + Math.random() * 2.6,
+      rise: 0.25 + Math.random() * 0.85,
+      drift: (Math.random() - 0.5) * 0.12,
+      lag: Math.random() * 0.3,
+    }));
+
+    const paint = (exit: number) => {
+      const cv = spark.current;
+      if (!cv) return;
+      const ctx = cv.getContext("2d");
+      if (!ctx) return;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const w = cv.clientWidth;
+      const h = cv.clientHeight;
+      if (cv.width !== Math.round(w * dpr)) {
+        cv.width = Math.round(w * dpr);
+        cv.height = Math.round(h * dpr);
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      if (exit <= 0.001) return;
+      for (const m of motes) {
+        // Each mote waits its turn, then rises and fades out.
+        const t = clamp((exit - m.lag) / (1 - m.lag));
+        if (t <= 0) continue;
+        const alpha = Math.sin(t * Math.PI) * 0.95;
+        if (alpha <= 0.01) continue;
+        const x = (m.x + m.drift * t) * w;
+        const y = (m.y - m.rise * t * 0.6) * h;
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = t > 0.5 ? "#dbe7ff" : "#8fb4ff";
+        ctx.beginPath();
+        ctx.arc(x, y, m.r * (1 + t * 0.7), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    };
 
     let frame = 0;
     let queued = false;
@@ -138,6 +184,10 @@ export function Entrance() {
       chips.current?.style.setProperty("opacity", `${ease(clamp((y - vh * 0.2) / (vh * 0.3))) * held}`);
       chips.current?.style.setProperty("transform", `translateY(-50%) translateX(${(exit * 40).toFixed(1)}px)`);
 
+      // The motes carry the departure.
+      spark.current?.style.setProperty("opacity", exit > 0.001 ? "1" : "0");
+      paint(exit);
+
       document.documentElement.dataset.entered = handoff > 0.72 ? "true" : "false";
     };
 
@@ -184,6 +234,8 @@ export function Entrance() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={asset(IMAGES["hero-leader"].src)} alt={IMAGES["hero-leader"].alt} />
         </div>
+
+        <canvas ref={spark} className="o-spark" aria-hidden />
 
         {/* What the building is saying, in the technical register. */}
         <ul ref={chips} className="o-chips" aria-label="Live conditions">
