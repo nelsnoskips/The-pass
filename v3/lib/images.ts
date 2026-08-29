@@ -1,128 +1,156 @@
 /**
  * Every photograph on the page, addressed by slot.
  *
- * The asset library is uploaded into public/images/ — drop the files in
- * and map each slot's src here. Until a file exists at its path, the
- * slot renders a composed placeholder, so the page is reviewable with
- * the folder empty and uploading the library is the whole deployment
- * step.
+ * public/images is the shared client library (a symlink to the one copy
+ * every Orravan version reads). Until a file exists at a slot's path,
+ * the slot renders a composed placeholder, so the page is reviewable
+ * before new artwork lands and dropping the file in is the whole
+ * deployment step.
+ *
+ * `brief` says what the shot needs to be — the slots still carrying a
+ * stand-in from the v2 library are marked "STAND-IN".
  */
 
 /** Every asset URL goes through here so a based build stays whole. */
 export const asset = (path: string) =>
   `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${path}`;
 
-export type Slot = {
-  src: string;
-  alt: string;
-  /** What the shot needs to be, for whoever is picking from the library. */
-  brief: string;
-};
+export type Slot = { src: string; alt: string; brief: string };
 
 export const IMAGES: Record<string, Slot> = {
   logo: {
     src: "/images/15-official-orravan-logo.png",
     alt: "Orravan",
-    brief: "The script wordmark, transparent background. SVG or wide PNG.",
+    brief: "The official mark: checked O plus the wordmark, transparent PNG.",
   },
-  "hero-technician": {
-    src: "/images/01-hero-safe-technician.png",
-    alt: "An Orravan technician at an open controls panel, tablet in hand",
-    brief: "Technician in black Orravan shirt at an open electrical/controls panel, tablet in hand, portrait-ish crop, light industrial interior.",
-  },
-  "building-section": {
+
+  /* --- the entrance ------------------------------------------------- */
+  "entrance-building": {
     src: "/images/02-building-sectional-cutaway.png",
-    alt: "Cross-section of an occupied building, floor by floor",
-    brief: "Building cut-away / floor grid: occupied floors above, plant below. Dark, wide.",
+    alt: "",
+    brief: "The building, faint behind the mark — its layers just readable through the blue.",
   },
-  "equipment-wide": {
-    src: "/images/equipment-wide.jpg",
-    alt: "The plant, wide: air falling from the duct, chillers, and the control racks",
-    brief: "The mock's full section-02 panorama, regenerated at resolution: duct airflow left, plant center, racks right.",
-  },
-  "equipment-air": {
-    src: "/images/03-equipment-room.png",
-    alt: "An air handler, airflow made visible",
-    brief: "The air layer of section 02.",
-  },
-  "equipment-plant": {
-    src: "/images/03-equipment-room.png",
-    alt: "Mechanical plant: pipes, pumps and air handlers",
-    brief: "Dark mechanical room, chillers and piping, moody single-source light. Very wide.",
-  },
-  "equipment-racks": {
-    src: "/images/03-equipment-room.png",
-    alt: "A technician at the controls racks",
-    brief: "Tech at glowing control racks, seen from behind/side. Tall crop.",
-  },
-  "briefing-band": {
-    src: "/images/section-03-intelligence-briefing-background.jpg",
-    alt: "The facility leader and specialist reading the service briefing",
-    brief: "Approved section-03 background: dark negative space left and center, the two readers anchored far right.",
-  },
-  "verified-band": {
-    src: "/images/section-05-verified-lobby-continuous.jpg",
-    alt: "The verified lobby: the client seated, the specialist confirming on a tablet",
-    brief: "Approved section-05 continuous lobby: seated client left, open lobby center, specialist with tablet far right.",
-  },
-  "briefing-viewers": {
-    src: "/images/04-intelligence-briefing-people.png",
-    alt: "A facility leader and specialist reading the service briefing",
-    brief: "Two people in front of a large dark dashboard screen, warm office light.",
-  },
-  "response-remote": {
-    src: "/images/05-response-remote-specialist.png",
-    alt: "Remote specialist confirming the diagnosis",
-    brief: "Specialist with headset at multi-screen desk, dark ops room.",
-  },
-  "response-field": {
-    src: "/images/06-response-field-technician.png",
-    alt: "Field technician correcting the equipment",
-    brief: "Tech in cap working in an equipment bay, hands on the system.",
-  },
-  "response-leader": {
+  "entrance-leader": {
     src: "/images/07-response-facility-leader.png",
-    alt: "Facility leader receiving confirmation",
-    brief: "Facility leader with tablet in a bright lobby/office, relieved calm.",
+    alt: "A facility leader reading the building's status",
+    brief: "The facility leader, cut out or on a clean ground: the nearer depth plane in the entrance.",
   },
-  "verified-office": {
-    src: "/images/08-verified-lobby.png",
-    alt: "A comfortable, working office",
-    brief: "Bright occupied office, people working comfortably, daylight. Very wide.",
+
+  /* --- one view, every system --------------------------------------- */
+  "view-building": {
+    src: "/images/02-building-sectional-cutaway.png",
+    alt: "A building in section: occupied floors, controls and plant",
+    brief: "Sectional cutaway, floors legible, wide.",
   },
-  "verified-leader": {
-    src: "/images/verified-leader.jpg",
-    alt: "The facility leader, system verified",
-    brief: "Person with tablet by a window, Orravan shirt, green-checked UI visible.",
+
+  /* --- less dashboard, more direction -------------------------------- */
+  "signal-people": {
+    src: "/images/04-intelligence-briefing-people.png",
+    alt: "A facility leader and an Orravan specialist reading a signal together",
+    brief: "STAND-IN. Wanted: two people at a tablet beside the app, warm daylight, Orravan polo on the specialist.",
   },
-  "services-control": {
+
+  /* --- from signal to decision --------------------------------------- */
+  "decision-remote": {
+    src: "/images/05-response-remote-specialist.png",
+    alt: "A remote specialist reviewing the signal",
+    brief: "Headset specialist at a multi-screen desk.",
+  },
+  "decision-field": {
+    src: "/images/06-response-field-technician.png",
+    alt: "A field technician on site",
+    brief: "Technician working the equipment, hands on the system.",
+  },
+  "decision-client": {
+    src: "/images/07-response-facility-leader.png",
+    alt: "The client receiving confirmation",
+    brief: "Client with phone or tablet, confirmation in hand.",
+  },
+
+  /* --- resolution you can see ---------------------------------------- */
+  "resolution-people": {
+    src: "/images/section-05-verified-lobby-continuous.jpg",
+    alt: "An Orravan specialist and the facility leader, the work verified",
+    brief: "STAND-IN. Wanted: the two of them seated together in the lobby, mid-conversation, the verified card sitting to their right.",
+  },
+
+  /* --- intelligence, applied ----------------------------------------- */
+  "service-automation": {
+    src: "/images/11-control-components.png",
+    alt: "Controls hardware",
+    brief: "STAND-IN. Wanted: a wall controller screen, straight on.",
+  },
+  "service-hvac": {
+    src: "/images/03-equipment-room.png",
+    alt: "Mechanical plant",
+    brief: "Air handlers and piping, clean light.",
+  },
+  "service-monitoring": {
     src: "/images/09-remote-monitoring-room.png",
     alt: "The Orravan operations room",
-    brief: "Ops room with several specialists at screens, dark, blue glow.",
+    brief: "Specialist at the monitoring wall.",
   },
-  "flow-warehouse": {
+  "service-inventory": {
     src: "/images/10-inventory-technician.png",
-    alt: "Emergency inventory being pulled",
-    brief: "Warehouse tech pulling a part from shelving.",
+    alt: "Parts pulled from inventory",
+    brief: "Technician at the shelving, part in hand.",
   },
-  "flow-parts": {
-    src: "/images/11-control-components.png",
-    alt: "Fabricated panels and parts",
-    brief: "Panels/parts as product shots on dark ground.",
+
+  /* --- software sees, experience decides ------------------------------ */
+  "difference-software": {
+    src: "/images/09-remote-monitoring-room.png",
+    alt: "The monitoring wall",
+    brief: "Ops room, screens carrying the room's light.",
   },
-  "flow-scan": {
+  "difference-experience": {
     src: "/images/12-on-site-technician.png",
-    alt: "A part scanned into the job",
-    brief: "Hands scanning a labeled part with a phone.",
+    alt: "An Orravan technician on site",
+    brief: "Technician in hard hat and Orravan polo, portrait crop.",
   },
-  "flow-van": {
-    src: "/images/13-service-van.png",
-    alt: "An Orravan van on its way",
-    brief: "White Orravan van, side view, on the move.",
-  },
-  "team-table": {
+
+  /* --- build what buildings become ------------------------------------ */
+  team: {
     src: "/images/14-team-planning.png",
     alt: "The Orravan team around a set of drawings",
-    brief: "6-8 people in Orravan black around a big table of drawings, wide.",
+    brief: "The team at the table, wide, everyone head to hands.",
+  },
+
+  /* --- built for every industry --------------------------------------- */
+  "industry-healthcare": {
+    src: "/images/08-verified-lobby.png",
+    alt: "A healthcare facility",
+    brief: "STAND-IN. Wanted: patient room or clinical corridor.",
+  },
+  "industry-commercial": {
+    src: "/images/section-05-verified-lobby-continuous.jpg",
+    alt: "A commercial office",
+    brief: "Occupied office floor, daylight.",
+  },
+  "industry-education": {
+    src: "/images/04-intelligence-briefing-people.png",
+    alt: "An education building",
+    brief: "STAND-IN. Wanted: classroom or campus commons.",
+  },
+  "industry-hospitality": {
+    src: "/images/07-response-facility-leader.png",
+    alt: "A hospitality space",
+    brief: "STAND-IN. Wanted: hotel lobby or restaurant floor.",
+  },
+  "industry-restaurants": {
+    src: "/images/03-equipment-room.png",
+    alt: "A restaurant's back of house",
+    brief: "STAND-IN. Wanted: kitchen line or dining room.",
+  },
+  "industry-mission": {
+    src: "/images/09-remote-monitoring-room.png",
+    alt: "A mission-critical facility",
+    brief: "Data hall or control room.",
+  },
+
+  /* --- the record ------------------------------------------------------ */
+  "record-device": {
+    src: "/images/07-response-facility-leader.png",
+    alt: "The record, open on a tablet",
+    brief: "STAND-IN. Wanted: a tablet held in hand showing the work order, cut out.",
   },
 };

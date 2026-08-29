@@ -1,37 +1,34 @@
 import { Footer, TopBar } from "@/components/chrome";
-import { ScrollRail } from "@/components/rail";
-import { ServiceClock } from "@/components/clock";
-import { Hero, S1Building, S2Equipment, S3Briefing } from "@/components/sections-a";
-import { S4Response, S5Verified, S6Services, S7Flow } from "@/components/sections-b";
-import { S8Team, S9Record, S10Close } from "@/components/sections-c";
+import { Entrance } from "@/components/entrance";
+import { LessDashboard, OneView, Resolution, ToDecision } from "@/components/sections-a";
+import { Close, Difference, Industries, Record, Services, Team } from "@/components/sections-b";
 
 /**
- * Orravan, direction 2.
+ * Orravan, direction 2 — "The building knows. Now you do."
  *
- * Same client, same service story — a signal enters the building at
- * 6:42 AM and leaves as a verified, documented record by 9:23 — told
- * in a second visual direction. The sections below start from v2's
- * composition and get reshaped to the approved layout for this
- * direction.
+ * The page opens on the blue plate and enters on one short scroll: the
+ * mark lifts away, the building and the facility leader separate into
+ * depth planes, the headline lands and the navigation takes over. From
+ * there it follows a single signal — Zone 4B running warm on 4/23 —
+ * from detection through a plain-language recommendation, the people
+ * who acted on it, verification, and the record that closes it.
  */
 export default function Page() {
   return (
     <>
       <TopBar />
-      <ScrollRail />
-      <ServiceClock />
-      <main className="relative">
-        <Hero />
-        <S1Building />
-        <S2Equipment />
-        <S3Briefing />
-        <S4Response />
-        <S5Verified />
-        <S6Services />
-        <S7Flow />
-        <S8Team />
-        <S9Record />
-        <S10Close />
+      <main>
+        <Entrance />
+        <OneView />
+        <LessDashboard />
+        <ToDecision />
+        <Resolution />
+        <Services />
+        <Difference />
+        <Team />
+        <Industries />
+        <Record />
+        <Close />
       </main>
       <Footer />
     </>

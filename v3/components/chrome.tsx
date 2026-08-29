@@ -1,57 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { FOOTER, NAV, ORRAVAN } from "@/lib/site";
-import { asset } from "@/lib/images";
-import { Plate } from "./ui";
+import { IMAGES, asset } from "@/lib/images";
 
 /**
- * The bar: mark left, the four practice menus, the two doors on the
- * right. The quick row underneath is the mock's second rail — one word
- * per practice, always in reach.
+ * The bar waits for the entrance. Until the plate hands the page over
+ * (`html[data-entered="true"]`), it is invisible and untouchable; from
+ * then on it is an ordinary sticky header.
  */
 export function TopBar() {
-  /* Past the hero the main row tightens and the service subnav folds
-     away; the header stays sticky the whole way. */
-  const [compact, setCompact] = useState(false);
-  useEffect(() => {
-    let queued = false;
-    const read = () => {
-      queued = false;
-      /* Hysteresis: shrinking the header shifts the page ~70px, so a
-         single threshold would flip back and forth under the scroll.
-         Collapse well past the hero, expand only well before it. */
-      const y = window.scrollY;
-      setCompact((prev) =>
-        prev ? y > window.innerHeight * 0.5 : y > window.innerHeight * 0.95,
-      );
-    };
-    const onScroll = () => {
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(read);
-    };
-    read();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <header className="sticky top-0 z-50 border-b border-rule bg-[rgba(247,245,239,0.92)] backdrop-blur-sm">
-      <div
-        className="mx-auto flex max-w-[1280px] items-center gap-6 px-5 transition-[height] duration-300 lg:px-8"
-        style={{ height: compact ? 58 : 72 }}
-      >
-        <a href="#top" aria-label="Orravan home" className="shrink-0">
+    <header className="o-bar fixed inset-x-0 top-0 z-50 border-b border-rule bg-[rgba(247,245,239,0.93)] backdrop-blur-sm">
+      <div className="mx-auto flex h-[64px] max-w-[1600px] items-center gap-8 px-5 lg:px-10">
+        <a href="#top" aria-label={`${ORRAVAN.name} home`} className="shrink-0">
           <Logo className="h-7" />
         </a>
 
-        <nav className="ml-4 hidden items-center gap-6 lg:flex" aria-label="Main">
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Main">
           {NAV.menus.map((menu) => (
             <button
               key={menu}
               type="button"
-              className="o-label flex items-center gap-1 text-ink-soft transition-colors hover:text-signal"
+              className="o-label flex items-center gap-1.5 text-[10px] text-ink-soft transition-colors hover:text-[var(--orravan-blue)]"
             >
               {menu}
               <svg viewBox="0 0 8 5" className="w-2.5 opacity-40" aria-hidden>
@@ -62,130 +32,98 @@ export function TopBar() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2.5">
-          <a href="#record" className="o-btn o-btn-ghost hidden sm:inline-flex">
-            Service portal
+          <a
+            href="#record"
+            className="hidden min-h-[38px] items-center border border-ink/25 px-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink transition-colors hover:bg-ink/5 sm:inline-flex"
+          >
+            {NAV.portal}
           </a>
-          <a href="#close" className="o-btn">
-            Request service
+          <a
+            href="#close"
+            className="inline-flex min-h-[38px] items-center bg-[var(--orravan-blue)] px-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-white"
+          >
+            {NAV.request}
           </a>
-        </div>
-      </div>
-
-      <div
-        className="hidden overflow-hidden border-t border-rule/60 transition-[height,opacity] duration-300 lg:block"
-        style={{ height: compact ? 0 : 28, opacity: compact ? 0 : 1 }}
-      >
-        <div className="mx-auto flex h-[28px] max-w-[1280px] items-center justify-center gap-10 px-8">
-          {NAV.quick.map((item) => (
-            <a
-              key={item}
-              href="#services"
-              className="o-label text-[10px] text-ink-mute transition-colors hover:text-signal"
-            >
-              {item}
-            </a>
-          ))}
         </div>
       </div>
     </header>
   );
 }
 
-/**
- * The mark: the uploaded artwork once it lands, the script wordmark
- * until then — so the site is never waiting on a logo file.
- */
+/** The official mark, with the script wordmark standing in until the
+    artwork resolves — the bar is never waiting on a file. */
 export function Logo({ className, light = false }: { className?: string; light?: boolean }) {
-  /* Probed rather than raced: an eager <img> can 404 before hydration
-     attaches onError, so the mark waits for the probe and never flashes
-     a broken image. */
-  const [state, setState] = useState<"probing" | "art" | "script">("probing");
-
-  useEffect(() => {
-    const probe = new Image();
-    probe.onload = () => setState("art");
-    probe.onerror = () => setState("script");
-    probe.src = asset("/images/15-official-orravan-logo.png");
-  }, []);
-
-  if (state === "art") {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={asset("/images/15-official-orravan-logo.png")}
-        alt="Orravan"
-        className={className}
-        style={light ? { filter: "invert(1) brightness(1.6)" } : undefined}
-      />
-    );
-  }
   return (
-    <span
-      className={`o-script text-[26px] leading-none ${light ? "text-bone" : "text-ink"} ${className ?? ""}`}
-    >
-      <span className="text-signal">O</span>rravan
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={asset(IMAGES.logo.src)}
+      alt={ORRAVAN.name}
+      className={className}
+      style={light ? { filter: "brightness(0) invert(1)" } : undefined}
+    />
   );
 }
 
 export function Footer() {
   return (
-    <footer className="o-panel">
-      <div className="mx-auto grid max-w-[1280px] gap-10 px-5 py-14 lg:grid-cols-[1.2fr_2fr_1.2fr] lg:px-8">
+    <footer className="bg-[#111214] text-bone">
+      <div className="mx-auto grid max-w-[1600px] gap-10 px-5 py-14 lg:grid-cols-[minmax(240px,320px)_1fr] lg:px-10">
         <div>
-          <Logo className="h-8" light />
-          <p className="o-label mt-4 text-[10px] text-bone/50">{ORRAVAN.descriptor}</p>
+          <Logo light className="h-8" />
+          <p className="o-label mt-5 text-[9.5px] leading-relaxed text-bone/45">
+            Automation · HVAC · Monitoring · Inventory
+          </p>
         </div>
 
-        <FooterColumns />
+        <div className="grid gap-8 sm:grid-cols-[repeat(2,minmax(0,1fr))_auto]">
+          {FOOTER.columns.map((column) => (
+            <div key={column.title}>
+              <p className="o-label text-[9.5px] text-bone/50">{column.title}</p>
+              <ul className="mt-3 space-y-2">
+                {column.links.map((link) => (
+                  <li key={link}>
+                    <a href="#top" className="text-[13px] text-bone/75 transition-colors hover:text-white">
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
 
-        <div className="text-sm leading-relaxed text-bone/80 lg:text-right">
-          <p className="o-label text-bone">{ORRAVAN.place}</p>
-          <p className="mt-2">{ORRAVAN.license}</p>
-          <a href={`tel:${ORRAVAN.phone.replace(/\D/g, "")}`} className="mt-1 block hover:text-signal">
-            {ORRAVAN.phone}
-          </a>
-          <a
-            href="https://www.linkedin.com"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Orravan on LinkedIn"
-            className="mt-3 inline-flex h-8 w-8 items-center justify-center rounded border border-bone/25 text-bone/80 hover:border-signal hover:text-signal"
-          >
-            in
-          </a>
+          <div className="sm:text-right">
+            <a href={`tel:${ORRAVAN.phone.replace(/\D/g, "")}`} className="block text-[13px] text-bone/75 hover:text-white">
+              {ORRAVAN.phone}
+            </a>
+            <a href={`mailto:${ORRAVAN.email}`} className="mt-2 block text-[13px] text-bone/75 hover:text-white">
+              {ORRAVAN.email}
+            </a>
+            <ul className="mt-4 flex gap-2 sm:justify-end">
+              {FOOTER.social.map((name) => (
+                <li key={name}>
+                  <a
+                    href="#top"
+                    aria-label={name}
+                    className="flex h-8 w-8 items-center justify-center border border-bone/20 text-[10px] text-bone/70 transition-colors hover:border-bone/50 hover:text-white"
+                  >
+                    {name === "LinkedIn" ? "in" : name === "YouTube" ? "▶" : "✕"}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
-      <div className="border-t border-rule-dark">
-        <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-3 px-5 py-4 lg:px-8">
-          <p className="text-xs text-bone/45">© Orravan. All rights reserved.</p>
-          <p className="flex gap-5 text-xs text-bone/45">
-            <a href="#" className="hover:text-bone">Privacy Policy</a>
-            <a href="#" className="hover:text-bone">Terms of Use</a>
-          </p>
+
+      <div className="border-t border-bone/10">
+        <div className="mx-auto flex max-w-[1600px] flex-wrap justify-between gap-3 px-5 py-4 text-[11px] text-bone/45 lg:px-10">
+          <span>© {ORRAVAN.name}. All rights reserved. {ORRAVAN.license}</span>
+          <span className="flex gap-5">
+            <a href="#top" className="hover:text-bone/80">Privacy Policy</a>
+            <a href="#top" className="hover:text-bone/80">Terms of Use</a>
+          </span>
         </div>
       </div>
     </footer>
-  );
-}
-
-function FooterColumns() {
-  return (
-    <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-      {FOOTER.columns.map((col) => (
-        <div key={col.title}>
-          <p className="o-label text-[10px] text-bone/50">{col.title}</p>
-          <ul className="mt-3 space-y-1.5">
-            {col.links.map((link) => (
-              <li key={link}>
-                <a href="#" className="text-[13px] text-bone/80 hover:text-signal">
-                  {link}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
   );
 }

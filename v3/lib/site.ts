@@ -1,127 +1,205 @@
 /**
- * Orravan — one building, one service thread.
+ * Orravan — direction 2: "The building knows. Now you do."
  *
- * Building services (automation, HVAC, monitoring, inventory) sold on a
- * single promise: every signal a building emits gets a next move, and
- * the thread from detection to verified resolution never breaks.
- *
- * Everything the page says lives here, so the sections, the service
- * record and the footer can never disagree about a time or a name. The
- * mock's worked example — AHU-3's supply-air drift, caught at 6:42 and
- * verified by 9:22 — runs the whole page.
+ * The same company told as a product story: one signal (Zone 4B running
+ * warm on 4/23) is detected, explained in plain language, assigned,
+ * corrected, verified and documented — and the page is the record of
+ * it. Every time, name and number below appears in the mock, so the
+ * sections, the work order and the footer can never disagree.
  */
 
 export const ORRAVAN = {
   name: "Orravan",
   fullName: "Orravan Mechanical",
-  tagline: "One building / One service thread",
-  place: "Long Beach, CA",
-  phone: "562.421.7378",
+  domain: "orravan.ai",
+  phone: "(832) 817-0006",
+  email: "hello@orravan.ai",
   license: "License No. 644288",
-  descriptor: "Building automation · HVAC · Monitoring · Inventory",
 } as const;
 
 export const NAV = {
-  menus: ["Intelligence", "Services", "Industries", "Company"],
-  quick: ["Automation", "HVAC", "Monitoring", "Inventory"],
+  menus: ["Solutions", "Industries", "Company"],
+  portal: "Service Portal",
+  request: "Request Service",
 } as const;
 
-export const HERO = {
-  eyebrow: "One building / One service thread",
-  headA: "Every signal",
-  headB: "has a next move.",
-  body: "Orravan connects the person servicing the system to the intelligence operating the building—and stays with it through resolution.",
-  primary: "Follow the response",
-  secondary: "Request service",
+/** The entrance: blue plate, mark, two doors, then the headline. */
+export const ENTRANCE = {
+  cue: "Scroll to enter",
+  headA: "The building knows.",
+  headB: "Now you do.",
+  /** Live conditions floating behind the mark. */
+  chips: [
+    { label: "Air quality", state: "Good" },
+    { label: "AHU-3 supply fan", state: "Normal" },
+    { label: "Chilled water plant", state: "Optimal" },
+  ],
 } as const;
 
-/** The day the page walks through. One incident, start to verified. */
-export const INCIDENT = {
-  what: "AHU-3 supply air temperature drifting above setpoint",
-  since: "Since 6:42 AM today",
-  why: ["Comfort may be degraded on Level 3", "Efficiency at risk if unaddressed"],
-  response: "Inspect and calibrate supply air sensor and re-balance airflow",
-  priority: "Medium",
-  specialist: { name: "Miguel Santos", role: "Senior Controls Specialist" },
-  status: "In progress",
+export const VIEW = {
+  head: ["One view.", "Every system."],
+  layers: [
+    { n: "01", label: "Occupied space", detail: "People and comfort" },
+    { n: "02", label: "Controls", detail: "Automation and insight" },
+    { n: "03", label: "Mechanical", detail: "Equipment and energy" },
+  ],
 } as const;
 
-export const SPACES = [
-  { label: "Occupied space", detail: "People and operations", icon: "space" },
-  { label: "Controls", detail: "The building's brain", icon: "controls" },
-  { label: "Mechanical", detail: "Systems in motion", icon: "mechanical" },
-  { label: "Monitored", detail: "Always connected", icon: "monitored" },
-] as const;
-
-export const RESPONSE = [
-  { time: "6:45 AM", who: "Remote specialist", did: "Confirms the diagnosis", slot: "response-remote" },
-  { time: "8:12 AM", who: "Field technician", did: "Corrects the equipment", slot: "response-field" },
-  { time: "9:20 AM", who: "Facility leader", did: "Receives confirmation", slot: "response-leader" },
-] as const;
-
-export const VERIFIED = {
-  time: "9:22 AM",
-  note: "All conditions normal. System balanced.",
-  chips: ["Comfort restored", "Condition verified", "Service documented"],
+/** The signal the whole page follows. */
+export const SIGNAL = {
+  head: ["Less dashboard.", "More direction."],
+  copy: "Plain language. Clear priorities. Recommended next steps.",
+  cta: "See how it works",
+  eyebrow: "Priority signal",
+  title: "Zone 4B Temperature High",
+  priority: "High",
+  meaning:
+    "Space temperature is above comfort range. Affecting occupied hours.",
+  action:
+    "Check air delivery position and reheat valve. Verify space sensor calibration.",
+  buttons: ["View details", "Create work order"],
+  nav: ["Overview", "Signals", "Systems", "Inventory", "Reports"],
 } as const;
 
-export const SERVICES = [
-  {
-    name: "Building automation systems",
-    detail: "Open, secure and integrated controls that connect people, equipment and data.",
-    cta: "Explore automation",
+export const DECISION = {
+  head: ["From signal", "to decision."],
+  copy: "People. Process. Performance.",
+  cta: "Our service approach",
+  steps: [
+    {
+      n: "01",
+      role: "Remote specialist",
+      detail: "We review your signal and guide the path.",
+      slot: "decision-remote",
+    },
+    {
+      n: "02",
+      role: "Field technician",
+      detail: "On-site inspection. Documents findings. Restores performance.",
+      slot: "decision-field",
+    },
+    {
+      n: "03",
+      role: "Client confirmation",
+      detail: "You receive the action and full documentation.",
+      slot: "decision-client",
+    },
+  ],
+} as const;
+
+export const RESOLUTION = {
+  head: ["Resolution", "you can see."],
+  copy: "Verified performance. Documented results. Confidence in every detail.",
+  card: {
+    status: "Verified",
+    title: "Zone 4B Temperature High",
+    state: "Resolved",
+    note: "Temperature returned to comfort range.",
+    stamp: "4/23/2025 8:41 AM",
+    who: "Technician: J. Martinez",
   },
-  { name: "HVAC systems", detail: "Design, service and optimization for the systems that move air and water.", cta: "Explore HVAC" },
-  { name: "Remote monitoring", detail: "Conditions watched continuously, with a specialist on the other end.", cta: "Explore monitoring" },
-] as const;
+} as const;
 
-export const FLOW = {
-  bullets: ["Emergency inventory", "Panel fabrication", "On-site support"],
-  cta: "View inventory",
-  stops: ["flow-warehouse", "flow-parts", "flow-scan", "flow-van"],
+export const SERVICES = {
+  head: ["Intelligence,", "applied."],
+  cta: "Explore services",
+  items: [
+    {
+      name: "Building automation",
+      detail: "Smarter controls. Better outcomes.",
+      slot: "service-automation",
+    },
+    {
+      name: "HVAC systems",
+      detail: "Reliable systems. Efficient operation.",
+      slot: "service-hvac",
+    },
+    {
+      name: "Remote monitoring",
+      detail: "24/7 coverage. Early issue detection.",
+      slot: "service-monitoring",
+    },
+    {
+      name: "Inventory & fabrication",
+      detail: "Right parts. Right when you need them.",
+      slot: "service-inventory",
+    },
+  ],
+} as const;
+
+export const DIFFERENCE = {
+  head: ["Software sees.", "Experience decides."],
+  copy: "Intelligence and field expertise—working together for your building.",
+  cta: "Our difference",
 } as const;
 
 export const TEAM = {
-  copy: "Senior-level expertise across software, controls and mechanical systems. Join the people building what buildings become.",
+  head: ["Build what", "buildings become."],
+  copy: "Controls. Mechanical. Software. Service. One team. One purpose.",
   primary: "Meet the team",
   secondary: "Explore careers",
 } as const;
 
+export const INDUSTRIES = {
+  head: ["Built for", "every industry."],
+  tabs: [
+    { name: "Healthcare", slot: "industry-healthcare" },
+    { name: "Commercial", slot: "industry-commercial" },
+    { name: "Education", slot: "industry-education" },
+    { name: "Hospitality", slot: "industry-hospitality" },
+    { name: "Restaurants", slot: "industry-restaurants" },
+    { name: "Mission critical", slot: "industry-mission" },
+  ],
+} as const;
+
 export const RECORD = {
-  timeline: [
-    { stage: "Detected", time: "6:42 AM" },
-    { stage: "Assigned", time: "6:45 AM" },
-    { stage: "Action taken", time: "8:12 AM" },
-    { stage: "Verified", time: "9:22 AM" },
-    { stage: "Documents", time: "Complete" },
-  ],
-  rows: [
-    { event: "Detected", details: "AHU-3 supply air temp high", by: "System", time: "6:42 AM" },
-    { event: "Assigned", details: "Miguel Santos", by: "Intelligence", time: "6:45 AM" },
-    { event: "Action taken", details: "Calibrated sensor and balanced airflow", by: "Field tech", time: "8:12 AM" },
-    { event: "Verified", details: "All conditions normal", by: "Miguel Santos", time: "9:22 AM" },
-    { event: "Documents", details: "Work order, photos, report", by: "System", time: "9:23 AM" },
-  ],
-  documents: [
-    { name: "Work Order #82317", kind: "PDF" },
-    { name: "Photos", kind: "ZIP" },
-    { name: "Service Report", kind: "PDF" },
-    { name: "Trend Log", kind: "CSV" },
+  head: ["Client record.", "Complete.", "Verified."],
+  order: "Work Order # WO-267812",
+  subject: "Zone 4B Temperature High",
+  cta: "View full history",
+  steps: [
+    {
+      stage: "Detected",
+      time: "4/23/2025 8:35 AM",
+      detail: "System detected high temperature.",
+    },
+    {
+      stage: "Assigned",
+      time: "4/23/2025 8:40 AM",
+      detail: "Assigned to J. Martinez.",
+    },
+    {
+      stage: "Action taken",
+      time: "4/23/2025 8:45 AM",
+      detail: "Reheat valve adjusted. Sensor calibrated.",
+    },
+    {
+      stage: "Verified",
+      time: "4/23/2025 8:41 AM",
+      detail: "Performance verified in the range.",
+    },
+    {
+      stage: "Documents complete",
+      time: "4/23/2025 8:46 AM",
+      detail: "All documents uploaded. Record complete.",
+    },
   ],
 } as const;
 
 export const CLOSE = {
-  copy: "Every event. Every action. Every document—one service record.",
-  primary: "Start a project",
-  secondary: "Request immediate service",
-  tertiary: "Client access",
+  head: ["What could your", "building tell you?"],
+  copy: "Start with one signal. Keep the whole record.",
+  primary: "Request service",
+  secondary: "Talk to our team",
 } as const;
 
 export const FOOTER = {
   columns: [
-    { title: "Intelligence", links: ["Automation", "HVAC", "Monitoring", "Inventory"] },
-    { title: "Services", links: ["Building automation", "HVAC systems", "Remote monitoring", "Inventory & fabrication"] },
-    { title: "Industries", links: ["Healthcare", "Offices", "Hospitality", "Education", "Restaurants"] },
-    { title: "Company", links: ["About us", "Our team", "Careers", "Contact"] },
+    {
+      title: "Solutions",
+      links: ["Automation", "HVAC", "Monitoring", "Inventory"],
+    },
+    { title: "Company", links: ["About", "Our team", "Careers", "Contact"] },
   ],
+  social: ["LinkedIn", "YouTube", "X"],
 } as const;

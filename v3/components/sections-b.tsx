@@ -1,304 +1,257 @@
 "use client";
 
-import { FLOW, RESPONSE, SERVICES, VERIFIED } from "@/lib/site";
 import { useState } from "react";
-import { LivePlate } from "./live";
-import { asset } from "@/lib/images";
-import { SectionIntro } from "./sections-a";
-import { ThreadPoint } from "./thread";
+import { CLOSE, DIFFERENCE, INDUSTRIES, RECORD, SERVICES, TEAM } from "@/lib/site";
+import { Band, Head } from "./sections-a";
 import { Plate, Reveal } from "./ui";
 
-/* -------------------------------------------- 04 · the response --- */
+/* ------------------------------------------------ intelligence, applied --- */
 
-export function S4Response() {
+export function Services() {
   return (
-    <section data-rail="04" className="relative overflow-x-clip bg-bone">
-      <div className="py-10 pl-5 lg:pl-10">
-        <div className="grid gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1fr] lg:pr-0">
-          <SectionIntro
-            n="04"
-            title={<>The thread becomes a response.</>}
-            copy="The right people. The right action. Confirmed."
-          />
+    <Band id="services">
+      <Head
+        lines={SERVICES.head}
+        aside={
+          <a
+            href="#close"
+            className="mt-7 inline-flex min-h-[44px] items-center border border-ink/30 px-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink transition-colors hover:bg-ink/5"
+          >
+            {SERVICES.cta}
+          </a>
+        }
+      />
 
-          {/* The mock's frame: the three moments cut at a gentle slant,
-              the thread travelling beneath them with a node per panel. */}
-          <div className="relative">
-            {/* The descent from 03 lands in the bone corner before the
-                under-card run begins. */}
-            <ThreadPoint x={0.004} y={1.06} />
-            <div className="grid gap-2 min-[900px]:grid-cols-3 min-[900px]:px-8">
-              {RESPONSE.map((step, i) => (
-                <Reveal key={step.time} delay={i * 300}>
-                  <article className="relative min-h-[320px] overflow-hidden min-[900px]:h-[23vw] min-[900px]:-skew-x-[5deg]">
-                    <div className="absolute inset-y-0 -inset-x-10 min-[900px]:skew-x-[5deg]">
-                      {/* Top-anchored so heads are never clipped at any
-                          viewport width. */}
-                      <Plate
-                        slot={step.slot}
-                        className="absolute inset-0"
-                        imgClassName="h-full w-full object-cover object-top"
-                      />
-                      <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-[rgba(17,18,20,0.85)] via-[rgba(17,18,20,0.45)] to-transparent" />
-                    </div>
-                    <div className="relative p-4 min-[900px]:skew-x-[5deg] min-[900px]:px-7">
-                      <span className="o-num text-[15px] text-bone">{step.time}</span>
-                      <p className="o-label pt-1 text-[10px] text-bone">{step.who}</p>
-                      <p className="pt-0.5 text-[12px] text-bone/75">{step.did}</p>
-                    </div>
-                    {/* The thread runs underneath the card. */}
-                    <ThreadPoint x={0.5} y={1.06} node />
-                  </article>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </section>
-  );
-}
-
-/* --------------------------------------------- 05 · verified green --- */
-
-export function S5Verified() {
-  return (
-    <section data-rail="05" className="relative bg-bone">
-      <div className="py-10 pl-5 lg:pl-10">
-        <div className="grid items-start gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1fr] lg:pr-0">
-          <SectionIntro
-            n="05"
-            title={
-              <>
-                Blue while we&rsquo;re working.{" "}
-                <span className="text-verified">Green when it&rsquo;s verified.</span>
-              </>
-            }
-            copy="Comfort restored. Systems balanced. Documentation complete."
-            aside={
-              <ul className="mt-8 grid grid-cols-3 gap-3">
-                {VERIFIED.chips.map((chip, i) => (
-                  <li key={chip} className="text-center">
-                    <Reveal delay={700 + i * 250}>
-                      <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full border border-ink/25 text-verified">
-                        <Check className="h-4 w-4" />
-                      </span>
-                      <span className="o-label mt-2 block text-[8.5px] leading-tight text-ink-mute">
-                        {chip}
-                      </span>
-                    </Reveal>
-                  </li>
-                ))}
-              </ul>
-            }
-          />
-
-          {/* The approved lobby, once, continuous: seated client left,
-              open lobby center, specialist far right. The verification
-              point lives in the opening — the thread turns green here. */}
-          {/* The photograph as supplied, uncropped at every width: the
-              seated client left, the specialist right, nobody cut. */}
-          <Reveal className="relative">
-            <div className="relative overflow-hidden">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 lg:pr-10">
+        {SERVICES.items.map((item, i) => (
+          <Reveal key={item.name} delay={i * 110}>
+            <article className="flex h-full flex-col">
               <Plate
-                slot="verified-band"
-                className="w-full"
-                imgClassName="h-auto w-full"
+                slot={item.slot}
+                parallax={8}
+                className="h-[max(160px,11vw)] overflow-hidden"
+                imgClassName="h-full w-full object-cover"
               />
-              <ThreadPoint x={0.52} y={0.56} node green />
-              <VerifiedCard />
-            </div>
+              <div className="flex flex-1 flex-col border border-t-0 border-rule bg-bone p-4">
+                <p className="o-label text-[10px] text-ink">{item.name}</p>
+                <p className="mt-2 text-[12px] leading-snug text-ink-mute">{item.detail}</p>
+                <span className="o-label mt-auto pt-4 text-[10px] text-[var(--orravan-blue)]">
+                  Learn more →
+                </span>
+              </div>
+            </article>
           </Reveal>
-        </div>
+        ))}
       </div>
-
-    </section>
+    </Band>
   );
 }
 
-/** The green card stamps in once the section is on screen. */
-function VerifiedCard() {
-  const [seen, setSeen] = useState(false);
+/* ------------------------------- software sees, experience decides --- */
+
+export function Difference() {
   return (
-    <div
-      ref={(node) => {
-        if (!node || seen) return;
-        const observer = new IntersectionObserver(
-          ([entry]) => entry.isIntersecting && setSeen(true),
-          { threshold: 0.6 },
-        );
-        observer.observe(node);
-      }}
-      className={`absolute right-[7%] top-[40%] w-[235px] rounded-[2px] border border-white/15 bg-[rgba(18,28,22,0.55)] p-4 backdrop-blur-[3px] ${
-        seen ? "o-stamped" : "opacity-0"
-      }`}
-      style={{
-        /* The mock's treatment: translucent, fading into the photo. */
-        maskImage:
-          "linear-gradient(to bottom, black 78%, rgba(0,0,0,0.55) 100%)",
-        WebkitMaskImage:
-          "linear-gradient(to bottom, black 78%, rgba(0,0,0,0.55) 100%)",
-      }}
-    >
-      <span className="flex items-start justify-between gap-2">
-        <span>
-          <span className="o-label block text-[11px] tracking-[0.18em] text-[#8fd6a4]">
-            Verified
-          </span>
-          <span className="o-num mt-1 block text-[12px] text-white/75">{VERIFIED.time}</span>
-        </span>
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-verified text-white shadow-[0_0_18px_rgba(77,154,95,0.5)]">
-          <Check className="h-4 w-4" />
-        </span>
-      </span>
-      <p className="mt-2 text-[12px] leading-snug text-white/90">{VERIFIED.note}</p>
-    </div>
+    <Band dark>
+      <Head
+        dark
+        lines={DIFFERENCE.head}
+        copy={DIFFERENCE.copy}
+        aside={
+          <a
+            href="#team"
+            className="mt-7 inline-flex min-h-[44px] items-center border border-bone/45 px-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-bone transition-colors hover:bg-bone/10"
+          >
+            {DIFFERENCE.cta}
+          </a>
+        }
+      />
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        {["difference-software", "difference-experience"].map((slot, i) => (
+          <Reveal key={slot} delay={i * 140}>
+            <Plate
+              slot={slot}
+              parallax={12}
+              className="h-[max(260px,20vw)] overflow-hidden"
+              imgClassName="h-full w-full object-cover object-top"
+            />
+          </Reveal>
+        ))}
+      </div>
+    </Band>
   );
 }
 
-/* ------------------------------------------------- 06 · services --- */
+/* ------------------------------------- build what buildings become --- */
 
-export function S6Services() {
+export function Team() {
+  return (
+    <Band id="team">
+      <Head
+        lines={TEAM.head}
+        copy={TEAM.copy}
+        aside={
+          <div className="mt-7 flex flex-wrap gap-3">
+            <a href="#close" className="o-btn bg-[var(--orravan-blue)]">
+              {TEAM.primary}
+            </a>
+            <a
+              href="#close"
+              className="inline-flex min-h-[44px] items-center border border-ink/30 px-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink transition-colors hover:bg-ink/5"
+            >
+              {TEAM.secondary}
+            </a>
+          </div>
+        }
+      />
+
+      <Reveal>
+        <Plate
+          slot="team"
+          parallax={10}
+          className="h-[max(300px,26vw)] overflow-hidden"
+          imgClassName="h-full w-full object-cover object-[center_12%]"
+        />
+      </Reveal>
+    </Band>
+  );
+}
+
+/* ----------------------------------------- built for every industry --- */
+
+export function Industries() {
   const [open, setOpen] = useState(0);
 
   return (
-    <section id="services" data-rail="06" className="relative bg-bone">
-      <div className="py-10 pl-5 lg:pl-10">
-        <div className="relative grid items-stretch gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1.35fr_1fr] lg:pr-0">
-          {/* A short continuation down the seam between the accordion
-              and the ops room. */}
-          <ThreadPoint x={0.69} y={0.5} node />
-          <SectionIntro
-            n="06"
-            title={<>One thread. Every Orravan service.</>}
-            copy="Whichever system needs attention, it is the same intelligence, the same people, the same record."
-          />
+    <Band id="industries">
+      <Head lines={INDUSTRIES.head} />
 
-          {/* Fixed floor so an opening item never moves the section. */}
-          <div className="min-h-[420px] divide-y divide-rule self-start border-y border-rule">
-            {SERVICES.map((service, i) => {
-              const isOpen = open === i;
-              return (
-                <div key={service.name}>
-                  <button
-                    type="button"
-                    aria-expanded={isOpen}
-                    onClick={() => setOpen(i)}
-                    className="flex w-full items-center justify-between gap-4 py-4 text-left"
-                  >
-                    <span className={`o-label text-[11px] ${isOpen ? "text-signal" : "text-ink"}`}>
-                      {service.name}
-                    </span>
-                    <span className="text-lg leading-none text-ink-mute">{isOpen ? "–" : "+"}</span>
-                  </button>
-                  <div
-                    className="grid overflow-hidden transition-[grid-template-rows,opacity] duration-300"
-                    style={{ gridTemplateRows: isOpen ? "1fr" : "0fr", opacity: isOpen ? 1 : 0 }}
-                  >
-                    <div className="min-h-0">
-                      <p className="pb-2 text-[13px] leading-relaxed text-ink-soft">
-                        {service.detail}
-                      </p>
-                      <a href="#close" className="o-link mb-4 inline-block">
-                        {service.cta} →
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+      <div>
+        <div className="flex flex-wrap gap-x-7 gap-y-2 border-b border-rule pb-3">
+          {INDUSTRIES.tabs.map((tab, i) => {
+            const active = i === open;
+            return (
+              <button
+                key={tab.name}
+                type="button"
+                onClick={() => setOpen(i)}
+                aria-pressed={active}
+                className={`o-label relative min-h-[36px] text-[10px] transition-colors ${
+                  active ? "text-[var(--orravan-blue)]" : "text-ink-mute hover:text-ink"
+                }`}
+              >
+                {tab.name}
+                <span
+                  className="absolute inset-x-0 -bottom-3 h-[2px] bg-[var(--orravan-blue)] transition-opacity"
+                  style={{ opacity: active ? 1 : 0 }}
+                />
+              </button>
+            );
+          })}
+        </div>
 
-          {/* The ops room holds the full height of the section. */}
-          <Reveal className="h-full">
-            <div className="relative h-full min-h-[420px] overflow-hidden">
-              <LivePlate
-                slot="services-control"
-                video="/images/monitoring-live.mp4"
-                parallax={16}
-                className="absolute inset-0"
-                imgClassName="h-full w-full object-cover"
+        {/* Every panel stays mounted so switching is a cross-fade, not a
+            reflow — the section never jumps as tabs change. */}
+        <div className="relative mt-4 h-[max(240px,18vw)] overflow-hidden">
+          {INDUSTRIES.tabs.map((tab, i) => (
+            <div
+              key={tab.name}
+              aria-hidden={i !== open}
+              className="absolute inset-0 transition-opacity duration-500"
+              style={{ opacity: i === open ? 1 : 0 }}
+            >
+              <Plate
+                slot={tab.slot}
+                className="h-full"
+                imgClassName="h-full w-full object-cover object-center"
               />
             </div>
-          </Reveal>
+          ))}
         </div>
       </div>
-
-    </section>
+    </Band>
   );
 }
 
-/* ------------------------------------------------ 07 · the flow --- */
+/* --------------------------------- client record. complete. verified --- */
 
-export function S7Flow() {
+export function Record() {
   return (
-    <section data-rail="07" className="relative bg-bone">
-      <div className="py-10 pl-5 lg:pl-10">
-        <div className="grid items-stretch gap-8 pr-5 lg:grid-cols-[minmax(260px,340px)_1fr] lg:pr-0">
-          <SectionIntro
-            n="07"
-            title={<>The part is already in the flow.</>}
-            copy="Stocked, fabricated and moving before the truck rolls."
-            aside={
-              <>
-                <ul className="mt-6 space-y-2.5">
-                  {FLOW.bullets.map((line) => (
-                    <li key={line} className="o-label flex items-center gap-2.5 text-[10px] text-ink-soft">
-                      <span className="h-1.5 w-1.5 rounded-full bg-signal" />
-                      {line}
-                    </li>
-                  ))}
-                </ul>
-                <a href="#close" className="o-link mt-6 inline-block">
-                  {FLOW.cta} →
-                </a>
-              </>
-            }
-          />
+    <Band id="record">
+      <Head lines={RECORD.head} />
 
-          {/* Four tiles, one row, identical aspect; the thread passes
-              beneath with a node per tile. The Orravan mark rides the
-              van as an overlay — never baked into the photograph. */}
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            {FLOW.stops.map((slot, i) => (
-              <Reveal key={slot} delay={i * 120}>
-                <div className="relative aspect-[4/5] w-full overflow-hidden">
-                  <Plate
-                    slot={slot}
-                    parallax={10}
-                    className="absolute inset-0"
-                    imgClassName={`h-full w-full object-cover ${
-                      slot === "flow-van" ? "object-[15%_50%]" : ""
-                    }`}
-                  />
-                  {slot === "flow-van" && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={asset("/images/15-official-orravan-logo.png")}
-                      alt=""
-                      aria-hidden
-                      className="absolute right-[8%] top-[42%] w-[36%] opacity-85 mix-blend-multiply"
-                    />
-                  )}
-                  {/* Beneath the tile; the chain runs right-to-left so
-                      the thread arrives from the ops room cleanly. */}
-                  <ThreadPoint x={0.5} y={1.05 + (3 - i) * 0.006} node />
-                </div>
-              </Reveal>
-            ))}
+      <Reveal className="lg:pr-10">
+        <div className="border border-rule bg-white shadow-[0_24px_60px_rgba(23,24,26,0.12)]">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule px-5 py-3.5">
+            <span className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+              <span className="o-num text-[12px] font-semibold text-ink">{RECORD.order}</span>
+              <span className="text-[13px] text-ink-soft">{RECORD.subject}</span>
+            </span>
+            <span className="o-label text-[10px] text-[var(--orravan-blue)]">{RECORD.cta} →</span>
           </div>
-        </div>
-      </div>
 
-    </section>
+          <ol className="grid gap-y-6 p-5 sm:grid-cols-2 lg:grid-cols-5 lg:gap-x-0 lg:divide-x lg:divide-rule [&>li]:lg:px-4 [&>li:first-child]:lg:pl-0">
+            {RECORD.steps.map((step, i) => (
+              <li key={step.stage}>
+                <Reveal delay={i * 130}>
+                  <span className="flex items-center gap-2">
+                    <Mark done={i > 1} />
+                    <span className="o-label text-[9.5px] text-ink">{step.stage}</span>
+                  </span>
+                  <p className="o-num mt-2 text-[11px] text-ink-mute">{step.time}</p>
+                  <p className="mt-1.5 text-[12px] leading-snug text-ink-soft">{step.detail}</p>
+                </Reveal>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </Reveal>
+    </Band>
   );
 }
 
-function Check({ className }: { className?: string }) {
+/** Blue while the work is moving, green once it is verified. */
+function Mark({ done }: { done: boolean }) {
   return (
-    <svg viewBox="0 0 16 16" className={className} fill="none" aria-hidden>
-      <path d="M3 8.5 L6.5 12 L13 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <span
+      className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-white"
+      style={{ background: done ? "var(--verified)" : "var(--orravan-blue)" }}
+    >
+      <svg viewBox="0 0 16 16" className="h-2.5 w-2.5" fill="none" aria-hidden>
+        <path d="M3 8.5 L6.5 12 L13 4.5" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
+  );
+}
+
+/* ------------------------------------------------------- the close --- */
+
+export function Close() {
+  return (
+    <section id="close" className="relative overflow-x-clip bg-[var(--orravan-blue)] text-white">
+      <div className="grid gap-8 px-5 py-16 lg:grid-cols-[minmax(240px,320px)_1fr] lg:gap-10 lg:px-10">
+        <Reveal>
+          <h2 className="o-display text-[clamp(30px,3.1vw,48px)] leading-[0.92] tracking-[-0.02em]">
+            {CLOSE.head.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
+          </h2>
+        </Reveal>
+
+        <Reveal delay={120} className="flex flex-col justify-center gap-6">
+          <p className="max-w-[38ch] text-[15px] leading-relaxed text-white/75">{CLOSE.copy}</p>
+          <div className="flex flex-wrap gap-3">
+            <a href="#top" className="o-btn-solid">
+              {CLOSE.primary}
+            </a>
+            <a href="#top" className="o-btn-line">
+              {CLOSE.secondary}
+            </a>
+          </div>
+        </Reveal>
+      </div>
+    </section>
   );
 }

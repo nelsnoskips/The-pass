@@ -65,7 +65,7 @@ for (const width of WIDTHS) {
     return {
       scrolls,
       overflow: overflow.slice(0, 4),
-      sections: document.querySelectorAll("main section[data-rail]").length,
+      sections: document.querySelectorAll("main > section").length,
     };
   });
 
@@ -77,7 +77,7 @@ for (const width of WIDTHS) {
   );
 
   if (shots) {
-    const rails = await page.$$eval("main section[data-rail]", (els) =>
+    const rails = await page.$$eval("main > section", (els) =>
       els.map((el) => el.dataset.rail),
     );
     for (const n of rails) {
