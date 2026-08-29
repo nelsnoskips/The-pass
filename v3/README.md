@@ -58,7 +58,17 @@ by eye. The reliable method, in order:
    mock is one fixed-width render; height ÷ page width is the invariant
    that survives at 1440 and 2560 alike. Fixed pixel heights are what
    caused faces to be cropped differently at every screen size.
-5. **Frame the subject, not the box.** For each photograph compare the
+5. **Render the candidates; do not infer them.** Automatic subject
+   detection was wrong twice on this build — warm wood and skin tones
+   both trip a skin mask, which put the team's heads through the top of
+   the frame. Crop the asset at the target frame aspect across a range
+   of `object-position` values, lay them out as a contact sheet, and
+   look. It takes one script and settles the question.
+6. **Check the frame can hold the subject at all.** The reference's
+   industries band is a thin architectural strip; our plates for it are
+   portraits, and no position saves a portrait in a 6:1 band. When
+   every candidate crop is bad, the frame is wrong, not the position.
+7. **Frame the subject, not the box.** For each photograph compare the
    source aspect to the displayed frame aspect: `visible = a_src /
    a_disp` is the fraction of source height that survives a cover crop.
    Locate the subject's head band with a skin mask, then solve for the
