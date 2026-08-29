@@ -29,7 +29,7 @@ export function Services() {
               <Plate
                 slot={item.slot}
                 parallax={8}
-                className="h-[max(120px,9vw)] overflow-hidden"
+                className="h-[max(130px,9.8vw)] overflow-hidden"
                 imgClassName="h-full w-full object-cover"
               />
               <div className="flex flex-1 flex-col border border-t-0 border-rule bg-bone p-4">
@@ -72,8 +72,10 @@ export function Difference() {
             <Plate
               slot={slot}
               parallax={12}
-              className="h-[max(160px,12.5vw)] overflow-hidden"
-              imgClassName="h-full w-full object-cover object-top"
+              className="h-[max(175px,14.5vw)] overflow-hidden"
+              imgClassName={`h-full w-full object-cover ${
+                slot === "difference-experience" ? "object-[50%_35%]" : "object-top"
+              }`}
             />
           </Reveal>
         ))}
@@ -109,8 +111,8 @@ export function Team() {
         <Plate
           slot="team"
           parallax={10}
-          className="h-[max(170px,13vw)] overflow-hidden"
-          imgClassName="h-full w-full object-cover object-[center_12%]"
+          className="h-[max(190px,17vw)] overflow-hidden"
+          imgClassName="h-full w-full object-cover object-top"
         />
       </Reveal>
     </Band>
@@ -152,7 +154,7 @@ export function Industries() {
 
         {/* Every panel stays mounted so switching is a cross-fade, not a
             reflow — the section never jumps as tabs change. */}
-        <div className="relative mt-4 h-[max(170px,12vw)] overflow-hidden">
+        <div className="relative mt-4 h-[max(150px,11vw)] overflow-hidden">
           {INDUSTRIES.tabs.map((tab, i) => (
             <div
               key={tab.name}

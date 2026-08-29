@@ -37,3 +37,33 @@ starting baseline and get reshaped to the new design.
 - Verify at 2560, 1920, 1440, 1366, 1024, 768 and 390 before pushing:
   `npm run qa`
 - Ship photographic art as JPEG. Multi-MB PNGs have failed the deploy.
+
+## Matching a mock: measure, do not eyeball
+
+Every fidelity round on this build lost time to estimating proportions
+by eye. The reliable method, in order:
+
+1. **Find the section bands.** Classify each row of the mock by its
+   background colour at the far-left gutter (that column is always
+   section background, never content). Contiguous runs are the bands.
+2. **Find the rail.** For each heading band, the first ink pixel from
+   the left gives the heading's x. In this reference it is 6.7% of page
+   width on every single section — that number becomes a token, applied
+   in one place, so the left column cannot drift.
+3. **Find the photo frames.** A photographic row has real tonal spread;
+   ivory and flat card rows do not. Take the row-wise standard
+   deviation across the content column and threshold it — the
+   contiguous runs are the image rectangles.
+4. **Express everything as a share of page width**, not pixels. The
+   mock is one fixed-width render; height ÷ page width is the invariant
+   that survives at 1440 and 2560 alike. Fixed pixel heights are what
+   caused faces to be cropped differently at every screen size.
+5. **Frame the subject, not the box.** For each photograph compare the
+   source aspect to the displayed frame aspect: `visible = a_src /
+   a_disp` is the fraction of source height that survives a cover crop.
+   Locate the subject's head band with a skin mask, then solve for the
+   `object-position` Y that puts the top of the heads roughly 18% into
+   the visible window. Guessing this is what produced chins cut off at
+   the frame edge.
+
+`qa.mjs` then proves the result at 2560/1920/1440/1366/1024/768/390.

@@ -98,7 +98,7 @@ export function OneView() {
           <Plate
             slot="view-building"
             parallax={14}
-            className="h-[max(200px,21.5vw)] overflow-hidden"
+            className="h-[max(180px,19.1vw)] overflow-hidden"
             imgClassName="h-full w-full object-cover object-top"
           />
         </Reveal>
@@ -143,7 +143,7 @@ export function LessDashboard() {
     right — the argument the section is making, legible at any size. */
 function SignalConsole() {
   return (
-    <div className="grid min-h-[max(210px,22vw)] border border-rule bg-white shadow-[0_30px_70px_rgba(23,24,26,0.14)] sm:grid-cols-[132px_1fr] lg:grid-cols-[132px_1fr_minmax(210px,32%)]">
+    <div className="grid min-h-[max(215px,24.3vw)] border border-rule bg-white shadow-[0_30px_70px_rgba(23,24,26,0.14)] sm:grid-cols-[132px_1fr] lg:grid-cols-[132px_1fr_minmax(210px,32%)]">
       {/* Sidebar */}
       <div className="hidden flex-col gap-1 border-r border-rule bg-[#f8f8f6] p-3 sm:flex">
         <p className="o-script mb-3 px-2 text-[15px] text-ink">
@@ -229,7 +229,7 @@ export function ToDecision() {
       <div className="grid gap-3 sm:grid-cols-3 lg:pr-10">
         {DECISION.steps.map((step) => (
           <Reveal key={step.n}>
-            <article className="relative h-[max(190px,15.5vw)] overflow-hidden">
+            <article className="relative h-[max(180px,15vw)] overflow-hidden">
               <Plate
                 slot={step.slot}
                 parallax={10}
@@ -262,12 +262,12 @@ export function Resolution() {
             slot="resolution-people"
             parallax={12}
             className="absolute inset-0"
-            imgClassName="h-full w-full object-cover object-[36%_18%]"
+            imgClassName="h-full w-full object-cover object-[50%_32%]"
           />
         </div>
 
         {/* The card the section is named for. */}
-        <div className="o-stamped absolute bottom-6 right-6 w-[min(300px,80%)] border border-rule bg-white p-4 shadow-[0_22px_50px_rgba(23,24,26,0.22)]">
+        <div className="o-stamped absolute right-[3%] top-1/2 w-[min(290px,27%)] -translate-y-1/2 border border-rule bg-white p-4 shadow-[0_22px_50px_rgba(23,24,26,0.22)]">
           <span className="flex items-center gap-2">
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-verified text-white">
               <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" aria-hidden>
