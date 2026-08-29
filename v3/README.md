@@ -10,12 +10,12 @@ side.
     MOCK_BASE=/orravan-v3 npm run build
     # then publish: cp -r out ../public/orravan-v3
 
-## The client library
+## The asset library
 
-`public/images` is a symlink to `../../v2/public/images` — one copy of
-the photography, wordmark and cinemagraphs, shared by every version.
-The static export follows it, so the hosted bundle is complete. Add new
-artwork to `v2/public/images` and both versions see it.
+`public/images` holds this direction's own 24 delivered assets — see the
+README in that folder for the exact filenames. Each version keeps its own
+library: sharing one meant this bundle carried 35MB of photography it
+never referenced, which failed the deploy.
 
 ## What carries over from v2
 
