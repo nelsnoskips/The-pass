@@ -8,3 +8,10 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# Mocks live at /{client}-v{n}; the /spec/orravan URL already in front
+# of the client keeps resolving.
+[[redirects]]
+  from = "/spec/orravan/*"
+  to = "/orravan-v1/:splat"
+  status = 301
