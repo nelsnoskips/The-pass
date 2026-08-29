@@ -496,7 +496,7 @@ body {
 
 .o-entrance {
   position: relative;
-  min-height: 148vh;
+  min-height: 186vh;
   background: var(--orravan-blue);
 }
 .o-entrance-stage {
@@ -522,8 +522,8 @@ body {
 .o-layer-blueprint img { object-fit: cover; opacity: 0.5; }
 .o-layer-building,
 .o-layer-leader { inset: auto 0 0 0; height: 88%; }
-.o-layer-building { left: 51%; right: 7%; height: 84%; bottom: 6%; }
-.o-layer-leader { left: 36%; right: 24%; height: 100%; }
+.o-layer-building { left: 44%; right: 1%; height: 100%; bottom: 0; }
+.o-layer-leader { left: 30%; right: 30%; height: 100%; }
 .o-layer-building img { object-fit: contain; object-position: center bottom; }
 .o-layer-leader img { object-fit: contain; object-position: center bottom; }
 @media (max-width: 1023px) {

@@ -102,33 +102,41 @@ export function Entrance() {
 
       cue.current?.style.setProperty("opacity", `${1 - ease(clamp(y / (vh * 0.12)))}`);
 
+      // 5 — the departure. Past the hero's dwell the composition comes
+      // apart in the order it arrived: the building lifts and recedes,
+      // the leader settles away, the field opens out behind them.
+      const exit = ease(clamp((y - vh * 0.5) / (vh * 0.32)));
+      const held = 1 - exit;
+
       // 3 — the hero's three layers, each at its own rate.
       const q = clamp(y / (vh * 0.6));
-      const depth = ease(clamp(y / (vh * 0.3)));
+      const depth = ease(clamp(y / (vh * 0.3))) * held;
       blueprint.current?.style.setProperty("opacity", `${depth}`);
       blueprint.current?.style.setProperty(
         "transform",
-        `translate3d(${(px * 0.4).toFixed(1)}px, ${(q * -TRAVEL * 0.18 + py * 0.4).toFixed(1)}px, 0)`,
+        `translate3d(${(px * 0.4).toFixed(1)}px, ${(q * -TRAVEL * 0.18 + py * 0.4 - exit * 26).toFixed(1)}px, 0) scale(${(1 + 0.05 * exit).toFixed(3)})`,
       );
       leader.current?.style.setProperty("opacity", `${depth}`);
       leader.current?.style.setProperty(
         "transform",
-        `translate3d(${(px * 1).toFixed(1)}px, ${(q * TRAVEL * 0.05 + py).toFixed(1)}px, 0)`,
+        `translate3d(${(px * 1).toFixed(1)}px, ${(q * TRAVEL * 0.05 + py + exit * 64).toFixed(1)}px, 0)`,
       );
       building.current?.style.setProperty("opacity", `${depth}`);
       building.current?.style.setProperty(
         "transform",
-        `translate3d(${(px * 1.6).toFixed(1)}px, ${(q * TRAVEL * 0.42 + py * 1.6).toFixed(1)}px, 0)`,
+        `translate3d(${(px * 1.6).toFixed(1)}px, ${(q * TRAVEL * 0.42 + py * 1.6 - exit * 92).toFixed(1)}px, 0) scale(${(1 - 0.08 * exit).toFixed(3)})`,
       );
 
       // 4 — the copy reveals by line once the entry has cleared.
       if (copy.current) {
-        const shown = ease(clamp((y - vh * 0.1) / (vh * 0.18)));
+        const shown = ease(clamp((y - vh * 0.1) / (vh * 0.18))) * held;
         copy.current.style.setProperty("opacity", `${shown}`);
+        copy.current.style.setProperty("transform", `translate3d(0, ${(-exit * 44).toFixed(1)}px, 0)`);
         copy.current.style.setProperty("pointer-events", shown > 0.3 ? "auto" : "none");
         copy.current.dataset.in = handoff > 0.6 ? "true" : "false";
       }
-      chips.current?.style.setProperty("opacity", `${ease(clamp((y - vh * 0.2) / (vh * 0.3)))}`);
+      chips.current?.style.setProperty("opacity", `${ease(clamp((y - vh * 0.2) / (vh * 0.3))) * held}`);
+      chips.current?.style.setProperty("transform", `translateY(-50%) translateX(${(exit * 40).toFixed(1)}px)`);
 
       document.documentElement.dataset.entered = handoff > 0.72 ? "true" : "false";
     };
