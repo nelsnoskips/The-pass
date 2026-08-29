@@ -11,7 +11,7 @@ import { IMAGES, asset } from "@/lib/images";
 export function TopBar() {
   return (
     <header className="o-bar fixed inset-x-0 top-0 z-50 border-b border-rule bg-[color-mix(in_srgb,var(--paper)_96%,transparent)] ">
-      <div className="mx-auto grid h-[64px] max-w-[1600px] grid-cols-[1fr_auto_1fr] items-center px-5 lg:px-10">
+      <div className="grid h-[68px] grid-cols-[1fr_auto_1fr] items-center px-[var(--rail-pad)] pr-5 lg:pr-10">
         <a href="#top" aria-label={`${ORRAVAN.name} home`} className="shrink-0">
           <Logo className="h-8" />
         </a>
@@ -78,7 +78,7 @@ export function Logo({ className, reverse = false }: { className?: string; rever
 export function Footer() {
   return (
     <footer id="close" className="bg-paper text-ink pt-16 lg:pt-24">
-      <div className="mx-auto grid max-w-[1600px] gap-10 px-5 pb-12 lg:grid-cols-[minmax(280px,1fr)_auto_auto_auto] lg:gap-16 lg:px-10">
+      <div className="grid gap-10 px-[var(--rail-pad)] pb-12 pr-5 lg:grid-cols-[var(--rail-w)_auto_auto_auto] lg:gap-14">
         {/* The closing line sits in the footer band, as in the reference. */}
         <h2 className="o-display self-start text-[clamp(2rem,3.4vw,3.4rem)] leading-[0.9] tracking-[0.004em]">
           <span className="block">What could your</span>

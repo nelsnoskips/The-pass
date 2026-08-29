@@ -492,6 +492,15 @@ body {
    ========================================================================== */
 
 :root {
+  /* The left rail, measured from the approved reference: every section
+     heading in the mock starts at the same 6.7% of page width, and the
+     content bands run 18-25% of page width tall. */
+  --rail-x: 6.7vw;
+  --rail-pad: 20px;
+  --rail-w: 21vw;
+  --band-y: clamp(18px, 2.3vw, 42px);
+  --head: clamp(1.7rem, 3.15vw, 3.1rem);
+
   --orravan-blue: #245fce;
   --orravan-blue-dark: #1e52b5;
   --orravan-blue-deep: #103d91;
@@ -499,6 +508,10 @@ body {
 
 @theme inline {
   --color-orravan: var(--orravan-blue);
+}
+
+@media (min-width: 1024px) {
+  :root { --rail-pad: var(--rail-x); }
 }
 
 /* --- the entry and the hero it hands over to ------------------------- */
@@ -608,7 +621,7 @@ body {
   opacity: 0;
   will-change: opacity;
 }
-@media (min-width: 1024px) { .o-hero { padding: 0 40px; } }
+@media (min-width: 1024px) { .o-hero { padding: 0 var(--rail-x); } }
 .o-hero h1 {
   font-family: var(--font-display);
   font-weight: 400;

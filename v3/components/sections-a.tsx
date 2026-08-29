@@ -23,7 +23,10 @@ export function Band({
       id={id}
       className={`relative overflow-x-clip ${dark ? "bg-[#111214] text-bone" : "bg-paper text-ink"} ${className ?? ""}`}
     >
-      <div className="grid gap-8 py-14 pl-5 pr-5 lg:grid-cols-[minmax(240px,320px)_1fr] lg:gap-10 lg:pl-10 lg:pr-0">
+      <div
+        className="grid gap-8 px-5 lg:grid-cols-[var(--rail-w)_1fr] lg:gap-[3vw] lg:pr-0"
+        style={{ paddingTop: "var(--band-y)", paddingBottom: "var(--band-y)", paddingLeft: "var(--rail-pad)" }}
+      >
         {children}
       </div>
     </section>
@@ -43,7 +46,7 @@ export function Head({
 }) {
   return (
     <Reveal className="lg:pt-2">
-      <h2 className="o-display text-[clamp(3rem,5.5vw,6rem)] leading-[0.88] tracking-[0.004em]">
+      <h2 className="o-display text-[length:var(--head)] leading-[0.88] tracking-[0.004em]">
         {lines.map((line) => (
           <span key={line} className="block">
             {line}
@@ -52,7 +55,7 @@ export function Head({
       </h2>
       {copy && (
         <p
-          className={`mt-5 max-w-[34ch] text-[14px] leading-relaxed ${
+          className={`mt-4 max-w-[34ch] text-[13.5px] leading-relaxed ${
             dark ? "text-bone/65" : "text-ink-soft"
           }`}
         >
@@ -95,7 +98,7 @@ export function OneView() {
           <Plate
             slot="view-building"
             parallax={14}
-            className="aspect-[16/9] overflow-hidden"
+            className="h-[max(200px,21.5vw)] overflow-hidden"
             imgClassName="h-full w-full object-cover object-top"
           />
         </Reveal>
@@ -113,7 +116,7 @@ export function LessDashboard() {
         lines={SIGNAL.head}
         copy={SIGNAL.copy}
         aside={
-          <a href="#record" className="o-btn mt-7 inline-flex bg-[var(--orravan-blue)]">
+          <a href="#record" className="o-btn mt-5 inline-flex bg-[var(--orravan-blue)]">
             {SIGNAL.cta}
           </a>
         }
@@ -140,7 +143,7 @@ export function LessDashboard() {
     right — the argument the section is making, legible at any size. */
 function SignalConsole() {
   return (
-    <div className="grid min-h-[max(340px,26vw)] border border-rule bg-white shadow-[0_30px_70px_rgba(23,24,26,0.14)] sm:grid-cols-[132px_1fr] lg:grid-cols-[132px_1fr_minmax(210px,32%)]">
+    <div className="grid min-h-[max(210px,22vw)] border border-rule bg-white shadow-[0_30px_70px_rgba(23,24,26,0.14)] sm:grid-cols-[132px_1fr] lg:grid-cols-[132px_1fr_minmax(210px,32%)]">
       {/* Sidebar */}
       <div className="hidden flex-col gap-1 border-r border-rule bg-[#f8f8f6] p-3 sm:flex">
         <p className="o-script mb-3 px-2 text-[15px] text-ink">
@@ -216,7 +219,7 @@ export function ToDecision() {
         aside={
           <a
             href="#services"
-            className="mt-7 inline-flex min-h-[44px] items-center border border-bone/45 px-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-bone transition-colors hover:bg-bone/10"
+            className="mt-5 inline-flex min-h-[44px] items-center border border-bone/45 px-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-bone transition-colors hover:bg-bone/10"
           >
             {DECISION.cta}
           </a>
@@ -226,7 +229,7 @@ export function ToDecision() {
       <div className="grid gap-3 sm:grid-cols-3 lg:pr-10">
         {DECISION.steps.map((step) => (
           <Reveal key={step.n}>
-            <article className="relative aspect-[4/5] overflow-hidden">
+            <article className="relative h-[max(190px,15.5vw)] overflow-hidden">
               <Plate
                 slot={step.slot}
                 parallax={10}
@@ -254,7 +257,7 @@ export function Resolution() {
       <Head lines={RESOLUTION.head} copy={RESOLUTION.copy} />
 
       <Reveal className="relative">
-        <div className="relative aspect-[16/9] overflow-hidden">
+        <div className="relative h-[max(200px,21.5vw)] overflow-hidden">
           <Plate
             slot="resolution-people"
             parallax={12}

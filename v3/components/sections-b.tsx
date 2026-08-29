@@ -15,7 +15,7 @@ export function Services() {
         aside={
           <a
             href="#close"
-            className="mt-7 inline-flex min-h-[44px] items-center border border-ink/30 px-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink transition-colors hover:bg-ink/5"
+            className="mt-5 inline-flex min-h-[44px] items-center border border-ink/30 px-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink transition-colors hover:bg-ink/5"
           >
             {SERVICES.cta}
           </a>
@@ -29,7 +29,7 @@ export function Services() {
               <Plate
                 slot={item.slot}
                 parallax={8}
-                className="aspect-[4/5] overflow-hidden"
+                className="h-[max(120px,9vw)] overflow-hidden"
                 imgClassName="h-full w-full object-cover"
               />
               <div className="flex flex-1 flex-col border border-t-0 border-rule bg-bone p-4">
@@ -59,7 +59,7 @@ export function Difference() {
         aside={
           <a
             href="#team"
-            className="mt-7 inline-flex min-h-[44px] items-center border border-bone/45 px-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-bone transition-colors hover:bg-bone/10"
+            className="mt-5 inline-flex min-h-[44px] items-center border border-bone/45 px-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-bone transition-colors hover:bg-bone/10"
           >
             {DIFFERENCE.cta}
           </a>
@@ -72,7 +72,7 @@ export function Difference() {
             <Plate
               slot={slot}
               parallax={12}
-              className="aspect-[3/2] overflow-hidden"
+              className="h-[max(160px,12.5vw)] overflow-hidden"
               imgClassName="h-full w-full object-cover object-top"
             />
           </Reveal>
@@ -91,7 +91,7 @@ export function Team() {
         lines={TEAM.head}
         copy={TEAM.copy}
         aside={
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div className="mt-5 flex flex-wrap gap-3">
             <a href="#close" className="o-btn bg-[var(--orravan-blue)]">
               {TEAM.primary}
             </a>
@@ -109,7 +109,7 @@ export function Team() {
         <Plate
           slot="team"
           parallax={10}
-          className="aspect-[16/9] overflow-hidden"
+          className="h-[max(170px,13vw)] overflow-hidden"
           imgClassName="h-full w-full object-cover object-[center_12%]"
         />
       </Reveal>
@@ -152,7 +152,7 @@ export function Industries() {
 
         {/* Every panel stays mounted so switching is a cross-fade, not a
             reflow — the section never jumps as tabs change. */}
-        <div className="relative mt-4 aspect-[3/2] overflow-hidden">
+        <div className="relative mt-4 h-[max(170px,12vw)] overflow-hidden">
           {INDUSTRIES.tabs.map((tab, i) => (
             <div
               key={tab.name}
