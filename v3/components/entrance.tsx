@@ -44,7 +44,6 @@ export function Entrance() {
   const copy = useRef<HTMLDivElement>(null);
   const chips = useRef<HTMLUListElement>(null);
   const cue = useRef<HTMLDivElement>(null);
-  const spark = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const node = section.current;
@@ -76,51 +75,6 @@ export function Entrance() {
       return;
     }
 
-    /* The field the hero disperses into: a few dozen motes of light that
-       lift and fade as the composition comes apart. Seeded once, drawn
-       only while the departure is actually running. */
-    const MOTES = 150;
-    const motes = Array.from({ length: MOTES }, () => ({
-      x: Math.random(),
-      y: 0.12 + Math.random() * 0.95,
-      r: 0.8 + Math.random() * 2.6,
-      rise: 0.25 + Math.random() * 0.85,
-      drift: (Math.random() - 0.5) * 0.12,
-      lag: Math.random() * 0.3,
-    }));
-
-    const paint = (exit: number) => {
-      const cv = spark.current;
-      if (!cv) return;
-      const ctx = cv.getContext("2d");
-      if (!ctx) return;
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
-      const w = cv.clientWidth;
-      const h = cv.clientHeight;
-      if (cv.width !== Math.round(w * dpr)) {
-        cv.width = Math.round(w * dpr);
-        cv.height = Math.round(h * dpr);
-      }
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, w, h);
-      if (exit <= 0.001) return;
-      for (const m of motes) {
-        // Each mote waits its turn, then rises and fades out.
-        const t = clamp((exit - m.lag) / (1 - m.lag));
-        if (t <= 0) continue;
-        const alpha = Math.sin(t * Math.PI) * 0.95;
-        if (alpha <= 0.01) continue;
-        const x = (m.x + m.drift * t) * w;
-        const y = (m.y - m.rise * t * 0.6) * h;
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = t > 0.5 ? "#dbe7ff" : "#8fb4ff";
-        ctx.beginPath();
-        ctx.arc(x, y, m.r * (1 + t * 0.7), 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-    };
-
     let frame = 0;
     let queued = false;
     let px = 0;
@@ -129,7 +83,7 @@ export function Entrance() {
     const read = () => {
       queued = false;
       const vh = window.innerHeight;
-      const y = Math.max(0, -node.getBoundingClientRect().top);
+      const y = window.scrollY;
 
       // 2 — the handoff: 0 to 25vh, fade and rise 24px.
       const handoff = ease(clamp(y / (vh * 0.25)));
@@ -148,45 +102,39 @@ export function Entrance() {
 
       cue.current?.style.setProperty("opacity", `${1 - ease(clamp(y / (vh * 0.12)))}`);
 
-      // 5 — the departure. Past the hero's dwell the composition comes
-      // apart in the order it arrived: the building lifts and recedes,
-      // the leader settles away, the field opens out behind them.
-      const exit = ease(clamp((y - vh * 0.5) / (vh * 0.32)));
-      const held = 1 - exit;
+      // The hero does not leave. It drifts a little against the section
+      // rising over it, which is what reads as depth.
+      const drift = Math.min(vh * 0.16, y * 0.14);
 
       // 3 — the hero's three layers, each at its own rate.
       const q = clamp(y / (vh * 0.6));
-      const depth = ease(clamp(y / (vh * 0.3))) * held;
+      const depth = ease(clamp(y / (vh * 0.3)));
       blueprint.current?.style.setProperty("opacity", `${depth}`);
       blueprint.current?.style.setProperty(
         "transform",
-        `translate3d(${(px * 0.4).toFixed(1)}px, ${(q * -TRAVEL * 0.18 + py * 0.4 - exit * 26).toFixed(1)}px, 0) scale(${(1 + 0.05 * exit).toFixed(3)})`,
+        `translate3d(${(px * 0.4).toFixed(1)}px, ${(q * -TRAVEL * 0.18 + py * 0.4 - drift * 0.35).toFixed(1)}px, 0)`,
       );
       leader.current?.style.setProperty("opacity", `${depth}`);
       leader.current?.style.setProperty(
         "transform",
-        `translate3d(${(px * 1).toFixed(1)}px, ${(q * TRAVEL * 0.05 + py + exit * 64).toFixed(1)}px, 0)`,
+        `translate3d(${(px * 1).toFixed(1)}px, ${(q * TRAVEL * 0.05 + py - drift * 0.7).toFixed(1)}px, 0)`,
       );
       building.current?.style.setProperty("opacity", `${depth}`);
       building.current?.style.setProperty(
         "transform",
-        `translate3d(${(px * 1.6).toFixed(1)}px, ${(q * TRAVEL * 0.42 + py * 1.6 - exit * 92).toFixed(1)}px, 0) scale(${(1 - 0.08 * exit).toFixed(3)})`,
+        `translate3d(${(px * 1.6).toFixed(1)}px, ${(q * TRAVEL * 0.42 + py * 1.6 - drift).toFixed(1)}px, 0)`,
       );
 
       // 4 — the copy reveals by line once the entry has cleared.
       if (copy.current) {
-        const shown = ease(clamp((y - vh * 0.1) / (vh * 0.18))) * held;
+        const shown = ease(clamp((y - vh * 0.1) / (vh * 0.18)));
         copy.current.style.setProperty("opacity", `${shown}`);
-        copy.current.style.setProperty("transform", `translate3d(0, ${(-exit * 44).toFixed(1)}px, 0)`);
+        copy.current.style.setProperty("transform", `translate3d(0, ${(-drift * 0.5).toFixed(1)}px, 0)`);
         copy.current.style.setProperty("pointer-events", shown > 0.3 ? "auto" : "none");
         copy.current.dataset.in = handoff > 0.6 ? "true" : "false";
       }
-      chips.current?.style.setProperty("opacity", `${ease(clamp((y - vh * 0.2) / (vh * 0.3))) * held}`);
-      chips.current?.style.setProperty("transform", `translateY(-50%) translateX(${(exit * 40).toFixed(1)}px)`);
-
-      // The motes carry the departure.
-      spark.current?.style.setProperty("opacity", exit > 0.001 ? "1" : "0");
-      paint(exit);
+      chips.current?.style.setProperty("opacity", `${ease(clamp((y - vh * 0.2) / (vh * 0.3)))}`);
+      chips.current?.style.setProperty("transform", `translateY(-50%) translateX(${(-drift * 0.25).toFixed(1)}px)`);
 
       document.documentElement.dataset.entered = handoff > 0.72 ? "true" : "false";
     };
@@ -234,8 +182,6 @@ export function Entrance() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={asset(IMAGES["hero-leader"].src)} alt={IMAGES["hero-leader"].alt} />
         </div>
-
-        <canvas ref={spark} className="o-spark" aria-hidden />
 
         {/* What the building is saying, in the technical register. */}
         <ul ref={chips} className="o-chips" aria-label="Live conditions">
