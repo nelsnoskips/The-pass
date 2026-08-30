@@ -535,6 +535,15 @@ body {
   background: var(--orravan-blue);
 }
 
+/* The hold: nothing to see, it just buys the hero a moment on screen
+   before the reveal begins. */
+.o-hold {
+  position: relative;
+  z-index: 1;
+  height: 55vh;
+  pointer-events: none;
+}
+
 /* Everything after it travels above the hero. */
 main > section:not(.o-entrance),
 footer {
@@ -701,6 +710,8 @@ html[data-entered="true"] header.o-bar {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* No scrubbing to wait for — do not make them scroll past nothing. */
+  .o-hold { height: 0; }
   .o-cue svg { animation: none; }
   header.o-bar { transition: none; }
 }

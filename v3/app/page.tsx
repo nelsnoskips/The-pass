@@ -19,6 +19,9 @@ export default function Page() {
       <TopBar />
       <main>
         <Entrance />
+        {/* A beat before the page starts covering the hero: transparent,
+            so the pinned hero simply holds while this scrolls past. */}
+        <div className="o-hold" aria-hidden />
         <OneView />
         <LessDashboard />
         <ToDecision />
