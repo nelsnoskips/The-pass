@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ReviewWorkspace } from "@/components/review/ReviewWorkspace";
-import { getReviewByToken } from "@/lib/studio/review";
+import { getReviewByToken, mocksFor } from "@/lib/studio/review";
 import { isConfigured } from "@/lib/db";
 import "./review.css";
 
@@ -50,7 +50,8 @@ export default async function ReviewPage({
     );
   }
 
-  if (!ctx.project.mock_path) {
+  const mocks = mocksFor(ctx.project);
+  if (mocks.length === 0) {
     return (
       <div className="rv-done">
         <p className="rv-eyebrow">Round {ctx.round.round}</p>
@@ -65,9 +66,10 @@ export default async function ReviewPage({
       token={token}
       projectName={ctx.project.name}
       clientName={ctx.clientName}
-      mockPath={ctx.project.mock_path}
+      mocks={mocks}
       round={ctx.round.round}
       alreadySubmitted={ctx.round.status === "submitted"}
+      chosen={ctx.round.chosen}
     />
   );
 }

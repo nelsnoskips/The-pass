@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getSessionEmail } from "@/lib/studio/session";
 import { getProject, markRoundsSeen, statusTokenFor } from "@/lib/studio/clients";
-import { openRoundAction, resolveCommentAction, setStageAction } from "@/lib/studio/actions";
+import { openRoundAction, resolveCommentAction, saveMocksAction, setStageAction } from "@/lib/studio/actions";
+import { mocksFor } from "@/lib/studio/review";
 import { STAGE_LABELS, STAGE_ORDER } from "@/lib/studio/types";
 import { isConfigured } from "@/lib/db";
 import "../../studio.css";
@@ -30,6 +31,8 @@ export default async function ProjectPage({
   await markRoundsSeen(id);
   const statusToken = await statusTokenFor(id);
 
+  const mocks = mocksFor(project);
+  const picked = rounds.find((r) => r.chosen)?.chosen ?? null;
   const open = comments.filter((c) => !c.resolved);
   const done = comments.filter((c) => c.resolved);
   const liveRound = rounds.find((r) => r.status === "open");
@@ -61,6 +64,12 @@ export default async function ProjectPage({
                     <a href={`/review/${liveRound.token}`} target="_blank" rel="noopener">
                       /review/{liveRound.token}
                     </a>
+                    {mocks.length > 1 && ` — showing ${mocks.length} directions`}
+                  </div>
+                )}
+                {picked && (
+                  <div className="st-row-meta" style={{ marginTop: ".4rem", color: "var(--ink)" }}>
+                    Direction chosen: <strong>{picked}</strong>
                   </div>
                 )}
                 {statusToken && (
@@ -83,6 +92,25 @@ export default async function ProjectPage({
                 </form>
               </div>
             </div>
+
+            <form action={saveMocksAction} style={{ marginTop: ".9rem" }}>
+              <input type="hidden" name="project_id" value={project.id} />
+              <label className="st-field">
+                <span>Mocks on the review link</span>
+                <textarea
+                  name="mocks"
+                  rows={4}
+                  placeholder={"Direction one /orravan-v1\nDirection two /orravan-v2"}
+                  defaultValue={mocks.map((m) => `${m.label} ${m.path}`).join("\n")}
+                />
+              </label>
+              <p className="st-note" style={{ margin: ".35rem 0 .6rem" }}>
+                One per line: the label the client reads, then the path. Leave it
+                empty and the link falls back to {project.mock_path ?? "nothing"}.
+                More than one turns on the switcher and asks them to pick.
+              </p>
+              <button className="st-btn" data-ghost type="submit">Save mocks</button>
+            </form>
 
             <form action={setStageAction} className="st-two" style={{ marginTop: ".8rem" }}>
               <input type="hidden" name="project_id" value={project.id} />

@@ -5,9 +5,10 @@ import { redirect } from "next/navigation";
 import { getSessionEmail } from "./session";
 import {
   archiveClient, createClient, createProject, deleteClient,
-  openRound, setCommentResolved, setStage,
+  openRound, setCommentResolved, setProjectMocks, setStage,
 } from "./clients";
 import { RESERVED_SLUGS, slugify, upsertProposal } from "./proposals";
+import { parseMocks } from "./review";
 import type { ProjectStage, ProposalLineItem } from "./types";
 
 /**
@@ -70,6 +71,15 @@ export async function setStageAction(form: FormData) {
   const stage = str(form, "stage") as ProjectStage | null;
   if (!id || !stage) return;
   await setStage(id, stage);
+  revalidatePath(`/studio/projects/${id}`);
+  revalidatePath("/studio");
+}
+
+export async function saveMocksAction(form: FormData) {
+  await requireStudio();
+  const id = str(form, "project_id");
+  if (!id) return;
+  await setProjectMocks(id, parseMocks(String(form.get("mocks") ?? "")));
   revalidatePath(`/studio/projects/${id}`);
   revalidatePath("/studio");
 }

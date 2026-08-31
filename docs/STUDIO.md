@@ -53,6 +53,23 @@ frames.
 pin comments to anything on it, and rewrite text in place. When they
 submit, the notes land against the project and you get an email.
 
+**Several mocks on one link.** A redesign is sold as three concepts to
+choose between, so the project page has a *Mocks on the review link*
+box: one per line, the label the client reads and then the path.
+
+```
+Direction one — every signal has a next move   /orravan-v1
+Direction two — the calm command centre        /orravan-v2
+Direction three — the building knows           /orravan-v3
+```
+
+More than one line puts a switcher in the review toolbar and asks the
+client which direction to build out. Their answer shows on the project
+page and in the notification subject line. Notes stay attached to
+whichever mock was on screen, so a comment on direction two is never
+mistaken for a comment on direction one. Leave the box empty and the
+link falls back to the single *mock path*, exactly as before.
+
 **Generate a proposal** at `/studio/proposals/new`. It renders at
 `/proposals/<slug>` off the same stylesheet as the hand-built ones, so a
 reader cannot tell which is which.

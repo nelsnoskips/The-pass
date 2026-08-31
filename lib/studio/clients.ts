@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { newToken } from "./review";
-import type { Client, Project, ProjectStage, ReviewComment, ReviewRound } from "./types";
+import type { Client, Project, ProjectMock, ProjectStage, ReviewComment, ReviewRound } from "./types";
 
 /** A project with everything the board needs to draw one row. */
 export type ProjectRow = Project & {
@@ -174,6 +174,21 @@ export async function createProject(input: {
     returning *
   `;
   return row;
+}
+
+/**
+ * Replaces a project's mock list. Stored whole rather than diffed:
+ * three concepts are named and ordered together, and a partial update
+ * would let a re-order silently drop one.
+ */
+export async function setProjectMocks(projectId: string, mocks: ProjectMock[]) {
+  const sql = db();
+  if (!sql) return;
+  await sql`
+    update projects
+    set mocks = ${sql.json(mocks)}, updated_at = now()
+    where id = ${projectId}
+  `;
 }
 
 export async function setStage(projectId: string, stage: ProjectStage) {
