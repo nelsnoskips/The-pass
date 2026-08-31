@@ -22,7 +22,7 @@ export async function POST(
     return NextResponse.json({ error: "Review storage is not configured." }, { status: 503 });
   }
 
-  let payload: { author?: unknown; comments?: unknown };
+  let payload: { author?: unknown; comments?: unknown; chosen?: unknown };
   try {
     payload = await req.json();
   } catch {
@@ -30,7 +30,12 @@ export async function POST(
   }
 
   const raw = Array.isArray(payload.comments) ? payload.comments : [];
-  if (raw.length === 0) {
+  const chosen = clip(payload.chosen);
+
+  // Choosing a direction is a complete submission on its own: a client
+  // who is happy with one of three concepts as presented has nothing to
+  // pin, and rejecting that leaves the round looking unanswered.
+  if (raw.length === 0 && !chosen) {
     return NextResponse.json({ error: "Nothing to submit." }, { status: 400 });
   }
   if (raw.length > MAX_COMMENTS) {
@@ -49,7 +54,7 @@ export async function POST(
   }));
 
   const author = clip(payload.author);
-  const result = await submitReview(token, author, comments);
+  const result = await submitReview(token, author, comments, chosen);
 
   if (!result) {
     return NextResponse.json({ error: "This review link is no longer open." }, { status: 404 });
@@ -60,9 +65,12 @@ export async function POST(
   // the client sees — they would resubmit and duplicate everything.
   const edits = comments.filter((c) => c.kind === "edit").length;
   await sendMail({
-    subject: `Review submitted — ${result.inserted} note${result.inserted === 1 ? "" : "s"}`,
+    subject: result.round.chosen
+      ? `Review submitted — ${result.round.chosen} — ${result.inserted} note${result.inserted === 1 ? "" : "s"}`
+      : `Review submitted — ${result.inserted} note${result.inserted === 1 ? "" : "s"}`,
     text: [
       `${author ?? "A client"} submitted round ${result.round.round}.`,
+      ...(result.round.chosen ? [`Direction chosen: ${result.round.chosen}.`] : []),
       `${result.inserted} note${result.inserted === 1 ? "" : "s"}, ${edits} of them text edits.`,
       "",
       ...comments.map((c, i) =>

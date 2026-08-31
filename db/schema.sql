@@ -191,3 +191,16 @@ create table if not exists agreement_signatures (
 
 create index if not exists agreement_signatures_slug_idx
   on agreement_signatures(agreement_slug);
+
+-- Several mocks on one project. A website redesign is sold as three
+-- concepts the client picks from, so the review tool has to be able to
+-- put all three behind one link rather than making the client hold
+-- three tabs open and tell us which was which. `mock_path` stays as
+-- the single-mock case and as the fallback for every project that
+-- predates this.
+alter table projects add column if not exists mocks jsonb not null default '[]'::jsonb;
+
+-- Which direction the client picked, recorded on the round they picked
+-- it in. Notes say what to change; this says what to change *about
+-- what*, and without it a three-concept round comes back unanswerable.
+alter table review_rounds add column if not exists chosen text;

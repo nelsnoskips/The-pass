@@ -68,6 +68,53 @@
   background: #fffdf8;
 }
 
+/* The direction switcher. Sits between the toolbar and the frame so
+   changing concepts reads as changing what is on the easel, not as
+   another review mode — the modes above it govern the click, this
+   governs the subject. */
+.rv-variants {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-wrap: wrap;
+  padding: .5rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+  background: #fffdf8;
+}
+.rv-variants .rv-eyebrow { margin-right: .3rem; }
+.rv-variants button {
+  padding: .38rem .8rem;
+  font-size: 12.5px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--soft);
+}
+.rv-variants button[data-on] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.rv-variants button[data-picked] { border-color: var(--gold); color: var(--ink); }
+.rv-variants button[data-picked][data-on] { color: var(--paper); }
+
+/* The pick itself. Deliberately not a dropdown: three concepts is the
+   whole question this round asks, and a closed select hides it. */
+.rv-pick {
+  border: 1px solid var(--gold);
+  border-radius: 2px;
+  padding: .7rem .75rem;
+  background: #fffdf8;
+}
+.rv-pick p { margin: .3rem 0 .6rem; font-size: 12px; line-height: 1.5; color: var(--soft); }
+.rv-pick-opts { display: grid; gap: .3rem; }
+.rv-pick-opts label {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .35rem .45rem;
+  font-size: 13px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.rv-pick-opts label[data-on] { border-color: var(--line); background: #fff; font-weight: 600; }
+.rv-pick-opts input { accent-color: var(--gold); }
+
 /* Both children need min-width:0. A grid item defaults to min-width
    auto, which means it refuses to shrink below its content and the
    sidebar's long text runs off the edge of the window instead of

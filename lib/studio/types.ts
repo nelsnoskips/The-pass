@@ -27,12 +27,21 @@ export type Client = {
   created_at: string;
 };
 
+/** One reviewable build of a project: a label the client reads and the
+    path it is served from on this domain. */
+export type ProjectMock = {
+  label: string;
+  path: string;
+};
+
 export type Project = {
   id: string;
   client_id: string;
   name: string;
   stage: ProjectStage;
   mock_path: string | null;
+  /** Empty for a single-mock project, which falls back to mock_path. */
+  mocks: ProjectMock[];
   live_url: string | null;
   status_token: string | null;
   monthly_fee: string | null;
@@ -47,6 +56,8 @@ export type ReviewRound = {
   round: number;
   status: "open" | "submitted" | "closed";
   note: string | null;
+  /** The mock label the client chose, on a round that offered several. */
+  chosen: string | null;
   created_at: string;
   submitted_at: string | null;
   seen_at: string | null;

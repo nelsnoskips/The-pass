@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PIN_STYLES, type Draft, offsetPct, selectorFor, shortText } from "./annotate";
+import type { ProjectMock } from "@/lib/studio/types";
 
 type Mode = "browse" | "comment" | "edit";
 
@@ -20,27 +21,38 @@ const MODE_COPY: Record<Mode, { label: string; hint: string }> = {
  * stay possible — half the feedback on a website is about how it moves
  * between pages — so arming an annotation mode is deliberate and
  * visible, and browse is the default.
+ *
+ * A project can carry several mocks — a redesign is sold as three
+ * concepts to choose between — in which case a switcher appears and the
+ * client is asked which direction they want. Notes stay attached to
+ * whichever mock was on screen, because `page_path` already records the
+ * mock's own path.
  */
 export function ReviewWorkspace({
   token,
   projectName,
   clientName,
-  mockPath,
+  mocks,
   round,
   alreadySubmitted,
+  chosen: chosenAlready,
 }: {
   token: string;
   projectName: string;
   clientName: string;
-  mockPath: string;
+  /** At least one. More than one puts a switcher in the toolbar. */
+  mocks: ProjectMock[];
   round: number;
   alreadySubmitted: boolean;
+  chosen: string | null;
 }) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [mode, setMode] = useState<Mode>("browse");
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [pagePath, setPagePath] = useState(mockPath);
+  const [shown, setShown] = useState(0);
+  const [chosen, setChosen] = useState<string>(chosenAlready ?? "");
+  const [pagePath, setPagePath] = useState(mocks[0].path);
   const [author, setAuthor] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
     alreadySubmitted ? "sent" : "idle",
@@ -248,8 +260,13 @@ export function ReviewWorkspace({
     setActiveId((a) => (a === id ? null : a));
   };
 
+  const picking = mocks.length > 1;
+  // Picking a direction is a complete answer on its own — a client who
+  // likes one as it stands has nothing to pin.
+  const canSubmit = drafts.length > 0 || (picking && chosen !== "");
+
   async function submit() {
-    if (drafts.length === 0) return;
+    if (!canSubmit) return;
     setStatus("sending");
     setError(null);
     try {
@@ -258,6 +275,7 @@ export function ReviewWorkspace({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           author: author.trim() || null,
+          chosen: chosen || null,
           comments: drafts.map((d) => ({
             kind: d.kind,
             pagePath: d.pagePath,
@@ -292,6 +310,7 @@ export function ReviewWorkspace({
           {drafts.length > 0
             ? `${drafts.length} note${drafts.length === 1 ? "" : "s"} on ${projectName} sent through. `
             : `Your notes on ${projectName} are already in. `}
+          {chosen && `You picked ${chosen}. `}
           We&rsquo;ll come back to you with the next round.
         </p>
       </div>
@@ -324,11 +343,30 @@ export function ReviewWorkspace({
           type="button"
           className="rv-submit"
           onClick={submit}
-          disabled={drafts.length === 0 || status === "sending"}
+          disabled={!canSubmit || status === "sending"}
         >
           {status === "sending" ? "Sending…" : `Submit ${drafts.length || ""}`.trim()}
         </button>
       </header>
+
+      {picking && (
+        <div className="rv-variants" role="group" aria-label="Design direction">
+          <span className="rv-eyebrow">Directions</span>
+          {mocks.map((m, i) => (
+            <button
+              key={m.path}
+              type="button"
+              onClick={() => setShown(i)}
+              aria-pressed={i === shown}
+              data-on={i === shown ? "1" : undefined}
+              data-picked={chosen === m.label ? "1" : undefined}
+            >
+              {m.label}
+              {chosen === m.label && <span aria-hidden> &#10003;</span>}
+            </button>
+          ))}
+        </div>
+      )}
 
       <p className="rv-hint">{MODE_COPY[mode].hint}</p>
 
@@ -342,10 +380,45 @@ export function ReviewWorkspace({
               </p>
             </div>
           )}
-          <iframe ref={frameRef} src={mockPath} title={`${projectName} preview`} />
+          <iframe
+            ref={frameRef}
+            src={mocks[shown].path}
+            title={`${projectName} — ${mocks[shown].label}`}
+          />
         </div>
 
         <aside className="rv-side">
+          {picking && (
+            <div className="rv-pick">
+              <span className="rv-eyebrow">Which direction?</span>
+              <p>Pick the one you want us to build out. Notes still count on any of them.</p>
+              <div className="rv-pick-opts">
+                {mocks.map((m) => (
+                  <label key={m.path} data-on={chosen === m.label ? "1" : undefined}>
+                    <input
+                      type="radio"
+                      name="chosen"
+                      value={m.label}
+                      checked={chosen === m.label}
+                      onChange={() => setChosen(m.label)}
+                    />
+                    <span>{m.label}</span>
+                  </label>
+                ))}
+                <label data-on={chosen === "" ? "1" : undefined}>
+                  <input
+                    type="radio"
+                    name="chosen"
+                    value=""
+                    checked={chosen === ""}
+                    onChange={() => setChosen("")}
+                  />
+                  <span>Not decided yet</span>
+                </label>
+              </div>
+            </div>
+          )}
+
           <div className="rv-side-head">
             <span className="rv-eyebrow">Your notes</span>
             <span className="rv-count">{drafts.length}</span>
@@ -355,6 +428,7 @@ export function ReviewWorkspace({
             <p className="rv-empty">
               Nothing yet. Pick <strong>Comment</strong> or <strong>Suggest an edit</strong>,
               then click the part of the page you mean.
+              {picking && " Choosing a direction above is enough on its own."}
             </p>
           )}
 
