@@ -2,8 +2,12 @@
 # Netlify auto-detects Next.js and provisions the Next Runtime; connecting
 # this repo in the Netlify UI with these settings is all that's required.
 
+# The migration runs first so a schema change ships with the code that
+# reads it. db/schema.sql is guarded throughout, so this is a no-op on
+# every deploy that does not change it, and it skips cleanly when no
+# database is configured.
 [build]
-  command = "npm run build"
+  command = "npm run db:migrate && npm run build"
   publish = ".next"
 
 [[plugins]]
