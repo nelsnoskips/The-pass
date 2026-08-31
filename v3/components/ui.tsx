@@ -15,11 +15,15 @@ export function Plate({
   slot,
   className,
   imgClassName,
+  imgStyle,
   parallax = 0,
 }: {
   slot: string;
   className?: string;
   imgClassName?: string;
+  /** Per-photograph overrides — object-position above all, which has to
+      be chosen one image at a time rather than shared across a set. */
+  imgStyle?: React.CSSProperties;
   /** Pixels of vertical drift across the section's travel. The image is
       oversized to cover the drift, so the frame never shows an edge. */
   parallax?: number;
@@ -90,7 +94,9 @@ export function Plate({
         src={asset(meta.src)}
         alt={meta.alt}
         className={imgClassName}
-        style={parallax ? { willChange: "transform" } : undefined}
+        style={
+          parallax ? { willChange: "transform", ...imgStyle } : imgStyle
+        }
         onError={() => setMissing(true)}
         loading="lazy"
         decoding="async"

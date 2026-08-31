@@ -165,7 +165,8 @@ export function Industries() {
               <Plate
                 slot={tab.slot}
                 className="h-full"
-                imgClassName="h-full w-full object-cover object-[50%_35%]"
+                imgClassName="h-full w-full object-cover"
+                imgStyle={{ objectPosition: `50% ${tab.focus}` }}
               />
             </div>
           ))}

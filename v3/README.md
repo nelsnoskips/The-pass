@@ -77,3 +77,12 @@ by eye. The reliable method, in order:
    the frame edge.
 
 `qa.mjs` then proves the result at 2560/1920/1440/1366/1024/768/390.
+
+### Photo bands wider than their source
+
+The industries band is ~69vw × 19vw — a 3.65:1 frame cut from 3:2
+photographs, so only about 41% of each source's height survives. At that
+crop one shared `object-position` cannot work: whatever value suits one
+photograph clips a head in another. Choose the value **per photograph**
+from a rendered contact sheet at the live frame aspect, and carry it on
+the data (`INDUSTRIES.tabs[].focus`) rather than in the class list.

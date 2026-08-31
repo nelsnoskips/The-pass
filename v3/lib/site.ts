@@ -147,13 +147,17 @@ export const TEAM = {
 
 export const INDUSTRIES = {
   head: ["Built for", "every industry."],
+  /* `focus` is the vertical object-position for each plate, chosen one
+     photograph at a time from rendered crops at the live band aspect
+     (see README, "Matching a mock"). The band is far wider than the
+     source, so a single shared value clips somebody in every frame. */
   tabs: [
-    { name: "Healthcare", slot: "industry-healthcare" },
-    { name: "Commercial", slot: "industry-commercial" },
-    { name: "Education", slot: "industry-education" },
-    { name: "Hospitality", slot: "industry-hospitality" },
-    { name: "Restaurants", slot: "industry-restaurants" },
-    { name: "Mission critical", slot: "industry-mission" },
+    { name: "Healthcare", slot: "industry-healthcare", focus: "50%" },
+    { name: "Commercial", slot: "industry-commercial", focus: "70%" },
+    { name: "Education", slot: "industry-education", focus: "45%" },
+    { name: "Hospitality", slot: "industry-hospitality", focus: "50%" },
+    { name: "Restaurants", slot: "industry-restaurants", focus: "32%" },
+    { name: "Mission critical", slot: "industry-mission", focus: "40%" },
   ],
 } as const;
 
