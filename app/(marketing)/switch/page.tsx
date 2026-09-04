@@ -36,6 +36,11 @@ const PLATFORM_FACTS = [
 
 const HOW_WE_DO_IT = [
   {
+    title: "AI search is the new front door — we build for it",
+    detail:
+      "When someone asks ChatGPT, Google's AI, or Perplexity where to eat, the answer comes from what those engines can read and trust. This is answer-engine optimization (AEO), and it's our specialty: real crawlable pages, structured data that spells out who and where you are, entity signals AI models actually cite. Template platforms serve widgets AI can barely see; we build sites that get quoted.",
+  },
+  {
     title: "You own everything",
     detail:
       "The design, the code, the domain, the photography, the content. From the day it launches, the site is an asset on your side of the ledger. If we ever part ways, nothing happens — it keeps running.",
@@ -88,6 +93,11 @@ const TABLE: [string, string, string][] = [
     "SEO",
     "Hand-written titles and descriptions, menus as real indexable pages, structured data for your restaurant and your city.",
     "Auto-generated metadata at platform scale; audited sites expose as few as 5–9 pages to Google.",
+  ],
+  [
+    "AI search (AEO)",
+    "Built to be the answer ChatGPT, Google AI, and Perplexity cite: crawlable content, structured data, entity signals. Our specialty.",
+    "Menus and content locked in widgets and subdomains that AI engines can't read or won't credit to your restaurant.",
   ],
   [
     "Speed",
