@@ -2,13 +2,18 @@
 
    The room doesn't start blue. It becomes Blue.
 
-   Everything here is scoped to .blu, and every cinematic state is gated
-   behind .blu-cine on <html>, added before first paint and only when
-   motion is welcome. Without that class — no JavaScript, reduced motion,
-   a crawler — the page renders its finished frames statically: the hero
-   is the open-curtain still with a real h1 and real buttons, the turn
-   section shows the blue state, the final CTA is already cobalt. The
-   film is the overture, never the interface. */
+   Everything is scoped to .blu, and every cinematic state is gated behind
+   .blu-cine on <html>, added before first paint and only when motion is
+   welcome. Without that class — no JavaScript, reduced motion, a crawler —
+   the page renders its finished frames: the hero is the complete
+   open-curtain photograph with a real h1 and real buttons, and every
+   section is simply itself. The film is the overture, never the interface.
+
+   The page's own argument is in its backgrounds. It opens near-black,
+   comes up into ivory for the week's billing, drops back to the room for
+   dinner and the turn, lifts into powder blue for the bar — the pause the
+   page needs before the second half — and closes in full cobalt. Blue is
+   not applied to everything; it arrives. */
 
 .blu {
   --blue-black: #030812;
@@ -17,17 +22,18 @@
   --stage-blue: #1167ff;
   --ivory: #f1ede4;
   --muted-ivory: #bebab2;
+  --powder: #dceaf3;
   --champagne: #c7a66a;
   --hairline: rgba(241, 237, 228, 0.18);
+  --hairline-ink: rgba(3, 8, 18, 0.16);
 
-  --pad: clamp(32px, 5vw, 88px);
+  --pad: clamp(24px, 5vw, 88px);
   --shell: 1540px;
-  --gap: clamp(96px, 12vw, 190px);
+  --gap: clamp(76px, 9vw, 140px);
 
   background: var(--blue-black);
   color: var(--ivory);
   font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 400;
   overflow-x: clip;
 }
 
@@ -36,18 +42,22 @@
 .blu-display {
   font-family: var(--font-bodoni), "Bodoni Moda", Didot, Georgia, serif;
   font-weight: 400;
-  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
 }
-.blu-h1 { font-size: clamp(4rem, 7.2vw, 8.75rem); line-height: 0.88; }
-.blu-h2 { font-size: clamp(2.8rem, 5vw, 6.25rem); line-height: 0.92; }
-.blu-h3 { font-size: clamp(1.75rem, 2.4vw, 2.75rem); line-height: 1; }
+.blu-h1 { font-size: clamp(3.1rem, 6.4vw, 7.4rem); line-height: 0.88; }
+/* Section headlines are measured off the approved mock rather than off
+   the brief's upper bound: at 1540px the mock sets them around 46px, and
+   the brief's 100px would swamp the photography they sit beside. */
+.blu-h2 { font-size: clamp(1.9rem, 3vw, 3.3rem); line-height: 0.94; }
+.blu-h3 { font-size: clamp(1rem, 1.15vw, 1.28rem); line-height: 1.25; letter-spacing: 0.04em; }
 .blu-body {
-  font-size: clamp(1rem, 1.15vw, 1.2rem);
+  font-size: clamp(0.95rem, 1.05vw, 1.12rem);
   line-height: 1.6;
   color: var(--muted-ivory);
 }
 .blu-label {
-  font-size: clamp(11px, 0.78vw, 13px);
+  font-size: clamp(10px, 0.72vw, 12px);
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: 0.16em;
@@ -56,7 +66,28 @@
 .blu-num {
   font-family: var(--font-bodoni), "Bodoni Moda", Didot, Georgia, serif;
   font-variant-numeric: lining-nums tabular-nums;
+  line-height: 0.8;
 }
+
+/* --------------------------------------------------- light rooms --- */
+/* Two of them: ivory for the billing and the events, powder blue for the
+   bar. Both invert the type rather than tinting it, so the page reads as
+   the same room with the house lights up. */
+
+.blu-light { background: var(--ivory); color: var(--blue-black); }
+.blu-powder { background: var(--powder); color: var(--blue-black); }
+.blu-light .blu-body,
+.blu-powder .blu-body { color: rgba(3, 8, 18, 0.66); }
+.blu-light .blu-label,
+.blu-powder .blu-label { color: rgba(3, 8, 18, 0.56); }
+.blu-light .blu-link,
+.blu-powder .blu-link { color: var(--blue-black); border-color: rgba(3, 8, 18, 0.4); }
+.blu-light .blu-link:hover,
+.blu-powder .blu-link:hover { border-color: var(--cobalt); color: var(--cobalt); }
+.blu-light .blu-btn,
+.blu-powder .blu-btn { color: var(--blue-black); border-color: var(--hairline-ink); }
+.blu-light .blu-hair,
+.blu-powder .blu-hair { border-color: var(--hairline-ink); }
 
 /* --------------------------------------------------------- shell --- */
 
@@ -68,14 +99,7 @@
 }
 .blu-section { padding-block: var(--gap); }
 .blu-rule { height: 1px; background: var(--hairline); border: 0; }
-.blu-rule-champagne {
-  height: 1px;
-  border: 0;
-  background: linear-gradient(90deg, rgba(199, 166, 106, 0.75), rgba(199, 166, 106, 0));
-}
 
-/* Buttons. One champagne primary on the page, per the brand system;
-   everything else is a hairline. 44px minimum on every tap target. */
 .blu-btn {
   display: inline-flex;
   align-items: center;
@@ -87,102 +111,64 @@
   color: var(--ivory);
   transition: background-color 0.35s, border-color 0.35s, color 0.35s;
 }
-.blu-btn:hover { border-color: rgba(241, 237, 228, 0.5); background: rgba(241, 237, 228, 0.06); }
+.blu-btn:hover { border-color: rgba(241, 237, 228, 0.55); background: rgba(241, 237, 228, 0.07); }
+/* The one filled button on the page. The mock fills it midnight, not
+   champagne: gold as a fill would tip the whole room into gold-luxury,
+   which the brief rules out. Champagne stays a hairline and a numeral. */
 .blu-btn-primary {
-  border-color: rgba(199, 166, 106, 0.8);
-  background: rgba(199, 166, 106, 0.12);
+  background: var(--midnight);
+  border-color: rgba(241, 237, 228, 0.35);
 }
-.blu-btn-primary:hover { background: var(--champagne); border-color: var(--champagne); color: var(--blue-black); }
+.blu-btn-primary:hover { background: var(--cobalt); border-color: var(--cobalt); }
+
 .blu-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
   min-height: 44px;
   color: var(--ivory);
-  border-bottom: 1px solid rgba(241, 237, 228, 0.35);
+  border-bottom: 1px solid rgba(241, 237, 228, 0.4);
   transition: border-color 0.3s, color 0.3s;
 }
 .blu-link:hover { border-color: var(--champagne); color: var(--champagne); }
 
-/* A narrow vertical light seam, used between a few sections rather than
-   as a continuous line down the page. */
-.blu-seam {
-  position: relative;
-  height: clamp(64px, 8vw, 120px);
-}
+/* A narrow vertical seam of light, used at two joins in the page rather
+   than as a rule running the whole way down it. */
+.blu-seam { position: relative; height: clamp(48px, 6vw, 96px); }
 .blu-seam::before {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
+  inset-block: 0;
   left: var(--pad);
   width: 1px;
-  background: linear-gradient(180deg, rgba(17, 103, 255, 0), rgba(17, 103, 255, 0.55), rgba(17, 103, 255, 0));
+  background: linear-gradient(180deg, rgba(17, 103, 255, 0), rgba(17, 103, 255, 0.6), rgba(17, 103, 255, 0));
 }
 
-/* ---------------------------------------------- the stage lights --- */
-/* Frames render their own light so the page is composed and lit with no
-   photography at all. A supplied photograph lays over the same box; the
-   light stays underneath as its grade, which is why these are painted on
-   the container rather than instead of the image. */
-
-.blu-frame {
-  position: relative;
-  overflow: hidden;
-  background: var(--blue-black);
-  isolation: isolate;
-}
+.blu-frame { position: relative; overflow: hidden; background: var(--midnight); }
 .blu-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.blu-lite { position: absolute; inset: 0; }
-.blu-lite-candle {
-  background:
-    radial-gradient(120% 90% at 30% 22%, rgba(199, 166, 106, 0.34) 0%, rgba(199, 166, 106, 0.06) 42%, rgba(3, 8, 18, 0) 72%),
-    radial-gradient(80% 70% at 78% 84%, rgba(199, 166, 106, 0.16) 0%, rgba(3, 8, 18, 0) 66%),
-    linear-gradient(165deg, #0b1220 0%, #05090f 58%, #030812 100%);
-}
-.blu-lite-cobalt {
-  background:
-    radial-gradient(100% 78% at 50% 26%, rgba(17, 103, 255, 0.42) 0%, rgba(6, 71, 217, 0.14) 46%, rgba(3, 8, 18, 0) 74%),
-    radial-gradient(70% 60% at 22% 88%, rgba(199, 166, 106, 0.12) 0%, rgba(3, 8, 18, 0) 60%),
-    linear-gradient(170deg, #071427 0%, #04101f 60%, #030812 100%);
-}
-.blu-lite-night {
-  background:
-    radial-gradient(90% 70% at 62% 32%, rgba(6, 71, 217, 0.3) 0%, rgba(3, 8, 18, 0) 68%),
-    linear-gradient(180deg, #050d1a 0%, #030812 70%);
-}
-.blu-lite-turn {
-  background:
-    radial-gradient(110% 86% at 44% 30%, rgba(255, 176, 92, 0.3) 0%, rgba(199, 166, 106, 0.08) 44%, rgba(3, 8, 18, 0) 74%),
-    linear-gradient(168deg, #140f0a 0%, #080c14 62%, #030812 100%);
-}
-/* The house grain. Fixed to the screen, never to the room. */
+
 .blu-grain {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.05;
+  opacity: 0.045;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* ============================================================ hero === */
-/* Still by default: one viewport, curtains already open, the h1 and both
-   actions in place. .blu-cine turns the same markup into a pinned stage
-   the guest scrubs the curtains open on. */
+/* One photograph, worked rather than reassembled. The client supplied the
+   scene flat, so the curtains are two masked copies of that same frame
+   drawn outward a couple of percent, the foreground a third copy moving
+   a shade faster, and the blue wash is painted in CSS. Copies of one
+   photograph can never mis-register against each other, which is the
+   whole reason to build it this way instead of compositing plates. */
 
-.blu-herowrap { position: relative; height: 100svh; min-height: 620px; }
-.blu-cine .blu-herowrap { height: 240vh; min-height: 0; }
+.blu-herowrap { position: relative; height: 100svh; min-height: 600px; }
+.blu-cine .blu-herowrap { height: 220vh; }
 @media (max-width: 900px) {
-  /* A short hold only: 85vh of non-pinned reveal, per the brief. */
+  /* A short hold only, and both hero actions stay above the fold. */
   .blu-cine .blu-herowrap { height: 100svh; min-height: 560px; }
 }
-
-/* Under the cine path these start closed and dark; without it they fall
-   back to their own defaults, which are the finished open frame. The
-   class is on <html> before first paint, so the still never flashes. */
-.blu-cine .blu-stage { --blu-open: 0; }
-.blu-cine .blu-turnstage { --blu-wipe: 0; }
 
 .blu-stage {
   position: sticky;
@@ -194,411 +180,389 @@
   background: var(--blue-black);
 }
 
-.blu-plane { position: absolute; inset: 0; }
-.blu-plane img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-
-/* 1 — the rear scrim, furthest back, moving least (0.06 x scroll). It is
-   overscanned past the bottom of the stage by more than it travels, so
-   its own edge never rides into frame. */
-.blu-p-scrim { z-index: 0; bottom: -16vh; }
-.blu-p-scrim .blu-lite {
-  background:
-    radial-gradient(58% 44% at 50% 46%, rgba(17, 103, 255, calc(0.18 + 0.34 * var(--blu-t, 0))) 0%, rgba(6, 71, 217, 0.08) 48%, rgba(3, 8, 18, 0) 78%),
-    linear-gradient(180deg, #050c17 0%, #030812 62%, #020610 100%);
-}
-
-/* 2 — the microphone: the visual anchor. It rides the parallax with the
-   room (0.12 x scroll) but is never itself animated — no sway, no scale,
-   no pulse. Everything else in the frame moves around it. */
-.blu-p-mic { z-index: 3; bottom: -22vh; }
-.blu-mic {
-  position: absolute;
-  left: 50%;
-  bottom: 20%;
-  translate: -50% 0;
-  width: clamp(90px, 9vw, 150px);
-  height: auto;
-  opacity: 0.92;
-}
-/* The pool of blue the microphone stands in. Narrow at the start — the
-   only blue in a nearly black room — and opening as the scroll runs. */
-.blu-pool {
-  position: absolute;
-  left: 50%;
-  bottom: 6%;
-  translate: -50% 0;
-  width: calc(22% + 42% * var(--blu-t, 0));
-  height: 74%;
-  pointer-events: none;
-  background: radial-gradient(
-    50% 58% at 50% 50%,
-    rgba(17, 103, 255, calc(0.3 + 0.34 * var(--blu-t, 0))) 0%,
-    rgba(6, 71, 217, 0.14) 46%,
-    rgba(3, 8, 18, 0) 74%
-  );
-}
-
-/* The dark the room actually starts in. It sits over the scrim but under
-   the projection, the microphone's pool and the candles on the tables —
-   which is the whole composition of the first frame: a nearly black room
-   with one narrow pool of blue in it and candlelight in the foreground.
-   It lifts as the curtains draw back. */
-.blu-hero-night {
+/* The room. Scaled 1.04 -> 1.0 about the microphone, so the anchor of the
+   frame is the one thing that does not move while everything around it
+   settles. */
+.blu-room {
   position: absolute;
   inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: #01040a;
-  opacity: calc(0.66 * (1 - var(--blu-t, 1)));
+  z-index: 0;
+  transform-origin: 66% 46%;
+  transform: scale(var(--blu-scale, 1));
+}
+.blu-room > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 52%;
 }
 
-/* 3 — the BLUE projection thrown on the rear scrim. Scales 1.08 -> 0.94
-   and fades 0.42 -> 0 across the sequence: the name is the thing the
-   room stops needing once you can see the room. */
+/* The curtains: the same frame, clipped to the velvet at each edge and
+   drawn outward. The clip lives on the wrapper and the travel on the
+   child, so the mask stays put while the fabric moves through it. */
+.blu-curtain { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.blu-curtain-l { clip-path: inset(0 83% 0 0); }
+.blu-curtain-r { clip-path: inset(0 0 0 74%); }
+.blu-curtain-inner { position: absolute; inset: 0; }
+.blu-curtain-l .blu-curtain-inner { transform: translate3d(calc(var(--blu-part, 0) * -2.6%), 0, 0); }
+.blu-curtain-r .blu-curtain-inner { transform: translate3d(calc(var(--blu-part, 0) * 2.6%), 0, 0); }
+.blu-curtain-inner > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 52%;
+}
+@media (max-width: 900px) {
+  /* The supplied frame already reads as an open curtain at this width,
+     and a 2.6% draw on a phone is motion nobody can see. */
+  .blu-curtain { display: none; }
+}
+
+/* The foreground: the tables and glassware, clipped off the bottom of the
+   same frame and moving a shade faster than the room. It only ever
+   travels downward, so the strip it uncovers is the identical photograph
+   a few pixels higher — the trick has no visible edge. */
+.blu-fore { position: absolute; inset: 0; z-index: 2; pointer-events: none; clip-path: inset(66% 0 0 0); }
+.blu-fore-inner { position: absolute; inset: 0; transform: translate3d(0, calc(var(--blu-fore, 0) * 9px), 0); }
+.blu-fore-inner > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 52%;
+}
+
+/* The wash: the room's own blue, painted rather than baked into a plate,
+   so it can move across the stage independently of the photograph. */
+.blu-wash {
+  position: absolute;
+  inset: -10%;
+  z-index: 3;
+  pointer-events: none;
+  opacity: calc(0.3 + 0.45 * var(--blu-t, 0));
+  transform: translate3d(calc(var(--blu-t, 0) * 3%), 0, 0);
+  background:
+    radial-gradient(46% 40% at 44% 40%, rgba(17, 103, 255, 0.34) 0%, rgba(6, 71, 217, 0.08) 52%, rgba(3, 8, 18, 0) 78%),
+    radial-gradient(70% 46% at 62% 88%, rgba(6, 71, 217, 0.2) 0%, rgba(3, 8, 18, 0) 72%);
+}
+
+/* The projection. Live type rather than a plate, so it stays crisp at any
+   size and costs nothing: 28% opacity down to nothing as the room comes
+   up under it. */
 .blu-projection {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 4;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  opacity: 0.42;
+  opacity: 0.28;
+  padding-left: 30%;
 }
 .blu-projection span {
   font-family: var(--font-bodoni), "Bodoni Moda", Didot, Georgia, serif;
-  font-size: clamp(3.5rem, 13vw, 15rem);
-  letter-spacing: 0.22em;
-  margin-right: -0.22em;
+  font-size: clamp(3rem, 11vw, 12rem);
+  letter-spacing: 0.2em;
+  margin-right: -0.2em;
   line-height: 1;
-  color: rgba(241, 237, 228, 0.5);
-  text-shadow: 0 0 60px rgba(17, 103, 255, 0.35);
+  text-transform: uppercase;
+  color: rgba(241, 237, 228, 0.9);
 }
 .blu-projection small {
-  display: block;
   font-family: var(--font-manrope), sans-serif;
-  font-size: clamp(9px, 0.9vw, 13px);
+  font-size: clamp(8px, 0.85vw, 12px);
   letter-spacing: 0.42em;
-  margin-top: 1.1rem;
-  color: rgba(241, 237, 228, 0.34);
+  margin-top: 1rem;
+  text-transform: uppercase;
+  color: rgba(241, 237, 228, 0.72);
 }
+@media (max-width: 1100px) { .blu-projection { padding-left: 0; } }
 
-/* 4 — the curtains. 28% occlusion each side at rest, drawn back over the
-   first 35% of the sequence. On narrow screens the same panels are a
-   clip-path opening instead of a translation, which is cheaper and reads
-   the same at that size. */
-.blu-p-curtain { z-index: 4; pointer-events: none; }
-.blu-curtain {
-  position: absolute;
-  top: -4vh;
-  bottom: -10vh;
-  width: 30%;
-}
-.blu-curtain-l {
-  left: 0;
-  transform: translate3d(calc(var(--blu-open, 1) * -78%), 0, 0);
-  background:
-    linear-gradient(90deg, #01040a 0%, #0d1c35 9%, #050f1f 19%, #14294a 31%, #06111f 43%, #1a3563 57%, #071324 70%, #1e3d72 85%, #0a1a31 95%, rgba(2, 6, 14, 0.72) 100%),
-    repeating-linear-gradient(90deg, rgba(174, 205, 255, 0.05) 0 1px, rgba(0, 0, 0, 0.28) 1px 17px);
-  box-shadow: 26px 0 70px rgba(1, 4, 10, 0.9);
-}
-.blu-curtain-r {
-  right: 0;
-  transform: translate3d(calc(var(--blu-open, 1) * 78%), 0, 0);
-  background:
-    linear-gradient(270deg, #01040a 0%, #0d1c35 9%, #050f1f 19%, #14294a 31%, #06111f 43%, #1a3563 57%, #071324 70%, #1e3d72 85%, #0a1a31 95%, rgba(2, 6, 14, 0.72) 100%),
-    repeating-linear-gradient(270deg, rgba(174, 205, 255, 0.05) 0 1px, rgba(0, 0, 0, 0.28) 1px 17px);
-  box-shadow: -26px 0 70px rgba(1, 4, 10, 0.9);
-}
-@media (max-width: 900px) {
-  .blu-curtain-l,
-  .blu-curtain-r { transform: none; }
-  .blu-curtain-l { clip-path: inset(0 0 0 calc(var(--blu-open, 1) * 100%)); }
-  .blu-curtain-r { clip-path: inset(0 calc(var(--blu-open, 1) * 100%) 0 0); }
-}
-
-/* 5 — the foreground tables, nearest the lens and moving fastest
-   (0.20 x scroll). Candlelight, out of focus by composition rather than
-   by a blur filter, which would cost frames on a phone. */
-.blu-p-tables { z-index: 5; top: auto; height: 46%; bottom: -30vh; }
-.blu-p-tables .blu-lite {
-  background:
-    radial-gradient(28% 60% at 14% 40%, rgba(199, 166, 106, 0.5) 0%, rgba(3, 8, 18, 0) 70%),
-    radial-gradient(24% 54% at 46% 62%, rgba(199, 166, 106, 0.34) 0%, rgba(3, 8, 18, 0) 70%),
-    radial-gradient(30% 62% at 84% 44%, rgba(199, 166, 106, 0.42) 0%, rgba(3, 8, 18, 0) 70%),
-    linear-gradient(180deg, rgba(3, 8, 18, 0) 0%, rgba(3, 8, 18, 0.72) 46%, #030812 100%);
-}
-
-/* 6 — the haze, and the cobalt gain that rises just before the hero
-   hands off to the calendar. */
-.blu-haze {
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-  pointer-events: none;
-  opacity: calc(0.28 + 0.5 * var(--blu-heat, 0));
-  background:
-    linear-gradient(102deg, rgba(17, 103, 255, 0) 34%, rgba(17, 103, 255, 0.1) 52%, rgba(120, 168, 255, 0.07) 62%, rgba(17, 103, 255, 0) 82%),
-    radial-gradient(120% 80% at 50% 100%, rgba(6, 71, 217, 0.22) 0%, rgba(3, 8, 18, 0) 70%);
-}
-/* Legibility under the copy, and the ink the stage leaves on as it goes,
-   so the calendar arrives out of black rather than off a hard edge. */
+/* Legibility under the copy: the mock's headline sits on the pale haze of
+   the stage, which needs a gradient behind it or the ivory disappears. */
 .blu-hero-shade {
   position: absolute;
   inset: 0;
-  z-index: 7;
+  z-index: 5;
   pointer-events: none;
-  background: linear-gradient(94deg, rgba(3, 8, 18, 0.9) 12%, rgba(3, 8, 18, 0.62) 44%, rgba(3, 8, 18, 0.06) 78%);
+  background: linear-gradient(96deg, rgba(3, 8, 18, 0.86) 8%, rgba(3, 8, 18, 0.5) 40%, rgba(3, 8, 18, 0) 72%);
 }
-.blu-hero-exit {
-  position: absolute;
-  inset: 0;
-  z-index: 11;
-  pointer-events: none;
-  background: var(--blue-black);
-  opacity: var(--blu-dark, 0);
+@media (max-width: 900px) {
+  .blu-hero-shade {
+    background:
+      linear-gradient(180deg, rgba(3, 8, 18, 0.72) 0%, rgba(3, 8, 18, 0.34) 34%, rgba(3, 8, 18, 0.62) 100%);
+  }
 }
-
-/* The hero copy is the destination, so it never drifts: no parallax, no
-   act system, present in the first frame and the last. */
 .blu-hero-copy {
   position: absolute;
   inset: 0;
-  z-index: 9;
+  z-index: 6;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 .blu-hero-eyebrow {
   position: absolute;
-  z-index: 10;
-  left: var(--pad);
-  right: var(--pad);
-  bottom: clamp(24px, 4vh, 54px);
-  color: rgba(241, 237, 228, 0.62);
+  z-index: 7;
+  inset-inline: var(--pad);
+  bottom: clamp(20px, 4vh, 48px);
+  color: rgba(241, 237, 228, 0.66);
+}
+/* The stage's exit is exactly one viewport tall. The room loses its last
+   light across it so the band below arrives out of black rather than off
+   a hard edge — but not until the hero has actually begun to leave. */
+.blu-hero-exit {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  background: var(--blue-black);
+  opacity: var(--blu-dark, 0);
 }
 
+/* Pre-engine values: closed, dark, unscaled. Set under .blu-cine only, so
+   the still hero keeps the finished frame. */
+.blu-cine .blu-stage { --blu-scale: 1.04; --blu-part: 0; --blu-t: 0; }
+
 /* ==================================================== reveal masks === */
-/* Headlines arrive by line out of overflow-hidden masks; blocks fade up.
-   Both are one-shot transitions driven by an IntersectionObserver, not by
-   the scroll position, so nothing re-animates on the way back up. */
 
 .blu-mask { display: block; overflow: hidden; }
 .blu-cine .blu-mask > span {
   display: block;
-  transform: translateY(108%);
-  transition: transform 0.95s cubic-bezier(0.16, 0.84, 0.24, 1);
+  transform: translateY(110%);
+  transition: transform 0.9s cubic-bezier(0.16, 0.84, 0.24, 1);
 }
-.blu-cine .is-in .blu-mask > span,
-.blu-cine .blu-mask.is-in > span { transform: none; }
+.blu-cine .is-in .blu-mask > span { transform: none; }
 .blu-cine [data-blu-rise] {
   opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 0.84, 0.24, 1);
+  transform: translateY(20px);
+  transition: opacity 0.75s ease, transform 0.75s cubic-bezier(0.16, 0.84, 0.24, 1);
 }
 .blu-cine [data-blu-rise].is-in { opacity: 1; transform: none; }
 
-/* ============================================ this week at blue === */
-/* Three portrait panels revealed from behind vertical velvet masks. The
-   dates and set times are real HTML text — never baked into a photo —
-   so they are selectable, translatable and searchable. */
+/* ======================= from blue hour to after hours (the band) === */
+/* Three panels edge to edge. They enter from behind vertical velvet
+   masks at three different rates, which is what makes a band of three
+   stills read as one evening passing rather than as a row of thumbnails. */
 
-.blu-week {
-  display: grid;
-  gap: clamp(20px, 2vw, 30px);
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-.blu-bill { position: relative; }
-.blu-portrait {
-  position: relative;
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-  background: var(--blue-black);
-}
-.blu-portrait img,
-.blu-portrait .blu-lite {
-  transition: transform 0.9s cubic-bezier(0.16, 0.84, 0.24, 1);
-}
-/* Hover is a suggestion, not a lunge: 1.025 and nothing more. */
-.blu-bill:hover .blu-portrait img,
-.blu-bill:hover .blu-portrait .blu-lite { transform: scale(1.025); }
-.blu-bill .blu-bill-meta {
-  transition: transform 0.9s cubic-bezier(0.16, 0.84, 0.24, 1);
-}
-.blu-bill:hover .blu-bill-meta { transform: translateY(-6px); }
-
-/* The velvet. Two halves that part vertically over 0.9s. */
-.blu-velvet {
+.blu-band { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.blu-band-panel { position: relative; aspect-ratio: 6 / 5; overflow: hidden; }
+.blu-band-panel img {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.blu-band-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(3, 8, 18, 0.78) 0%, rgba(3, 8, 18, 0) 42%);
   pointer-events: none;
 }
+.blu-band-cap { position: absolute; z-index: 2; left: clamp(14px, 1.4vw, 24px); bottom: clamp(12px, 1.4vw, 22px); }
+.blu-band-head {
+  position: absolute;
+  z-index: 3;
+  left: clamp(14px, 1.4vw, 26px);
+  top: clamp(14px, 1.4vw, 26px);
+  max-width: 22ch;
+}
+.blu-velvet { position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0; }
+.blu-cine .blu-velvet { opacity: 1; }
 .blu-velvet::before,
 .blu-velvet::after {
   content: "";
   position: absolute;
   inset-block: 0;
-  width: 50%;
+  width: 50.5%;
   background:
-    linear-gradient(90deg, #050d1a, #0b1729 42%, #060f1e 100%),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0 2px, rgba(0, 0, 0, 0.2) 2px 22px);
+    linear-gradient(90deg, #050d1a, #0b1729 44%, #060f1e 100%),
+    repeating-linear-gradient(90deg, rgba(174, 205, 255, 0.05) 0 1px, rgba(0, 0, 0, 0.26) 1px 17px);
   transition: transform 0.9s cubic-bezier(0.22, 0.8, 0.2, 1), opacity 0.9s ease;
 }
 .blu-velvet::before { left: 0; }
 .blu-velvet::after { right: 0; }
-/* No engine: the velvet is simply not there. */
-.blu-velvet { opacity: 0; }
-.blu-cine .blu-velvet { opacity: 1; }
 .blu-cine .is-in .blu-velvet { opacity: 0; }
-.blu-cine .is-in .blu-velvet::before { transform: translateX(-24px); }
-.blu-cine .is-in .blu-velvet::after { transform: translateX(24px); }
+.blu-cine .is-in .blu-velvet::before { transform: translateX(-22px); }
+.blu-cine .is-in .blu-velvet::after { transform: translateX(22px); }
 
-@media (max-width: 900px) {
-  /* A horizontal snap carousel, bled to the screen edge so the third
-     panel is visibly cut and the row reads as scrollable. */
-  .blu-week {
-    grid-template-columns: none;
+@media (max-width: 760px) {
+  .blu-band { grid-template-columns: 1fr; gap: 4px; }
+  .blu-band-panel { aspect-ratio: 16 / 10; }
+}
+
+/* ================================================ tonight, in one view === */
+
+.blu-bills { display: grid; gap: clamp(28px, 3vw, 56px); grid-template-columns: repeat(3, 1fr); }
+.blu-bill { display: grid; grid-template-columns: minmax(0, 0.86fr) minmax(0, 1fr); gap: clamp(14px, 1.4vw, 26px); align-items: start; }
+.blu-bill-shot { position: relative; aspect-ratio: 3 / 4; overflow: hidden; }
+.blu-bill-shot img { transition: transform 0.9s cubic-bezier(0.16, 0.84, 0.24, 1); }
+/* A suggestion, not a lunge. */
+.blu-bill:hover .blu-bill-shot img { transform: scale(1.025); }
+.blu-bill-meta { transition: transform 0.9s cubic-bezier(0.16, 0.84, 0.24, 1); }
+.blu-bill:hover .blu-bill-meta { transform: translateY(-6px); }
+
+@media (max-width: 1000px) {
+  /* A horizontal snap carousel, bled to the screen edge so the next bill
+     is visibly cut and the row reads as scrollable. */
+  .blu-bills {
     display: flex;
+    grid-template-columns: none;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-padding-left: var(--pad);
     margin-inline: calc(var(--pad) * -1);
     padding-inline: var(--pad);
-    gap: 16px;
+    gap: 18px;
     scrollbar-width: none;
+    /* Without this the carousel's scrollable overflow propagates to the
+       root scroller and the whole page pans sideways on a phone — the
+       bleed's negative margin is not the culprit, the nested scroller is.
+       Paint containment stops it at this box. */
+    contain: paint;
   }
-  .blu-week::-webkit-scrollbar { display: none; }
-  .blu-bill { flex: 0 0 78%; scroll-snap-align: start; }
+  .blu-bills::-webkit-scrollbar { display: none; }
+  .blu-bill { flex: 0 0 84%; scroll-snap-align: start; }
 }
 
-/* ============================================= dinner to the turn === */
-/* One matched room, photographed warm and blue. A vertical light wipe
-   carries the blue state across it from left to right — never a
-   draggable comparison slider, which turns the evening into a toy. */
+/* ================================================ the full-width acts === */
+/* Dinner is warm and the turn is blue, and they run back to back with a
+   seam of light between them. That adjacency is the transformation the
+   brief asked for: with one matched room in two grades it would have been
+   a wipe, and with these two frames it is a cut — which is what the
+   supplied photography can actually carry. */
 
-.blu-turnwrap { position: relative; }
-.blu-cine .blu-turnwrap { height: 260vh; }
-.blu-turnstage {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-.blu-cine .blu-turnstage {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  min-height: 560px;
-}
-.blu-turn-layer { position: absolute; inset: 0; }
-/* The warm state, ~2700K, is the base. */
-.blu-turn-warm .blu-lite {
-  background:
-    radial-gradient(64% 52% at 38% 34%, rgba(255, 183, 107, 0.42) 0%, rgba(199, 166, 106, 0.12) 48%, rgba(8, 10, 14, 0) 76%),
-    radial-gradient(40% 40% at 82% 74%, rgba(255, 176, 92, 0.24) 0%, rgba(8, 10, 14, 0) 70%),
-    linear-gradient(168deg, #171008 0%, #0a0b10 62%, #050710 100%);
-}
-/* The blue state sits over it under a clip, so the wipe is a reveal of
-   the same room rather than a crossfade between two rooms. Skin tones
-   are held by the warm radial that survives inside the blue grade. */
-.blu-turn-blue {
-  clip-path: inset(0 calc(100% - var(--blu-wipe, 100) * 1%) 0 0);
-}
-.blu-turn-blue .blu-lite {
-  background:
-    radial-gradient(58% 48% at 44% 32%, rgba(17, 103, 255, 0.46) 0%, rgba(6, 71, 217, 0.16) 50%, rgba(3, 8, 18, 0) 78%),
-    radial-gradient(26% 30% at 40% 62%, rgba(255, 186, 122, 0.2) 0%, rgba(3, 8, 18, 0) 72%),
-    linear-gradient(168deg, #071427 0%, #041020 60%, #030812 100%);
-}
-/* The seam of light doing the wiping. */
-.blu-turn-seam {
+.blu-act { position: relative; overflow: hidden; isolation: isolate; }
+.blu-act-img { position: absolute; inset: 0; }
+.blu-act-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* A slow push rather than another blue overlay. */
+.blu-cine .blu-act-img { transform: scale(var(--blu-push, 1)); }
+.blu-act-shade {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--blu-wipe, 100) * 1%);
-  width: 2px;
-  z-index: 4;
+  inset: 0;
+  z-index: 1;
   pointer-events: none;
-  opacity: var(--blu-seam, 0);
-  background: linear-gradient(180deg, rgba(17, 103, 255, 0), rgba(160, 200, 255, 0.9) 46%, rgba(17, 103, 255, 0));
-  box-shadow: 0 0 44px 10px rgba(17, 103, 255, 0.42);
+  background: linear-gradient(94deg, rgba(3, 8, 18, 0.88) 6%, rgba(3, 8, 18, 0.52) 34%, rgba(3, 8, 18, 0) 62%);
 }
-.blu-turn-copy { position: relative; z-index: 5; }
-
-@media (max-width: 900px) {
-  .blu-cine .blu-turnwrap { height: auto; }
-  .blu-cine .blu-turnstage { position: relative; height: auto; min-height: 0; }
-}
-
-/* ================================================= the final call === */
-/* The most saturated blue on the page. Midnight to cobalt across the
-   last 40% of its entrance, with a performance silhouette behind. */
-
-.blu-final {
+.blu-act-copy {
   position: relative;
-  overflow: hidden;
-  background: var(--midnight);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: clamp(360px, 30vw, 520px);
+  padding-block: clamp(44px, 4vw, 80px);
 }
-.blu-final::before {
+
+/* ==================================================== the blue list === */
+/* The page's pause. Bright, wide, and unhurried — the only section where
+   nothing is lit from a stage. */
+
+.blu-list-shot { position: relative; aspect-ratio: 1731 / 909; overflow: hidden; }
+.blu-list-shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.blu-list-labels {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-top: clamp(14px, 1.6vw, 24px);
+}
+@media (max-width: 760px) {
+  .blu-list-labels { grid-template-columns: repeat(3, 1fr); row-gap: 18px; }
+}
+
+/* ===================================================== membership === */
+
+.blu-member { background: linear-gradient(112deg, #0a1d3c 0%, var(--midnight) 46%, #04101f 100%); }
+.blu-member-shots { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(8px, 0.9vw, 16px); }
+.blu-member-shot { position: relative; aspect-ratio: 486 / 780; overflow: hidden; }
+@media (max-width: 760px) { .blu-member-shots { grid-template-columns: repeat(2, 1fr); } }
+
+/* ================================================= private events === */
+
+.blu-events { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(10px, 1.1vw, 20px); }
+.blu-event-shot { position: relative; aspect-ratio: 462 / 640; overflow: hidden; }
+@media (max-width: 900px) { .blu-events { grid-template-columns: repeat(2, 1fr); } }
+
+/* ================================================ below the surface === */
+
+.blu-descent { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+.blu-descent-shot { position: relative; aspect-ratio: 575 / 866; overflow: hidden; }
+@media (max-width: 760px) { .blu-descent { grid-template-columns: repeat(3, 1fr); } }
+
+/* ==================================================== the finale === */
+/* The most saturated moment on the page, and the only one that needed no
+   help from CSS: the photograph is already the last note. */
+
+.blu-finale { position: relative; overflow: hidden; isolation: isolate; }
+.blu-finale-img { position: absolute; inset: 0; }
+.blu-finale-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.blu-finale::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(168deg, var(--cobalt) 0%, #0a2f9e 54%, var(--midnight) 100%);
+  z-index: 1;
+  pointer-events: none;
+  /* Midnight into cobalt across the last of its entrance. */
+  background: linear-gradient(96deg, rgba(6, 71, 217, 0.5) 0%, rgba(7, 20, 39, 0.1) 58%, rgba(3, 8, 18, 0) 100%);
   opacity: var(--blu-final, 1);
 }
-.blu-cine .blu-final::before { opacity: var(--blu-final, 0); }
-.blu-final-figure {
+.blu-finale-shade {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  z-index: 1;
   pointer-events: none;
-  opacity: calc(0.06 + 0.12 * var(--blu-final, 1));
+  background: linear-gradient(94deg, rgba(3, 8, 18, 0.82) 4%, rgba(3, 8, 18, 0.34) 38%, rgba(3, 8, 18, 0) 64%);
 }
-.blu-final-figure svg { height: clamp(320px, 54%, 560px); width: auto; }
-.blu-final > .blu-shell { position: relative; }
+.blu-cine .blu-finale::before { opacity: var(--blu-final, 0); }
+.blu-finale-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: clamp(430px, 40vw, 640px);
+  padding-block: clamp(52px, 5vw, 96px);
+}
 
-/* ============================================================ misc === */
-
-.blu-drift { will-change: auto; }
-.blu-cine .blu-drift { will-change: transform; }
+/* ========================================================= misc === */
 
 .blu-hair { border-top: 1px solid var(--hairline); }
-.blu-list-row {
+.blu-row {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 1.5rem;
   align-items: baseline;
-  padding-block: 1.15rem;
+  padding-block: 1rem;
   border-bottom: 1px solid rgba(241, 237, 228, 0.1);
-  transition: border-color 0.35s;
 }
-.blu-list-row:hover { border-color: rgba(199, 166, 106, 0.5); }
 
 /* ------------------------------------------------- reduced motion --- */
-/* Not a degraded page: the finished one. No pin, no parallax, no wipe —
-   the blue state, the open curtains and the cobalt CTA are simply
-   already there, and the only motion left is a fade under 300ms. */
+/* Not a degraded page: the finished one. The complete hero as a static
+   image, every section already arrived, and no transition over 300ms. */
 
 @media (prefers-reduced-motion: reduce) {
   .blu *,
   .blu *::before,
   .blu *::after {
     animation: none !important;
-    transition-duration: 0.24s !important;
+    transition-duration: 0.22s !important;
   }
-  .blu-herowrap,
-  .blu-turnwrap { height: auto !important; }
-  .blu-stage,
-  .blu-turnstage { position: relative !important; height: 100svh; }
-  .blu-turnstage { height: auto; }
+  .blu-herowrap { height: 100svh !important; }
+  .blu-stage { position: relative !important; }
+  .blu-room { transform: none !important; }
+  .blu-curtain, .blu-fore { display: none !important; }
   .blu-mask > span { transform: none !important; }
   [data-blu-rise] { opacity: 1 !important; transform: none !important; }
   .blu-velvet { opacity: 0 !important; }
-  .blu-curtain-l, .blu-curtain-r { transform: none !important; clip-path: none !important; }
-  .blu-curtain-l { left: -22%; }
-  .blu-curtain-r { right: -22%; }
-  .blu-turn-blue { clip-path: none !important; }
-  .blu-final::before { opacity: 1 !important; }
+  .blu-act-img { transform: none !important; }
+  .blu-finale::before { opacity: 1 !important; }
 }

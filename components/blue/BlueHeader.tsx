@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-import { NAV, VENUE } from "@/lib/blue";
+import { NAV } from "@/lib/blue";
 
 /**
  * The house bar. Transparent over the hero so the curtains open on an
@@ -38,10 +38,10 @@ export function BlueHeader() {
         past || open ? "bg-[#030812]/90 backdrop-blur-[6px]" : "bg-transparent",
       )}
     >
-      <div className="blu-shell flex h-[68px] items-center justify-between gap-8 md:h-[84px]">
-        <a href="#top" className="flex flex-col leading-none" aria-label={`${VENUE.name} — top of page`}>
-          <span className="blu-display text-[22px] tracking-[0.4em] md:text-[26px]">BLUE</span>
-          <span className="blu-label mt-[6px] text-[9px] tracking-[0.24em] text-[#BEBAB2] md:text-[10px]">
+      <div className="blu-shell flex h-[68px] items-center justify-between gap-3 md:h-[84px] md:gap-8">
+        <a href="#top" className="flex min-w-0 shrink flex-col leading-none" aria-label="BLUE — top of page">
+          <span className="blu-display text-[22px] tracking-[0.4em] md:text-[26px]">Blue</span>
+          <span className="blu-label mt-[6px] hidden text-[9px] tracking-[0.24em] text-[#BEBAB2] sm:block md:text-[10px]">
             At the Gale South Beach
           </span>
         </a>
@@ -59,7 +59,7 @@ export function BlueHeader() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <a href="#reserve" className="blu-btn blu-label hidden sm:inline-flex">
+          <a href="#reserve" className="blu-btn blu-label !min-h-[44px] !px-4 sm:!px-6">
             Reserve
           </a>
           <button
@@ -69,10 +69,10 @@ export function BlueHeader() {
             aria-controls="blu-menu"
             className="blu-label flex h-11 min-w-11 items-center justify-center gap-2 px-2 text-[#F1EDE4] lg:hidden"
           >
-            <span className="sr-only sm:not-sr-only">{open ? "Close" : "Menu"}</span>
-            <span aria-hidden className="flex w-5 flex-col gap-[5px]">
-              <span className="h-px w-full bg-current" />
-              <span className="h-px w-full bg-current" />
+            <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
+            <span aria-hidden className="flex w-6 flex-col gap-[6px]">
+              <span className="h-[1.5px] w-full bg-current" />
+              <span className="h-[1.5px] w-full bg-current" />
             </span>
           </button>
         </div>
@@ -97,9 +97,9 @@ export function BlueHeader() {
           <a
             href="#reserve"
             onClick={() => setOpen(false)}
-            className="blu-btn blu-btn-primary blu-label mt-5 sm:hidden"
+            className="blu-btn blu-btn-primary blu-label mt-5"
           >
-            Reserve
+            Reserve the experience
           </a>
         </nav>
       </div>

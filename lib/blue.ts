@@ -1,35 +1,32 @@
 /**
- * BLUE at the Gale — content and the image manifest for the concept room.
+ * BLUE at the Gale — content for the concept room.
  *
- * Every photograph the page wants is declared here with `src: null` until
- * the client's assets land. Each frame paints its own stage light in CSS,
- * so the room reads as lit and finished with no photography at all; when a
- * file is dropped into `public/images/blue/` under the documented name,
- * flip the `src` and the photograph sits over that light instead of
- * replacing a grey box. See `public/images/blue/README.md`.
+ * Section order, image placement and focal crops follow the client's
+ * placement guide and the approved mock in
+ * `public/images/blue/00-reference-homepage-mock.png`. Every word on the
+ * page lives here as text: the supplied photography carries no type, and
+ * dates, set times, menu names and labels must stay in HTML so they can
+ * be selected, translated, read aloud and indexed.
  */
 
-export type Frame = {
-  /** Path under /public once the asset lands, or null while it hasn't. */
-  src: string | null;
+const IMG = "/images/blue";
+
+export type Shot = {
+  src: string;
   alt: string;
-  /** object-position for the crop, so the subject survives every ratio. */
+  /** Focal point for the crop, so the subject survives every ratio. */
   pos?: string;
-  /** Which stage light the CSS placeholder paints when src is null. */
-  light: "candle" | "cobalt" | "turn" | "night";
 };
 
 export const NAV = [
   { href: "#tonight", label: "Tonight" },
-  { href: "#experience", label: "The Experience" },
+  { href: "#experiences", label: "Experiences" },
   { href: "#calendar", label: "Calendar" },
   { href: "#membership", label: "Membership" },
   { href: "#private", label: "Private Events" },
 ] as const;
 
 export const VENUE = {
-  name: "BLUE",
-  sub: "At the Gale South Beach",
   street: "1690 Collins Avenue",
   city: "Miami Beach, FL 33139",
   phone: "305 604 1800",
@@ -37,59 +34,62 @@ export const VENUE = {
   email: "info@blueatgale.com",
 } as const;
 
-/* ------------------------------------------------------ the hero --- */
+/* ------------------------------------------------------- the hero --- */
 
-/** The open-curtain scene, separated into planes. Each is optional: the
- *  stage composes with whichever ones exist. */
-export const HERO_PLANES = {
-  scrim: {
-    src: null,
-    alt: "",
-    light: "night",
-  } as Frame,
-  microphone: {
-    src: null,
-    alt: "",
-    light: "cobalt",
-  } as Frame,
-  curtainLeft: { src: null, alt: "", light: "night" } as Frame,
-  curtainRight: { src: null, alt: "", light: "night" } as Frame,
-  tables: { src: null, alt: "", light: "candle" } as Frame,
-  /** The single flat frame used under reduced motion and with no JS. */
-  still: {
-    src: null,
-    alt: "The room at BLUE, curtains open on a lit microphone",
-    light: "cobalt",
-  } as Frame,
+export const HERO: Shot = {
+  src: `${IMG}/01-hero-open-curtains-microphone.webp`,
+  alt: "The room at BLUE: velvet curtains drawn back on a lit microphone, candlelit tables in the foreground",
+  /* The microphone is the anchor of the frame and sits right of centre;
+     the crop holds it rather than the geometric middle. */
+  pos: "62% 52%",
 };
 
-/* --------------------------------------------- this week at blue --- */
+/* --------------------------- from blue hour to after hours (band) --- */
 
-export type Performance = {
-  date: string;
+export const EVENING_STATES: (Shot & { caption: string })[] = [
+  {
+    src: `${IMG}/02-blue-hour-terrace.webp`,
+    alt: "Guests on the terrace as the sun goes down over the water",
+    caption: "Sunset on the terrace",
+    pos: "center 42%",
+  },
+  {
+    src: `${IMG}/03-dinner-show.webp`,
+    alt: "A singer and her band playing to a full dining room",
+    caption: "Dinner show",
+    pos: "center 46%",
+  },
+  {
+    src: `${IMG}/04-after-midnight.webp`,
+    alt: "The stage in deep blue light after midnight",
+    caption: "After midnight",
+    pos: "center 48%",
+  },
+];
+
+/* ------------------------------------------------ tonight, in one view --- */
+
+export type Billing = {
+  /** The date numeral, or null for tonight's own bill. */
+  date: string | null;
   day: string;
   billing: string;
   artist: string;
-  format: string;
   sets: string;
-  note: string;
-  frame: Frame;
+  shot: Shot;
 };
 
-export const WEEK: Performance[] = [
+export const TONIGHT: Billing[] = [
   {
-    date: "22",
+    date: null,
     day: "Thursday",
-    billing: "Blue Standards",
+    billing: "Tonight",
     artist: "Marcus Johnson Quartet",
-    format: "Trumpet, piano, bass, brushes",
     sets: "8PM & 10PM",
-    note: "The room's own repertoire, played by the people who wrote the arrangements.",
-    frame: {
-      src: null,
-      alt: "Marcus Johnson at the microphone in a dark room",
-      pos: "center 32%",
-      light: "candle",
+    shot: {
+      src: `${IMG}/05-artist-marcus.webp`,
+      alt: "Marcus Johnson in profile, in black tie",
+      pos: "center 26%",
     },
   },
   {
@@ -97,14 +97,11 @@ export const WEEK: Performance[] = [
     day: "Friday",
     billing: "Latin Friday",
     artist: "Laura Chavez Ensemble",
-    format: "Voice, guitar, percussion",
     sets: "9PM & 11PM",
-    note: "Bolero and son through the first seating, and the floor open by midnight.",
-    frame: {
-      src: null,
-      alt: "Laura Chavez singing under a single warm light",
-      pos: "center 30%",
-      light: "cobalt",
+    shot: {
+      src: `${IMG}/06-artist-laura.webp`,
+      alt: "Laura Chavez singing into a handheld microphone",
+      pos: "center 24%",
     },
   },
   {
@@ -112,74 +109,92 @@ export const WEEK: Performance[] = [
     day: "Saturday",
     billing: "Cabaret Saturday",
     artist: "Nicole Arends in Blue",
-    format: "Voice and a seven-piece",
     sets: "9PM & 11PM",
-    note: "The late set the room is named for. Reservations close early on Saturdays.",
-    frame: {
-      src: null,
-      alt: "Nicole Arends at a vintage microphone in blue light",
-      pos: "center 28%",
-      light: "night",
+    shot: {
+      src: `${IMG}/07-artist-nicole.webp`,
+      alt: "Nicole Arends at a vintage microphone",
+      pos: "center 22%",
     },
   },
 ];
 
-/* --------------------------------------------------- the evening --- */
+/* ------------------------------------------- the two full-width acts --- */
 
-export const EVENING = [
-  { time: "7:00", title: "The room opens", detail: "Champagne on the terrace while the light goes off the water." },
-  { time: "8:00", title: "One seating", detail: "Four courses, served to the whole room at the same hour." },
-  { time: "9:00", title: "The first set", detail: "The lights come down and the stage takes the room." },
-  { time: "11:00", title: "The turn", detail: "Second set. Lights lower. The floor opens." },
-  { time: "1:00", title: "After hours", detail: "The bar stays, the room stays, and so does the band." },
+export const DINNER: Shot = {
+  src: `${IMG}/08-dinner-scored-live.webp`,
+  alt: "A table set for dinner while a singer performs behind it",
+  pos: "center 34%",
+};
+
+export const TURN: Shot = {
+  src: `${IMG}/09-room-turns-blue.webp`,
+  alt: "The room seen through an oval opening, the floor in deep blue light",
+  pos: "center center",
+};
+
+/* ---------------------------------------------------- the blue list --- */
+
+/** Six items, left to right as they stand in the photograph. The labels
+ *  are HTML beneath the image rather than type baked into it. */
+export const BLUE_LIST: { name: string; note?: string }[] = [
+  { name: "Aegean Martini" },
+  { name: "Clarity Negroni", note: "Poured tableside" },
+  { name: "Caviar Blini" },
+  { name: "Champagne Bollinger" },
+  { name: "Oysters" },
+  { name: "Lobster Roll" },
 ];
 
-/* -------------------------------------------------- behind the bar --- */
+export const BLUE_LIST_SHOT: Shot = {
+  src: `${IMG}/10-blue-list-cocktails.webp`,
+  alt: "Six signature cocktails and bites on a pale blue ground",
+  pos: "center bottom",
+};
 
-export const BAR = [
-  { name: "Aegean Martini", detail: "Gin, dry vermouth, olive oil washed, brined caper leaf" },
-  { name: "Clarity Negroni", detail: "Clarified and poured tableside from a single decanter" },
-  { name: "Bollinger, by the glass", detail: "Special Cuvée, opened to order, never held over" },
-  { name: "The Gale Old Fashioned", detail: "Cane-rested rye, burnt orange, house bitters" },
-  { name: "Caviar and blini", detail: "Ossetra, crème fraîche, warm buckwheat" },
-  { name: "Oysters, the half dozen", detail: "Cold, dressed with nothing but a lemon" },
-];
-
-/* --------------------------------------------------- membership --- */
+/* ----------------------------------------------------- membership --- */
 
 export const MEMBER_RIGHTS = [
-  "A named bottle locker behind the bar",
-  "Champagne stored under your own name",
-  "Personal glassware, kept and polished for you",
-  "Rooftop and beach access at the Gale",
-  "First call on Basel week and holiday seatings",
+  "Named bottle locker",
+  "Stored champagne",
+  "Personal glassware",
+  "Rooftop & beach access",
 ];
 
-export const MEMBERSHIP_FRAMES: Frame[] = [
-  { src: null, alt: "A named brass bottle locker, B 07", pos: "center", light: "candle" },
-  { src: null, alt: "The back bar, bottles held in low light", pos: "center", light: "night" },
-  { src: null, alt: "Personal crystal on a polished counter", pos: "center", light: "candle" },
-  { src: null, alt: "The rooftop pool at the Gale at dusk", pos: "center", light: "cobalt" },
+export const MEMBER_SHOTS: Shot[] = [
+  { src: `${IMG}/11-member-blue-door.webp`, alt: "A brass locker plate reading B 07", pos: "center" },
+  { src: `${IMG}/12-member-bottle-locker.webp`, alt: "The back bar, bottles held in low light", pos: "center" },
+  { src: `${IMG}/13-member-glassware.webp`, alt: "Personal crystal on a polished counter", pos: "center" },
+  { src: `${IMG}/14-member-rooftop.webp`, alt: "The rooftop pool at the Gale", pos: "center" },
 ];
 
-/* ------------------------------------------------ private events --- */
+/* -------------------------------------------------- private events --- */
 
-export const PRIVATE = [
-  { title: "Art Basel Dinner", detail: "Ninety seated, one seating, the room closed to the public.", frame: { src: null, alt: "A long table set for a private dinner", pos: "center 46%", light: "candle" } as Frame },
-  { title: "Fashion Presentation", detail: "The stage becomes a runway; the terrace becomes the reception.", frame: { src: null, alt: "A model on the BLUE stage", pos: "center 38%", light: "cobalt" } as Frame },
-  { title: "Intimate Wedding", detail: "Ceremony on the terrace, dinner below, the band already here.", frame: { src: null, alt: "A couple on the dance floor", pos: "center 34%", light: "candle" } as Frame },
-  { title: "Corporate Reception", detail: "Full buyout, four hundred standing, one bill.", frame: { src: null, alt: "A reception filling the room", pos: "center 46%", light: "night" } as Frame },
+export const EVENTS: (Shot & { title: string })[] = [
+  { src: `${IMG}/15-event-art-basel-dinner.webp`, alt: "A long table set for a private dinner", title: "Art Basel Dinner", pos: "center 48%" },
+  { src: `${IMG}/16-event-fashion-presentation.webp`, alt: "A model on the BLUE stage", title: "Fashion Presentation", pos: "center 40%" },
+  { src: `${IMG}/17-event-intimate-wedding.webp`, alt: "A couple on the floor at a wedding", title: "Intimate Wedding", pos: "center 36%" },
+  { src: `${IMG}/18-event-corporate-reception.webp`, alt: "A standing reception filling the room", title: "Corporate Reception", pos: "center 46%" },
 ];
 
-/* --------------------------------------------------- the descent --- */
+/* --------------------------------------------- below the surface --- */
 
-export const DESCENT: Frame[] = [
-  { src: null, alt: "The Gale South Beach on Collins Avenue at night", pos: "center 58%", light: "night" },
-  { src: null, alt: "The stair down from the Gale lobby", pos: "center", light: "candle" },
-  { src: null, alt: "The blue door at the bottom of the stair", pos: "center", light: "cobalt" },
+export const DESCENT: Shot[] = [
+  { src: `${IMG}/19-gale-arrival.webp`, alt: "The Gale South Beach on Collins Avenue at night", pos: "center 56%" },
+  { src: `${IMG}/20-hidden-descent.webp`, alt: "The stair down from the Gale lobby", pos: "center" },
+  { src: `${IMG}/21-blue-door-entry.webp`, alt: "The blue door at the bottom of the stair", pos: "center" },
 ];
+
+/* ------------------------------------------------------ final call --- */
+
+export const FINALE: Shot = {
+  src: `${IMG}/22-final-performance-cta.webp`,
+  alt: "A singer in silhouette at the microphone, her band behind her in blue light",
+  /* She stands right of frame; the crop keeps her there and leaves the
+     dark left third for the copy. */
+  pos: "68% center",
+};
 
 export const FOOTER_NAV = [
-  { heading: "The Room", links: ["Tonight", "Calendar", "The Experience", "Membership", "Private Events"] },
+  { heading: "The Room", links: ["Tonight", "Calendar", "Experiences", "Membership", "Private Events"] },
   { heading: "Practical", links: ["Instagram", "Dress Code", "FAQs", "Careers", "Privacy Policy"] },
 ];
