@@ -57,6 +57,55 @@ const HOW_WE_DO_IT = [
   },
 ];
 
+/** [dimension, The Pass, the platform model] — figures from the Sept 2026 research. */
+const TABLE: [string, string, string][] = [
+  [
+    "What you pay",
+    "Priced against your current bill — e.g. $300/mo with the build included. Or one project fee from $3,000.",
+    "$250–$550/mo plus setup fees and add-ons. Negotiated in a demo; never published.",
+  ],
+  [
+    "The contract",
+    "Twelve months covers the build, then month to month. Cancel anytime after.",
+    "12-month lock-in that quietly auto-renews for another full year.",
+  ],
+  [
+    "Who owns the website",
+    "You — the design, the code, the domain, the content.",
+    "The platform. Cancel and the site goes offline.",
+  ],
+  [
+    "Your photography",
+    "Yours, always.",
+    "Often the platform's — buying back your own shoot can cost $3,000.",
+  ],
+  [
+    "Where your pages live",
+    "Your domain. Every visit and link builds equity you keep.",
+    "Ordering, reservations, and menus often sit on the platform's subdomains.",
+  ],
+  [
+    "SEO",
+    "Hand-written titles and descriptions, menus as real indexable pages, structured data for your restaurant and your city.",
+    "Auto-generated metadata at platform scale; audited sites expose as few as 5–9 pages to Google.",
+  ],
+  [
+    "Speed",
+    "Modern static engineering — mobile scores in the 90s.",
+    "Typically 50–65 on mobile, and speed is a ranking input.",
+  ],
+  [
+    "Making changes",
+    "Care plan covers updates and refreshes. No hourly meter running.",
+    "Site changes capped at ~15 hours a year, then $150/hour.",
+  ],
+  [
+    "If you leave",
+    "Nothing happens. The site keeps running — it's yours.",
+    "The site disappears and you rebuild from scratch, redirects and rankings included.",
+  ],
+];
+
 export default function SwitchPage() {
   return (
     <>
@@ -121,6 +170,53 @@ export default function SwitchPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Side by side */}
+      <section className="bg-[#0A0A09] px-5 pb-24 sm:px-8 sm:pb-28">
+        <div className="mx-auto max-w-[1200px]">
+          <p className="mk-label border-t border-[#B79A68]/20 pt-14 text-[#B79A68]">
+            Side by side
+          </p>
+          <div className="mt-10 overflow-x-auto">
+            <table className="w-full min-w-[640px] border-collapse text-left">
+              <thead>
+                <tr className="border-b border-[#B79A68]/30">
+                  <th className="mk-label py-4 pr-6 font-normal text-[#F1EDE5]/45">
+                    &nbsp;
+                  </th>
+                  <th className="mk-label py-4 pr-6 font-normal text-[#B79A68]">
+                    The Pass
+                  </th>
+                  <th className="mk-label py-4 font-normal text-[#F1EDE5]/45">
+                    The all-in-one platforms
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {TABLE.map(([dim, us, them]) => (
+                  <tr key={dim} className="border-b border-[#F1EDE5]/10 align-top">
+                    <th className="w-[20%] py-5 pr-6 text-[13.5px] font-semibold text-[#F1EDE5]">
+                      {dim}
+                    </th>
+                    <td className="w-[40%] py-5 pr-6 text-[14px] leading-relaxed text-[#F1EDE5]/85">
+                      {us}
+                    </td>
+                    <td className="w-[40%] py-5 text-[14px] leading-relaxed text-[#F1EDE5]/55">
+                      {them}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-8 max-w-[720px] text-[11.5px] leading-relaxed text-[#F1EDE5]/35">
+            Platform figures from published customer records, contracts, and
+            reviews of leading all-in-one restaurant marketing platforms,
+            researched September 2026. Plans vary — bring yours and
+            we&rsquo;ll do this table with your real numbers.
+          </p>
         </div>
       </section>
 
