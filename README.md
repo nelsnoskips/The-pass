@@ -54,6 +54,7 @@ Concept rooms (the Test Kitchen — demo restaurant sites, not part of the app):
 | `/serein` | SEREIN: a tasting room that loses its light as you scroll |
 | `/house-issue` | HOUSE ISSUE: a deli that publishes everything it makes |
 | `/feedback` | FEEDBACK: a burger counter you have to turn up before it feeds you |
+| `/blue` | BLUE at the Gale: a supper club that starts near-black and becomes blue |
 
 ## Architecture notes
 
