@@ -724,3 +724,404 @@ html[data-entered="true"] header.o-bar {
 
 /* Sections clear the fixed bar when jumped to. */
 main > section { scroll-margin-top: 72px; }
+
+/* ==========================================================================
+   The history, drawn as an instrument.
+   Orravan's argument is that they read a building's trend and act on
+   it, so their own history is drawn the way their software draws a
+   system: a time axis, a lane per kind of signal, and a playhead that
+   sweeps as the page scrolls.
+   ========================================================================== */
+
+.o-tl { position: relative; background: var(--paper); height: var(--travel); }
+/* No sweep, no travel: the section collapses to its content. */
+.o-tl[data-still] { height: auto; }
+@media (max-width: 899px) { .o-tl { height: auto; } }
+
+.o-tl-stick {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+/* No sweep, so nothing needs pinning — under reduced motion, and on any
+   screen too narrow to draw the chart. A pinned list you scroll past
+   while nothing happens is worse than no pinning at all. */
+.o-tl-stick[data-still],
+.o-tl[data-still] .o-tl-stick {
+  position: static; min-height: 0; padding: var(--band-y) 0;
+}
+@media (max-width: 899px) {
+  .o-tl-stick { position: static; min-height: 0; padding: var(--band-y) 0; }
+}
+
+.o-tl-inner {
+  width: 100%;
+  padding: var(--band-y) 5vw var(--band-y) var(--rail-pad);
+}
+
+.o-tl-head { max-width: 46ch; }
+
+/* --------------------------------------------------------- the chart -- */
+
+.o-tl-stage {
+  position: relative;
+  margin-top: clamp(20px, 3vw, 40px);
+}
+
+.o-tl-grid,
+.o-tl-years,
+.o-tl-lanes,
+.o-tl-sweep { display: none; }
+
+.o-tl-node {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  align-items: start;
+  gap: .7rem;
+  width: 100%;
+  padding: .5rem 0;
+  text-align: left;
+  border-top: 1px solid var(--rule);
+}
+
+.o-tl-dot {
+  width: 9px; height: 9px;
+  margin-top: .35rem;
+  border-radius: 50%;
+  background: var(--rule);
+  box-shadow: 0 0 0 0 var(--signal-soft);
+  transition: background var(--dur-ui) var(--ease-out),
+              box-shadow 420ms var(--ease-out);
+}
+.o-tl-node[data-lit] .o-tl-dot { background: var(--signal); }
+.o-tl-node[data-on] .o-tl-dot { box-shadow: 0 0 0 7px var(--signal-soft); }
+
+.o-tl-node-text { display: grid; gap: .1rem; }
+.o-tl-node-year { font-size: 9.5px; color: var(--ink-mute); }
+.o-tl-node-title { font-size: 13px; line-height: 1.35; color: var(--ink-soft); }
+.o-tl-node[data-on] .o-tl-node-title { color: var(--ink); font-weight: 600; }
+
+/* ---------------------------------------------------------- the card -- */
+
+.o-tl-card {
+  position: relative;
+  margin-top: clamp(18px, 2.4vw, 30px);
+  padding: clamp(14px, 1.5vw, 20px);
+  border: 1px solid var(--rule);
+  background: var(--bone);
+  max-width: 62ch;
+}
+.o-tl-approx { color: var(--ink-mute); }
+.o-tl-card-body { display: flex; align-items: baseline; gap: 1rem; margin-top: .5rem; }
+.o-tl-figure {
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: .8;
+  color: var(--signal);
+}
+.o-tl-title { font-size: clamp(1.05rem, 1.9vw, 1.6rem); line-height: 1.05; }
+.o-tl-detail {
+  margin-top: .4rem;
+  max-width: 52ch;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.o-tl-count {
+  position: absolute;
+  top: clamp(14px, 1.5vw, 20px);
+  right: clamp(14px, 1.5vw, 20px);
+  font-size: 9.5px;
+  color: var(--ink-mute);
+}
+
+/* --------------------------------------------------------------------- */
+/* Wide enough to be a chart. Below this the nodes stay an ordinary list,
+   because a sticky horizontal scrub on a phone loses people. Position
+   comes from custom properties set inline, so the same markup can be
+   laid out here and left alone above. */
+
+@media (min-width: 900px) {
+  .o-tl-stage {
+    height: min(52vh, 460px);
+    margin-top: clamp(28px, 4vw, 56px);
+    padding-right: 2vw;
+  }
+
+  .o-tl-grid {
+    display: block;
+    position: absolute;
+    inset: 0 0 0 92px;
+    width: calc(100% - 92px);
+    height: 100%;
+  }
+  .o-tl-grid line { stroke: var(--rule); stroke-width: 1; }
+
+  .o-tl-years {
+    display: block;
+    position: absolute;
+    left: 92px; right: 0; bottom: -22px;
+    height: 18px;
+  }
+  .o-tl-years span {
+    position: absolute;
+    transform: translateX(-50%);
+    font-family: var(--font-technical);
+    font-size: 9.5px;
+    letter-spacing: .1em;
+    color: var(--ink-mute);
+  }
+
+  .o-tl-lanes {
+    display: grid;
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 84px;
+    align-content: space-around;
+  }
+  .o-tl-lanes span { font-size: 9px; color: var(--ink-mute); }
+
+  /* The playhead and the nodes share one coordinate space: the plotted
+     area that begins after the lane labels. Both are given a unitless
+     fraction of that area, so a node and the sweep land on the same x
+     for the same year at every width. */
+  .o-tl-sweep {
+    display: block;
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 92px;
+    width: calc(100% - 92px);
+    pointer-events: none;
+  }
+  .o-tl-sweep::before,
+  .o-tl-sweep::after {
+    content: "";
+    position: absolute;
+    left: calc(100% * var(--sweep-n, 0));
+  }
+  .o-tl-sweep::before {
+    top: -6px; bottom: -6px;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--signal) 12%,
+      var(--signal) 88%,
+      transparent
+    );
+    opacity: .5;
+  }
+  .o-tl-sweep::after {
+    top: -9px;
+    width: 5px; height: 5px;
+    margin-left: -2px;
+    border-radius: 50%;
+    background: var(--signal);
+  }
+
+  .o-tl-node {
+    position: absolute;
+    left: calc(92px + (100% - 92px) * var(--x-n));
+    top: var(--y);
+    display: block;
+    width: auto;
+    padding: 0;
+    border: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  .o-tl-dot {
+    display: block;
+    width: 11px; height: 11px;
+    margin: 0 auto;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+  }
+  .o-tl-node[data-lit] .o-tl-dot { background: var(--signal); border-color: var(--signal); }
+  .o-tl-node[data-on] .o-tl-dot {
+    box-shadow: 0 0 0 8px var(--signal-soft);
+    transform: scale(1.25);
+  }
+
+  .o-tl-node-text {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 9px);
+    width: 15ch;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity var(--dur-ui) var(--ease-out);
+    pointer-events: none;
+  }
+  .o-tl-node:hover .o-tl-node-text,
+  .o-tl-node:focus-visible .o-tl-node-text,
+  .o-tl-node[data-on] .o-tl-node-text { opacity: 1; }
+  .o-tl-node-title { font-size: 11px; line-height: 1.25; }
+
+  /* Alternate lanes drop their label below the dot so neighbouring
+     lanes never write over each other. */
+  .o-tl-node[data-flip] .o-tl-node-text {
+    bottom: auto;
+    top: calc(100% + 9px);
+  }
+
+  .o-tl-card { max-width: 54ch; margin-top: clamp(34px, 4vw, 60px); }
+}
+
+/* ==========================================================================
+   Meet the team.
+   ========================================================================== */
+
+.o-team-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+.o-team-stats > div { background: var(--paper); padding: clamp(12px, 1.4vw, 18px); }
+.o-team-stats dt { font-size: 9.5px; color: var(--ink-mute); }
+.o-team-stats dd { margin: .25rem 0 0; font-size: clamp(1.5rem, 3vw, 2.4rem); line-height: .95; }
+@media (min-width: 700px) { .o-team-stats { grid-template-columns: repeat(4, 1fr); } }
+
+.o-team-note {
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding: .3rem .6rem;
+  font-size: 9.5px;
+  color: var(--warn);
+  border: 1px dashed var(--warn);
+}
+
+.o-team-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .75rem;
+  margin: 1.6rem 0 .7rem;
+  padding-bottom: .45rem;
+  font-size: 10px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--rule);
+}
+.o-team-blurb {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-mute);
+}
+
+/* Capped rather than 1fr: a group of three should read as a cluster of
+   three people, not three tiles stretched across a column built for
+   eight. The max in the minmax is what stops the row spreading. */
+.o-team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 178px));
+  justify-content: start;
+  gap: .6rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* Height chains through the Reveal wrapper so a two-line role does not
+   leave its neighbours short. */
+.o-team-grid > li,
+.o-team-grid > li > * { display: grid; height: 100%; }
+
+.o-team-tile {
+  display: grid;
+  align-content: start;
+  gap: .1rem;
+  width: 100%;
+  height: 100%;
+  padding: .7rem;
+  text-align: left;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  transition: border-color var(--dur-ui) var(--ease-out),
+              transform var(--dur-ui) var(--ease-out);
+}
+.o-team-tile:hover { border-color: var(--signal); transform: translateY(-2px); }
+
+.o-team-portrait {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  margin-bottom: .5rem;
+  background: linear-gradient(150deg, var(--panel), var(--panel-soft));
+  color: var(--bone);
+}
+.o-team-portrait span { font-size: clamp(1.2rem, 2.4vw, 1.7rem); letter-spacing: .04em; opacity: .82; }
+.o-team-portrait[data-big] { width: 72px; aspect-ratio: 1; margin-bottom: .9rem; }
+
+.o-team-name { font-size: 12.5px; font-weight: 600; }
+.o-team-role { font-size: 9px; color: var(--ink-mute); }
+
+/* ------------------------------------------------------- the profile -- */
+
+.o-team-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(17, 20, 23, .55);
+  backdrop-filter: blur(3px);
+  animation: o-fade 200ms var(--ease-out) both;
+}
+@keyframes o-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.o-team-profile {
+  position: relative;
+  width: min(460px, 100%);
+  max-height: 86vh;
+  overflow-y: auto;
+  padding: clamp(18px, 2.4vw, 28px);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  animation: o-rise 260ms var(--ease-out) both;
+}
+@keyframes o-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.o-team-close {
+  position: absolute;
+  top: .4rem; right: .55rem;
+  width: 32px; height: 32px;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ink-mute);
+}
+.o-team-close:hover { color: var(--ink); }
+.o-team-profile-name { margin-top: .2rem; font-size: clamp(1.3rem, 2.6vw, 1.9rem); line-height: 1; }
+.o-team-since { margin-top: .3rem; font-size: 9.5px; color: var(--ink-mute); }
+.o-team-bio { margin-top: .9rem; font-size: 13px; line-height: 1.65; color: var(--ink-soft); }
+.o-team-quote {
+  margin: 1rem 0 0;
+  padding-left: .9rem;
+  border-left: 2px solid var(--signal);
+  font-size: 14px;
+  line-height: 1.5;
+  font-style: italic;
+  color: var(--ink);
+}
+.o-team-focus { display: flex; flex-wrap: wrap; gap: .35rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.o-team-focus li {
+  padding: .22rem .5rem;
+  font-size: 9px;
+  color: var(--ink-mute);
+  border: 1px solid var(--rule);
+}
+
+/* ------------------------------------------------------------ careers -- */
+
+.o-team-values { display: grid; gap: 1px; margin: 0; padding: 0; list-style: none; background: var(--rule-dark); border: 1px solid var(--rule-dark); }
+.o-team-values li { background: var(--panel); padding: clamp(12px, 1.4vw, 18px); }
+.o-team-values span { font-size: 9.5px; color: var(--bone); }
+.o-team-values p { margin: .35rem 0 0; font-size: 12.5px; line-height: 1.55; color: rgba(243, 240, 232, .6); }
+@media (min-width: 760px) { .o-team-values { grid-template-columns: repeat(3, 1fr); } }

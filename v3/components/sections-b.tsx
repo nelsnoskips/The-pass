@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DIFFERENCE, INDUSTRIES, RECORD, SERVICES, TEAM } from "@/lib/site";
 import { Band, Head } from "./sections-a";
+import { asset } from "@/lib/images";
 import { Plate, Reveal } from "./ui";
 
 /* ------------------------------------------------ intelligence, applied --- */
@@ -94,7 +95,7 @@ export function Team() {
         copy={TEAM.copy}
         aside={
           <div className="mt-5 flex flex-wrap gap-3">
-            <a href="#close" className="o-btn bg-[var(--orravan-blue)]">
+            <a href={asset("/team")} className="o-btn bg-[var(--orravan-blue)]">
               {TEAM.primary}
             </a>
             <a
