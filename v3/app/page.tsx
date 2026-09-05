@@ -4,6 +4,7 @@ import { LessDashboard, OneView, Pillars, Resolution, ToDecision } from "@/compo
 import { Difference, Industries, Record, Services, Team } from "@/components/sections-b";
 import { Story } from "@/components/story";
 import { Faq } from "@/components/faq";
+import { Assist } from "@/components/assist";
 
 /**
  * Orravan, direction 2 — "The building knows. Now you do."
@@ -38,6 +39,7 @@ export default function Page() {
         <Faq />
       </main>
       <Footer />
+      <Assist />
     </>
   );
 }
