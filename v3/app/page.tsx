@@ -2,6 +2,7 @@ import { Footer, TopBar } from "@/components/chrome";
 import { Entrance } from "@/components/entrance";
 import { LessDashboard, OneView, Resolution, ToDecision } from "@/components/sections-a";
 import { Difference, Industries, Record, Services, Team } from "@/components/sections-b";
+import { Story } from "@/components/story";
 
 /**
  * Orravan, direction 2 — "The building knows. Now you do."
@@ -28,6 +29,7 @@ export default function Page() {
         <Resolution />
         <Services />
         <Difference />
+        <Story />
         <Team />
         <Industries />
         <Record />

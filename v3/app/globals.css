@@ -1125,3 +1125,164 @@ main > section { scroll-margin-top: 72px; }
 .o-team-values span { font-size: 9.5px; color: var(--bone); }
 .o-team-values p { margin: .35rem 0 0; font-size: 12.5px; line-height: 1.55; color: rgba(243, 240, 232, .6); }
 @media (min-width: 760px) { .o-team-values { grid-template-columns: repeat(3, 1fr); } }
+
+/* ==========================================================================
+   Ten years, travelling sideways.
+   The homepage's register is photographic where the team page's is
+   analytical: seven full frames that move horizontally while the page
+   scrolls down, with the year set large across each.
+   ========================================================================== */
+
+.o-st { position: relative; background: var(--panel); color: var(--bone); }
+
+.o-st-stick {
+  display: grid;
+  /* Three content rows, not auto-1fr-auto: a 1fr in the middle strands
+     the frames at the top of the empty space and pushes the rail to the
+     floor. Sized to content, then centred as a block. */
+  grid-template-rows: auto auto auto;
+  align-content: center;
+  gap: clamp(14px, 2vw, 26px);
+  padding: var(--band-y) 0 var(--band-y) var(--rail-pad);
+}
+
+.o-st-head { max-width: 44ch; padding-right: 5vw; }
+.o-st-title {
+  margin-top: .5rem;
+  font-size: var(--head);
+  line-height: .88;
+}
+.o-st-copy {
+  margin-top: .7rem;
+  max-width: 40ch;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: rgba(243, 240, 232, .62);
+}
+.o-st-cta { margin-top: .9rem; display: inline-block; color: var(--bone); }
+
+/* The window clips; the track moves. Nothing inside may change layout
+   width, or the page gains a horizontal scrollbar. */
+.o-st-window { overflow: hidden; }
+
+.o-st-track {
+  display: flex;
+  gap: clamp(10px, 1.2vw, 18px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: max-content;
+  will-change: transform;
+}
+
+.o-st-frame { flex: 0 0 auto; width: min(78vw, 420px); }
+
+.o-st-frame figure {
+  position: relative;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #0f1216;
+}
+.o-st-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The frames sit on a dark ground; letting the photograph go slightly
+     down keeps the year legible without a slab behind it. */
+  filter: brightness(.82) saturate(.92);
+}
+
+/* The year, set across the frame. Large enough to be the thing you see
+   first, tight enough that the photograph is still the subject. */
+.o-st-year {
+  position: absolute;
+  top: clamp(10px, 1.4vw, 18px);
+  left: clamp(12px, 1.4vw, 20px);
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: .8;
+  letter-spacing: .01em;
+  color: rgba(243, 240, 232, .92);
+  text-shadow: 0 2px 24px rgba(0, 0, 0, .45);
+  pointer-events: none;
+}
+
+.o-st-frame figcaption {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: grid;
+  gap: .25rem;
+  padding: clamp(12px, 1.5vw, 20px);
+  background: linear-gradient(
+    to top,
+    rgba(10, 12, 15, .92),
+    rgba(10, 12, 15, .68) 55%,
+    transparent
+  );
+}
+.o-st-kicker { font-size: 9px; color: var(--signal); }
+.o-st-frame-title { font-size: clamp(1.05rem, 1.7vw, 1.45rem); line-height: 1.02; }
+.o-st-line {
+  max-width: 40ch;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(243, 240, 232, .66);
+}
+
+/* The rail reads as travel across the decade, not as a scrollbar. */
+.o-st-rail { position: relative; margin-right: 5vw; height: 22px; }
+.o-st-rail::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--rule-dark);
+}
+.o-st-rail-fill {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--signal);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.o-st-rail-ends {
+  display: flex;
+  justify-content: space-between;
+  padding-top: .45rem;
+  font-size: 9px;
+  color: var(--ink-mute);
+}
+
+/* --------------------------------------------------------------------- */
+/* Wide enough to pin. Narrower than this — and under reduced motion —
+   the frames stack and the section is an ordinary photo essay. */
+
+@media (min-width: 900px) {
+  .o-st { height: var(--travel); }
+  .o-st[data-still] { height: auto; }
+
+  .o-st-stick {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    /* The header is fixed over the page, so a pinned section has to
+       start below it or its own heading is the thing it covers. */
+    padding-top: calc(var(--band-y) + var(--bar-h, 104px));
+  }
+  .o-st[data-still] .o-st-stick { position: static; height: auto; }
+
+  .o-st-frame { width: min(34vw, 460px); height: min(52vh, 470px); }
+  .o-st[data-still] .o-st-frame { height: min(46vh, 380px); }
+}
+
+@media (max-width: 899px) {
+  .o-st-window { overflow: visible; }
+  .o-st-track {
+    flex-direction: column;
+    width: auto;
+    padding-right: 5vw;
+  }
+  .o-st-frame { width: auto; aspect-ratio: 4 / 3; }
+  .o-st-rail { display: none; }
+}

@@ -291,3 +291,115 @@ export const TEAM_PAGE = {
     "We hire trained trades and keep them. If that is the kind of shop you want to work in, we would like to hear from you.",
   careersCta: "Explore careers",
 } as const;
+
+/* --------------------------------------------- the homepage story --- */
+
+/**
+ * The same decade, told as pictures rather than as a chart.
+ *
+ * The team page runs the full twelve milestones as an instrument. The
+ * homepage cannot ask for that much attention, and a visitor there
+ * wants the feeling of a company that has been doing this a while — so
+ * this is the highlight reel: seven chapters, each a full photograph
+ * with the year set large over it, travelling sideways as the page
+ * scrolls.
+ *
+ * `slot` currently points at plates from the direction-2 library, and
+ * every one is a stand-in. The real article is Alex's field
+ * photography — the aerial, the vans, the shop — and each entry says
+ * in `wants` what it is holding a place for, so the swap is obvious
+ * rather than archaeological.
+ */
+export type Chapter = {
+  id: string;
+  year: string;
+  kicker: string;
+  title: string;
+  line: string;
+  slot: string;
+  /** Vertical framing for the plate, per photograph. */
+  focus: string;
+  /** What Orravan should send to replace the stand-in. */
+  wants: string;
+};
+
+export const STORY = {
+  eyebrow: "Since 2014",
+  head: ["Ten years", "in the building."],
+  copy:
+    "One truck became a union shop of fifty. The work is the record.",
+  cta: "The whole story",
+} as const;
+
+export const CHAPTERS: Chapter[] = [
+  {
+    id: "c-2014",
+    year: "2014",
+    kicker: "The beginning",
+    title: "One tradesman, one truck",
+    line: "Rigo Navarro Sr. starts Orravan on the belief that mechanical work is a service business first.",
+    slot: "decision-field",
+    focus: "50% 40%",
+    wants: "Rigo Sr., or the earliest van photograph that exists.",
+  },
+  {
+    id: "c-2015",
+    year: "2015",
+    kicker: "Central plant",
+    title: "Chiller mechanical",
+    line: "The heaviest equipment in the building, and the least forgiving of guesswork.",
+    slot: "service-hvac",
+    focus: "50% 45%",
+    wants: "A real chiller or central plant job.",
+  },
+  {
+    id: "c-2016",
+    year: "2016",
+    kicker: "In-house",
+    title: "Automation and controls",
+    line: "Orravan stops being the people who fix the equipment and becomes the people who know what it is doing.",
+    slot: "service-automation",
+    focus: "50% 45%",
+    wants: "The automation team, or a real controls panel.",
+  },
+  {
+    id: "c-2018",
+    year: "2018",
+    kicker: "Recognised",
+    title: "SBE / Minority certified",
+    line: "Formal recognition of how the company was built — and the credential that opens institutional work.",
+    slot: "decision-client",
+    focus: "50% 40%",
+    wants: "The certificate, or the team on an institutional site.",
+  },
+  {
+    id: "c-2020",
+    year: "2020",
+    kicker: "A permanent home",
+    title: "Our own shop",
+    line: "Fabrication, staging and stock move under one roof the company owns.",
+    slot: "service-inventory",
+    focus: "50% 50%",
+    wants: "The actual shop, inside and out. The fleet parked up.",
+  },
+  {
+    id: "c-2023",
+    year: "2023",
+    kicker: "Union shop",
+    title: "Trained trades, fairly paid",
+    line: "A commitment to the standard of work that comes with them.",
+    slot: "difference-experience",
+    focus: "50% 40%",
+    wants: "The crew on site. Faces, not equipment.",
+  },
+  {
+    id: "c-2024",
+    year: "2024",
+    kicker: "Today",
+    title: "Fifty on the team",
+    line: "Headcount doubled in three years without the standard moving.",
+    slot: "resolution-people",
+    focus: "50% 40%",
+    wants: "The team aerial shot Alex mentioned.",
+  },
+];
