@@ -42,7 +42,6 @@ export function Entrance() {
   const leader = useRef<HTMLDivElement>(null);
   const building = useRef<HTMLDivElement>(null);
   const copy = useRef<HTMLDivElement>(null);
-  const chips = useRef<HTMLUListElement>(null);
   const cue = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,7 +65,6 @@ export function Entrance() {
         copy.current.style.setProperty("opacity", "1");
         copy.current.dataset.in = "true";
       }
-      chips.current?.style.setProperty("opacity", "1");
       document.documentElement.dataset.entered = "true";
     };
 
@@ -133,8 +131,6 @@ export function Entrance() {
         copy.current.style.setProperty("pointer-events", shown > 0.3 ? "auto" : "none");
         copy.current.dataset.in = handoff > 0.6 ? "true" : "false";
       }
-      chips.current?.style.setProperty("opacity", `${ease(clamp((y - vh * 0.2) / (vh * 0.3)))}`);
-      chips.current?.style.setProperty("transform", `translateY(-50%) translateX(${(-drift * 0.25).toFixed(1)}px)`);
 
       document.documentElement.dataset.entered = handoff > 0.72 ? "true" : "false";
     };
@@ -183,19 +179,6 @@ export function Entrance() {
           <img src={asset(IMAGES["hero-leader"].src)} alt={IMAGES["hero-leader"].alt} />
         </div>
 
-        {/* What the building is saying, in the technical register. */}
-        <ul ref={chips} className="o-chips" aria-label="Live conditions">
-          {ENTRANCE.chips.map((chip) => (
-            <li key={chip.label}>
-              <span className="o-chip-dot" />
-              <span>
-                <span className="o-chip-label">{chip.label}</span>
-                <span className="o-chip-state">{chip.state}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-
         {/* The entry: the mark, two doors, the cue. Centred. */}
         <div ref={entry} className="o-entry">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -226,6 +209,11 @@ export function Entrance() {
           <div className="o-hero-doors">
             <a href="#close" className="o-btn-solid">{ENTRANCE.primary}</a>
             <a href="#close" className="o-btn-line">{ENTRANCE.secondary}</a>
+            {/* Straight to the history for anyone who wants to know who
+                they would be hiring before they read what it costs. */}
+            <a href="#story" className="o-hero-anchor o-label">
+              {ENTRANCE.anchor} &darr;
+            </a>
           </div>
         </div>
       </div>

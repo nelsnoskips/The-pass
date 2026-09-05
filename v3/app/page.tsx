@@ -1,7 +1,10 @@
 import { Footer, TopBar } from "@/components/chrome";
 import { Entrance } from "@/components/entrance";
-import { LessDashboard, OneView, Resolution, ToDecision } from "@/components/sections-a";
+import { LessDashboard, OneView, Pillars, Resolution, ToDecision } from "@/components/sections-a";
 import { Difference, Industries, Record, Services, Team } from "@/components/sections-b";
+import { Story } from "@/components/story";
+import { Faq } from "@/components/faq";
+import { Assist } from "@/components/assist";
 
 /**
  * Orravan, direction 2 — "The building knows. Now you do."
@@ -22,17 +25,21 @@ export default function Page() {
         {/* A beat before the page starts covering the hero: transparent,
             so the pinned hero simply holds while this scrolls past. */}
         <div className="o-hold" aria-hidden />
+        <Pillars />
         <OneView />
         <LessDashboard />
         <ToDecision />
         <Resolution />
         <Services />
         <Difference />
+        <Story />
         <Team />
         <Industries />
         <Record />
+        <Faq />
       </main>
       <Footer />
+      <Assist />
     </>
   );
 }
