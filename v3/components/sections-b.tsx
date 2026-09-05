@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { DIFFERENCE, INDUSTRIES, RECORD, SERVICES, TEAM } from "@/lib/site";
 import { Band, Head } from "./sections-a";
 import { asset } from "@/lib/images";
@@ -123,56 +122,34 @@ export function Team() {
 /* ----------------------------------------- built for every industry --- */
 
 export function Industries() {
-  const [open, setOpen] = useState(0);
-
   return (
     <Band id="industries">
-      <Head lines={INDUSTRIES.head} />
+      <Head lines={INDUSTRIES.head} copy={INDUSTRIES.copy} />
 
-      <div>
-        <div className="flex flex-wrap gap-x-7 gap-y-2 border-b border-rule pb-3">
-          {INDUSTRIES.tabs.map((tab, i) => {
-            const active = i === open;
-            return (
-              <button
-                key={tab.name}
-                type="button"
-                onClick={() => setOpen(i)}
-                aria-pressed={active}
-                className={`o-label relative min-h-[36px] text-[10px] transition-colors ${
-                  active ? "text-[var(--orravan-blue)]" : "text-ink-mute hover:text-ink"
-                }`}
-              >
-                {tab.name}
-                <span
-                  className="absolute inset-x-0 -bottom-3 h-[2px] bg-[var(--orravan-blue)] transition-opacity"
-                  style={{ opacity: active ? 1 : 0 }}
-                />
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Every panel stays mounted so switching is a cross-fade, not a
-            reflow — the section never jumps as tabs change. */}
-        <div className="relative mt-4 h-[max(200px,19vw)] overflow-hidden">
-          {INDUSTRIES.tabs.map((tab, i) => (
-            <div
-              key={tab.name}
-              aria-hidden={i !== open}
-              className="absolute inset-0 transition-opacity duration-500"
-              style={{ opacity: i === open ? 1 : 0 }}
-            >
+      {/* Every market on the page at once, as Orravan asked, rather than
+          one behind a tab. Scattered: alternate tiles sit lower and the
+          sizes vary, so it reads as a wall of the buildings they work in
+          rather than a filing system. Each plate keeps its own vertical
+          focus — a shared value clips somebody in every frame. */}
+      <ol className="o-markets">
+        {INDUSTRIES.tabs.map((tab, i) => (
+          <li key={tab.name} className="o-market" data-i={i}>
+            <Reveal delay={i * 70}>
               <Plate
                 slot={tab.slot}
-                className="h-full"
+                parallax={6}
+                className="o-market-plate"
                 imgClassName="h-full w-full object-cover"
                 imgStyle={{ objectPosition: `50% ${tab.focus}` }}
               />
-            </div>
-          ))}
-        </div>
-      </div>
+              <span className="o-market-name">
+                <span className="o-label o-market-n">{String(i + 1).padStart(2, "0")}</span>
+                <span className="o-display">{tab.name}</span>
+              </span>
+            </Reveal>
+          </li>
+        ))}
+      </ol>
     </Band>
   );
 }

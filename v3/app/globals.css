@@ -1286,3 +1286,127 @@ main > section { scroll-margin-top: 72px; }
   .o-st-frame { width: auto; aspect-ratio: 4 / 3; }
   .o-st-rail { display: none; }
 }
+
+/* ==========================================================================
+   The four pillars, and the hero's anchor.
+   ========================================================================== */
+
+.o-hero-anchor {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 .2rem;
+  font-size: 10px;
+  color: rgba(243, 240, 232, .7);
+  border-bottom: 1px solid rgba(243, 240, 232, .3);
+  transition: color var(--dur-ui) var(--ease-out), border-color var(--dur-ui) var(--ease-out);
+}
+.o-hero-anchor:hover { color: var(--bone); border-color: var(--bone); }
+
+.o-pillars {
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.o-pillars ol {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--rule);
+}
+.o-pillars li {
+  background: var(--paper);
+  padding: clamp(18px, 2.4vw, 34px) clamp(18px, 2vw, 30px);
+}
+.o-pillars li:first-child { padding-left: var(--rail-pad); }
+.o-pillar-n { display: block; font-size: 9.5px; color: var(--signal); }
+.o-pillar-name {
+  margin-top: .5rem;
+  font-size: clamp(1.7rem, 3vw, 2.7rem);
+  line-height: .9;
+}
+.o-pillar-detail {
+  margin-top: .6rem;
+  max-width: 30ch;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+@media (min-width: 900px) {
+  .o-pillars ol { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ==========================================================================
+   Every market at once — a scattered wall, not a filing system.
+   ========================================================================== */
+
+.o-markets {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(10px, 1.4vw, 20px);
+  margin: 0;
+  padding: 0 5vw 0 0;
+  list-style: none;
+}
+.o-market { position: relative; }
+.o-market-plate {
+  height: clamp(150px, 22vw, 300px);
+  overflow: hidden;
+}
+.o-market-name {
+  position: absolute;
+  left: 0; bottom: 0;
+  display: grid;
+  gap: .15rem;
+  padding: .75rem .9rem;
+  background: linear-gradient(to top, rgba(10, 12, 15, .82), transparent);
+  color: var(--bone);
+  pointer-events: none;
+}
+.o-market-name .o-display { font-size: clamp(1.1rem, 1.6vw, 1.5rem); line-height: 1; }
+.o-market-n { font-size: 9px; color: var(--signal); }
+
+@media (min-width: 900px) {
+  .o-markets { grid-template-columns: repeat(3, 1fr); }
+  /* The scatter. Even tiles drop and the two wide-format buildings get
+     more height — a wall with a rhythm rather than six equal boxes.
+     The drop is a margin, not a transform: a transform moves the tile
+     without telling the grid, so a dropped tile lands on top of the one
+     below it and hides its label. A margin grows the row instead. */
+  .o-markets { align-items: start; }
+  .o-market:nth-child(even) { margin-top: clamp(18px, 2.6vw, 40px); }
+  .o-market:nth-child(2) .o-market-plate,
+  .o-market:nth-child(4) .o-market-plate { height: clamp(180px, 26vw, 360px); }
+}
+
+/* ==========================================================================
+   The FAQ.
+   ========================================================================== */
+
+.o-faq { border-top: 1px solid var(--rule); margin-right: 5vw; }
+.o-faq-item { border-bottom: 1px solid var(--rule); }
+.o-faq-item h3 { margin: 0; }
+.o-faq-item button {
+  display: grid;
+  grid-template-columns: 2.4rem 1fr 1.6rem;
+  align-items: baseline;
+  gap: .6rem;
+  width: 100%;
+  min-height: 52px;
+  padding: .85rem 0;
+  text-align: left;
+}
+.o-faq-n { font-size: 9.5px; color: var(--ink-mute); }
+.o-faq-q { font-size: 14.5px; font-weight: 600; line-height: 1.35; color: var(--ink); }
+.o-faq-mark { font-size: 18px; line-height: 1; color: var(--ink-mute); text-align: right; }
+.o-faq-item[data-on] .o-faq-mark { color: var(--signal); }
+.o-faq-a p {
+  margin: 0;
+  padding: 0 2.2rem 1.1rem 3rem;
+  max-width: 64ch;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}

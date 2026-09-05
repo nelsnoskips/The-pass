@@ -27,19 +27,43 @@ export const NAV = {
 /** The entrance: blue plate, mark, two doors, then the headline. */
 export const ENTRANCE = {
   cue: "Scroll to enter",
-  headA: "The building",
-  headB: "knows. Now you do.",
+  headA: "Delivering senior level",
+  headB: "service since 2014.",
+  /* Service delivery leads. The intelligence is how the work gets done,
+     not what is being sold — that ordering is the whole reposition. */
   body:
-    "Orravan.ai unites building intelligence, automation and expert service to turn signal into action—so your people, your systems and your building perform at their best.",
-  primary: "Start a project",
-  secondary: "Request immediate service",
-  /** Live conditions floating behind the mark. */
-  chips: [
-    { label: "Air quality", state: "Good" },
-    { label: "AHU-3 supply fan", state: "Normal" },
-    { label: "Chilled water plant", state: "Optimal" },
-  ],
+    "Commercial mechanical and HVAC, delivered by trained trades who stay with the job to resolution. Retrofit, automation, service and maintenance, backed by the intelligence to see what a building needs before it asks.",
+  primary: "Request service",
+  secondary: "Start a project",
+  anchor: "Who we are",
 } as const;
+
+/**
+ * The four pillars, directly below the hero.
+ *
+ * They replace the three live-condition chips that used to float beside
+ * the mark. Those read as a product demo at the moment the page should
+ * be saying what Orravan does — and a visitor who wants HVAC service
+ * should not have to infer it from a supply-fan status.
+ */
+export const PILLARS = [
+  {
+    name: "Retrofit",
+    detail: "Mechanical retrofits that lift performance, reliability and comfort in buildings already running.",
+  },
+  {
+    name: "Automation",
+    detail: "Building automation and DDC controls: upgrades, integration, programming and support.",
+  },
+  {
+    name: "Service",
+    detail: "Commercial HVAC service with people who know the building before they arrive.",
+  },
+  {
+    name: "Maintenance",
+    detail: "Planned maintenance that finds the problem while it is still small.",
+  },
+] as const;
 
 export const VIEW = {
   head: ["One view.", "Every system."],
@@ -147,6 +171,7 @@ export const TEAM = {
 
 export const INDUSTRIES = {
   head: ["Built for", "every industry."],
+  copy: "Healthcare to mission critical. The building changes; the standard does not.",
   /* `focus` is the vertical object-position for each plate, chosen one
      photograph at a time from rendered crops at the live band aspect
      (see README, "Matching a mock"). The band is far wider than the
@@ -209,4 +234,54 @@ export const FOOTER = {
   ],
   social: ["LinkedIn", "YouTube", "X"],
   copyright: "© 2025 Orravan.ai, Inc. All rights reserved.",
+} as const;
+
+/**
+ * The FAQ. Orravan's own answers, supplied 3 Sep 2026, edited only for
+ * punctuation. Rendered as an accordion and, separately, as FAQPage
+ * structured data — the second is what actually feeds Google's rich
+ * results and the AI answer engines, and is the substance behind the
+ * SEO/AEO line in the agreement rather than a talking point.
+ */
+export const FAQ = {
+  head: ["Questions,", "answered."],
+  copy: "The things people ask before they call. If yours is not here, call it in.",
+  items: [
+    {
+      q: "What services does Orravan Mechanical provide?",
+      a: "Orravan Mechanical provides commercial mechanical and HVAC services, including mechanical retrofits, building automation and controls, HVAC service, maintenance, and project support.",
+    },
+    {
+      q: "What types of facilities does Orravan Mechanical work on?",
+      a: "We work with commercial and institutional facilities — healthcare, hospitality, education, government, data centers and more — and provide customized mechanical solutions based on each building's operational needs.",
+    },
+    {
+      q: "Does Orravan Mechanical provide HVAC retrofits?",
+      a: "Yes. We specialize in mechanical retrofit projects designed to improve system performance, reliability, efficiency, and overall building comfort.",
+    },
+    {
+      q: "Does Orravan Mechanical provide building automation and controls services?",
+      a: "Yes. Our team provides building automation and controls solutions, including system upgrades, DDC controls, equipment integration, programming, and support.",
+    },
+    {
+      q: "Does Orravan Mechanical offer preventative maintenance and service?",
+      a: "Yes. We offer ongoing mechanical service and support to help maintain HVAC equipment, improve reliability, and identify potential issues before they become major problems.",
+    },
+    {
+      q: "Does Orravan Mechanical work with general contractors?",
+      a: "Yes. We regularly collaborate with general contractors, owners, engineers, and other project stakeholders throughout the construction process.",
+    },
+    {
+      q: "How does Orravan Mechanical prioritize safety?",
+      a: "Orravan Mechanical is committed to maintaining safe job sites through proper planning, training, communication, and adherence to industry safety standards. We work to protect our employees, clients, project partners, and the facilities we serve while delivering every project safely and reliably.",
+    },
+    {
+      q: "What makes Orravan Mechanical different?",
+      a: "Orravan Mechanical focuses on delivering reliable outcomes through technical expertise, strong communication, safety, accountability, and a commitment to long-term client relationships.",
+    },
+    {
+      q: "Does Orravan Mechanical provide residential HVAC services?",
+      a: "No. Orravan Mechanical specializes in commercial mechanical and HVAC services and does not provide residential HVAC services.",
+    },
+  ],
 } as const;
