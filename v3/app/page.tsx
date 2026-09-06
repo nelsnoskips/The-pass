@@ -25,6 +25,10 @@ export default function Page() {
         {/* A beat before the page starts covering the hero: transparent,
             so the pinned hero simply holds while this scrolls past. */}
         <div className="o-hold" aria-hidden />
+        {/* The decade comes first. The reposition is "senior level
+            service since 2014", so the proof of the "since 2014" lands
+            before the pillars, and before any product story does. */}
+        <Story />
         <Pillars />
         <OneView />
         <LessDashboard />
@@ -32,7 +36,6 @@ export default function Page() {
         <Resolution />
         <Services />
         <Difference />
-        <Story />
         <Team />
         <Industries />
         <Record />
