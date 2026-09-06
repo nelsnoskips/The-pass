@@ -1,6 +1,6 @@
 "use client";
 
-import { DECISION, RESOLUTION, SIGNAL, VIEW } from "@/lib/site";
+import { DECISION, PILLARS, RESOLUTION, SIGNAL, VIEW } from "@/lib/site";
 import { Plate, Reveal } from "./ui";
 
 /* -------------------------------------------------------- the frame --- */
@@ -284,5 +284,35 @@ export function Resolution() {
         </div>
       </Reveal>
     </Band>
+  );
+}
+
+/* ------------------------------------------------------- four pillars --- */
+
+/**
+ * What Orravan does, immediately under the hero.
+ *
+ * This is the first thing after the headline for a reason: the site now
+ * leads on service delivery, and a visitor who arrived wanting HVAC
+ * service should see the word before they see anything about signals.
+ * It replaces the live-condition chips that used to float beside the
+ * mark — a product demo in the position that should have been an
+ * answer.
+ */
+export function Pillars() {
+  return (
+    <section id="pillars" className="o-pillars" aria-label="What we do">
+      <ol>
+        {PILLARS.map((p, i) => (
+          <li key={p.name}>
+            <Reveal delay={i * 90}>
+              <span className="o-label o-pillar-n">{String(i + 1).padStart(2, "0")}</span>
+              <h2 className="o-display o-pillar-name">{p.name}</h2>
+              <p className="o-pillar-detail">{p.detail}</p>
+            </Reveal>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }

@@ -68,6 +68,20 @@
   background: #fffdf8;
 }
 
+/* Confirmation that notes were sent, in a strip rather than a page of
+   its own. Replacing the workspace with a thank-you was the bug: a
+   client who has sent notes still wants to see the site, and on a
+   three-direction round they have barely started. */
+.rv-sent {
+  padding: .55rem 1.1rem;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: #f0f5f1;
+  border-bottom: 1px solid rgba(77, 154, 95, .35);
+}
+.rv-sent strong { color: #2f6b41; }
+
 /* The direction switcher. Sits between the toolbar and the frame so
    changing concepts reads as changing what is on the easel, not as
    another review mode — the modes above it govern the click, this
