@@ -30,3 +30,15 @@ steady-state, non-escalating motion so the pier and pyramid hold their shape
 for the full clip. The raw Kling output rewrote several dates by second 10;
 the composite replaces the entire graphic layer with the original PNG in every
 frame, so the delivered files are text-exact.
+
+## v2 posters (ECNL badge)
+
+`beach-fc-schedule-motion-15s-v2.mp4` and `beach-fc-roster-motion-15s-v2.mp4`
+use the updated posters that add the ECNL badge top-right. The photo regions
+were pixel-identical to the first posters, so the schedule reuses the existing
+15 s pier footage with the new graphic layer (no credits spent). The roster is a
+new 15 s Kling v3.0 Pro render with a bolder brief: the edge light blooms wide
+and rolls along the pyramid, lighting the faces and the low wall. Built with
+`composite15_v2.py schedule` / `composite15_v2.py roster`. The text mask now
+classifies by color (cream, light-gray, gold) instead of luminance so the
+original glow edge is no longer frozen inside the animated glow.
