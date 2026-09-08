@@ -8,8 +8,12 @@ One reusable surf plate + one script. Each new match costs zero credits.
 - `surf-plate-15s.mp4` – the animated background, rendered once with Kling v3.0 Pro
   from `background-surf.png` (about 22.5 credits). Reuse it for every match that
   keeps this background.
-- `background-surf.png` – the still the plate was made from. The script locks the
-  cream band and the gold ring from it and damps surf motion behind the lower text.
+- `background-surf.png` – the still the plate was made from, with the gold ring
+  inpainted out. The script locks the cream band from it and damps surf motion
+  behind the lower text.
+- `ring-sprite.png` – the gold ring as an anti-aliased RGBA sprite, composited
+  over the plate on every frame so the thin line stays crisp. (Copying it out of
+  the still pixel-by-pixel through a colour mask made it look jagged.)
 - `overlay-2026-09-12-lafc.png` – the transparent type layer exported from the
   design tool for the LAFC So Cal match.
 - `matchday-2026-09-12-lafc-15s.mp4` – the finished video.
@@ -22,7 +26,7 @@ One reusable surf plate + one script. Each new match costs zero credits.
 
 ```
 python3 matchday_template.py overlay-NEW.png surf-plate-15s.mp4 matchday-NEW-15s.mp4 \
-    --still background-surf.png --calm 900 990
+    --still background-surf.png --ring ring-sprite.png --calm 900 990
 ```
 
 That is the whole process. Roles are assigned by position, so as long as the
@@ -48,8 +52,10 @@ Edit the numbers in `state()` to retime anything.
 
 ## Swapping the background photo
 
-Render a new plate once: upload the new still to Higgsfield, generate a 15 s
-Kling v3.0 Pro clip with a "slow, restrained, receding surf" prompt, then pass
+Render a new plate once. If the still carries thin graphic lines (like the
+ring), remove them from the still first and keep them as a separate RGBA
+sprite for `--ring`; otherwise the video model warps them. Upload the clean
+still to Higgsfield, generate a 15 s Kling v3.0 Pro clip with a "slow, restrained, receding surf" prompt, then pass
 the new still as `--still`. Kling always runs a full wave cycle no matter how
 the prompt is worded, which is why the `--calm` zone exists: it fades any
 deviation from the still below the given rows so surf never washes behind the

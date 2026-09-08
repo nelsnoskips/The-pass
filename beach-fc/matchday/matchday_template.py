@@ -5,6 +5,9 @@ Usage:  python3 matchday_template.py OVERLAY.png PLATE.mp4 OUT.mp4 [--seconds 15
 --still : the background still the plate was rendered from.  Flat design regions
           in it (the cream band, the gold ring) are locked from the still so the
           AI plate can only move the photograph.
+--ring RING.png : an RGBA sprite (e.g. the gold ring) composited over the plate
+          on every frame, under the type.  Keeps thin graphic lines crisp instead
+          of copying them pixel-by-pixel out of the still.
 --calm Y0 Y1 : below Y0 the plate's deviation from the still is faded out
           (fully by Y1) so surf can never wash behind the lower text.  The
           final frame stays pixel-identical to the still; only motion is damped.
@@ -125,10 +128,6 @@ def still_lock_mask(still_rgb):
     y = 0
     while y < H and flat[y]: y += 1
     if y > 0: m[:max(0, y - 2)] = 1.0
-    R, G, B = a[..., 0], a[..., 1], a[..., 2]
-    gold = (R > 150) & (G > 100) & (B < 110) & (R - B > 70) & (R - G > 25)
-    gm = Image.fromarray((gold * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(5)).filter(ImageFilter.GaussianBlur(1.2))
-    m = np.maximum(m, np.asarray(gm, dtype=np.float32) / 255.0)
     m = np.asarray(Image.fromarray((m * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(2)), dtype=np.float32) / 255.0
     return m
 
@@ -151,6 +150,10 @@ def main():
             keep = 0.12 + 0.88 * keep                                  # leave 12% of the motion
             lock = np.maximum(lock, (1 - keep)[:, None, None] * np.ones((1, W, 1), np.float32))
             print('calm zone %d-%d applied' % (cy0, cy1))
+    ring = None
+    if '--ring' in sys.argv:
+        r = np.asarray(Image.open(sys.argv[sys.argv.index('--ring') + 1]).convert('RGBA').resize((W, H), Image.LANCZOS), dtype=np.float32)
+        ring = (r[..., :3], r[..., 3:4] / 255.0)
     sprites = name_sprites(extract_sprites(ov), W, H)
     for s in sprites:
         s['rgb'] = ov[s['y0']:s['y1'], s['x0']:s['x1'], :3]
@@ -162,13 +165,14 @@ def main():
                             '-vf', f'scale={W}:{H}:flags=lanczos', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
                            stdout=subprocess.PIPE)
     enc = subprocess.Popen([FF, '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}',
-                            '-r', str(FPS), '-i', '-', '-c:v', 'libx264', '-preset', 'slow', '-crf', '17',
+                            '-r', str(FPS), '-i', '-', '-c:v', 'libx264', '-preset', 'slow', '-crf', '15', '-tune', 'film',
                             '-pix_fmt', 'yuv420p', '-movflags', '+faststart', out_p], stdin=subprocess.PIPE)
     for f in range(n_frames):
         buf = dec.stdout.read(W * H * 3)
         if len(buf) < W * H * 3: break
         frame = np.frombuffer(buf, np.uint8).reshape(H, W, 3).astype(np.float32)
         if lock is not None: frame = still * lock + frame * (1 - lock)
+        if ring is not None: frame = frame * (1 - ring[1]) + ring[0] * ring[1]
         t = f / FPS
         for s in sprites:
             dy, op, wipe = state(s, t)
