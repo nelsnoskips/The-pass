@@ -20,3 +20,13 @@ Both: 1080x1350 (4:5), 5 s, 24 fps, H.264, silent.
    feathered mask (schedule: everything above the fog line; roster: header
    band plus a tight per-glyph luminance mask), so the typography is
    pixel-identical to the source PNG in every frame.
+
+## 15-second versions
+
+`beach-fc-schedule-motion-15s.mp4` and `beach-fc-roster-motion-15s.mp4` were made
+the same way from 15 s Kling v3.0 Pro renders (about 22.5 credits each), using
+`composite15.py schedule` / `composite15.py roster`. The prompt asked for
+steady-state, non-escalating motion so the pier and pyramid hold their shape
+for the full clip. The raw Kling output rewrote several dates by second 10;
+the composite replaces the entire graphic layer with the original PNG in every
+frame, so the delivered files are text-exact.
