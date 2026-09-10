@@ -130,7 +130,7 @@ export const IMAGES: Record<string, Slot> = {
   },
 
   /* --- ten years in the building: the supplied photographs --------------
-     Picked from Orravan's Drive on 2026-09-10; see public/images/supplied/
+     Picked from Orravan's Drive on 2026-09-10; see supplied/
      README.md for the originals and what each one is standing in for. */
   "story-2014": {
     src: img("25-story-2014-founder.webp"),

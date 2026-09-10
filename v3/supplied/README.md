@@ -25,4 +25,4 @@ Selected from the client's Drive folder on 2026-09-10. Converted from HEIC, long
 | `rooftop-ahu-wide.jpg` | Hero alt / Retrofit | 4032×3024 | Rooftop air handlers, wide, sky (Jul 2025, landscape) | [20250715_213317715_iOS.heic](https://drive.google.com/file/d/1C7Iuzmp67ml_s8Y0hjrbtPg11YuseeF9/view) |
 | `rooftop-weather-station.jpg` | Automation texture | 4284×5712 | Weather station on rooftop unit (Jun 2026) | [20260629_160603913_iOS.heic](https://drive.google.com/file/d/1rUXTpl_PEFMzcJ20Y8lzDeUGsTwlzqi9/view) |
 
-Nothing here is wired into the site yet. See `v3/lib/images.ts` to swap a stand-in for one of these.
+These stay out of `v3/public` on purpose: the export copies that folder wholesale, and a manifest full of long Drive ids in the published tree trips Netlify's secret scanning. Seven of them are wired in as `story-*` slots in `v3/lib/images.ts` via the `25-`–`32-` WebP plates.
