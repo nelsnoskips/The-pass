@@ -1,7 +1,8 @@
 /**
  * Who Orravan is: the history, and the people.
  *
- * The milestones are the client's own, supplied 3 Sep 2026. Nothing
+ * The milestones are the client's own, supplied 3 Sep 2026, with the 2025 retrofit team and the
+ * 25-in-2021 / 50-in-2024 headcounts confirmed by Alex on 9 Sep. Nothing
  * here is inferred — where a month was given it is kept, where only a
  * year was given the entry sits at mid-year and `precision` says so, so
  * the timeline can render an honest tick rather than implying a date
@@ -157,12 +158,22 @@ export const MILESTONES: Milestone[] = [
     detail: "Headcount doubles in three years without the standard moving.",
     figure: "50",
   },
+  {
+    id: "retrofit",
+    lane: "sector",
+    at: 2025.5,
+    stamp: "2025",
+    exact: false,
+    title: "Retrofit mechanical team launched",
+    detail:
+      "A dedicated team for the first of the four pillars: lifting performance, reliability and comfort in buildings already running.",
+  },
 ];
 
 /** The axis runs a little either side of the real span — but only a
     little past the end, so the last milestone lands with runway to be
     read rather than arriving in the final few pixels of the scroll. */
-export const SPAN = { from: 2014.2, to: 2024.75 } as const;
+export const SPAN = { from: 2014.2, to: 2025.75 } as const;
 
 export const HISTORY = {
   eyebrow: "2014 — today",
@@ -297,7 +308,7 @@ export const TEAM_PAGE = {
 /**
  * The same decade, told as pictures rather than as a chart.
  *
- * The team page runs the full twelve milestones as an instrument. The
+ * The team page runs the full thirteen milestones as an instrument. The
  * homepage cannot ask for that much attention, and a visitor there
  * wants the feeling of a company that has been doing this a while — so
  * this is the highlight reel: seven chapters, each a full photograph
@@ -338,7 +349,7 @@ export const CHAPTERS: Chapter[] = [
     kicker: "The beginning",
     title: "One tradesman, one truck",
     line: "Rigo Navarro Sr. starts Orravan on the belief that mechanical work is a service business first.",
-    slot: "decision-field",
+    slot: "story-2014",
     focus: "50% 40%",
     wants: "Rigo Sr., or the earliest van photograph that exists.",
   },
@@ -348,8 +359,8 @@ export const CHAPTERS: Chapter[] = [
     kicker: "Central plant",
     title: "Chiller mechanical",
     line: "The heaviest equipment in the building, and the least forgiving of guesswork.",
-    slot: "service-hvac",
-    focus: "50% 45%",
+    slot: "story-2015",
+    focus: "40% 50%",
     wants: "A real chiller or central plant job.",
   },
   {
@@ -358,8 +369,8 @@ export const CHAPTERS: Chapter[] = [
     kicker: "In-house",
     title: "Automation and controls",
     line: "Orravan stops being the people who fix the equipment and becomes the people who know what it is doing.",
-    slot: "service-automation",
-    focus: "50% 45%",
+    slot: "story-2016",
+    focus: "50% 50%",
     wants: "The automation team, or a real controls panel.",
   },
   {
@@ -368,9 +379,9 @@ export const CHAPTERS: Chapter[] = [
     kicker: "Recognised",
     title: "SBE / Minority certified",
     line: "Formal recognition of how the company was built — and the credential that opens institutional work.",
-    slot: "decision-client",
-    focus: "50% 40%",
-    wants: "The certificate, or the team on an institutional site.",
+    slot: "story-2018",
+    focus: "50% 12%",
+    wants: "The certificate. The crew on an institutional site stands in until it arrives.",
   },
   {
     id: "c-2020",
@@ -378,8 +389,8 @@ export const CHAPTERS: Chapter[] = [
     kicker: "A permanent home",
     title: "Our own shop",
     line: "Fabrication, staging and stock move under one roof the company owns.",
-    slot: "service-inventory",
-    focus: "50% 50%",
+    slot: "story-2020",
+    focus: "50% 35%",
     wants: "The actual shop, inside and out. The fleet parked up.",
   },
   {
@@ -388,8 +399,8 @@ export const CHAPTERS: Chapter[] = [
     kicker: "Union shop",
     title: "Trained trades, fairly paid",
     line: "A commitment to the standard of work that comes with them.",
-    slot: "difference-experience",
-    focus: "50% 40%",
+    slot: "story-2023",
+    focus: "50% 35%",
     wants: "The crew on site. Faces, not equipment.",
   },
   {
@@ -398,8 +409,8 @@ export const CHAPTERS: Chapter[] = [
     kicker: "Today",
     title: "Fifty on the team",
     line: "Headcount doubled in three years without the standard moving.",
-    slot: "resolution-people",
-    focus: "50% 40%",
+    slot: "story-2024",
+    focus: "50% 55%",
     wants: "The team aerial shot Alex mentioned.",
   },
 ];
