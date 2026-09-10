@@ -124,9 +124,48 @@ export const IMAGES: Record<string, Slot> = {
 
   /* --- build what buildings become ------------------------------------- */
   team: {
-    src: img("16-team-careers.webp"),
-    alt: "The Orravan team",
-    brief: "Careers and team. 16:9.",
+    src: img("32-team-lunch.webp"),
+    alt: "The Orravan team at lunch inside the shop",
+    brief: "Careers and team. Supplied; portrait, so frame for the table.",
+  },
+
+  /* --- ten years in the building: the supplied photographs --------------
+     Picked from Orravan's Drive on 2026-09-10; see public/images/supplied/
+     README.md for the originals and what each one is standing in for. */
+  "story-2014": {
+    src: img("25-story-2014-founder.webp"),
+    alt: "A technician at a rooftop pump in the early days",
+    brief: "Founder-era rooftop scan, upscaled. Confirm who and when with Alex.",
+  },
+  "story-2015": {
+    src: img("26-story-2015-chiller.webp"),
+    alt: "A technician working at the base of a chiller in a plant room",
+    brief: "Chiller room, Nov 2022. 4:3.",
+  },
+  "story-2016": {
+    src: img("27-story-2016-controls.webp"),
+    alt: "An Orravan-built controls panel, wired and labelled",
+    brief: "Controls panel, Sep 2026. Portrait.",
+  },
+  "story-2018": {
+    src: img("28-story-2018-institutional.webp"),
+    alt: "Five Orravan technicians in hard hats inside a mechanical room",
+    brief: "Crew on an institutional site, Aug 2023. 16:9.",
+  },
+  "story-2020": {
+    src: img("29-story-2020-shop.webp"),
+    alt: "Two of the Orravan leadership outside the shop at 3323",
+    brief: "The shop, Feb 2021. Portrait.",
+  },
+  "story-2023": {
+    src: img("30-story-2023-crew.webp"),
+    alt: "Nine Orravan technicians on a rooftop beside the equipment",
+    brief: "Rooftop crew, upscaled. Keep below full bleed; patch text is synthesised.",
+  },
+  "story-2024": {
+    src: img("31-story-2024-team.webp"),
+    alt: "The whole Orravan team and fleet outside the shop",
+    brief: "Team and fleet, supplied. 7:5.",
   },
 
   /* --- built for every industry ----------------------------------------- */
