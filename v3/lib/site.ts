@@ -14,7 +14,7 @@ export const ORRAVAN = {
   domain: "orravan.ai",
   phone: "(832) 817-0006",
   email: "hello@orravan.ai",
-  license: "License No. 644288",
+  license: "License #1025455",
 } as const;
 
 export const NAV = {
