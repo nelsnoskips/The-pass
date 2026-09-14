@@ -167,9 +167,14 @@ function Profile({ p, onClose }: { p: Person; onClose: () => void }) {
         <h3 className="o-display o-team-profile-name">{p.name}</h3>
         {p.since && <p className="o-label o-team-since">At Orravan since {p.since}</p>}
 
-        <p className="o-team-bio">{p.bio}</p>
+        {p.bio && <p className="o-team-bio">{p.bio}</p>}
 
-        {p.quote && <blockquote className="o-team-quote">{p.quote}</blockquote>}
+        {p.quote && (
+          <blockquote className="o-team-quote">
+            {p.quote}
+            {p.cite && <cite className="o-label o-team-cite">{p.cite}</cite>}
+          </blockquote>
+        )}
 
         {p.focus && (
           <ul className="o-team-focus">
