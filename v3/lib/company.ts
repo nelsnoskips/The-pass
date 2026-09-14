@@ -184,8 +184,11 @@ export const HISTORY = {
 
 /* ------------------------------------------------------------- team --- */
 
-/** True while the roster below is scaffolding rather than real staff. */
-export const PLACEHOLDER = true;
+/** True while the roster below is scaffolding rather than real staff.
+    False since 14 Sep 2026: the names, titles, groups, start years and
+    quotes are Alex's spreadsheet, verbatim apart from two spelling
+    corrections. Headshots are still to come, so the tiles show initials. */
+export const PLACEHOLDER = false;
 
 export type Person = {
   id: string;
@@ -194,8 +197,11 @@ export type Person = {
   /** Rendered in the portrait tile until headshots arrive. */
   initials: string;
   since?: string;
-  bio: string;
+  /** Optional: most of the roster supplied a quote, not a biography. */
+  bio?: string;
   quote?: string;
+  /** Who said the quote, when it is not the person's own. */
+  cite?: string;
   focus?: string[];
 };
 
@@ -206,43 +212,38 @@ export type Department = {
   people: Person[];
 };
 
-const lorem =
-  "Placeholder biography. Two or three sentences on what this person is responsible for, how long they have been at Orravan, and the kind of problem a client would call them about.";
-
 export const LEADERSHIP: Person[] = [
   {
-    id: "founder",
+    id: "rigo-sr",
     name: "Rigo Navarro Sr.",
     role: "Founder",
     initials: "RN",
     since: "2014",
-    bio: lorem,
-    quote: "We started with one truck and the same standard we hold now.",
-    focus: ["Mechanical", "Company"],
+    focus: ["Owner"],
   },
   {
-    id: "lead-2",
-    name: "Name Surname",
+    id: "danny",
+    name: "Danny Navarro",
+    role: "Chief Executive Officer",
+    initials: "DN",
+    since: "2016",
+    focus: ["Owner"],
+  },
+  {
+    id: "rigo-jr",
+    name: "Rigo Navarro Jr.",
+    role: "Chief Operating Officer",
+    initials: "RN",
+    since: "2015",
+    quote: "Success is earned, not given.",
+    focus: ["Owner"],
+  },
+  {
+    id: "don",
+    name: "Don Bach",
     role: "President",
-    initials: "NS",
-    bio: lorem,
+    initials: "DB",
     focus: ["Operations"],
-  },
-  {
-    id: "lead-3",
-    name: "Name Surname",
-    role: "Vice President",
-    initials: "NS",
-    bio: lorem,
-    focus: ["Projects"],
-  },
-  {
-    id: "lead-4",
-    name: "Name Surname",
-    role: "Director of Operations",
-    initials: "NS",
-    bio: lorem,
-    focus: ["Service", "Dispatch"],
   },
 ];
 
@@ -250,11 +251,47 @@ export const DEPARTMENTS: Department[] = [
   {
     id: "mechanical",
     name: "Mechanical",
-    blurb: "Retrofit, central plant and project delivery.",
+    blurb: "Central plant, service and the on-call rotation.",
     people: [
-      { id: "m1", name: "Name Surname", role: "Mechanical Superintendent", initials: "NS", bio: lorem },
-      { id: "m2", name: "Name Surname", role: "Project Manager", initials: "NS", bio: lorem },
-      { id: "m3", name: "Name Surname", role: "Lead Pipefitter", initials: "NS", bio: lorem },
+      {
+        id: "john",
+        name: "John Vazquez",
+        role: "Service Manager",
+        initials: "JV",
+        quote: "Both in fighting and in everyday life you should be determined though calm.",
+      },
+      {
+        id: "simon",
+        name: "Simon Kang",
+        role: "Mechanical Foreman",
+        initials: "SK",
+        since: "2025",
+        quote: "Do or do not, there is no try.",
+      },
+    ],
+  },
+  {
+    id: "retrofit",
+    name: "Retrofit",
+    blurb: "Mechanical retrofit projects, from estimate to commissioning.",
+    people: [
+      {
+        id: "lupe",
+        name: "Lupe Hernandez",
+        role: "Retrofit Projects Foreman",
+        initials: "LH",
+        since: "2025",
+        quote:
+          "We are in the country of opportunities. No one is coming to rescue your potential or hand you evolution on a silver platter, so do not wait for circumstances to align. Go find it and get it yourself. But ambition alone isn't enough; excellence is a discipline, not a luxury budget. Do it correctly the first time, and you will permanently bypass the hidden costs of doing it twice.",
+      },
+      {
+        id: "juan",
+        name: "Juan Rodriguez",
+        role: "Project Manager",
+        initials: "JR",
+        since: "2021",
+        quote: "Speak like it's delusional until it isn't.",
+      },
     ],
   },
   {
@@ -262,29 +299,57 @@ export const DEPARTMENTS: Department[] = [
     name: "Automation & Controls",
     blurb: "DDC controls, integration, programming and support.",
     people: [
-      { id: "a1", name: "Name Surname", role: "Controls Manager", initials: "NS", bio: lorem },
-      { id: "a2", name: "Name Surname", role: "Systems Engineer", initials: "NS", bio: lorem },
-      { id: "a3", name: "Name Surname", role: "Automation Technician", initials: "NS", bio: lorem },
+      {
+        id: "alfred",
+        name: "Alfred Rojas",
+        role: "Controls Lead Engineer",
+        initials: "AR",
+        since: "2019",
+        quote: "The way to get started is to quit talking and begin doing.",
+      },
+      {
+        id: "victor",
+        name: "Victor Dorado",
+        role: "Account Executive",
+        initials: "VD",
+        since: "2026",
+        bio:
+          "Credibility is built through action and results. From the Marine Corps to the field, to managing projects, and now as an Account Executive, Victor has held to one idea: a commitment only means something if you follow through on it. Leadership is taking ownership, delivering on what you promise, and earning the trust of your team and customers through consistent performance.",
+        quote:
+          "Words are words, explanations are explanations, promises are promises, but only performance is reality.",
+        cite: "Harold S. Geneen",
+      },
     ],
   },
   {
-    id: "service",
-    name: "Service",
-    blurb: "Maintenance, emergency response and the on-call rotation.",
+    id: "office",
+    name: "Sales & Office",
+    blurb: "Accounts, estimating and the people who keep the shop running.",
     people: [
-      { id: "s1", name: "Name Surname", role: "Service Manager", initials: "NS", bio: lorem },
-      { id: "s2", name: "Name Surname", role: "Lead Service Technician", initials: "NS", bio: lorem },
-      { id: "s3", name: "Name Surname", role: "Dispatcher", initials: "NS", bio: lorem },
-    ],
-  },
-  {
-    id: "operations",
-    name: "Operations",
-    blurb: "Estimating, purchasing, parts and the back office.",
-    people: [
-      { id: "o1", name: "Name Surname", role: "Estimator", initials: "NS", bio: lorem },
-      { id: "o2", name: "Name Surname", role: "Parts Manager", initials: "NS", bio: lorem },
-      { id: "o3", name: "Name Surname", role: "Office Manager", initials: "NS", bio: lorem },
+      {
+        id: "jessica",
+        name: "Jessica Sanchez",
+        role: "Sr. Account Executive",
+        initials: "JS",
+        since: "2025",
+        quote: "Your experiences will either make you bitter or better.",
+      },
+      {
+        id: "kendall",
+        name: "Kendall Yanez",
+        role: "Account Executive",
+        initials: "KY",
+        since: "2026",
+        quote: "Don't wait for opportunity. Create it.",
+      },
+      {
+        id: "christine",
+        name: "Christine Escala",
+        role: "Office Manager",
+        initials: "CE",
+        since: "2026",
+        quote: "With a little patience, a little persistence, and a lot of heart, you'll figure it out.",
+      },
     ],
   },
 ];
@@ -293,7 +358,7 @@ export const TEAM_PAGE = {
   eyebrow: "Who we are",
   head: ["The people", "behind the work."],
   copy:
-    "Controls, mechanical, service and the office. Fifty people, one standard, and a name on every job.",
+    "Mechanical, retrofit, automation and the office. Fifty people, one standard, and a name on every job.",
   orgHead: ["Meet", "the team."],
   orgCopy:
     "Leadership first, then the four groups that run the work. Open anyone to read what they do.",
@@ -351,7 +416,7 @@ export const CHAPTERS: Chapter[] = [
     line: "Rigo Navarro Sr. starts Orravan on the belief that mechanical work is a service business first.",
     slot: "story-2014",
     focus: "50% 40%",
-    wants: "Rigo Sr., or the earliest van photograph that exists.",
+    wants: "Supplied: Danny Navarro on a rooftop, early days.",
   },
   {
     id: "c-2015",
@@ -381,7 +446,7 @@ export const CHAPTERS: Chapter[] = [
     line: "Formal recognition of how the company was built — and the credential that opens institutional work.",
     slot: "story-2018",
     focus: "50% 12%",
-    wants: "The certificate. The crew on an institutional site stands in until it arrives.",
+    wants: "Alex prefers the SBE and MBE emblems here rather than a certificate. Files pending; the crew on an institutional site stands in.",
   },
   {
     id: "c-2020",

@@ -1101,6 +1101,7 @@ main > section { scroll-margin-top: 72px; }
 .o-team-profile-name { margin-top: .2rem; font-size: clamp(1.3rem, 2.6vw, 1.9rem); line-height: 1; }
 .o-team-since { margin-top: .3rem; font-size: 9.5px; color: var(--ink-mute); }
 .o-team-bio { margin-top: .9rem; font-size: 13px; line-height: 1.65; color: var(--ink-soft); }
+.o-team-cite { display: block; margin-top: .5rem; font-style: normal; font-size: 9.5px; color: var(--ink-mute); }
 .o-team-quote {
   margin: 1rem 0 0;
   padding-left: .9rem;

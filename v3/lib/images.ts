@@ -134,8 +134,8 @@ export const IMAGES: Record<string, Slot> = {
      README.md for the originals and what each one is standing in for. */
   "story-2014": {
     src: img("25-story-2014-founder.webp"),
-    alt: "A technician at a rooftop pump in the early days",
-    brief: "Founder-era rooftop scan, upscaled. Confirm who and when with Alex.",
+    alt: "Danny Navarro at a rooftop pump in Orravan's first years",
+    brief: "Danny Navarro, early days, upscaled from a scan. Confirmed by Alex 14 Sep 2026. The shoulder patch is a former employer's; retouch if it ever shows.",
   },
   "story-2015": {
     src: img("26-story-2015-chiller.webp"),

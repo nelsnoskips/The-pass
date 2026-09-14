@@ -107,7 +107,7 @@ export const SCRIPT: Record<string, Node> = {
   "emergency-911": {
     id: "emergency-911",
     bot: [
-      "Call 911 now. Once everyone is safe, come back here or call (832) 817-0006 and we'll take it from there.",
+      "Call 911 now. Once everyone is safe, come back here or call (855) 677-2826 and we'll take it from there.",
     ],
     chips: [{ label: "Everyone is safe — continue", to: "emergency-system" }],
   },

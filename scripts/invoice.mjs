@@ -33,7 +33,7 @@ const API = "https://api.stripe.com/v1";
 const BILLING = {
   orravan: {
     company: "Orravan Mechanical",
-    email: "hello@orravan.ai",
+    email: "Ajimenez@orravan.ai",
     agreement: "/proposals/orravan-agreement",
     source: "Orravan Mechanical — Project Scope & Agreement, §2 Fees and payment",
     total: 400000,
