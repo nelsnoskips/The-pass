@@ -351,7 +351,7 @@ export const CHAPTERS: Chapter[] = [
     line: "Rigo Navarro Sr. starts Orravan on the belief that mechanical work is a service business first.",
     slot: "story-2014",
     focus: "50% 40%",
-    wants: "Rigo Sr., or the earliest van photograph that exists.",
+    wants: "Supplied: Danny Navarro on a rooftop, early days.",
   },
   {
     id: "c-2015",
@@ -381,7 +381,7 @@ export const CHAPTERS: Chapter[] = [
     line: "Formal recognition of how the company was built — and the credential that opens institutional work.",
     slot: "story-2018",
     focus: "50% 12%",
-    wants: "The certificate. The crew on an institutional site stands in until it arrives.",
+    wants: "Alex prefers the SBE and MBE emblems here rather than a certificate. Files pending; the crew on an institutional site stands in.",
   },
   {
     id: "c-2020",
