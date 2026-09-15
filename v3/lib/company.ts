@@ -227,6 +227,7 @@ export const LEADERSHIP: Person[] = [
     role: "Chief Executive Officer",
     initials: "DN",
     since: "2016",
+    quote: "Success is built when nobody is watching.",
     focus: ["Owner"],
   },
   {
