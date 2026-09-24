@@ -187,15 +187,17 @@ export const HISTORY = {
 /** True while the roster below is scaffolding rather than real staff.
     False since 14 Sep 2026: the names, titles, groups, start years and
     quotes are Alex's spreadsheet, verbatim apart from two spelling
-    corrections. Headshots are still to come, so the tiles show initials. */
+    corrections. Headshots from the studio shoot landed 24 Sep 2026. */
 export const PLACEHOLDER = false;
 
 export type Person = {
   id: string;
   name: string;
   role: string;
-  /** Rendered in the portrait tile until headshots arrive. */
+  /** Shown in the portrait tile when there is no photograph. */
   initials: string;
+  /** Square headshot under /images/team/. Omit and the tile shows initials. */
+  photo?: string;
   since?: string;
   /** Optional: most of the roster supplied a quote, not a biography. */
   bio?: string;
@@ -218,6 +220,7 @@ export const LEADERSHIP: Person[] = [
     name: "Rigo Navarro Sr.",
     role: "Founder",
     initials: "RN",
+    photo: "/images/team/rigo-sr.webp",
     since: "2014",
     focus: ["Owner"],
   },
@@ -226,7 +229,9 @@ export const LEADERSHIP: Person[] = [
     name: "Danny Navarro",
     role: "Chief Executive Officer",
     initials: "DN",
+    photo: "/images/team/danny.webp",
     since: "2016",
+    quote: "Success is built when nobody is watching.",
     focus: ["Owner"],
   },
   {
@@ -234,6 +239,7 @@ export const LEADERSHIP: Person[] = [
     name: "Rigo Navarro Jr.",
     role: "Chief Operating Officer",
     initials: "RN",
+    photo: "/images/team/rigo-jr.webp",
     since: "2015",
     quote: "Success is earned, not given.",
     focus: ["Owner"],
@@ -243,6 +249,7 @@ export const LEADERSHIP: Person[] = [
     name: "Don Bach",
     role: "President",
     initials: "DB",
+    photo: "/images/team/don.webp",
     focus: ["Operations"],
   },
 ];
@@ -258,6 +265,7 @@ export const DEPARTMENTS: Department[] = [
         name: "John Vazquez",
         role: "Service Manager",
         initials: "JV",
+        photo: "/images/team/john.webp",
         quote: "Both in fighting and in everyday life you should be determined though calm.",
       },
       {
@@ -265,6 +273,7 @@ export const DEPARTMENTS: Department[] = [
         name: "Simon Kang",
         role: "Mechanical Foreman",
         initials: "SK",
+        photo: "/images/team/simon.webp",
         since: "2025",
         quote: "Do or do not, there is no try.",
       },
@@ -280,6 +289,7 @@ export const DEPARTMENTS: Department[] = [
         name: "Lupe Hernandez",
         role: "Retrofit Projects Foreman",
         initials: "LH",
+        photo: "/images/team/lupe.webp",
         since: "2025",
         quote:
           "We are in the country of opportunities. No one is coming to rescue your potential or hand you evolution on a silver platter, so do not wait for circumstances to align. Go find it and get it yourself. But ambition alone isn't enough; excellence is a discipline, not a luxury budget. Do it correctly the first time, and you will permanently bypass the hidden costs of doing it twice.",
@@ -289,6 +299,7 @@ export const DEPARTMENTS: Department[] = [
         name: "Juan Rodriguez",
         role: "Project Manager",
         initials: "JR",
+        photo: "/images/team/juan.webp",
         since: "2021",
         quote: "Speak like it's delusional until it isn't.",
       },
@@ -304,6 +315,7 @@ export const DEPARTMENTS: Department[] = [
         name: "Alfred Rojas",
         role: "Controls Lead Engineer",
         initials: "AR",
+        photo: "/images/team/alfred.webp",
         since: "2019",
         quote: "The way to get started is to quit talking and begin doing.",
       },
@@ -312,6 +324,7 @@ export const DEPARTMENTS: Department[] = [
         name: "Victor Dorado",
         role: "Account Executive",
         initials: "VD",
+        photo: "/images/team/victor.webp",
         since: "2026",
         bio:
           "Credibility is built through action and results. From the Marine Corps to the field, to managing projects, and now as an Account Executive, Victor has held to one idea: a commitment only means something if you follow through on it. Leadership is taking ownership, delivering on what you promise, and earning the trust of your team and customers through consistent performance.",
@@ -331,6 +344,7 @@ export const DEPARTMENTS: Department[] = [
         name: "Jessica Sanchez",
         role: "Sr. Account Executive",
         initials: "JS",
+        photo: "/images/team/jessica.webp",
         since: "2025",
         quote: "Your experiences will either make you bitter or better.",
       },
@@ -339,6 +353,7 @@ export const DEPARTMENTS: Department[] = [
         name: "Kendall Yanez",
         role: "Account Executive",
         initials: "KY",
+        photo: "/images/team/kendall.webp",
         since: "2026",
         quote: "Don't wait for opportunity. Create it.",
       },
@@ -347,6 +362,7 @@ export const DEPARTMENTS: Department[] = [
         name: "Christine Escala",
         role: "Office Manager",
         initials: "CE",
+        photo: "/images/team/christine.webp",
         since: "2026",
         quote: "With a little patience, a little persistence, and a lot of heart, you'll figure it out.",
       },

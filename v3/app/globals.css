@@ -1055,7 +1055,24 @@ main > section { scroll-margin-top: 72px; }
   color: var(--bone);
 }
 .o-team-portrait span { font-size: clamp(1.2rem, 2.4vw, 1.7rem); letter-spacing: .04em; opacity: .82; }
-.o-team-portrait[data-big] { width: 72px; aspect-ratio: 1; margin-bottom: .9rem; }
+.o-team-portrait[data-big] { width: 112px; aspect-ratio: 1; margin-bottom: .9rem; }
+.o-team-portrait { overflow: hidden; }
+.o-team-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The studio grey reads a touch warm against the ivory page; pull it
+     toward the panel tone so thirteen tiles sit as one set. */
+  filter: saturate(.94);
+  transition: transform .5s cubic-bezier(.2,.7,.2,1);
+}
+.o-team-tile:hover .o-team-portrait img,
+.o-team-tile:focus-visible .o-team-portrait img { transform: scale(1.035); }
+@media (prefers-reduced-motion: reduce) {
+  .o-team-portrait img { transition: none; }
+  .o-team-tile:hover .o-team-portrait img,
+  .o-team-tile:focus-visible .o-team-portrait img { transform: none; }
+}
 
 .o-team-name { font-size: 12.5px; font-weight: 600; }
 .o-team-role { font-size: 9px; color: var(--ink-mute); }

@@ -10,6 +10,7 @@ import {
 } from "@/lib/company";
 import { Band, Head } from "./sections-a";
 import { Reveal } from "./ui";
+import { asset } from "@/lib/images";
 
 /**
  * Meet the team.
@@ -96,14 +97,27 @@ export function Org() {
   );
 }
 
+/** The face, or the initials standing in for one. Decorative either
+    way: the name is always printed beside it. */
+function Portrait({ p, big }: { p: Person; big?: boolean }) {
+  return (
+    <span className="o-team-portrait" data-big={big || undefined} aria-hidden>
+      {p.photo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={asset(p.photo)} alt="" loading={big ? "eager" : "lazy"} decoding="async" />
+      ) : (
+        <span className="o-display">{p.initials}</span>
+      )}
+    </span>
+  );
+}
+
 function Tile({ p, i, onOpen }: { p: Person; i: number; onOpen: () => void }) {
   return (
     <li>
       <Reveal delay={i * 60}>
         <button type="button" className="o-team-tile" onClick={onOpen}>
-          <span className="o-team-portrait" aria-hidden>
-            <span className="o-display">{p.initials}</span>
-          </span>
+          <Portrait p={p} />
           <span className="o-team-name">{p.name}</span>
           <span className="o-team-role o-label">{p.role}</span>
         </button>
@@ -159,9 +173,7 @@ function Profile({ p, onClose }: { p: Person; onClose: () => void }) {
           &times;
         </button>
 
-        <span className="o-team-portrait" data-big aria-hidden>
-          <span className="o-display">{p.initials}</span>
-        </span>
+        <Portrait p={p} big />
 
         <p className="o-label text-[10px] text-[var(--orravan-blue)]">{p.role}</p>
         <h3 className="o-display o-team-profile-name">{p.name}</h3>
