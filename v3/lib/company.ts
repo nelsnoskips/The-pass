@@ -379,7 +379,7 @@ export const TEAM_PAGE = {
     "Mechanical, retrofit, automation and the office. Fifty people, one standard, and a name on every job.",
   orgHead: ["Meet", "the team."],
   orgCopy:
-    "Leadership first, then the four groups that run the work. Open anyone to read what they do.",
+    "The people who run the work, leadership first. Two layouts to compare: switch between them here.",
   careersHead: ["Build what", "buildings become."],
   careersCopy:
     "We hire trained trades and keep them. If that is the kind of shop you want to work in, we would like to hear from you.",
