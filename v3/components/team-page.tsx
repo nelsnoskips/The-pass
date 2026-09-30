@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   DEPARTMENTS,
   LEADERSHIP,
-  PLACEHOLDER,
   TEAM_PAGE,
   type Person,
 } from "@/lib/company";
@@ -15,18 +14,19 @@ import { asset } from "@/lib/images";
 /**
  * Meet the team.
  *
- * Don asked for an org chart that feels personal rather than a list of
- * names and titles, which are close to opposite things: a boxes-and-
- * lines chart is the least human diagram there is. So the structure is
- * carried by grouping — leadership first, then the four groups that run
- * the work — and every node is a portrait tile that opens a profile.
- * The hierarchy is legible without a single connector line.
+ * Alex asked to lose the department headings and try two layouts from
+ * the pages Orravan liked: a stacked list where every person's quote
+ * and bio sit in the open, and a side-scroll strip. Both are built here
+ * behind a small switch so the team can compare them on the real page
+ * with their own people in it, rather than on a mock. The chosen one
+ * stays; the switch and the other go.
  *
- * Headshots have not been taken yet, so the tile falls back to a
- * monogram on a tonal block. That is a deliberate placeholder rather
- * than a grey silhouette: it looks finished at a glance, and swapping
- * in Danny's photographs later is a file change with no layout
- * consequence.
+ * Order carries the hierarchy now that headings don't: leadership
+ * first, then everyone else in the order Alex's spreadsheet listed
+ * them. Each person's group survives as a small label, not a heading.
+ *
+ * `?view=scroll` opens straight on the strip, so either layout can be
+ * sent as its own link.
  */
 
 export function TeamIntro() {
@@ -52,48 +52,189 @@ export function TeamIntro() {
   );
 }
 
+type View = "stacked" | "scroll";
+
+const VIEWS: { id: View; label: string }[] = [
+  { id: "stacked", label: "Stacked" },
+  { id: "scroll", label: "Side-scroll" },
+];
+
+type Member = Person & { group: string };
+
+/** One list, no headings: leadership, then the groups in roster order. */
+const TEAM: Member[] = [
+  ...LEADERSHIP.map((p) => ({ ...p, group: "Leadership" })),
+  ...DEPARTMENTS.flatMap((d) => d.people.map((p) => ({ ...p, group: d.name }))),
+];
+
 export function Org() {
+  const [view, setView] = useState<View>("stacked");
   const [open, setOpen] = useState<Person | null>(null);
+
+  // Read the layout from the address so each can be sent as a link.
+  useEffect(() => {
+    const v = new URLSearchParams(window.location.search).get("view");
+    if (v === "scroll" || v === "stacked") setView(v);
+  }, []);
+
+  const choose = (v: View) => {
+    setView(v);
+    const url = new URL(window.location.href);
+    if (v === "stacked") url.searchParams.delete("view");
+    else url.searchParams.set("view", v);
+    window.history.replaceState(null, "", url);
+  };
 
   return (
     <Band id="org">
-      <Head lines={TEAM_PAGE.orgHead} copy={TEAM_PAGE.orgCopy} />
+      <Head
+        lines={TEAM_PAGE.orgHead}
+        copy={TEAM_PAGE.orgCopy}
+        aside={<Switch view={view} onChange={choose} />}
+      />
 
-      <div>
-        {PLACEHOLDER && (
-          <p className="o-team-note o-label">
-            Template — awaiting the employee list and headshots
-          </p>
-        )}
-
-        <section aria-labelledby="org-lead">
-          <h3 id="org-lead" className="o-team-group o-label">
-            Leadership
-          </h3>
-          <ul className="o-team-grid" data-lead>
-            {LEADERSHIP.map((p, i) => (
-              <Tile key={p.id} p={p} i={i} onOpen={() => setOpen(p)} />
-            ))}
-          </ul>
-        </section>
-
-        {DEPARTMENTS.map((d) => (
-          <section key={d.id} aria-labelledby={`org-${d.id}`}>
-            <h3 id={`org-${d.id}`} className="o-team-group o-label">
-              {d.name}
-              <span className="o-team-blurb">{d.blurb}</span>
-            </h3>
-            <ul className="o-team-grid">
-              {d.people.map((p, i) => (
-                <Tile key={p.id} p={p} i={i} onOpen={() => setOpen(p)} />
-              ))}
-            </ul>
-          </section>
-        ))}
+      {/* min-w-0: without it the strip's content width props the grid
+          column open and the whole page scrolls sideways. */}
+      <div className="min-w-0">
+        {view === "stacked" ? <Stack /> : <Strip onOpen={setOpen} />}
       </div>
 
       {open && <Profile p={open} onClose={() => setOpen(null)} />}
     </Band>
+  );
+}
+
+function Switch({ view, onChange }: { view: View; onChange: (v: View) => void }) {
+  return (
+    <div className="o-team-switch" role="group" aria-label="Team layout">
+      {VIEWS.map((v) => (
+        <button
+          key={v.id}
+          type="button"
+          className="o-label"
+          aria-pressed={view === v.id}
+          onClick={() => onChange(v.id)}
+        >
+          {v.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Stacked: one row per person, everything visible. Nothing to open,
+ * which is the point of the Therma page Orravan liked; it reads as a
+ * room full of people rather than a directory.
+ */
+function Stack() {
+  return (
+    <ol className="o-team-stack">
+      {TEAM.map((p) => (
+        <li key={p.id}>
+          <Reveal>
+            <article className="o-team-row" aria-labelledby={`tm-${p.id}`}>
+              <Portrait p={p} />
+              <div className="o-team-row-text">
+                <p className="o-label o-team-row-role">{p.role}</p>
+                <h3 id={`tm-${p.id}`} className="o-display o-team-row-name">
+                  {p.name}
+                </h3>
+                <p className="o-label o-team-since">
+                  {p.group}
+                  {p.since && ` · At Orravan since ${p.since}`}
+                </p>
+                {p.bio && <p className="o-team-bio">{p.bio}</p>}
+                {p.quote && (
+                  <blockquote className="o-team-quote">
+                    {p.quote}
+                    {p.cite && <cite className="o-label o-team-cite">{p.cite}</cite>}
+                  </blockquote>
+                )}
+              </div>
+            </article>
+          </Reveal>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/**
+ * Side-scroll: a strip of cards that runs off the right edge of the
+ * page, native horizontal scrolling with snap points, so a trackpad,
+ * a phone swipe and the arrow buttons all move it. Vertical scrolling
+ * is never hijacked; the page still scrolls down past it normally.
+ */
+function Strip({ onOpen }: { onOpen: (p: Person) => void }) {
+  const rail = useRef<HTMLUListElement>(null);
+  const [at, setAt] = useState({ start: true, end: false, p: 0 });
+
+  useEffect(() => {
+    const el = rail.current;
+    if (!el) return;
+    const read = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      setAt({
+        start: el.scrollLeft <= 4,
+        end: el.scrollLeft >= max - 4,
+        p: max > 0 ? el.scrollLeft / max : 1,
+      });
+    };
+    read();
+    el.addEventListener("scroll", read, { passive: true });
+    window.addEventListener("resize", read);
+    return () => {
+      el.removeEventListener("scroll", read);
+      window.removeEventListener("resize", read);
+    };
+  }, []);
+
+  const step = (dir: 1 | -1) => {
+    const el = rail.current;
+    const card = el?.querySelector("li");
+    if (!el || !card) return;
+    const gap = parseFloat(getComputedStyle(el).columnGap) || 0;
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollBy({
+      left: dir * (card.getBoundingClientRect().width + gap),
+      behavior: still ? "auto" : "smooth",
+    });
+  };
+
+  return (
+    <div className="o-team-strip">
+      <ul
+        ref={rail}
+        className="o-team-rail"
+        tabIndex={0}
+        aria-label="The team. Scroll sideways, or use the arrow buttons."
+      >
+        {TEAM.map((p) => (
+          <li key={p.id}>
+            <button type="button" className="o-team-card" onClick={() => onOpen(p)}>
+              <Portrait p={p} />
+              <span className="o-label o-team-card-group">{p.group}</span>
+              <span className="o-display o-team-card-name">{p.name}</span>
+              <span className="o-label o-team-role">{p.role}</span>
+              {p.quote && <span className="o-team-card-quote">&ldquo;{p.quote}&rdquo;</span>}
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      <div className="o-team-strip-foot">
+        <span className="o-team-strip-bar" aria-hidden>
+          <span style={{ transform: `scaleX(${Math.max(0.06, at.p).toFixed(3)})` }} />
+        </span>
+        <button type="button" onClick={() => step(-1)} disabled={at.start} aria-label="Previous people">
+          &larr;
+        </button>
+        <button type="button" onClick={() => step(1)} disabled={at.end} aria-label="More people">
+          &rarr;
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -109,20 +250,6 @@ function Portrait({ p, big }: { p: Person; big?: boolean }) {
         <span className="o-display">{p.initials}</span>
       )}
     </span>
-  );
-}
-
-function Tile({ p, i, onOpen }: { p: Person; i: number; onOpen: () => void }) {
-  return (
-    <li>
-      <Reveal delay={i * 60}>
-        <button type="button" className="o-team-tile" onClick={onOpen}>
-          <Portrait p={p} />
-          <span className="o-team-name">{p.name}</span>
-          <span className="o-team-role o-label">{p.role}</span>
-        </button>
-      </Reveal>
-    </li>
   );
 }
 

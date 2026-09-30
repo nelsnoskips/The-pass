@@ -986,65 +986,119 @@ main > section { scroll-margin-top: 72px; }
 .o-team-stats dd { margin: .25rem 0 0; font-size: clamp(1.5rem, 3vw, 2.4rem); line-height: .95; }
 @media (min-width: 700px) { .o-team-stats { grid-template-columns: repeat(4, 1fr); } }
 
-.o-team-note {
-  display: inline-block;
-  margin-bottom: 1rem;
-  padding: .3rem .6rem;
+/* ------------------------------------------------- the layout switch -- */
+
+.o-team-switch {
+  display: inline-flex;
+  margin-top: 1.1rem;
+  border: 1px solid var(--rule);
+}
+.o-team-switch button {
+  padding: .5rem .85rem;
   font-size: 9.5px;
-  color: var(--warn);
-  border: 1px dashed var(--warn);
-}
-
-.o-team-group {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: .75rem;
-  margin: 1.6rem 0 .7rem;
-  padding-bottom: .45rem;
-  font-size: 10px;
-  color: var(--ink);
-  border-bottom: 1px solid var(--rule);
-}
-.o-team-blurb {
-  font-family: var(--font-sans);
-  font-size: 11.5px;
-  letter-spacing: 0;
-  text-transform: none;
   color: var(--ink-mute);
+  transition: background var(--dur-ui) var(--ease-out), color var(--dur-ui) var(--ease-out);
 }
+.o-team-switch button + button { border-left: 1px solid var(--rule); }
+.o-team-switch button:hover { color: var(--ink); }
+.o-team-switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 
-/* Capped rather than 1fr: a group of three should read as a cluster of
-   three people, not three tiles stretched across a column built for
-   eight. The max in the minmax is what stops the row spreading. */
-.o-team-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 178px));
-  justify-content: start;
-  gap: .6rem;
-  list-style: none;
+/* ------------------------------------------------------------ stacked -- */
+
+.o-team-stack {
+  max-width: 980px;
   margin: 0;
   padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
 }
-/* Height chains through the Reveal wrapper so a two-line role does not
-   leave its neighbours short. */
-.o-team-grid > li,
-.o-team-grid > li > * { display: grid; height: 100%; }
+@media (min-width: 1024px) { .o-team-stack { margin-right: 5vw; } }
+.o-team-row {
+  display: grid;
+  grid-template-columns: minmax(92px, 30%) 1fr;
+  align-items: start;
+  gap: clamp(14px, 2.4vw, 36px);
+  padding: clamp(16px, 2.2vw, 30px) 0;
+  border-bottom: 1px solid var(--rule);
+}
+@media (min-width: 900px) {
+  .o-team-row { grid-template-columns: clamp(170px, 16vw, 230px) 1fr; }
+}
+.o-team-row .o-team-portrait { margin: 0; }
+.o-team-row-role { font-size: 10px; color: var(--orravan-blue); }
+.o-team-row-name { margin-top: .2rem; font-size: clamp(1.45rem, 2.8vw, 2.3rem); line-height: .95; }
+.o-team-row .o-team-bio { max-width: 62ch; }
+.o-team-row .o-team-quote { max-width: 56ch; font-size: clamp(14px, 1.2vw, 16.5px); }
 
-.o-team-tile {
+/* -------------------------------------------------------- side-scroll -- */
+
+.o-team-strip { min-width: 0; }
+.o-team-rail {
+  display: flex;
+  gap: clamp(10px, 1.2vw, 16px);
+  margin: 0;
+  padding: 0 var(--rail-pad) 8px 0;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+.o-team-rail:focus-visible { outline: 2px solid var(--signal); outline-offset: 4px; }
+.o-team-rail > li { flex: 0 0 clamp(220px, 21vw, 290px); scroll-snap-align: start; }
+@media (max-width: 899px) { .o-team-rail > li { flex-basis: 72vw; } }
+.o-team-card {
   display: grid;
   align-content: start;
-  gap: .1rem;
+  gap: .15rem;
   width: 100%;
   height: 100%;
-  padding: .7rem;
+  padding: .8rem;
   text-align: left;
   background: var(--paper);
   border: 1px solid var(--rule);
-  transition: border-color var(--dur-ui) var(--ease-out),
-              transform var(--dur-ui) var(--ease-out);
+  transition: border-color var(--dur-ui) var(--ease-out);
 }
-.o-team-tile:hover { border-color: var(--signal); transform: translateY(-2px); }
+.o-team-card:hover { border-color: var(--signal); }
+.o-team-card .o-team-portrait { margin-bottom: .75rem; }
+.o-team-card-group { font-size: 9px; color: var(--orravan-blue); }
+.o-team-card-name { margin-top: .1rem; font-size: clamp(1.15rem, 1.6vw, 1.45rem); line-height: 1; }
+.o-team-card-quote {
+  display: -webkit-box;
+  margin-top: .65rem;
+  overflow: hidden;
+  font-size: 12.5px;
+  line-height: 1.5;
+  font-style: italic;
+  color: var(--ink-soft);
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+.o-team-strip-foot {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-top: .9rem;
+  padding-right: var(--rail-pad);
+}
+.o-team-strip-bar { position: relative; flex: 1; height: 2px; overflow: hidden; background: var(--rule); }
+.o-team-strip-bar > span {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform-origin: left;
+  transition: transform 120ms linear;
+}
+.o-team-strip-foot button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  transition: border-color var(--dur-ui) var(--ease-out);
+}
+.o-team-strip-foot button:hover:not(:disabled) { border-color: var(--signal); }
+.o-team-strip-foot button:disabled { opacity: .3; cursor: default; }
+@media (prefers-reduced-motion: reduce) { .o-team-strip-bar > span { transition: none; } }
 
 .o-team-portrait {
   display: grid;
@@ -1066,12 +1120,12 @@ main > section { scroll-margin-top: 72px; }
   filter: saturate(.94);
   transition: transform .5s cubic-bezier(.2,.7,.2,1);
 }
-.o-team-tile:hover .o-team-portrait img,
-.o-team-tile:focus-visible .o-team-portrait img { transform: scale(1.035); }
+.o-team-card:hover .o-team-portrait img,
+.o-team-card:focus-visible .o-team-portrait img { transform: scale(1.035); }
 @media (prefers-reduced-motion: reduce) {
   .o-team-portrait img { transition: none; }
-  .o-team-tile:hover .o-team-portrait img,
-  .o-team-tile:focus-visible .o-team-portrait img { transform: none; }
+  .o-team-card:hover .o-team-portrait img,
+  .o-team-card:focus-visible .o-team-portrait img { transform: none; }
 }
 
 .o-team-name { font-size: 12.5px; font-weight: 600; }
@@ -1584,4 +1638,15 @@ main > section { scroll-margin-top: 72px; }
 @media (prefers-reduced-motion: reduce) {
   .o-ai-panel, .o-ai-msg { animation: none; }
   .o-ai-typing span { animation: none; opacity: .6; }
+}
+
+/* The team list runs long in either layout. Pin the heading and the
+   layout switch beside it on wide screens so the switch is always one
+   click away, wherever the reader is in the list. */
+@media (min-width: 1024px) {
+  #org > div > :first-child {
+    position: sticky;
+    top: calc(var(--bar-h, 104px) + 16px);
+    align-self: start;
+  }
 }
