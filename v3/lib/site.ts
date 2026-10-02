@@ -232,8 +232,8 @@ export const FOOTER = {
     },
     { title: "Company", links: ["About", "Our team", "Careers", "Contact"] },
   ],
-  social: ["LinkedIn", "YouTube", "X"],
-  copyright: "© 2025 Orravan.ai, Inc. All rights reserved.",
+  social: ["LinkedIn", "YouTube"],
+  copyright: "© 2026 Orravan.ai, Inc. All rights reserved.",
 } as const;
 
 /**
@@ -244,7 +244,7 @@ export const FOOTER = {
  * SEO/AEO line in the agreement rather than a talking point.
  */
 export const FAQ = {
-  head: ["Questions,", "answered."],
+  head: ["Frequently asked", "questions."],
   copy: "The things people ask before they call. If yours is not here, call it in.",
   items: [
     {
