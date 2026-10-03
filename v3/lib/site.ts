@@ -36,6 +36,11 @@ export const ENTRANCE = {
   primary: "Request service",
   secondary: "Start a project",
   anchor: "Who we are",
+  /* Directly under the headline, per the 2 Oct call: the number to
+     call and the licence that says they are allowed to do the work. */
+  phone: ORRAVAN.phone,
+  phoneHref: "tel:+18556772826",
+  license: ORRAVAN.license,
 } as const;
 
 /**
@@ -171,7 +176,7 @@ export const TEAM = {
 
 export const INDUSTRIES = {
   head: ["Built for", "every industry."],
-  copy: "Healthcare to mission critical. The building changes; the standard does not.",
+  copy: "Healthcare to government. The building changes; the standard does not.",
   /* `focus` is the vertical object-position for each plate, chosen one
      photograph at a time from rendered crops at the live band aspect
      (see README, "Matching a mock"). The band is far wider than the
@@ -182,7 +187,7 @@ export const INDUSTRIES = {
     { name: "Education", slot: "industry-education", focus: "45%" },
     { name: "Hospitality", slot: "industry-hospitality", focus: "50%" },
     { name: "Restaurants", slot: "industry-restaurants", focus: "32%" },
-    { name: "Mission critical", slot: "industry-mission", focus: "40%" },
+    { name: "Government", slot: "industry-government", focus: "50%" },
   ],
 } as const;
 

@@ -39,15 +39,12 @@ export const IMAGES: Record<string, Slot> = {
     alt: "",
     brief: "Blueprint field. Hero base layer, full bleed, moves slowest.",
   },
-  "hero-leader": {
-    src: img("02-hero-facility-leader-cutout.webp"),
-    alt: "A facility leader reading the building's status",
-    brief: "Alpha cut-out. Hero left/centre layer, contained, never cropped.",
-  },
-  "hero-building": {
-    src: img("03-hero-building-cutaway-cutout.webp"),
-    alt: "The building in section",
-    brief: "Alpha cut-out. Hero right layer, contained, moves fastest.",
+  /* The O-check from the official mark, redrawn clean at hero size.
+     Replaces the facility leader and the building cut-away (2 Oct call). */
+  "hero-mark": {
+    src: img("33-hero-mark.webp"),
+    alt: "",
+    brief: "Alpha. The O-check emblem, hero right layer, contained.",
   },
 
   /* --- one view. every system. --------------------------------------- */
@@ -135,7 +132,7 @@ export const IMAGES: Record<string, Slot> = {
   "story-2014": {
     src: img("25-story-2014-founder.webp"),
     alt: "Danny Navarro at a rooftop pump in Orravan's first years",
-    brief: "Danny Navarro, early days, upscaled from a scan. Confirmed by Alex 14 Sep 2026. The shoulder patch is a former employer's; retouch if it ever shows.",
+    brief: "Danny Navarro, early days, upscaled from a scan. Confirmed by Alex 14 Sep 2026. Former employer's sleeve patch retouched out 3 Oct 2026.",
   },
   "story-2015": {
     src: img("26-story-2015-chiller.webp"),
@@ -174,5 +171,5 @@ export const IMAGES: Record<string, Slot> = {
   "industry-education": { src: img("19-industry-education.webp"), alt: "Education", brief: "Industry. 3:2." },
   "industry-hospitality": { src: img("20-industry-hospitality.webp"), alt: "Hospitality", brief: "Industry. 3:2." },
   "industry-restaurants": { src: img("21-industry-restaurants.webp"), alt: "Restaurants", brief: "Industry. 3:2." },
-  "industry-mission": { src: img("22-industry-mission-critical.webp"), alt: "Mission critical", brief: "Industry. 3:2." },
+  "industry-government": { src: img("34-industry-government.webp"), alt: "Government", brief: "Industry. 3:2. Stand-in until Orravan supplies a real job photo." },
 };
