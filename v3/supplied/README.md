@@ -26,3 +26,8 @@ Selected from the client's Drive folder on 2026-09-10. Converted from HEIC, long
 | `rooftop-weather-station.jpg` | Automation texture | 4284×5712 | Weather station on rooftop unit (Jun 2026) | [20260629_160603913_iOS.heic](https://drive.google.com/file/d/1rUXTpl_PEFMzcJ20Y8lzDeUGsTwlzqi9/view) |
 
 These stay out of `v3/public` on purpose: the export copies that folder wholesale, and a manifest full of long Drive ids in the published tree trips Netlify's secret scanning. Seven of them are wired in as `story-*` slots in `v3/lib/images.ts` via the `25-`–`32-` WebP plates.
+
+## 3 October 2026
+
+- `2014-founder-rooftop-pump-retouched.jpg`: the former employer's sleeve patch and pocket items removed with Higgsfield (GPT Image 2.5 edit). This is the version on the site.
+- `hero-mark-3d-alternative.png`: a dimensional render of the O-check emblem, kept as an option. The site uses the flat, faithful redraw at `public/images/33-hero-mark.webp`.
