@@ -39,15 +39,12 @@ export const IMAGES: Record<string, Slot> = {
     alt: "",
     brief: "Blueprint field. Hero base layer, full bleed, moves slowest.",
   },
-  "hero-leader": {
-    src: img("02-hero-facility-leader-cutout.webp"),
-    alt: "A facility leader reading the building's status",
-    brief: "Alpha cut-out. Hero left/centre layer, contained, never cropped.",
-  },
-  "hero-building": {
-    src: img("03-hero-building-cutaway-cutout.webp"),
-    alt: "The building in section",
-    brief: "Alpha cut-out. Hero right layer, contained, moves fastest.",
+  /* The O-check from the official mark, redrawn clean at hero size.
+     Replaces the facility leader and the building cut-away (2 Oct call). */
+  "hero-mark": {
+    src: img("33-hero-mark.webp"),
+    alt: "",
+    brief: "Alpha. The O-check emblem, hero right layer, contained.",
   },
 
   /* --- one view. every system. --------------------------------------- */
@@ -124,9 +121,48 @@ export const IMAGES: Record<string, Slot> = {
 
   /* --- build what buildings become ------------------------------------- */
   team: {
-    src: img("16-team-careers.webp"),
-    alt: "The Orravan team",
-    brief: "Careers and team. 16:9.",
+    src: img("32-team-lunch.webp"),
+    alt: "The Orravan team at lunch inside the shop",
+    brief: "Careers and team. Supplied; portrait, so frame for the table.",
+  },
+
+  /* --- ten years in the building: the supplied photographs --------------
+     Picked from Orravan's Drive on 2026-09-10; see supplied/
+     README.md for the originals and what each one is standing in for. */
+  "story-2014": {
+    src: img("25-story-2014-founder.webp"),
+    alt: "Danny Navarro at a rooftop pump in Orravan's first years",
+    brief: "Danny Navarro, early days, upscaled from a scan. Confirmed by Alex 14 Sep 2026. Former employer's sleeve patch retouched out 3 Oct 2026.",
+  },
+  "story-2015": {
+    src: img("26-story-2015-chiller.webp"),
+    alt: "A technician working at the base of a chiller in a plant room",
+    brief: "Chiller room, Nov 2022. 4:3.",
+  },
+  "story-2016": {
+    src: img("27-story-2016-controls.webp"),
+    alt: "An Orravan-built controls panel, wired and labelled",
+    brief: "Controls panel, Sep 2026. Portrait.",
+  },
+  "story-2018": {
+    src: img("28-story-2018-institutional.webp"),
+    alt: "Five Orravan technicians in hard hats inside a mechanical room",
+    brief: "Crew on an institutional site, Aug 2023. 16:9.",
+  },
+  "story-2020": {
+    src: img("29-story-2020-shop.webp"),
+    alt: "Two of the Orravan leadership outside the shop at 3323",
+    brief: "The shop, Feb 2021. Portrait.",
+  },
+  "story-2023": {
+    src: img("30-story-2023-crew.webp"),
+    alt: "Nine Orravan technicians on a rooftop beside the equipment",
+    brief: "Rooftop crew, upscaled. Keep below full bleed; patch text is synthesised.",
+  },
+  "story-2024": {
+    src: img("31-story-2024-team.webp"),
+    alt: "The whole Orravan team and fleet outside the shop",
+    brief: "Team and fleet, supplied. 7:5.",
   },
 
   /* --- built for every industry ----------------------------------------- */
@@ -135,5 +171,5 @@ export const IMAGES: Record<string, Slot> = {
   "industry-education": { src: img("19-industry-education.webp"), alt: "Education", brief: "Industry. 3:2." },
   "industry-hospitality": { src: img("20-industry-hospitality.webp"), alt: "Hospitality", brief: "Industry. 3:2." },
   "industry-restaurants": { src: img("21-industry-restaurants.webp"), alt: "Restaurants", brief: "Industry. 3:2." },
-  "industry-mission": { src: img("22-industry-mission-critical.webp"), alt: "Mission critical", brief: "Industry. 3:2." },
+  "industry-government": { src: img("34-industry-government.webp"), alt: "Government", brief: "Industry. 3:2. Stand-in until Orravan supplies a real job photo." },
 };

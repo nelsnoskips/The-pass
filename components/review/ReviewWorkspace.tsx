@@ -54,9 +54,13 @@ export function ReviewWorkspace({
   const [chosen, setChosen] = useState<string>(chosenAlready ?? "");
   const [pagePath, setPagePath] = useState(mocks[0].path);
   const [author, setAuthor] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
-    alreadySubmitted ? "sent" : "idle",
-  );
+  const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
+  // Sending is not the end of the review. A client who has sent notes
+  // still wants to look at the site — to check what they said, to show
+  // a colleague, above all to keep comparing the directions — so this
+  // records that they have sent rather than closing the workspace.
+  const [sent, setSent] = useState(alreadySubmitted);
+  const [justSent, setJustSent] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [blocked, setBlocked] = useState(false);
 
@@ -292,7 +296,11 @@ export function ReviewWorkspace({
         const j = await res.json().catch(() => ({}));
         throw new Error(j.error ?? `Submit failed (${res.status})`);
       }
-      setStatus("sent");
+      setJustSent(drafts.length);
+      setSent(true);
+      setDrafts([]);
+      setActiveId(null);
+      setStatus("idle");
     } catch (err) {
       setStatus("error");
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -300,22 +308,6 @@ export function ReviewWorkspace({
   }
 
   /* --------------------------------------------------------- render -- */
-
-  if (status === "sent") {
-    return (
-      <div className="rv-done">
-        <p className="rv-eyebrow">Round {round}</p>
-        <h1>Thank you — that&rsquo;s with us.</h1>
-        <p>
-          {drafts.length > 0
-            ? `${drafts.length} note${drafts.length === 1 ? "" : "s"} on ${projectName} sent through. `
-            : `Your notes on ${projectName} are already in. `}
-          {chosen && `You picked ${chosen}. `}
-          We&rsquo;ll come back to you with the next round.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="rv-shell">
@@ -345,7 +337,9 @@ export function ReviewWorkspace({
           onClick={submit}
           disabled={!canSubmit || status === "sending"}
         >
-          {status === "sending" ? "Sending…" : `Submit ${drafts.length || ""}`.trim()}
+          {status === "sending"
+            ? "Sending…"
+            : `${sent ? "Send" : "Submit"} ${drafts.length || ""}`.trim()}
         </button>
       </header>
 
@@ -366,6 +360,19 @@ export function ReviewWorkspace({
             </button>
           ))}
         </div>
+      )}
+
+      {sent && (
+        <p className="rv-sent" role="status">
+          <strong>
+            {justSent > 0
+              ? `Thank you — ${justSent} note${justSent === 1 ? "" : "s"} sent through.`
+              : "Your notes are with us."}
+          </strong>{" "}
+          {chosen ? `You picked ${chosen}. ` : ""}
+          Keep looking around as long as you like — the directions all stay
+          open, and anything else you send reaches us on the same round.
+        </p>
       )}
 
       <p className="rv-hint">{MODE_COPY[mode].hint}</p>
@@ -426,7 +433,8 @@ export function ReviewWorkspace({
 
           {drafts.length === 0 && (
             <p className="rv-empty">
-              Nothing yet. Pick <strong>Comment</strong> or <strong>Suggest an edit</strong>,
+              {sent ? "Nothing further yet. " : "Nothing yet. "}
+              Pick <strong>Comment</strong> or <strong>Suggest an edit</strong>,
               then click the part of the page you mean.
               {picking && " Choosing a direction above is enough on its own."}
             </p>

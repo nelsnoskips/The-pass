@@ -66,7 +66,7 @@ const HOW_WE_DO_IT = [
 const TABLE: [string, string, string][] = [
   [
     "What you pay",
-    "Priced against your current bill — e.g. $300/mo with the build included. Or one project fee from $3,000.",
+    "At least 25% under your current bill — e.g. $500/mo becomes $350/mo, build included. Five or more locations: $300/mo each.",
     "$250–$550/mo plus setup fees and add-ons. Negotiated in a demo; never published.",
   ],
   [
@@ -243,9 +243,16 @@ export default function SwitchPage() {
               <div className="mt-8 space-y-5 text-[15.5px] leading-relaxed text-[#1A1310]/80">
                 <p>
                   Paying a platform <strong>$500 a month</strong>? With us
-                  it&rsquo;s <strong>$300 a month</strong> — and that includes
+                  it&rsquo;s <strong>$350 a month</strong> — and that includes
                   designing and building your custom website from scratch. No
-                  separate project fee, no setup fee.
+                  separate project fee, no setup fee. Whatever your platform
+                  bill is, we come in at least 25% under it.
+                </p>
+                <p>
+                  <strong>Groups:</strong> five or more locations and the rate
+                  drops to <strong>$300 a month per location</strong> — each
+                  concept with its own custom site, its own identity, and its
+                  own ownership.
                 </p>
                 <p>
                   Twelve months covers the build. At the end of it,{" "}
@@ -270,7 +277,7 @@ export default function SwitchPage() {
                 </div>
                 <div className="flex justify-between gap-4 border-b border-[#0A0A09]/10 pb-3">
                   <dt className="text-[#1A1310]/70">The Switch, year one</dt>
-                  <dd className="font-semibold">$3,600 · build included</dd>
+                  <dd className="font-semibold">$4,200 · build included</dd>
                 </div>
                 <div className="flex justify-between gap-4 pb-1">
                   <dt className="text-[#1A1310]/70">Year two and after</dt>
@@ -280,8 +287,9 @@ export default function SwitchPage() {
                 </div>
               </dl>
               <p className="mt-6 text-[12.5px] leading-relaxed text-[#1A1310]/50">
-                Example priced against a $500/month platform bill. Hospitality
-                groups: multi-location pricing scales per concept — ask.
+                Example priced against a $500/month platform bill. Five or
+                more locations: $300/month per location, each site owned
+                outright at month twelve.
               </p>
             </div>
           </div>

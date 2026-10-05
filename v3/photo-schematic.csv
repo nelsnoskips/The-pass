@@ -1,0 +1,27 @@
+Slot,Page,Section,What it shows now,Current source,Frame shape,Real photo or AI? (Orravan to confirm),What to send us,Notes
+hero-leader,Home,Hero (foreground),Facility leader cut-out reading a tablet,AI stand-in,Portrait cut-out on transparent background,REAL,Team aerial shot OR a van photo (the hero replaces this figure),Client asked for real team/van imagery in the hero. Highest priority.
+hero-building,Home,Hero (right layer),Building cutaway showing mechanical systems,AI stand-in,Tall cut-out,AI (keep),Nothing needed,Reads as illustration; keep unless a real aerial replaces the whole hero composition.
+hero-blueprint,Home,Hero (background),Blueprint field,AI stand-in,Full bleed,AI (keep),Nothing needed,Background texture only.
+view-building,Home,One view. Every system.,Building in section with mechanical and controls,AI stand-in,16:9 wide,AI (keep) or REAL,Optional: a real mechanical room or rooftop unit install,Works as illustration; a real plant room would be stronger.
+signal-people,Home,Less dashboard. More direction.,Client and Orravan specialist reading a screen together,AI stand-in,3:2,REAL,Two people at a control screen or laptop on site,Faces should be Orravan staff.
+decision-remote,Home,From signal to decision (1 of 3),Remote specialist at monitoring station,AI stand-in,4:5 portrait,REAL,Dispatcher or automation tech at their desk,Part of a three-frame sequence — shoot all three the same day if possible.
+decision-field,Home,From signal to decision (2 of 3),Field technician on site,AI stand-in,4:5 portrait,REAL,Technician at a unit with tools or tablet,Same sequence as above.
+decision-client,Home,From signal to decision (3 of 3),Client receiving confirmation on phone,AI stand-in,4:5 portrait,REAL or AI,A facility manager on the phone (can be a real client if permitted),Same sequence as above.
+resolution-people,Home,Resolution (verified),Lobby handover between client and specialist,AI stand-in,Wide 17.7vw band,REAL,Team member with a client in a lobby or plant room,Also used as the 2024 chapter in the homepage timeline.
+service-automation,Home,Services tile 1 + timeline 2016,Controls panel and monitoring screen,AI stand-in,Small tile 9.8vw + timeline frame,REAL,A real controls panel / DDC install,Client mentioned automation team may have server or panel imagery.
+service-hvac,Home,Services tile 2 + timeline 2015,Rooftop HVAC unit,AI stand-in,Small tile + timeline frame,REAL,A real rooftop unit or chiller job,Doubles as the 2015 Chiller chapter.
+service-monitoring,Home,Services tile 3,Remote monitoring screens,AI stand-in,Small tile,AI (keep) or REAL,Optional: real monitoring dashboard screenshot,Screens are fine as AI.
+service-inventory,Home,Services tile 4 + timeline 2020,Parts shelving / inventory,AI stand-in,Small tile + timeline frame,REAL,The actual shop: shelving and stock and fleet parked outside,Doubles as the 2020 Own Shop chapter. Client said shop photos exist.
+difference-software,Home,Software sees. Experience decides.,Operations centre screens,AI stand-in,14.5vw band,AI (keep),Nothing needed,Illustrative.
+difference-experience,Home,Software sees. Experience decides. + timeline 2023,Senior field specialist portrait,AI stand-in,14.5vw band + timeline frame,REAL,Senior technician portrait on site (hard hat and safety glasses),Doubles as the 2023 Union chapter. Faces not equipment.
+industry-healthcare,Home,Industries wall,Hospital corridor with nurses station,AI (generated 31 Aug),22vw tile,AI (keep) or REAL,Optional: a healthcare job site if one can be photographed,Generated to brief; acceptable as AI.
+industry-commercial,Home,Industries wall,Open plan office across an atrium,AI (generated 31 Aug),26vw tile,AI (keep) or REAL,Optional: a commercial building Orravan services,Generated to brief; acceptable as AI.
+industry-education,Home,Industries wall,University atrium and students,AI stand-in,22vw tile,AI (keep),Nothing needed,
+industry-hospitality,Home,Industries wall,Hotel lobby,AI stand-in,26vw tile,AI (keep),Nothing needed,
+industry-restaurants,Home,Industries wall,Open kitchen and dining room,AI stand-in,22vw tile,AI (keep),Nothing needed,
+industry-mission,Home,Industries wall,Data centre aisle,AI stand-in,22vw tile,AI (keep),Nothing needed,
+story-2014,Home,Timeline chapter 2014,Field technician (reusing decision-field),AI stand-in,Timeline frame ~34vw x 52vh,REAL,Rigo Sr. or the earliest van photo that exists,Low-quality originals are fine; we can enhance.
+story-2018,Home,Timeline chapter 2018,Client on phone (reusing decision-client),AI stand-in,Timeline frame,REAL,The SBE certificate or the team on an institutional site,
+story-2024,Home,Timeline chapter 2024,Lobby handover (reusing resolution-people),AI stand-in,Timeline frame,REAL,The team aerial shot Alex mentioned,Ideal closer for the sequence.
+headshots (x16),Team,Meet the team,Monogram placeholders,Placeholder,Square 1:1 crop,REAL,One headshot per person on Don's list; same background and lighting for all,Danny is bringing a camera. Shoot square or with room to crop square. Send the employee list first so we know how many.
+team-hero,Team,Page hero,None yet,Not yet placed,Wide band,REAL,Team aerial or group shot,Will use the same aerial as the homepage 2024 chapter if that is all there is.

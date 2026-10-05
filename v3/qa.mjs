@@ -30,6 +30,9 @@ const TYPES = {
 const server = createServer(async (req, res) => {
   let path = decodeURIComponent(req.url.split("?")[0]);
   if (path.endsWith("/")) path += "index.html";
+  // The export writes a sub-route as `team.html`, and Netlify serves it
+  // at `/team`. Resolve the same way, or QA checks a 404.
+  else if (!extname(path)) path += ".html";
   try {
     const body = await readFile(join(ROOT, normalize(path)));
     res.writeHead(200, { "content-type": TYPES[extname(path)] ?? "application/octet-stream" });
@@ -39,11 +42,17 @@ const server = createServer(async (req, res) => {
   }
 });
 await new Promise((r) => server.listen(0, r));
-const url = `http://localhost:${server.address().port}${base}/`;
+const origin = `http://localhost:${server.address().port}`;
+/** Every route the mock serves. A sub-page can overflow where the
+    homepage does not — the timeline positions nodes absolutely. */
+const ROUTES = ["/", "/team"];
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 let failures = 0;
 
+for (const route of ROUTES) {
+  const url = `${origin}${base}${route}`;
+  console.log(`\n${route}`);
 for (const width of WIDTHS) {
   const page = await browser.newPage({ viewport: { width, height: 1000 } });
   await page.goto(url, { waitUntil: "networkidle" });
@@ -90,6 +99,7 @@ for (const width of WIDTHS) {
     }
   }
   await page.close();
+}
 }
 
 await browser.close();

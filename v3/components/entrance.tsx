@@ -13,10 +13,10 @@ import { IMAGES, asset } from "@/lib/images";
  * The hero copy then reveals line by line behind a clip mask, and the
  * navigation takes the page.
  *
- * The hero is three independent layers moving at different rates —
- * blueprint slowest, facility leader nearly with the page, building
- * cut-away fastest — with the whole budget kept under 48px of travel,
- * plus a few pixels of pointer depth. Restraint is the point: this is
+ * The hero is two independent layers moving at different rates — the
+ * blueprint slowest, Orravan's O-check emblem faster — with the whole
+ * budget kept under 48px of travel, plus a few pixels of pointer
+ * depth. Restraint is the point: this is
  * depth, not a ride.
  *
  * The two actions never fade out and never leave the pointer's reach;
@@ -39,10 +39,8 @@ export function Entrance() {
   const entry = useRef<HTMLDivElement>(null);
   const doors = useRef<HTMLDivElement>(null);
   const blueprint = useRef<HTMLDivElement>(null);
-  const leader = useRef<HTMLDivElement>(null);
-  const building = useRef<HTMLDivElement>(null);
+  const mark = useRef<HTMLDivElement>(null);
   const copy = useRef<HTMLDivElement>(null);
-  const chips = useRef<HTMLUListElement>(null);
   const cue = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -58,7 +56,7 @@ export function Entrance() {
       entry.current?.style.setProperty("transform", "translate3d(0,-24px,0)");
       doors.current?.style.setProperty("transform", "translate3d(0,-24px,0)");
       cue.current?.style.setProperty("opacity", "0");
-      for (const layer of [blueprint, leader, building]) {
+      for (const layer of [blueprint, mark]) {
         layer.current?.style.setProperty("opacity", "1");
         layer.current?.style.setProperty("transform", "none");
       }
@@ -66,7 +64,6 @@ export function Entrance() {
         copy.current.style.setProperty("opacity", "1");
         copy.current.dataset.in = "true";
       }
-      chips.current?.style.setProperty("opacity", "1");
       document.documentElement.dataset.entered = "true";
     };
 
@@ -106,7 +103,7 @@ export function Entrance() {
       // rising over it, which is what reads as depth.
       const drift = Math.min(vh * 0.16, y * 0.14);
 
-      // 3 — the hero's three layers, each at its own rate.
+      // 3 — the hero's two layers, each at its own rate.
       const q = clamp(y / (vh * 0.6));
       const depth = ease(clamp(y / (vh * 0.3)));
       blueprint.current?.style.setProperty("opacity", `${depth}`);
@@ -114,15 +111,10 @@ export function Entrance() {
         "transform",
         `translate3d(${(px * 0.4).toFixed(1)}px, ${(q * -TRAVEL * 0.18 + py * 0.4 - drift * 0.35).toFixed(1)}px, 0)`,
       );
-      leader.current?.style.setProperty("opacity", `${depth}`);
-      leader.current?.style.setProperty(
+      mark.current?.style.setProperty("opacity", `${depth}`);
+      mark.current?.style.setProperty(
         "transform",
-        `translate3d(${(px * 1).toFixed(1)}px, ${(q * TRAVEL * 0.05 + py - drift * 0.7).toFixed(1)}px, 0)`,
-      );
-      building.current?.style.setProperty("opacity", `${depth}`);
-      building.current?.style.setProperty(
-        "transform",
-        `translate3d(${(px * 1.6).toFixed(1)}px, ${(q * TRAVEL * 0.42 + py * 1.6 - drift).toFixed(1)}px, 0)`,
+        `translate3d(${(px * 1.4).toFixed(1)}px, ${(q * TRAVEL * 0.3 + py * 1.4 - drift * 0.8).toFixed(1)}px, 0)`,
       );
 
       // 4 — the copy reveals by line once the entry has cleared.
@@ -133,8 +125,6 @@ export function Entrance() {
         copy.current.style.setProperty("pointer-events", shown > 0.3 ? "auto" : "none");
         copy.current.dataset.in = handoff > 0.6 ? "true" : "false";
       }
-      chips.current?.style.setProperty("opacity", `${ease(clamp((y - vh * 0.2) / (vh * 0.3)))}`);
-      chips.current?.style.setProperty("transform", `translateY(-50%) translateX(${(-drift * 0.25).toFixed(1)}px)`);
 
       document.documentElement.dataset.entered = handoff > 0.72 ? "true" : "false";
     };
@@ -169,32 +159,15 @@ export function Entrance() {
   return (
     <section ref={section} id="top" className="o-entrance">
       <div className="o-entrance-stage">
-        {/* The hero, three independent layers. */}
+        {/* The hero, two independent layers. */}
         <div ref={blueprint} className="o-layer o-layer-blueprint">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={asset(IMAGES["hero-blueprint"].src)} alt="" aria-hidden />
         </div>
-        <div ref={building} className="o-layer o-layer-building">
+        <div ref={mark} className="o-layer o-layer-mark">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={asset(IMAGES["hero-building"].src)} alt={IMAGES["hero-building"].alt} />
+          <img src={asset(IMAGES["hero-mark"].src)} alt="" aria-hidden />
         </div>
-        <div ref={leader} className="o-layer o-layer-leader">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={asset(IMAGES["hero-leader"].src)} alt={IMAGES["hero-leader"].alt} />
-        </div>
-
-        {/* What the building is saying, in the technical register. */}
-        <ul ref={chips} className="o-chips" aria-label="Live conditions">
-          {ENTRANCE.chips.map((chip) => (
-            <li key={chip.label}>
-              <span className="o-chip-dot" />
-              <span>
-                <span className="o-chip-label">{chip.label}</span>
-                <span className="o-chip-state">{chip.state}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
 
         {/* The entry: the mark, two doors, the cue. Centred. */}
         <div ref={entry} className="o-entry">
@@ -222,10 +195,20 @@ export function Entrance() {
             <span className="o-mask"><span>{ENTRANCE.headA}</span></span>
             <span className="o-mask o-mask-2"><span>{ENTRANCE.headB}</span></span>
           </h1>
+          <p className="o-hero-cred">
+            <a href={ENTRANCE.phoneHref}>{ENTRANCE.phone}</a>
+            <span aria-hidden>·</span>
+            <span>{ENTRANCE.license}</span>
+          </p>
           <p>{ENTRANCE.body}</p>
           <div className="o-hero-doors">
             <a href="#close" className="o-btn-solid">{ENTRANCE.primary}</a>
             <a href="#close" className="o-btn-line">{ENTRANCE.secondary}</a>
+            {/* Straight to the history for anyone who wants to know who
+                they would be hiring before they read what it costs. */}
+            <a href="#story" className="o-hero-anchor o-label">
+              {ENTRANCE.anchor} &darr;
+            </a>
           </div>
         </div>
       </div>
