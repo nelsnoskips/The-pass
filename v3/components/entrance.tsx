@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ENTRANCE, NAV } from "@/lib/site";
-import { IMAGES, asset } from "@/lib/images";
+import { HERO_SLIDES, IMAGES, asset } from "@/lib/images";
 
 /**
  * The blue entry and the hero it hands over to.
@@ -13,8 +13,9 @@ import { IMAGES, asset } from "@/lib/images";
  * The hero copy then reveals line by line behind a clip mask, and the
  * navigation takes the page.
  *
- * The hero is two independent layers moving at different rates — the
- * blueprint slowest, Orravan's O-check emblem faster — with the whole
+ * The hero is two independent layers moving at different rates — a
+ * slideshow of Orravan's own photographs under a steel wash, slowest,
+ * and Orravan's O-check emblem faster — with the whole
  * budget kept under 48px of travel, plus a few pixels of pointer
  * depth. Restraint is the point: this is
  * depth, not a ride.
@@ -31,6 +32,9 @@ import { IMAGES, asset } from "@/lib/images";
 const ease = (t: number) => 1 - Math.pow(1 - t, 3);
 const clamp = (t: number) => Math.min(1, Math.max(0, t));
 
+/** How long each slide holds before the next fades in. */
+const SLIDE_MS = 6500;
+
 /** Travel budget for the whole hero, in pixels. Stays under 48. */
 const TRAVEL = 44;
 
@@ -42,6 +46,21 @@ export function Entrance() {
   const mark = useRef<HTMLDivElement>(null);
   const copy = useRef<HTMLDivElement>(null);
   const cue = useRef<HTMLDivElement>(null);
+  const [slide, setSlide] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+
+  /* The slideshow clock. Off under reduced motion (the indicators still
+     work by hand), and paused while the tab is hidden so a visitor
+     never comes back to a slide that skipped ahead without them. A
+     manual pick restarts the clock from that slide. */
+  useEffect(() => {
+    setLoaded(true);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = window.setInterval(() => {
+      if (!document.hidden) setSlide((n) => (n + 1) % HERO_SLIDES.length);
+    }, SLIDE_MS);
+    return () => window.clearInterval(t);
+  }, [slide]);
 
   useEffect(() => {
     const node = section.current;
@@ -161,8 +180,36 @@ export function Entrance() {
       <div className="o-entrance-stage">
         {/* The hero, two independent layers. */}
         <div ref={blueprint} className="o-layer o-layer-blueprint">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={asset(IMAGES["hero-blueprint"].src)} alt="" aria-hidden />
+          <div className="o-slides" aria-hidden>
+            {HERO_SLIDES.map((s, k) =>
+              // Only the first slide loads with the page; the rest follow
+              // once it has painted, so the hero is never waiting on six.
+              k === 0 || loaded ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={s.src}
+                  src={asset(s.src)}
+                  alt=""
+                  data-on={k === slide || undefined}
+                  style={{ objectPosition: s.focus }}
+                  decoding="async"
+                  fetchPriority={k === 0 ? "high" : "low"}
+                />
+              ) : null,
+            )}
+          </div>
+          <span className="o-wash" aria-hidden />
+        </div>
+        <div className="o-slide-dots" role="group" aria-label="Hero photographs">
+          {HERO_SLIDES.map((s, k) => (
+            <button
+              key={s.src}
+              type="button"
+              aria-label={`Show photograph ${k + 1}: ${s.alt}`}
+              aria-current={k === slide ? "true" : undefined}
+              onClick={() => setSlide(k)}
+            />
+          ))}
         </div>
         <div ref={mark} className="o-layer o-layer-mark">
           {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -20,6 +20,20 @@ export type Slot = { src: string; alt: string; brief: string };
 
 const img = (file: string) => `/images/${file}`;
 
+/**
+ * The hero slideshow (7 Oct): Orravan's own photographs, run under a
+ * steel wash. Five were 4:3 and were widened to 16:9 with Higgsfield's
+ * outpaint; the original photo is composited back over the centre at
+ * full resolution, so only the added edges are generated.
+ */
+export const HERO_SLIDES: { src: string; alt: string; focus: string }[] = [
+  { src: img("35-hero-slide-1-team.webp"), alt: "The Orravan team and fleet outside the shop", focus: "50% 40%" },
+  { src: img("36-hero-slide-2-chiller.webp"), alt: "A technician at a chiller in a central plant", focus: "60% 50%" },
+  { src: img("38-hero-slide-4-crew.webp"), alt: "Orravan technicians in a mechanical room", focus: "50% 35%" },
+  { src: img("39-hero-slide-5-fleet.webp"), alt: "Orravan vehicles on a job site", focus: "60% 50%" },
+  { src: img("40-hero-slide-6-rooftop.webp"), alt: "Rooftop air handlers", focus: "50% 60%" },
+];
+
 export const IMAGES: Record<string, Slot> = {
   /* --- the identity. Never substitute a generated mark. -------------- */
   "logo-light": {
@@ -34,11 +48,6 @@ export const IMAGES: Record<string, Slot> = {
   },
 
   /* --- the hero, three independent layers ---------------------------- */
-  "hero-blueprint": {
-    src: img("01-hero-blueprint-background.webp"),
-    alt: "",
-    brief: "Blueprint field. Hero base layer, full bleed, moves slowest.",
-  },
   /* The O-check from the official mark, redrawn clean at hero size.
      Replaces the facility leader and the building cut-away (2 Oct call). */
   "hero-mark": {
