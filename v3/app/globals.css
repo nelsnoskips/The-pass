@@ -19,11 +19,8 @@
   --rule-dark: #34353a;
 
   /* The signal. Blue while we're working, green when it's verified. */
-  /* Orravan's own blue is the steel of the check in their mark,
-     #87a6ce (orravan.ai, --color4). The working shades below share its
-     hue and are darkened only enough to carry white text at AA. */
-  --signal: #496e9c;
-  --signal-soft: rgba(73, 110, 156, 0.12);
+  --signal: #245fce;
+  --signal-soft: rgba(36, 95, 206, 0.12);
   --verified: #4d9a5f;
   --verified-soft: rgba(78, 158, 95, 0.14);
   --warn: #e5a43a;
@@ -504,10 +501,13 @@ body {
   --band-y: clamp(18px, 2.3vw, 42px);
   --head: clamp(1.7rem, 3.15vw, 3.1rem);
 
-  --orravan-steel: #87a6ce;      /* the brand blue itself: accents only */
-  --orravan-blue: #496e9c;       /* buttons, links, labels: 5.3:1 on white */
-  --orravan-blue-dark: #41618b;
-  --orravan-blue-deep: #314968;  /* the ground under the hero */
+  --orravan-blue: #245fce;
+  --orravan-blue-dark: #1e52b5;
+  --orravan-blue-deep: #103d91;
+  /* Orravan's own steel bluish-gray, from orravan.ai (--color4) and the
+     check in the logo; slate is the same hue, deep enough for white. */
+  --orravan-steel: #87a6ce;
+  --orravan-slate: #3e5674;
 }
 
 @theme inline {
@@ -528,7 +528,7 @@ body {
   top: 0;
   z-index: 0;
   height: 100vh;
-  background: var(--orravan-blue-deep);
+  background: var(--orravan-blue);
 }
 .o-entrance-stage {
   position: relative;
@@ -536,7 +536,7 @@ body {
   place-items: center;
   height: 100vh;
   overflow: hidden;
-  background: var(--orravan-blue-deep);
+  background: var(--orravan-blue);
 }
 
 /* The hold: nothing to see, it just buys the hero a moment on screen
@@ -565,75 +565,10 @@ footer {
   will-change: transform, opacity;
 }
 .o-layer img { position: absolute; inset: 0; width: 100%; height: 100%; }
-/* The slideshow: Orravan's own photographs under a steel wash. Each
-   slide fades in while easing back from a slight zoom, so the frame is
-   always moving a little and never cuts. */
-.o-slides { position: absolute; inset: 0; overflow: hidden; }
-.o-slides img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transform: scale(1.07);
-  filter: saturate(0.55) contrast(1.04);
-  transition: opacity 1.6s ease, transform 9s cubic-bezier(.25,.6,.3,1);
-  will-change: opacity, transform;
-}
-.o-slides img[data-on] { opacity: 1; transform: scale(1); }
-/* The wash: deep steel behind the copy on the left, opening toward
-   the right so the photograph reads; then the brand steel laid over
-   the whole frame as colour, which is what makes it Orravan's blue
-   rather than a photo with a shadow on it. */
-.o-wash {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgba(36, 54, 78, 0.93) 0%, rgba(41, 62, 89, 0.84) 34%, rgba(49, 73, 104, 0.62) 62%, rgba(58, 86, 121, 0.5) 100%),
-    linear-gradient(180deg, rgba(36, 54, 78, 0.35) 0%, rgba(36, 54, 78, 0) 30%, rgba(36, 54, 78, 0) 70%, rgba(36, 54, 78, 0.45) 100%);
-}
-/* On a phone the copy runs the full width, so the wash does too. */
-@media (max-width: 1023px) {
-  .o-wash {
-    background: linear-gradient(180deg, rgba(36, 54, 78, 0.9) 0%, rgba(41, 62, 89, 0.82) 55%, rgba(36, 54, 78, 0.9) 100%);
-  }
-}
-.o-wash::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--orravan-steel);
-  mix-blend-mode: color;
-  opacity: 0.55;
-}
-.o-slide-dots {
-  position: absolute;
-  left: 20px;
-  bottom: 28px;
-  z-index: 4;
-  display: flex;
-  gap: 8px;
-}
-.o-slide-dots button {
-  width: 22px;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.35);
-  transition: background 300ms ease, width 300ms ease;
-}
-.o-slide-dots button[aria-current="true"] { width: 36px; background: #fff; }
-@media (min-width: 1024px) { .o-slide-dots { left: var(--rail-x); } }
-/* Hidden on the entry screen; they belong to the hero it hands over to. */
-.o-slide-dots { opacity: 0; pointer-events: none; transition: opacity 400ms ease; }
-html[data-entered="true"] .o-slide-dots { opacity: 1; pointer-events: auto; }
-@media (prefers-reduced-motion: reduce) {
-  .o-slides img { transition: none; transform: none; }
-}
+.o-layer-blueprint img { object-fit: cover; opacity: 0.5; }
 /* The O-check sits in the right half, centred on the headline block,
    and never crowds it: contained, so the emblem is never cropped. */
-/* Smaller once the hero became a slideshow: the emblem signs the frame
-   and stays clear of the people in it. */
-.o-layer-mark { left: 70%; right: 7%; top: 31%; bottom: 27%; }
+.o-layer-mark { left: 60%; right: 9%; top: 27%; bottom: 20%; }
 .o-layer-mark img {
   object-fit: contain;
   object-position: center;
@@ -692,6 +627,71 @@ html[data-entered="true"] .o-slide-dots { opacity: 1; pointer-events: auto; }
   will-change: transform, opacity;
 }
 .o-entry-mark { width: clamp(240px, 30vw, 520px); height: auto; }
+
+/* The landing slideshow: Orravan's own photographs under a steel
+   bluish-gray wash. It belongs to the entry alone and leaves with it.
+   Each slide fades in while easing back from a slight zoom, so the
+   frame is always moving a little and never cuts. */
+.o-entry-slides {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  will-change: opacity;
+}
+.o-slides { position: absolute; inset: 0; overflow: hidden; }
+.o-slides img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.07);
+  filter: saturate(0.5) contrast(1.05);
+  transition: opacity 1.6s ease, transform 9s cubic-bezier(.25,.6,.3,1);
+  will-change: opacity, transform;
+}
+.o-slides img[data-on] { opacity: 1; transform: scale(1); }
+/* The wash: slate over the whole frame, a little deeper behind the
+   wordmark so it always reads, then the brand steel laid over as
+   colour, which is what makes it Orravan's blue rather than a photo
+   with a shadow on it. */
+.o-wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 42% at 50% 47%, rgba(44, 62, 86, 0.6), rgba(50, 70, 96, 0) 100%),
+    linear-gradient(180deg, rgba(62, 86, 116, 0.86) 0%, rgba(62, 86, 116, 0.76) 50%, rgba(56, 78, 106, 0.88) 100%);
+}
+.o-wash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--orravan-steel);
+  mix-blend-mode: color;
+  opacity: 0.6;
+}
+.o-slide-dots {
+  position: absolute;
+  left: 20px;
+  bottom: 28px;
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+.o-slide-dots button {
+  width: 22px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.35);
+  transition: background 300ms ease, width 300ms ease;
+}
+.o-slide-dots button[aria-current="true"] { width: 36px; background: #fff; }
+@media (min-width: 1024px) { .o-slide-dots { left: var(--rail-x); } }
+html[data-entered="true"] .o-slide-dots { visibility: hidden; }
+@media (prefers-reduced-motion: reduce) {
+  .o-slides img { transition: none; transform: none; }
+}
 
 .o-hero {
   position: absolute;
@@ -1316,9 +1316,6 @@ main > section { scroll-margin-top: 72px; }
     transparent
   );
 }
-/* The timeline runs on near-black, where the working blue is too dim
-   to read; the brand steel itself carries labels here at 7:1. */
-.o-st { --signal: var(--orravan-steel); }
 .o-st-kicker { font-size: 9px; color: var(--signal); }
 .o-st-frame-title { font-size: clamp(1.05rem, 1.7vw, 1.45rem); line-height: 1.02; }
 .o-st-line {
@@ -1537,10 +1534,10 @@ main > section { scroll-margin-top: 72px; }
   color: var(--bone);
   background: var(--signal);
   border-radius: 999px;
-  box-shadow: 0 8px 28px rgba(49, 73, 104, .35);
+  box-shadow: 0 8px 28px rgba(36, 95, 206, .35);
   transition: transform var(--dur-ui) var(--ease-out), box-shadow var(--dur-ui) var(--ease-out);
 }
-.o-ai-launch:hover { transform: translateY(-1px); box-shadow: 0 10px 32px rgba(49, 73, 104, .45); }
+.o-ai-launch:hover { transform: translateY(-1px); box-shadow: 0 10px 32px rgba(36, 95, 206, .45); }
 .o-ai-launch-dot {
   width: 8px; height: 8px;
   border-radius: 50%;
@@ -1677,3 +1674,7 @@ main > section { scroll-margin-top: 72px; }
     align-self: start;
   }
 }
+
+/* On the landing screen the solid door takes the slate, so it belongs
+   to the steel around it rather than the hero's blue. */
+.o-entry .o-btn-solid { color: var(--orravan-slate); }
