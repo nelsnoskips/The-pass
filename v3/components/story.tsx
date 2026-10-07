@@ -103,7 +103,7 @@ export function Story() {
     >
       <div className="o-st-stick">
         <header className="o-st-head">
-          <p className="o-label text-[10px] text-[var(--orravan-steel)]">{STORY.eyebrow}</p>
+          <p className="o-label text-[10px] text-[var(--orravan-blue)]">{STORY.eyebrow}</p>
           <h2 id="st-head" className="o-display o-st-title">
             {STORY.head.map((l) => (
               <span key={l} className="block">
