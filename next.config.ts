@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  // components/house/Plate.tsx checks public/ with existsSync at build
+  // time, which makes the tracer copy all of public/ (180MB of mocks and
+  // video) into the server function and pushes it past AWS Lambda's
+  // 250MB limit. Every page that uses it is prerendered, and the CDN
+  // serves public/ anyway, so none of it belongs in the function.
+  outputFileTracingExcludes: {
+    "*": ["./public/**/*"],
+  },
   images: {
     // Food and paper stock carry visible grain, so they are served above
     // the default 75. Next only honours qualities declared here.
