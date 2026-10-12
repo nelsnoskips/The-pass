@@ -214,12 +214,12 @@ export const RECORD = {
     },
     {
       stage: "Verified",
-      time: "4/23/2025 8:41 AM",
+      time: "4/23/2025 8:52 AM",
       detail: "Performance verified in the range.",
     },
     {
       stage: "Documents complete",
-      time: "4/23/2025 8:46 AM",
+      time: "4/23/2025 8:55 AM",
       detail: "All documents uploaded. Record complete.",
     },
   ],
