@@ -33,7 +33,7 @@ export function TopBar() {
 
         <div className="flex items-center justify-end gap-2.5">
           <a
-            href="#record"
+            href={NAV.portalHref}
             className="hidden min-h-[38px] items-center border border-ink/25 px-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink transition-colors hover:bg-ink/5 sm:inline-flex"
           >
             {NAV.portal}

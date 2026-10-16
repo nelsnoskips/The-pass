@@ -21,6 +21,8 @@ export const NAV = {
   menus: ["Intelligence", "Services", "Industries", "Company"],
   quick: ["Automation", "HVAC", "Monitoring", "Inventory"],
   portal: "Service Portal",
+  /** The customer login on Orravan's current site (Alex, 13 Oct). */
+  portalHref: "https://orravan.ai/service-portal/",
   request: "Request Service",
 } as const;
 

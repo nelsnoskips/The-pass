@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Orravan Assist forms</title><meta name="robots" content="noindex"></head>
+<body>
+<!-- Declares the assistant's two forms so Netlify registers them at
+     deploy. The assistant posts here with fetch; nobody visits it. -->
+<form name="assist-request" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input name="bot-field"><input name="details"><input name="phone">
+  <textarea name="message"></textarea><input name="contact">
+  <textarea name="conversation"></textarea><input name="page">
+</form>
+<form name="assist-emergency" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input name="bot-field"><input name="details"><input name="phone">
+  <textarea name="message"></textarea><input name="contact">
+  <textarea name="conversation"></textarea><input name="page">
+</form>
+</body>
+</html>

@@ -1625,7 +1625,8 @@ main > section { scroll-margin-top: 72px; }
 
 .o-ai-foot { display: grid; gap: 8px; padding: 10px 12px 10px; border-top: 1px solid var(--rule); }
 .o-ai-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.o-ai-chips button {
+.o-ai-chips button,
+.o-ai-chips a {
   min-height: 34px;
   padding: 0 12px;
   font-size: 12px;
@@ -1635,7 +1636,9 @@ main > section { scroll-margin-top: 72px; }
   border-radius: 999px;
   transition: background var(--dur-ui) var(--ease-out), border-color var(--dur-ui) var(--ease-out);
 }
-.o-ai-chips button:hover { border-color: var(--signal); }
+.o-ai-chips button:hover,
+.o-ai-chips a:hover { border-color: var(--signal); }
+.o-ai-chips a { display: inline-flex; align-items: center; }
 .o-ai-form { display: grid; grid-template-columns: 1fr 40px; gap: 6px; }
 .o-ai-form input {
   min-height: 40px;

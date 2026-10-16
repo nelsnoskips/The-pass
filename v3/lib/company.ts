@@ -2,7 +2,10 @@
  * Who Orravan is: the history, and the people.
  *
  * The milestones are the client's own, supplied 3 Sep 2026, with the 2025 retrofit team and the
- * 25-in-2021 / 50-in-2024 headcounts confirmed by Alex on 9 Sep. Nothing
+ * 25-in-2021 headcount confirmed by Alex on 9 Sep. On 13 Oct Alex moved
+ * fifty on the team to 2025 and asked for the history to start at 2016,
+ * so the 2014 and 2015 entries are gone (the founding year stays in the
+ * headline and the team page). Nothing
  * here is inferred — where a month was given it is kept, where only a
  * year was given the entry sits at mid-year and `precision` says so, so
  * the timeline can render an honest tick rather than implying a date
@@ -41,54 +44,6 @@ export type Milestone = {
 };
 
 export const MILESTONES: Milestone[] = [
-  {
-    id: "founded",
-    lane: "company",
-    at: 2014.58,
-    stamp: "Aug 2014",
-    exact: true,
-    title: "Rigo Navarro Sr. founds Orravan",
-    detail:
-      "One tradesman, one truck, and a conviction that commercial mechanical work is a service business before it is a parts business.",
-  },
-  {
-    id: "mechanical",
-    lane: "sector",
-    at: 2014.75,
-    stamp: "2014",
-    exact: false,
-    title: "Mechanical sector launched",
-    detail:
-      "The founding discipline. Commercial mechanical work becomes the base every other capability is built on.",
-  },
-  {
-    id: "truck-1",
-    lane: "fleet",
-    at: 2014.9,
-    stamp: "2014",
-    exact: false,
-    title: "First truck",
-    detail: "Rigo Sr.'s Mercedes Sprinter. The whole company fits in it.",
-  },
-  {
-    id: "chiller",
-    lane: "sector",
-    at: 2015.37,
-    stamp: "May 2015",
-    exact: true,
-    title: "Chiller mechanical",
-    detail:
-      "Central plant work joins the offer — the heaviest equipment in the building, and the least forgiving of guesswork.",
-  },
-  {
-    id: "truck-2",
-    lane: "fleet",
-    at: 2015.7,
-    stamp: "2015",
-    exact: false,
-    title: "Second truck",
-    detail: "Rigo Jr.'s Sprinter. Two trucks, two generations.",
-  },
   {
     id: "automation",
     lane: "sector",
@@ -151,11 +106,11 @@ export const MILESTONES: Milestone[] = [
   {
     id: "fifty",
     lane: "people",
-    at: 2024.5,
-    stamp: "2024",
+    at: 2025.35,
+    stamp: "2025",
     exact: false,
     title: "Fifty on the team",
-    detail: "Headcount doubles in three years without the standard moving.",
+    detail: "Headcount doubles in four years without the standard moving.",
     figure: "50",
   },
   {
@@ -173,13 +128,13 @@ export const MILESTONES: Milestone[] = [
 /** The axis runs a little either side of the real span — but only a
     little past the end, so the last milestone lands with runway to be
     read rather than arriving in the final few pixels of the scroll. */
-export const SPAN = { from: 2014.2, to: 2025.75 } as const;
+export const SPAN = { from: 2016.0, to: 2025.75 } as const;
 
 export const HISTORY = {
-  eyebrow: "2014 — today",
+  eyebrow: "2016 — today",
   head: ["Ten years,", "one standard."],
   copy:
-    "From one truck in 2014 to a union shop of fifty. Scroll it through, or jump straight to any year.",
+    "From three trucks in 2016 to a union shop of fifty. Scroll it through, or jump straight to any year.",
 } as const;
 
 /* ------------------------------------------------------------- team --- */
@@ -418,7 +373,7 @@ export type Chapter = {
 };
 
 export const STORY = {
-  eyebrow: "Since 2014",
+  eyebrow: "2016 — today",
   head: ["Ten years", "in the building."],
   copy:
     "One truck became a union shop of fifty. The work is the record.",
@@ -426,26 +381,6 @@ export const STORY = {
 } as const;
 
 export const CHAPTERS: Chapter[] = [
-  {
-    id: "c-2014",
-    year: "2014",
-    kicker: "The beginning",
-    title: "One tradesman, one truck",
-    line: "Rigo Navarro Sr. starts Orravan on the belief that mechanical work is a service business first.",
-    slot: "story-2014",
-    focus: "50% 40%",
-    wants: "Supplied: Danny Navarro on a rooftop, early days.",
-  },
-  {
-    id: "c-2015",
-    year: "2015",
-    kicker: "Central plant",
-    title: "Chiller mechanical",
-    line: "The heaviest equipment in the building, and the least forgiving of guesswork.",
-    slot: "story-2015",
-    focus: "40% 50%",
-    wants: "A real chiller or central plant job.",
-  },
   {
     id: "c-2016",
     year: "2016",
@@ -487,11 +422,11 @@ export const CHAPTERS: Chapter[] = [
     wants: "The crew on site. Faces, not equipment.",
   },
   {
-    id: "c-2024",
-    year: "2024",
+    id: "c-2025",
+    year: "2025",
     kicker: "Today",
     title: "Fifty on the team",
-    line: "Headcount doubled in three years without the standard moving.",
+    line: "Headcount doubled in four years without the standard moving.",
     slot: "story-2024",
     focus: "50% 55%",
     wants: "The team aerial shot Alex mentioned.",
