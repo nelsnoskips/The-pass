@@ -150,7 +150,7 @@ export function Story() {
         <div className="o-st-rail" aria-hidden>
           <span ref={fill} className="o-st-rail-fill" />
           <span className="o-st-rail-ends o-label">
-            <span>2014</span>
+            <span>2016</span>
             <span>Today</span>
           </span>
         </div>

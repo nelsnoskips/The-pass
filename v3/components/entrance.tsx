@@ -237,7 +237,7 @@ export function Entrance() {
             alt={IMAGES["logo-reverse"].alt}
           />
           <div ref={doors} className="o-doors">
-            <a href="#record" className="o-btn-line">{NAV.portal}</a>
+            <a href={NAV.portalHref} className="o-btn-line">{NAV.portal}</a>
             <a href="#close" className="o-btn-solid">{NAV.request}</a>
           </div>
           <div ref={cue} className="o-cue" aria-hidden>

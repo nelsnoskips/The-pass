@@ -1,20 +1,24 @@
 /**
  * The assistant's script.
  *
- * This is a mock: nothing here calls a model or a dispatcher. It is a
- * small conversation tree that demonstrates what the live version would
- * do — take a service request, triage an after-hours emergency and page
- * the on-call technician, answer the questions people actually ask, and
- * look up a work order — so Orravan can feel the experience before
- * paying to build it.
+ * A guided desk, not a model: a small conversation tree that takes a
+ * service request, an after-hours emergency or a question, and sends it
+ * to the Orravan team as a form submission. Alex chose this no-cost
+ * version on 13 Oct; an AI version can come later. General requests go
+ * to Noelia (ngodinez@orravan.ai) and emergencies to the on-call lead,
+ * Simon Kang (skang@orravan.ai) — the addresses live in the form
+ * notifications on the host, not in this file, so they never ship in
+ * the page.
  *
- * It shares its facts with the rest of the page. The work order it
- * "finds" is the one in the Client Record section; the technician it
- * pages is the one named there. A mock that contradicts the page it
- * sits on stops being convincing.
+ * Nothing here promises what the desk cannot do: no paging, no
+ * technician names, no response times nobody agreed to. Work orders
+ * live in the Service Portal, so the desk points there.
  */
 
-export type Chip = { label: string; to: string };
+export type Chip = { label: string; to?: string; href?: string };
+
+/** What an answer is filed as in the submission. */
+export type Field = "details" | "phone" | "message" | "contact";
 
 export type Node = {
   id: string;
@@ -22,22 +26,27 @@ export type Node = {
   bot: string[];
   chips?: Chip[];
   /** Ask for typed input instead of, or as well as, chips. */
-  input?: { placeholder: string; to: string; kind?: "text" | "tel" | "order" };
+  input?: { placeholder: string; to: string; kind?: "text" | "tel"; field: Field };
+  /** Reaching this node sends what the visitor has told us. */
+  send?: "request" | "emergency";
 };
+
+export const PORTAL = "https://orravan.ai/service-portal/";
 
 export const ASSIST = {
   name: "Orravan Assist",
-  tag: "Preview",
   launcher: "Ask Orravan",
-  status: "On-call desk · usually a minute",
-  privacy: "This is a demonstration. Nothing typed here is sent anywhere.",
+  status: "Orravan service desk",
+  privacy: "What you send here goes to the Orravan team. In an emergency, call 911 first.",
+  failed:
+    "Sorry, that didn't go through. Please call us at (855) 677-2826 and we'll take it from there.",
 } as const;
 
 export const SCRIPT: Record<string, Node> = {
   root: {
     id: "root",
     bot: [
-      "Hi — this is the Orravan desk. I can take a service request, get an emergency to the on-call technician, or look something up.",
+      "Hi, this is Orravan. I can take a service request, get an after-hours emergency to our on-call team, or point you to your work orders.",
       "What do you need?",
     ],
     chips: [
@@ -71,20 +80,26 @@ export const SCRIPT: Record<string, Node> = {
   "service-down": {
     id: "service-down",
     bot: [
-      "Then it goes to dispatch as a priority call, not a ticket.",
-      "What's the best number to confirm a window with you?",
+      "Then we'll flag it as a priority.",
+      "What's your name, and the address of the building?",
     ],
-    input: { placeholder: "Your phone number", to: "service-done", kind: "tel" },
+    input: { placeholder: "Name and building address", to: "service-phone", field: "details" },
   },
   "service-planned": {
     id: "service-planned",
-    bot: ["No problem. What's the best number for the office to reach you on?"],
-    input: { placeholder: "Your phone number", to: "service-done", kind: "tel" },
+    bot: ["No problem. What's your name, and the address of the building?"],
+    input: { placeholder: "Name and building address", to: "service-phone", field: "details" },
+  },
+  "service-phone": {
+    id: "service-phone",
+    bot: ["And the best number to reach you?"],
+    input: { placeholder: "Your phone number", to: "service-done", kind: "tel", field: "phone" },
   },
   "service-done": {
     id: "service-done",
+    send: "request",
     bot: [
-      "Thanks. Dispatch has it and will call to confirm a window. You'll get a text with the technician's name when they're assigned.",
+      "Thanks. Your request is with our service team, and someone will call you to confirm a time.",
       "Anything else?",
     ],
     chips: [
@@ -97,7 +112,7 @@ export const SCRIPT: Record<string, Node> = {
   emergency: {
     id: "emergency",
     bot: [
-      "Okay. First — is anyone in danger, or is there a gas smell, smoke, or active flooding?",
+      "Okay. First, is anyone in danger, or is there a gas smell, smoke, or active flooding?",
     ],
     chips: [
       { label: "Yes", to: "emergency-911" },
@@ -115,26 +130,28 @@ export const SCRIPT: Record<string, Node> = {
     id: "emergency-system",
     bot: ["Which of these is closest?"],
     chips: [
-      { label: "No cooling", to: "emergency-page" },
-      { label: "No heat", to: "emergency-page" },
-      { label: "Water leak from equipment", to: "emergency-page" },
-      { label: "Alarm on the BAS", to: "emergency-page" },
+      { label: "No cooling", to: "emergency-details" },
+      { label: "No heat", to: "emergency-details" },
+      { label: "Water leak from equipment", to: "emergency-details" },
+      { label: "Alarm on the BAS", to: "emergency-details" },
     ],
   },
-  "emergency-page": {
-    id: "emergency-page",
-    bot: [
-      "Paging the on-call technician now…",
-      "J. Martinez has acknowledged. Estimated on site in about 45 minutes.",
-      "What number should J. call you on when they're close?",
-    ],
-    input: { placeholder: "Your phone number", to: "emergency-done", kind: "tel" },
+  "emergency-details": {
+    id: "emergency-details",
+    bot: ["Understood. What's your name, and the address of the building?"],
+    input: { placeholder: "Name and building address", to: "emergency-phone", field: "details" },
+  },
+  "emergency-phone": {
+    id: "emergency-phone",
+    bot: ["And the best number for our on-call technician to call you on?"],
+    input: { placeholder: "Your phone number", to: "emergency-done", kind: "tel", field: "phone" },
   },
   "emergency-done": {
     id: "emergency-done",
+    send: "emergency",
     bot: [
-      "Done. J. has your number and the building address on file. You'll get a text when they're ten minutes out.",
-      "If anything changes before then, this line is open.",
+      "That's been sent to our on-call team, and they'll call you back.",
+      "If you don't hear from us soon, call (855) 677-2826.",
     ],
     chips: [
       { label: "Thank you", to: "bye" },
@@ -145,33 +162,12 @@ export const SCRIPT: Record<string, Node> = {
   /* ------------------------------------------------- track a work order -- */
   track: {
     id: "track",
-    bot: ["What's the work order number? It starts with WO-."],
-    input: { placeholder: "e.g. WO-267812", to: "track-found", kind: "order" },
-  },
-  "track-found": {
-    id: "track-found",
     bot: [
-      "WO-267812 — Zone 4B Temperature High.",
-      "Detected 4/23 at 8:35 AM. Assigned to J. Martinez at 8:40. Reheat valve adjusted and sensor calibrated. Performance verified in range, and the record is complete with all documents uploaded.",
-      "Want the full record?",
+      "Your work orders are in the Service Portal, where you can see the status of each one.",
+      "No login yet? You can request one on the portal page.",
     ],
     chips: [
-      { label: "Open the record", to: "track-open" },
-      { label: "Back to the start", to: "root" },
-    ],
-  },
-  "track-open": {
-    id: "track-open",
-    bot: ["It's the Client Record section just above the footer — I've scrolled you there."],
-    chips: [{ label: "Back to the start", to: "root" }],
-  },
-  "track-miss": {
-    id: "track-miss",
-    bot: [
-      "I can't find that one. In the live version I'd check it against ServiceTrade; for now the one on this page is WO-267812.",
-    ],
-    chips: [
-      { label: "Try WO-267812", to: "track-found" },
+      { label: "Open the Service Portal", href: PORTAL },
       { label: "Back to the start", to: "root" },
     ],
   },
@@ -180,7 +176,7 @@ export const SCRIPT: Record<string, Node> = {
   automation: {
     id: "automation",
     bot: [
-      "Building automation has been in-house since 2016: DDC controls, integration, programming and support, across healthcare, education, data centres and commercial.",
+      "Building automation has been in-house since 2016: DDC controls, integration, programming and support, across healthcare, education, data centers and commercial.",
       "The useful next step is a walkthrough of your building. Want one?",
     ],
     chips: [
@@ -191,12 +187,18 @@ export const SCRIPT: Record<string, Node> = {
   },
   "automation-book": {
     id: "automation-book",
-    bot: ["Great. Best number for the controls team to reach you?"],
-    input: { placeholder: "Your phone number", to: "automation-done", kind: "tel" },
+    bot: ["Great. What's your name, and the address of the building?"],
+    input: { placeholder: "Name and building address", to: "automation-phone", field: "details" },
+  },
+  "automation-phone": {
+    id: "automation-phone",
+    bot: ["And the best number for our controls team to reach you?"],
+    input: { placeholder: "Your phone number", to: "automation-done", kind: "tel", field: "phone" },
   },
   "automation-done": {
     id: "automation-done",
-    bot: ["Thanks — someone from controls will call within one business day to set it up."],
+    send: "request",
+    bot: ["Thanks. Someone from our controls team will call you to set it up."],
     chips: [
       { label: "That's all", to: "bye" },
       { label: "Back to the start", to: "root" },
@@ -206,19 +208,18 @@ export const SCRIPT: Record<string, Node> = {
   /* ------------------------------------------------------- everything else -- */
   other: {
     id: "other",
-    bot: ["Go ahead — I'll get it to the right person."],
-    input: { placeholder: "Type your question", to: "other-got", kind: "text" },
+    bot: ["Go ahead, and I'll get it to the right person."],
+    input: { placeholder: "Type your question", to: "other-got", field: "message" },
   },
   "other-got": {
     id: "other-got",
-    bot: [
-      "Got it. I'll pass that to the office. What's the best number or email to reply to?",
-    ],
-    input: { placeholder: "Phone or email", to: "other-done", kind: "text" },
+    bot: ["Got it. What's the best phone number or email to reply to?"],
+    input: { placeholder: "Phone or email", to: "other-done", field: "contact" },
   },
   "other-done": {
     id: "other-done",
-    bot: ["Thanks. Someone will come back to you within one business day."],
+    send: "request",
+    bot: ["Thanks. Someone from the office will get back to you."],
     chips: [
       { label: "That's all", to: "bye" },
       { label: "Back to the start", to: "root" },
@@ -227,10 +228,7 @@ export const SCRIPT: Record<string, Node> = {
 
   bye: {
     id: "bye",
-    bot: ["Thanks for reaching out. The desk is here whenever you need it."],
+    bot: ["Thanks for reaching out. We're here whenever you need us."],
     chips: [{ label: "Start again", to: "root" }],
   },
 };
-
-/** The one work order the mock knows. */
-export const KNOWN_ORDER = /WO-?\s?267812/i;

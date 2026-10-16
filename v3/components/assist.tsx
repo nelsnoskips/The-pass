@@ -1,21 +1,28 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ASSIST, KNOWN_ORDER, SCRIPT, type Node } from "@/lib/assist";
+import { ASSIST, SCRIPT, type Chip, type Field, type Node } from "@/lib/assist";
+import { asset } from "@/lib/images";
 
 /**
- * Orravan Assist — a mock of the chat the client asked for.
+ * Orravan Assist — the guided service desk.
  *
- * A small launcher bottom-right; a panel that runs a scripted
- * conversation. There is no model behind it and nothing typed leaves
- * the browser, and the panel says so. The point is to let Orravan feel
- * the experience — a service request taken, an emergency triaged and a
- * technician paged, a work order found — before paying to build it.
+ * A small launcher bottom-right; a panel that walks a scripted
+ * conversation. There is no model behind it. When the visitor reaches
+ * the end of a request, what they told us is posted as a Netlify form
+ * submission ("assist-request" or "assist-emergency"), and the host's
+ * form notifications email it to the right person. The forms are
+ * declared in public/__forms.html so the host can see them at deploy.
  *
- * The one piece of real behaviour: typing a work-order number is
- * actually checked, so the mock does not claim to find an order the
- * page has never heard of.
+ * If the submission fails, the desk says so and gives the phone number
+ * rather than claiming a request it never delivered.
  */
+
+const FAILED: Node = {
+  id: "failed",
+  bot: [ASSIST.failed],
+  chips: [{ label: "Back to the start", to: "root" }],
+};
 
 type Msg =
   | { id: number; from: "bot"; text: string }
@@ -38,6 +45,9 @@ export function Assist() {
   const launcher = useRef<HTMLButtonElement>(null);
   const started = useRef(false);
   const timers = useRef<number[]>([]);
+  /** What the visitor has told us, filed by field, and the whole exchange. */
+  const answers = useRef<Partial<Record<Field, string>>>({});
+  const transcript = useRef<string[]>([]);
 
   useEffect(() => {
     const q = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -55,6 +65,7 @@ export function Assist() {
     timers.current = [];
     setNode(n);
     setReady(false);
+    transcript.current.push(...n.bot.map((t) => `Orravan: ${t}`));
 
     if (still) {
       setMsgs((m) => [...m, ...n.bot.map((text) => ({ id: next(), from: "bot" as const, text }))]);
@@ -109,15 +120,59 @@ export function Assist() {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const say = (text: string) => setMsgs((m) => [...m, { id: next(), from: "you", text }]);
+  const say = (text: string) => {
+    transcript.current.push(`Visitor: ${text}`);
+    setMsgs((m) => [...m, { id: next(), from: "you", text }]);
+  };
 
-  const pick = (label: string, to: string) => {
-    if (!ready) return;
-    say(label);
-    if (to === "track-open") {
-      document.getElementById("record")?.scrollIntoView({ behavior: still ? "auto" : "smooth" });
+  /** Post what we have to the host's form handler. True only on a 2xx. */
+  const deliver = async (kind: "request" | "emergency") => {
+    const a = answers.current;
+    const body = new URLSearchParams({
+      "form-name": kind === "emergency" ? "assist-emergency" : "assist-request",
+      details: a.details ?? "",
+      phone: a.phone ?? "",
+      message: a.message ?? "",
+      contact: a.contact ?? "",
+      conversation: transcript.current.join("\n"),
+      page: window.location.href,
+    });
+    try {
+      const res = await fetch(asset("/__forms.html"), {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: body.toString(),
+      });
+      return res.ok;
+    } catch {
+      return false;
     }
-    play(SCRIPT[to]);
+  };
+
+  /* Move to a node. A node that sends waits for the submission first,
+     behind the typing indicator, and only confirms if it went through. */
+  const go = async (to: string) => {
+    const n = SCRIPT[to];
+    if (!n.send) return play(n);
+    setReady(false);
+    setTyping(true);
+    const ok = await deliver(n.send);
+    setTyping(false);
+    if (ok) {
+      answers.current = {};
+      transcript.current = [];
+    }
+    play(ok ? n : FAILED);
+  };
+
+  const pick = (c: Chip) => {
+    if (!ready || !c.to) return;
+    say(c.label);
+    if (c.to === "root") {
+      answers.current = {};
+      transcript.current = [];
+    }
+    void go(c.to);
   };
 
   const submit = (e: React.FormEvent) => {
@@ -126,12 +181,8 @@ export function Assist() {
     if (!text || !ready || !node.input) return;
     say(text);
     setDraft("");
-    // The one lookup that is real: does the page know this order?
-    const to =
-      node.input.kind === "order"
-        ? KNOWN_ORDER.test(text) ? "track-found" : "track-miss"
-        : node.input.to;
-    play(SCRIPT[to]);
+    answers.current[node.input.field] = text;
+    void go(node.input.to);
   };
 
   return (
@@ -149,7 +200,6 @@ export function Assist() {
               <strong>{ASSIST.name}</strong>
               <span className="o-label o-ai-status">{ASSIST.status}</span>
             </span>
-            <span className="o-label o-ai-tag">{ASSIST.tag}</span>
             <button
               type="button"
               className="o-ai-close"
@@ -179,11 +229,17 @@ export function Assist() {
           <div className="o-ai-foot">
             {ready && node.chips && (
               <div className="o-ai-chips">
-                {node.chips.map((c) => (
-                  <button key={c.label} type="button" onClick={() => pick(c.label, c.to)}>
-                    {c.label}
-                  </button>
-                ))}
+                {node.chips.map((c) =>
+                  c.href ? (
+                    <a key={c.label} href={c.href} target="_blank" rel="noopener noreferrer">
+                      {c.label} &#8599;
+                    </a>
+                  ) : (
+                    <button key={c.label} type="button" onClick={() => pick(c)}>
+                      {c.label}
+                    </button>
+                  ),
+                )}
               </div>
             )}
             {node.input && (

@@ -37,7 +37,7 @@ import { HISTORY, LANES, MILESTONES, SPAN, type Milestone } from "@/lib/company"
 const F = (at: number) => (at - SPAN.from) / (SPAN.to - SPAN.from);
 const X = (at: number) => F(at) * 100;
 
-const YEARS = [2014, 2016, 2018, 2020, 2022, 2024];
+const YEARS = [2016, 2018, 2020, 2022, 2024];
 
 /** Scroll distance the sweep is spread over, as a multiple of viewport. */
 const TRAVEL = 2.4;
