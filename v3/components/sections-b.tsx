@@ -1,6 +1,6 @@
 "use client";
 
-import { DIFFERENCE, INDUSTRIES, RECORD, SERVICES, TEAM } from "@/lib/site";
+import { CONTROLS, DIFFERENCE, INDUSTRIES, RECORD, SERVICES, TEAM } from "@/lib/site";
 import { Band, Head } from "./sections-a";
 import { asset } from "@/lib/images";
 import { Plate, Reveal } from "./ui";
@@ -42,6 +42,45 @@ export function Services() {
             </article>
           </Reveal>
         ))}
+      </div>
+    </Band>
+  );
+}
+
+/* ------------------------------------------- drawn by our engineers --- */
+
+export function Controls() {
+  const [lead, ...rest] = CONTROLS.items;
+  return (
+    <Band id="controls">
+      <Head lines={CONTROLS.head} copy={CONTROLS.copy} />
+
+      <div className="grid gap-3 lg:pr-10">
+        <Reveal>
+          <figure className="o-ctl o-ctl-lead">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={asset(lead.src)} alt={lead.alt} loading="lazy" decoding="async" />
+            <figcaption>
+              <span className="o-label text-[10px] text-ink">{lead.name}</span>
+              <span className="text-[12px] leading-snug text-ink-mute">{lead.detail}</span>
+            </figcaption>
+          </figure>
+        </Reveal>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {rest.map((item) => (
+            <Reveal key={item.name}>
+              <figure className="o-ctl">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={asset(item.src)} alt={item.alt} loading="lazy" decoding="async" />
+                <figcaption>
+                  <span className="o-label text-[10px] text-ink">{item.name}</span>
+                  <span className="text-[12px] leading-snug text-ink-mute">{item.detail}</span>
+                </figcaption>
+              </figure>
+            </Reveal>
+          ))}
+        </div>
+        <p className="text-[11px] text-ink-mute">{CONTROLS.note}</p>
       </div>
     </Band>
   );

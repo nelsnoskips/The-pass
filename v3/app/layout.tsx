@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, IBM_Plex_Mono, Inter } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@/components/analytics";
 
 /* The brand system's three voices: Bebas for the big condensed
    headlines, Inter for everything a person reads or clicks, Plex Mono
@@ -31,7 +32,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.variable} ${bebas.variable} ${plex.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
