@@ -1718,3 +1718,48 @@ main > section { scroll-margin-top: 72px; }
   .o-ctl-lead img { aspect-ratio: 16 / 9; object-fit: contain; }
   .o-ctl-lead figcaption { align-content: end; border-top: 0; border-left: 1px solid var(--color-rule, rgba(23, 24, 26, .12)); padding: 20px; }
 }
+
+/* Request a quote. */
+.o-quote-band { min-height: 70vh; }
+.o-quote {
+  display: grid;
+  gap: 16px;
+  max-width: 760px;
+  padding: clamp(20px, 2.6vw, 36px);
+  background: #fff;
+  border: 1px solid var(--rule);
+  box-shadow: 0 30px 70px rgba(23, 24, 26, .08);
+}
+.o-quote-row { display: grid; gap: 16px; }
+@media (min-width: 640px) { .o-quote-row { grid-template-columns: 1fr 1fr; } }
+.o-quote label { display: grid; gap: 6px; }
+.o-quote label > span {
+  font-family: var(--font-technical);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft, #4a4b50);
+}
+.o-quote input,
+.o-quote textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  font-size: 15px;
+  color: var(--color-ink, #17181a);
+  background: #fafaf8;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+.o-quote textarea { resize: vertical; }
+.o-quote input:focus,
+.o-quote textarea:focus { outline: none; border-color: var(--orravan-blue); background: #fff; }
+.o-quote button[disabled] { opacity: .6; cursor: progress; }
+.o-quote-error { padding: 10px 12px; font-size: 13px; color: #8a1f1f; background: #fbeaea; border-left: 2px solid #c43c3c; }
+.o-quote-done { align-content: start; }
+.o-quote-contact { display: grid; gap: 14px; margin-top: 26px; }
+.o-quote-contact dt { font-size: 10px; color: var(--color-ink-mute, #7a7b80); }
+.o-quote-contact dd { margin: 3px 0 0; font-size: 14px; color: var(--color-ink, #17181a); }
+.o-quote-contact a:hover { color: var(--orravan-blue); }

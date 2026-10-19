@@ -238,7 +238,7 @@ export function Entrance() {
           />
           <div ref={doors} className="o-doors">
             <a href={NAV.portalHref} className="o-btn-line">{NAV.portal}</a>
-            <a href="#close" className="o-btn-solid">{NAV.request}</a>
+            <a href={asset("/request-quote")} className="o-btn-solid">{NAV.request}</a>
           </div>
           <div ref={cue} className="o-cue" aria-hidden>
             <span>{ENTRANCE.cue}</span>
@@ -261,8 +261,8 @@ export function Entrance() {
           </p>
           <p>{ENTRANCE.body}</p>
           <div className="o-hero-doors">
-            <a href="#close" className="o-btn-solid">{ENTRANCE.primary}</a>
-            <a href="#close" className="o-btn-line">{ENTRANCE.secondary}</a>
+            <a href={asset("/request-quote")} className="o-btn-solid">{ENTRANCE.primary}</a>
+            <a href={asset("/request-quote")} className="o-btn-line">{ENTRANCE.secondary}</a>
             {/* Straight to the history for anyone who wants to know who
                 they would be hiring before they read what it costs. */}
             <a href="#story" className="o-hero-anchor o-label">

@@ -39,7 +39,7 @@ export function TopBar() {
             {NAV.portal}
           </a>
           <a
-            href="#close"
+            href={asset("/request-quote")}
             className="inline-flex min-h-[38px] items-center bg-[var(--orravan-blue)] px-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-white"
           >
             {NAV.request}
