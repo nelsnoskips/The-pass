@@ -158,11 +158,6 @@ export const IMAGES: Record<string, Slot> = {
     alt: "An Orravan-built controls panel, wired and labelled",
     brief: "Controls panel, Sep 2026. Portrait.",
   },
-  "story-2018": {
-    src: img("28-story-2018-institutional.webp"),
-    alt: "Five Orravan technicians in hard hats inside a mechanical room",
-    brief: "Crew on an institutional site, Aug 2023. 16:9.",
-  },
   "story-2020": {
     src: img("29-story-2020-shop.webp"),
     alt: "Two of the Orravan leadership outside the shop at 3323",

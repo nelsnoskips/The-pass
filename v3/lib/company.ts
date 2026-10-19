@@ -365,7 +365,10 @@ export type Chapter = {
   kicker: string;
   title: string;
   line: string;
-  slot: string;
+  /** The photograph. A chapter without one renders as a lettered frame. */
+  slot?: string;
+  /** Shown large in a frame that has no photograph. */
+  words?: string[];
   /** Vertical framing for the plate, per photograph. */
   focus: string;
   /** What Orravan should send to replace the stand-in. */
@@ -397,9 +400,9 @@ export const CHAPTERS: Chapter[] = [
     kicker: "Recognised",
     title: "SBE / Minority certified",
     line: "Formal recognition of how the company was built — and the credential that opens institutional work.",
-    slot: "story-2018",
-    focus: "50% 12%",
-    wants: "Alex prefers the SBE and MBE emblems here rather than a certificate. Files pending; the crew on an institutional site stands in.",
+    words: ["Small Business Enterprise", "Minority Business Enterprise"],
+    focus: "50% 50%",
+    wants: "The SBE and MBE emblems, or the replacement photo Alex is sending. The old crew photo came out on 19 Oct: most of the people in it weren't Orravan staff.",
   },
   {
     id: "c-2020",
