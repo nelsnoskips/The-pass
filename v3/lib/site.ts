@@ -163,6 +163,44 @@ export const SERVICES = {
   ],
 } as const;
 
+/** The controls team's work. Each image is a clean render of a real
+    building automation graphic the team built — recreated with
+    Higgsfield from Orravan's own screens (Alex, 8 Oct), so the
+    equipment and piping are theirs but the labels, point tables and
+    client logos are gone. Client sites stay unnamed: two of the three
+    are a jail and a police department. */
+export const CONTROLS = {
+  head: ["Every system,", "drawn by our engineers."],
+  copy: "Our controls team builds the graphics building operators work from, laid out the way each system is actually piped.",
+  note: "Illustrations recreated from building automation graphics our team built for government and education projects.",
+  items: [
+    {
+      name: "Chiller plant",
+      detail: "Three chillers, their pumps, and the chilled and condenser water loops on one screen.",
+      src: "/images/41-controls-chiller-plant.webp",
+      alt: "Three centrifugal chillers with blue chilled water piping, inline pumps and green condenser water lines",
+    },
+    {
+      name: "Cooling towers",
+      detail: "Every tower cell and condenser pump, with the makeup water line.",
+      src: "/images/42-controls-cooling-towers.webp",
+      alt: "Five cooling tower cells with green condenser water headers and a bank of pumps",
+    },
+    {
+      name: "Air terminal",
+      detail: "The damper, controller and reheat coil that run a single zone.",
+      src: "/images/43-controls-air-handler.webp",
+      alt: "A VAV terminal unit with its damper, controller and hot water reheat coil",
+    },
+    {
+      name: "Heating hot water",
+      detail: "The boiler, circulating pumps, and the supply and return loop.",
+      src: "/images/44-controls-hot-water.webp",
+      alt: "A boiler with two red circulating pumps and the supply and return piping",
+    },
+  ],
+} as const;
+
 export const DIFFERENCE = {
   head: ["Software sees.", "Experience decides."],
   copy: "Intelligence and field expertise—working together for your building.",

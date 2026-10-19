@@ -1,7 +1,7 @@
 import { Footer, TopBar } from "@/components/chrome";
 import { Entrance } from "@/components/entrance";
 import { LessDashboard, OneView, Pillars, ToDecision } from "@/components/sections-a";
-import { Difference, Industries, Record, Services, Team } from "@/components/sections-b";
+import { Difference, Industries, Record, Services, Team, Controls } from "@/components/sections-b";
 import { Story } from "@/components/story";
 import { Faq } from "@/components/faq";
 import { Assist } from "@/components/assist";
@@ -34,6 +34,7 @@ export default function Page() {
         <LessDashboard />
         <ToDecision />
         <Services />
+        <Controls />
         <Difference />
         <Team />
         <Industries />
