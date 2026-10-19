@@ -13,8 +13,20 @@ export const ORRAVAN = {
   fullName: "Orravan Mechanical",
   domain: "orravan.ai",
   phone: "(855) 677-2826",
-  email: "hello@orravan.ai",
+  /** The address on Orravan's current site. */
+  email: "info@orravan.ai",
   license: "License #1025455",
+  hours: "Mon–Fri, 8am–5pm",
+  address: ["3323 E. 59th St.", "Long Beach, CA 90805"],
+} as const;
+
+/** The quote page: the same fields as orravan.ai/request-quote, so
+    nothing the office relies on goes missing in the move. */
+export const QUOTE = {
+  head: ["Request", "a quote."],
+  copy: "Tell us about the building and what it needs. Our team will get back to you to scope the work.",
+  sent: "Thanks. Your request is with our team, and we'll be in touch soon.",
+  failed: "Sorry, that didn't go through. Please call us at (855) 677-2826 or email info@orravan.ai.",
 } as const;
 
 export const NAV = {
