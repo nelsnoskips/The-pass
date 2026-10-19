@@ -120,18 +120,24 @@ export function Story() {
         <div className="o-st-window">
           <ol ref={track} className="o-st-track">
             {CHAPTERS.map((c) => {
-              const plate = IMAGES[c.slot];
+              const plate = c.slot ? IMAGES[c.slot] : undefined;
               return (
                 <li key={c.id} className="o-st-frame">
-                  <figure>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={asset(plate.src)}
-                      alt={plate.alt}
-                      style={{ objectPosition: c.focus }}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                  <figure data-plain={plate ? undefined : true}>
+                    {plate ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={asset(plate.src)}
+                        alt={plate.alt}
+                        style={{ objectPosition: c.focus }}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <span className="o-st-words o-label">
+                        {c.words?.map((w) => <span key={w}>{w}</span>)}
+                      </span>
+                    )}
                     <span className="o-st-year o-display" aria-hidden>
                       {c.year}
                     </span>
