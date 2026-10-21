@@ -259,7 +259,7 @@ export const INDUSTRIES = {
     { name: "Commercial", slot: "industry-commercial", focus: "70%" },
     { name: "Education", slot: "industry-education", focus: "45%" },
     { name: "Hospitality", slot: "industry-hospitality", focus: "50%" },
-    { name: "Restaurants", slot: "industry-restaurants", focus: "32%" },
+    { name: "Data centers", slot: "industry-data-centers", focus: "50%" },
     { name: "Government", slot: "industry-government", focus: "50%" },
   ],
 } as const;

@@ -50,7 +50,7 @@ export const SCRIPT: Record<string, Node> = {
       "What do you need?",
     ],
     chips: [
-      { label: "Request service", to: "service" },
+      { label: "Request service", href: "/request-quote" },
       { label: "Emergency — after hours", to: "emergency" },
       { label: "Track a work order", to: "track" },
       { label: "Automation & controls", to: "automation" },
