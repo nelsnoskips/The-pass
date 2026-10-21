@@ -122,15 +122,17 @@ export const IMAGES: Record<string, Slot> = {
   },
 
   /* --- software sees. experience decides. ------------------------------ */
+  /* Both are Orravan's own job photos (20 Oct). The generated
+     operations centre and field-specialist stock read as AI. */
   "difference-software": {
-    src: img("14-software-operations-center.webp"),
-    alt: "The Orravan operations centre",
-    brief: "Software Sees. 3:2.",
+    src: img("45-difference-controls-panel.webp"),
+    alt: "An Orravan-built controls panel with two building controllers",
+    brief: "Software Sees. Supplied 2016-controls-panel-dual.jpg, portrait.",
   },
   "difference-experience": {
-    src: img("15-senior-field-specialist.webp"),
-    alt: "A senior Orravan field specialist",
-    brief: "Experience Decides. 3:2.",
+    src: img("46-difference-tech-chiller.webp"),
+    alt: "An Orravan technician working at the base of a chiller",
+    brief: "Experience Decides. Supplied 2015-chiller-room.jpg, 4:3.",
   },
 
   /* --- build what buildings become ------------------------------------- */

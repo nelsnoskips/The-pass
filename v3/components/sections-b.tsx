@@ -113,7 +113,7 @@ export function Difference() {
               parallax={12}
               className="h-[max(175px,14.5vw)] overflow-hidden"
               imgClassName={`h-full w-full object-cover ${
-                slot === "difference-experience" ? "object-[50%_35%]" : "object-top"
+                slot === "difference-experience" ? "object-[50%_74%]" : "object-[50%_42%]"
               }`}
             />
           </Reveal>
