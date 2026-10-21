@@ -34,8 +34,10 @@ export const NAV = {
       a homepage section from any page. Company became Team on 21 Oct. */
   menus: [
     { label: "Intelligence", href: "/#how" },
-    { label: "Services", href: "/#services" },
+    { label: "Services", href: "/services" },
     { label: "Industries", href: "/#industries" },
+    { label: "Inventory", href: "/inventory" },
+    { label: "About", href: "/about" },
     { label: "Team", href: "/team" },
   ],
   /** The quick row under the bar: each one lands on the part of the
@@ -171,21 +173,25 @@ export const SERVICES = {
       name: "Building automation",
       detail: "Smarter controls. Better outcomes.",
       slot: "service-automation",
+      href: "/services/building-automation",
     },
     {
       name: "HVAC systems",
       detail: "Reliable systems. Efficient operation.",
       slot: "service-hvac",
+      href: "/services/hvac",
     },
     {
       name: "Remote monitoring",
       detail: "24/7 coverage. Early issue detection.",
       slot: "service-monitoring",
+      href: "/services/support",
     },
     {
       name: "Inventory & fabrication",
       detail: "Right parts. Right when you need them.",
       slot: "service-inventory",
+      href: "/inventory",
     },
   ],
 } as const;
@@ -300,10 +306,25 @@ export const FOOTER = {
   columns: [
     {
       title: "Solutions",
-      links: ["Automation", "HVAC", "Monitoring", "Inventory"],
+      links: [
+        { label: "Automation", href: "/services/building-automation" },
+        { label: "HVAC", href: "/services/hvac" },
+        { label: "Monitoring", href: "/services/support" },
+        { label: "Inventory", href: "/inventory" },
+      ],
     },
-    { title: "Company", links: ["About", "Our team", "Careers", "Contact"] },
+    {
+      title: "Company",
+      links: [
+        { label: "About", href: "/about" },
+        { label: "Our team", href: "/team" },
+        { label: "Careers", href: "/team#careers" },
+        { label: "Contact", href: "/contact" },
+      ],
+    },
   ],
+  /** Their LinkedIn, from the current site's footer. */
+  linkedin: "https://www.linkedin.com/company/orravan-mechanical-inc.",
   social: ["LinkedIn", "YouTube"],
   copyright: "© 2026 Orravan.ai, Inc. All rights reserved.",
 } as const;

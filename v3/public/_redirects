@@ -1,0 +1,13 @@
+# Old orravan.ai addresses → their new homes. Only read when this build
+# is deployed at the root of orravan.ai (launch); harmless on the mock.
+/about-us                              /about                          301
+/about-us/                             /about                          301
+/services/hvac-systems/*               /services/hvac                  301
+/services/building-automation-systems/* /services/building-automation 301
+/contact-us/*                          /contact                        301
+/all-products                          /inventory                      301
+/all-products/*                        /inventory                      301
+/products-by-category/*                /inventory                      301
+/products-by-brand/*                   /inventory                      301
+/service-portal/*                      https://portal.orravan.ai/service-portal/  301
+/account/*                             https://portal.orravan.ai/account/         301
