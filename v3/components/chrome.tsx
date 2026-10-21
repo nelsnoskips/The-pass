@@ -89,9 +89,9 @@ export function Footer() {
             <p className="o-ui text-[10px] text-ink-mute">{column.title}</p>
             <ul className="mt-4 space-y-2.5">
               {column.links.map((link) => (
-                <li key={link}>
-                  <a href="#top" className="text-[13px] text-ink-soft transition-colors hover:text-[var(--orravan-blue)]">
-                    {link}
+                <li key={link.label}>
+                  <a href={asset(link.href)} className="text-[13px] text-ink-soft transition-colors hover:text-[var(--orravan-blue)]">
+                    {link.label}
                   </a>
                 </li>
               ))}
@@ -110,7 +110,13 @@ export function Footer() {
           <ul className="mt-5 flex gap-4">
             {FOOTER.social.map((name) => (
               <li key={name}>
-                <a href="#top" aria-label={name} className="text-ink-soft transition-colors hover:text-[var(--orravan-blue)]">
+                <a
+                  href={name === "LinkedIn" ? FOOTER.linkedin : asset("/")}
+                  aria-label={name}
+                  target={name === "LinkedIn" ? "_blank" : undefined}
+                  rel={name === "LinkedIn" ? "noopener noreferrer" : undefined}
+                  className="text-ink-soft transition-colors hover:text-[var(--orravan-blue)]"
+                >
                   <SocialIcon name={name} />
                 </a>
               </li>

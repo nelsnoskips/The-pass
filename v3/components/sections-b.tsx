@@ -35,9 +35,9 @@ export function Services() {
               <div className="flex flex-1 flex-col border border-t-0 border-rule bg-bone p-4">
                 <p className="o-label text-[10px] text-ink">{item.name}</p>
                 <p className="mt-2 text-[12px] leading-snug text-ink-mute">{item.detail}</p>
-                <span className="o-label mt-auto pt-4 text-[10px] text-[var(--orravan-blue)]">
+                <a href={asset(item.href)} className="o-label mt-auto pt-4 text-[10px] text-[var(--orravan-blue)]">
                   Learn more →
-                </span>
+                </a>
               </div>
             </article>
           </Reveal>
