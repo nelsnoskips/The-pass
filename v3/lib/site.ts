@@ -30,8 +30,23 @@ export const QUOTE = {
 } as const;
 
 export const NAV = {
-  menus: ["Intelligence", "Services", "Industries", "Company"],
-  quick: ["Automation", "HVAC", "Monitoring", "Inventory"],
+  /** Where each menu item goes. Paths are site-relative; "/#…" jumps to
+      a homepage section from any page. Company became Team on 21 Oct. */
+  menus: [
+    { label: "Intelligence", href: "/#how" },
+    { label: "Services", href: "/#services" },
+    { label: "Industries", href: "/#industries" },
+    { label: "Team", href: "/team" },
+  ],
+  /** The quick row under the bar: each one lands on the part of the
+      homepage it names. HVAC and Inventory land on their own cards in
+      Services, which light up when arrived at. */
+  quick: [
+    { label: "Automation", href: "/#controls" },
+    { label: "HVAC", href: "/#service-hvac" },
+    { label: "Monitoring", href: "/#how" },
+    { label: "Inventory", href: "/#service-inventory" },
+  ],
   portal: "Service Portal",
   /** The customer login on Orravan's current site (Alex, 13 Oct). */
   portalHref: "https://orravan.ai/service-portal/",

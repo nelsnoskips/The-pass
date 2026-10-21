@@ -25,7 +25,7 @@ export function Services() {
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 lg:pr-10">
         {SERVICES.items.map((item) => (
           <Reveal key={item.name}>
-            <article className="flex h-full flex-col">
+            <article id={item.slot} className="o-service flex h-full flex-col">
               <Plate
                 slot={item.slot}
                 parallax={8}

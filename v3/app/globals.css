@@ -784,13 +784,13 @@ html[data-entered="true"] .o-slide-dots { visibility: hidden; }
 
 /* --- the navigation waits for the entrance ---------------------------- */
 
-header.o-bar {
+header.o-bar[data-waits] {
   opacity: 0;
   transform: translateY(-10px);
   pointer-events: none;
   transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
 }
-html[data-entered="true"] header.o-bar {
+html[data-entered="true"] header.o-bar[data-waits] {
   opacity: 1;
   transform: none;
   pointer-events: auto;
@@ -1763,3 +1763,23 @@ main > section { scroll-margin-top: 72px; }
 .o-quote-contact dt { font-size: 10px; color: var(--color-ink-mute, #7a7b80); }
 .o-quote-contact dd { margin: 3px 0 0; font-size: 14px; color: var(--color-ink, #17181a); }
 .o-quote-contact a:hover { color: var(--orravan-blue); }
+
+/* Arriving from the quick row: land clear of the fixed bar, and let the
+   card the link named light up for a moment. */
+#controls, #how, #services, #industries, #record, #faq, #story { scroll-margin-top: 96px; }
+.o-service { scroll-margin-top: 130px; }
+.o-service:target { animation: o-service-lit 2.4s ease-out 1; }
+@keyframes o-service-lit {
+  0%, 35% { box-shadow: 0 0 0 2px var(--orravan-blue), 0 18px 40px rgba(73, 110, 156, .22); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .o-service:target { animation: none; box-shadow: 0 0 0 2px var(--orravan-blue); }
+}
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* Pages whose header shows from the start sit clear of it: the bar,
+   plus the quick row from 1024px. */
+.o-below-bar { padding-top: 68px; }
+@media (min-width: 1024px) { .o-below-bar { padding-top: 104px; } }

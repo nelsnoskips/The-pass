@@ -16,7 +16,7 @@ export default function TeamPage() {
   return (
     <>
       <TopBar />
-      <main>
+      <main className="o-below-bar">
         <TeamIntro />
         <Org />
         <Careers />

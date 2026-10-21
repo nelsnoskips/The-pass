@@ -19,7 +19,7 @@ import { Assist } from "@/components/assist";
 export default function Page() {
   return (
     <>
-      <TopBar />
+      <TopBar waits />
       <main>
         <Entrance />
         {/* A beat before the page starts covering the hero: transparent,

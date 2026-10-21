@@ -4,30 +4,29 @@ import { FOOTER, NAV, ORRAVAN } from "@/lib/site";
 import { IMAGES, asset } from "@/lib/images";
 
 /**
- * The bar waits for the entrance. Until the plate hands the page over
- * (`html[data-entered="true"]`), it is invisible and untouchable; from
- * then on it is an ordinary sticky header.
+ * On the homepage the bar waits for the entrance: until the plate hands
+ * the page over (`html[data-entered="true"]`) it is invisible and
+ * untouchable, and from then on it is an ordinary sticky header. Pages
+ * without an entrance (team, quote) show it from the start — before,
+ * they waited for an entrance that never came and had no header.
  */
-export function TopBar() {
+export function TopBar({ waits = false }: { waits?: boolean }) {
   return (
-    <header className="o-bar fixed inset-x-0 top-0 z-50 border-b border-rule bg-[color-mix(in_srgb,var(--paper)_96%,transparent)] ">
+    <header data-waits={waits || undefined} className="o-bar fixed inset-x-0 top-0 z-50 border-b border-rule bg-[color-mix(in_srgb,var(--paper)_96%,transparent)] ">
       <div className="grid h-[68px] grid-cols-[1fr_auto_1fr] items-center px-[var(--rail-pad)] pr-5 lg:pr-10">
-        <a href="#top" aria-label={`${ORRAVAN.name} home`} className="shrink-0">
+        <a href={asset("/")} aria-label={`${ORRAVAN.name} home`} className="shrink-0">
           <Logo className="h-8" />
         </a>
 
         <nav className="hidden items-center justify-center gap-8 lg:flex" aria-label="Main">
           {NAV.menus.map((menu) => (
-            <button
-              key={menu}
-              type="button"
-              className="o-ui flex items-center gap-1.5 text-[10px] text-ink-soft transition-colors hover:text-[var(--orravan-blue)]"
+            <a
+              key={menu.label}
+              href={asset(menu.href)}
+              className="o-ui text-[10px] text-ink-soft transition-colors hover:text-[var(--orravan-blue)]"
             >
-              {menu}
-              <svg viewBox="0 0 8 5" className="w-2.5 opacity-40" aria-hidden>
-                <path d="M0 0 L4 5 L8 0" fill="currentColor" />
-              </svg>
-            </button>
+              {menu.label}
+            </a>
           ))}
         </nav>
 
@@ -52,11 +51,11 @@ export function TopBar() {
         <div className="mx-auto flex max-w-[1600px] justify-center gap-14 px-10 py-2">
           {NAV.quick.map((item) => (
             <a
-              key={item}
-              href="#services"
+              key={item.label}
+              href={asset(item.href)}
               className="o-ui text-[10px] text-ink-mute transition-colors hover:text-[var(--orravan-blue)]"
             >
-              {item}
+              {item.label}
             </a>
           ))}
         </div>
