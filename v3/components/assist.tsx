@@ -230,7 +230,11 @@ export function Assist() {
             {ready && node.chips && (
               <div className="o-ai-chips">
                 {node.chips.map((c) =>
-                  c.href ? (
+                  c.href?.startsWith("/") ? (
+                    <a key={c.label} href={asset(c.href)}>
+                      {c.label}
+                    </a>
+                  ) : c.href ? (
                     <a key={c.label} href={c.href} target="_blank" rel="noopener noreferrer">
                       {c.label} &#8599;
                     </a>

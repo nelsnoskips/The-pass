@@ -37,7 +37,7 @@ export const SERVICES_PAGE = {
   head: ["Engineering the", "buildings of the future."],
   lede:
     "High-quality air conditioning solutions for buildings across California. Orravan Mechanical, Inc. offers complete installations, retrofit, repairs, parts and automation engineering.",
-  served: ["Health care facilities", "Restaurants", "Hotels", "Office buildings", "Churches", "Schools"],
+  served: ["Health care facilities", "Data centers", "Hotels", "Office buildings", "Churches", "Schools"],
   call:
     "If you are a commercial building owner interested in upgrading your existing HVAC system, installing a new energy-efficient system, or signing up for a custom maintenance contract, talk to us today.",
   columns: [

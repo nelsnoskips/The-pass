@@ -181,6 +181,6 @@ export const IMAGES: Record<string, Slot> = {
   "industry-commercial": { src: img("18-industry-commercial.webp"), alt: "Commercial", brief: "Industry. 3:2." },
   "industry-education": { src: img("19-industry-education.webp"), alt: "Education", brief: "Industry. 3:2." },
   "industry-hospitality": { src: img("20-industry-hospitality.webp"), alt: "Hospitality", brief: "Industry. 3:2." },
-  "industry-restaurants": { src: img("21-industry-restaurants.webp"), alt: "Restaurants", brief: "Industry. 3:2." },
+  "industry-data-centers": { src: img("21-industry-data-centers.webp"), alt: "Data center cooling and server aisle", brief: "Industry. 3:2." },
   "industry-government": { src: img("34-industry-government.webp"), alt: "Government", brief: "Industry. 3:2. Stand-in until Orravan supplies a real job photo." },
 };

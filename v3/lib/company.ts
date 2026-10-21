@@ -217,13 +217,10 @@ export const DEPARTMENTS: Department[] = [
     blurb: "Central plant, service and the on-call rotation.",
     people: [
       {
-        id: "john",
-        name: "John Vazquez",
-        role: "Service Manager",
-        initials: "JV",
-        since: "2024",
-        photo: "/images/team/john.webp",
-        quote: "Both in fighting and in everyday life you should be determined though calm.",
+        id: "ray",
+        name: "Ray Romaine",
+        role: "VP of Operations",
+        initials: "RR",
       },
       {
         id: "simon",
@@ -322,6 +319,13 @@ export const DEPARTMENTS: Department[] = [
         photo: "/images/team/christine.webp",
         since: "2026",
         quote: "With a little patience, a little persistence, and a lot of heart, you'll figure it out.",
+      },
+      {
+        id: "alex",
+        name: "Alex Jimenez",
+        role: "Project Coordinator",
+        initials: "AJ",
+        photo: "/images/team/alex.webp",
       },
     ],
   },
