@@ -221,6 +221,7 @@ export const DEPARTMENTS: Department[] = [
         name: "Ray Romaine",
         role: "VP of Operations",
         initials: "RR",
+        photo: "/images/team/ray.webp",
       },
       {
         id: "simon",
