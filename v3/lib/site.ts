@@ -51,7 +51,7 @@ export const NAV = {
   ],
   portal: "Service Portal",
   /** The customer login on Orravan's current site (Alex, 13 Oct). */
-  portalHref: "https://orravan.ai/service-portal/",
+  portalHref: "https://portal.orravan.ai/",
   request: "Request Service",
 } as const;
 
