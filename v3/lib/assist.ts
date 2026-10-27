@@ -31,7 +31,7 @@ export type Node = {
   send?: "request" | "emergency";
 };
 
-export const PORTAL = "https://orravan.ai/service-portal/";
+export const PORTAL = "https://portal.orravan.ai/";
 
 export const ASSIST = {
   name: "Orravan Assist",

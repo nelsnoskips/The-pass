@@ -9,5 +9,5 @@
 /all-products/*                        /inventory                      301
 /products-by-category/*                /inventory                      301
 /products-by-brand/*                   /inventory                      301
-/service-portal/*                      https://portal.orravan.ai/service-portal/  301
+/service-portal/*                      https://portal.orravan.ai/  301
 /account/*                             https://portal.orravan.ai/account/         301
