@@ -27,6 +27,9 @@ export const QUOTE = {
   copy: "Tell us about the building and what it needs. Our team will get back to you to scope the work.",
   sent: "Thanks. Your request is with our team, and we'll be in touch soon.",
   failed: "Sorry, that didn't go through. Please call us at (855) 677-2826 or email info@orravan.ai.",
+  /** Existing ServiceTrade customers can open a request in the portal,
+      which lands straight in dispatch. */
+  portal: "Request service in the Service Portal",
 } as const;
 
 export const NAV = {

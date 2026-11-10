@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ORRAVAN, QUOTE } from "@/lib/site";
+import { NAV, ORRAVAN, QUOTE } from "@/lib/site";
 import { asset } from "@/lib/images";
 
 /**
@@ -113,6 +113,14 @@ export function QuoteForm() {
 export function QuoteContact() {
   return (
     <dl className="o-quote-contact">
+      <div>
+        <dt className="o-label">Existing customers</dt>
+        <dd>
+          <a href={NAV.portalHref} target="_blank" rel="noopener noreferrer">
+            {QUOTE.portal} &#8599;
+          </a>
+        </dd>
+      </div>
       <div>
         <dt className="o-label">Call</dt>
         <dd>
