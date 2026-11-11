@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
-import { findTimes, reserve, type ReserveState, type TimeOption } from "@/lib/sites/actions";
+import { findTimes, joinWaitlistAction, reserve, type ReserveState, type TimeOption } from "@/lib/sites/actions";
 
 /**
  * The guest's booking flow: party and date, then a time, then who they
@@ -15,6 +15,8 @@ export function BookingWidget({
   maxDate,
   maxParty,
   restaurant,
+  initialDate,
+  initialParty,
 }: {
   slug: string;
   /** Venue-local "yyyy-mm-dd". */
@@ -22,10 +24,14 @@ export function BookingWidget({
   maxDate: string;
   maxParty: number;
   restaurant: string;
+  /** From a waitlist text's link. */
+  initialDate?: string;
+  initialParty?: number;
 }) {
-  const [party, setParty] = useState(2);
-  const [date, setDate] = useState(today);
+  const [party, setParty] = useState(initialParty && initialParty <= maxParty ? initialParty : 2);
+  const [date, setDate] = useState(initialDate && initialDate >= today && initialDate <= maxDate ? initialDate : today);
   const [times, setTimes] = useState<TimeOption[] | null>(null);
+  const [open, setOpen] = useState(true);
   const [time, setTime] = useState<string | null>(null);
   const [loading, startLoading] = useTransition();
   const [state, submit, pending] = useActionState<ReserveState, FormData>(reserve, { error: null });
@@ -35,10 +41,11 @@ export function BookingWidget({
   useEffect(() => {
     const id = ++request.current;
     startLoading(async () => {
-      const found = await findTimes(slug, date, party);
+      const { times: found, open: serving } = await findTimes(slug, date, party);
       // A slower, older answer must not overwrite a newer one.
       if (id !== request.current) return;
       setTimes(found);
+      setOpen(serving);
       setTime((current) => (found.some((t) => t.time === current) ? current : null));
     });
   }, [slug, date, party]);
@@ -48,7 +55,7 @@ export function BookingWidget({
     if (!state.error) return;
     const id = ++request.current;
     startLoading(async () => {
-      const found = await findTimes(slug, date, party);
+      const { times: found } = await findTimes(slug, date, party);
       if (id !== request.current) return;
       setTimes(found);
       setTime((current) => (found.some((t) => t.time === current) ? current : null));
@@ -101,9 +108,18 @@ export function BookingWidget({
           {times === null ? (
             <p className="site-note" style={{ marginTop: 10 }}>Finding tables…</p>
           ) : times.length === 0 ? (
-            <p className="site-note" style={{ marginTop: 10 }}>
-              No tables online for {party} on that day. Try another date, or call us — we keep a few tables back for the phone.
-            </p>
+            <div style={{ marginTop: 10 }}>
+              {open ? (
+                <>
+                  <p className="site-note">
+                    No tables online for {party} on that day. Try another date, call us, or we can text you if one opens.
+                  </p>
+                  <Waitlist slug={slug} date={date} party={party} />
+                </>
+              ) : (
+                <p className="site-note">We&rsquo;re closed that day. Please pick another date.</p>
+              )}
+            </div>
           ) : (
             <div role="group" aria-labelledby="bk-times" style={{ opacity: loading ? 0.5 : 1 }}>
               {groups.map(([period, options]) => (
@@ -159,5 +175,45 @@ export function BookingWidget({
       )}
       {!chosen && state.error && <p className="site-error" role="alert">{state.error}</p>}
     </form>
+  );
+}
+
+/** "Tell me if a table opens". It sits inside the booking form, and a
+ *  form can't nest in a form, so it sends its own fields directly. */
+function Waitlist({ slug, date, party }: { slug: string; date: string; party: number }) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [state, setState] = useState<{ error: string | null; joined?: boolean }>({ error: null });
+  const [pending, start] = useTransition();
+  if (state.joined) {
+    return <p className="site-note" role="status" style={{ marginTop: 12 }}>You&rsquo;re on the list. If a table for {party} opens that day, we&rsquo;ll text you a link — first to book gets it.</p>;
+  }
+  if (!open) {
+    return <button type="button" className="site-btn ghost" style={{ marginTop: 12 }} onClick={() => setOpen(true)}>Text me if a table opens</button>;
+  }
+  const send = () =>
+    start(async () => {
+      const f = new FormData();
+      f.set("site", slug); f.set("date", date); f.set("party", String(party)); f.set("name", name); f.set("phone", phone);
+      setState(await joinWaitlistAction({ error: null }, f));
+    });
+  return (
+    <div className="site-stack" style={{ marginTop: 14, gap: 12 }}>
+      <div className="site-row">
+        <div className="site-field">
+          <label htmlFor="wl-name">Name</label>
+          <input id="wl-name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
+        </div>
+        <div className="site-field">
+          <label htmlFor="wl-phone">Mobile</label>
+          <input id="wl-phone" type="tel" autoComplete="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+        </div>
+      </div>
+      {state.error && <p className="site-error" role="alert">{state.error}</p>}
+      <button type="button" className="site-btn" disabled={pending || !name.trim() || !phone.trim()} onClick={send}>
+        {pending ? "Adding…" : "Add me to the list"}
+      </button>
+    </div>
   );
 }

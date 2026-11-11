@@ -2,7 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "../db";
+import { notifyWaitlist } from "../reservations/followups";
 import { sendCancellationNotice } from "../reservations/notify";
+import { localDate } from "../reservations/time";
+import { headers } from "next/headers";
 import { availableSlots, book, seatWalkIn, setStatus, type ReservationStatus } from "../reservations/repo";
 import { formatClock, formatWhen } from "../sites/format";
 import { requireTenant } from "./context";
@@ -21,8 +24,8 @@ export async function changeStatus(org: string, reservationId: string, status: R
   const { tenant } = await requireTenant(org);
   if (!can(tenant, "book")) return { error: "Your role can't change bookings." };
 
-  const [before] = await sql<{ status: ReservationStatus; guest_id: string; phone: string; starts_at: Date; timezone: string; venue_phone: string | null }[]>`
-    select r.status, r.guest_id, g.phone, r.starts_at, v.timezone, v.phone as venue_phone
+  const [before] = await sql<{ status: ReservationStatus; guest_id: string; phone: string; starts_at: Date; timezone: string; venue_phone: string | null; venue_id: string }[]>`
+    select r.status, r.guest_id, g.phone, r.starts_at, v.timezone, v.phone as venue_phone, r.venue_id
     from reservations r join guests g on g.id = r.guest_id join venues v on v.id = r.venue_id
     where r.id = ${reservationId} and r.org_id = ${tenant.orgId}`;
   if (!before) return { error: "Booking not found." };
@@ -45,6 +48,15 @@ export async function changeStatus(org: string, reservationId: string, status: R
       });
     } catch (err) {
       console.error("Cancellation notice failed", err);
+    }
+    try {
+      const h = await headers();
+      await notifyWaitlist(sql, {
+        orgId: tenant.orgId, venueId: before.venue_id, date: localDate(before.starts_at, before.timezone),
+        baseUrl: `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host") ?? ""}`,
+      });
+    } catch (err) {
+      console.error("Waitlist notify failed", err);
     }
   }
   revalidatePath(`/r/${org}/host`);

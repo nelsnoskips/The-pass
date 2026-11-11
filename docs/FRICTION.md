@@ -27,15 +27,15 @@ reviews). Re-check prices before quoting them to a prospect.
 | Complaint | Evidence | What we do | State |
 |---|---|---|---|
 | Per-cover fees eat thin margins | G2 summary cites it in 16 reviews *(snippet)*; SF Standard: bills in "the thousands" | One flat fee per location. No fee per cover, ever, and none on the restaurant's own website | Engine has no fee concept; pricing to set |
-| Lock-in: annual contracts, "system of record" terms | Restaurant Dive, Apr 2026: new OpenTable terms; trade group's biggest concern; Washington AG asked to review | Month to month. No exclusivity. Export everything — guests, bookings, history — in one click | Export to build |
+| Lock-in: annual contracts, "system of record" terms | Restaurant Dive, Apr 2026: new OpenTable terms; trade group's biggest concern; Washington AG asked to review | Month to month. No exclusivity. Export everything — guests, bookings, history — in one click | Export built (guests with consent history, bookings) |
 | Double bookings when systems don't talk | Same article; Capterra review on the lost SevenRooms link *(snippet)* | The database refuses overlapping holds on a table whatever the source. During a switch, import the other system's bookings as holds | Guarantee built and tested; import to build |
 | Who owns the guest | OpenTable blocked data sharing in 2019, then charged for it *(snippet)* | Guests belong to the restaurant's account. We never contact them for anyone else | Built (per-org guests, consent record) |
 | Platform markets other restaurants to my guest | One Trustpilot anecdote *(snippet)*; unconfirmed | Confirmation and reminder messages mention only this restaurant | Built |
 | A cut of deposits and no-show fees | OpenTable 2% (verified); Resy/Tock 2–3% (official) | Card processing at cost; no platform cut | Deposits to build |
-| Bots, brokers, and now AI agents taking tables | Resy: broker bookings no-show at 4× the rate; NY law Feb 2025; CNN Sep 2026 | A booking belongs to a phone number: one live booking per phone per service, rate limits per phone and per network address, a deposit on the slots that get resold, and a flag for the host when a pattern looks like a broker | Phone identity built; limits and flags to build |
+| Bots, brokers, and now AI agents taking tables | Resy: broker bookings no-show at 4× the rate; NY law Feb 2025; CNN Sep 2026 | A booking belongs to a phone number: one live booking per phone per service, rate limits per phone and per network address, a deposit on the slots that get resold, and a flag for the host when a pattern looks like a broker | One per phone per day, 4/hour per phone, 10 per 10 min per address: built. Deposits and broker flags to build |
 | Opaque pricing | SevenRooms publishes none | Prices on the website | When pricing is set |
 | Guest data exposed through a vendor | SevenRooms breach, Dec 2022 | Hold only what a booking needs; every query scoped to one restaurant and tested; few vendors | Isolation built and tested |
-| Setup is fiddly; weak offline | SevenRooms reviews *(snippet)* | We set up the floor and hours for them; host stand keeps working through a dropped connection | Host stand to build |
+| Setup is fiddly; weak offline | SevenRooms reviews *(snippet)* | We set up the floor and hours for them; host stand keeps working through a dropped connection | Host stand built; offline mode to build |
 | Switching is a slog for staff | SF Standard | Import, a host stand that looks like what hosts know, and a person from the studio doing the move | To build |
 
 What operators do **not** complain about, as far as this found: support
@@ -50,12 +50,12 @@ network covers it actually needs.
 
 | Complaint | Evidence | What we do | State |
 |---|---|---|---|
-| Charged a cancellation or no-show fee they dispute | Top complaint on both Trustpilot pages, incl. marked no-show after dining | The policy is stated before booking and in the confirmation. A reminder with one-tap cancel goes out before the cut-off. A no-show charge needs a host to mark it, is logged with who and when, and can't be applied to a party that was seated | Status log built; reminders, policy text, deposits to build |
+| Charged a cancellation or no-show fee they dispute | Top complaint on both Trustpilot pages, incl. marked no-show after dining | The policy is stated before booking and in the confirmation. A reminder with one-tap cancel goes out before the cut-off. A no-show charge needs a host to mark it, is logged with who and when, and can't be applied to a party that was seated | Status rules built (a seated party can't become a no-show); reminders built; policy text and deposits to build |
 | Can't reach anyone | Resy removed live chat; OpenTable "an automated AI bot" | The restaurant's phone number is on every booking page and message. The restaurant is the support | Built |
 | Forced account, codes that never arrive | Resy login reviews, 2026 | No account, no app, no code. A name and a mobile number | Built |
-| Can't find how to change or cancel | ~10% of analysed Resy feedback (OnClarity) | Every confirmation carries a private link: cancel in one tap; change time or party size in place | Cancel built; change-in-place to build |
-| Booking not honoured, or changed without a word | OpenTable reviews, 2026 | Closed days can't be booked. If the restaurant changes or cancels a booking, the guest is texted | Closures built; change notices to build |
-| Nothing ever available | Resy reviews | "Tell me if a table opens": a notify list per service that texts in order when someone cancels | To build |
+| Can't find how to change or cancel | ~10% of analysed Resy feedback (OnClarity) | Every confirmation carries a private link: cancel in one tap; change time or party size in place | Built: cancel, and move day, time or party in place |
+| Booking not honoured, or changed without a word | OpenTable reviews, 2026 | Closed days can't be booked. If the restaurant changes or cancels a booking, the guest is texted | Closures built; restaurant-cancel text built |
+| Nothing ever available | Resy reviews | "Tell me if a table opens": a notify list per day that texts in order when someone cancels | Built (three per opening, link pre-filled) |
 | Points they can't use | OpenTable review | Rewards are this restaurant's, spent at this restaurant | Loyalty wave |
 | Too many messages | Weak evidence | Promotions only with recorded consent, at most one a week, 10am–8pm, STOP honoured | Built and tested |
 
@@ -65,7 +65,10 @@ card.
 
 ## What this adds to the build
 
-In order: rate limits and one-live-booking-per-phone; reminders with
-one-tap cancel; change a booking in place; the notify list; change and
-cancellation notices to guests; one-click export; import from the old
-system; deposits with the policy shown up front and processing at cost.
+Done: rate limits and one-live-booking-per-phone; reminders with
+one-tap cancel; change a booking in place; the notify list;
+cancellation notices to guests; one-click export.
+
+Still to build: import from the old system; deposits with the policy
+shown up front and processing at cost; broker-pattern flags; host stand
+offline mode.

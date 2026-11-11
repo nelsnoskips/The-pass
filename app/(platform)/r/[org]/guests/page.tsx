@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
+import { can } from "@/lib/platform/tenant";
 import { formatPhone } from "@/lib/sites/format";
 
 export const dynamic = "force-dynamic";
@@ -45,11 +46,19 @@ export default async function Guests({ params, searchParams }: { params: Promise
           <h1>Guests</h1>
           <p className="pf-sub">{total} guests · {textable} can receive marketing texts</p>
         </div>
+        <div className="pf-daynav" style={{ flexWrap: "wrap" }}>
+        {can(tenant, "manage_venue") && (
+          <>
+            <a className="pf-btn" href={`/r/${slug}/export/guests.csv`} download>Export guests</a>
+            <a className="pf-btn" href={`/r/${slug}/export/bookings.csv`} download>Export bookings</a>
+          </>
+        )}
         <form className="pf-daynav" role="search">
           <input name="q" defaultValue={term} placeholder="Name, phone or email" aria-label="Search guests"
             className="pf-input" style={{ width: 260 }} />
           <button className="pf-btn" type="submit">Search</button>
         </form>
+        </div>
       </div>
       <section className="pf-panel pf-scroll">
         {guests.length === 0 ? (

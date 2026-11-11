@@ -2,13 +2,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import { ChangeBooking } from "@/components/sites/ChangeBooking";
 import { bookingByToken } from "@/lib/reservations/repo";
+import { localDate } from "@/lib/reservations/time";
 import { cancelBooking } from "@/lib/sites/actions";
 import { formatWhen } from "@/lib/sites/format";
 import { getPublishedSite } from "@/lib/sites/repo";
 
 // A private page reached by an unguessable link: never indexed.
 export const metadata: Metadata = { title: "Your reservation", robots: { index: false, follow: false } };
+
+function maxDate(tz: string, horizonDays: number) {
+  const [y, m, d] = localDate(new Date(), tz).split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + horizonDays)).toISOString().slice(0, 10);
+}
 
 const STATUS: Record<string, { label: string; tone: "ok" | "off" }> = {
   booked: { label: "Confirmed", tone: "ok" },
@@ -19,8 +26,9 @@ const STATUS: Record<string, { label: string; tone: "ok" | "off" }> = {
   no_show: { label: "Missed", tone: "off" },
 };
 
-export default async function BookingPage({ params }: { params: Promise<{ site: string; token: string }> }) {
+export default async function BookingPage({ params, searchParams }: { params: Promise<{ site: string; token: string }>; searchParams: Promise<{ changed?: string }> }) {
   const { site: slug, token } = await params;
+  const { changed } = await searchParams;
   const sql = db();
   if (!sql) notFound();
   const [site, booking] = await Promise.all([getPublishedSite(sql, slug), bookingByToken(sql, token)]);
@@ -39,7 +47,7 @@ export default async function BookingPage({ params }: { params: Promise<{ site: 
         {booking.status === "cancelled"
           ? "This reservation is cancelled."
           : canCancel
-            ? `You're booked, ${first}.`
+            ? changed ? `Done — you're moved, ${first}.` : `You're booked, ${first}.`
             : "Your reservation"}
       </h1>
 
@@ -52,17 +60,22 @@ export default async function BookingPage({ params }: { params: Promise<{ site: 
       </dl>
 
       {canCancel ? (
-        <>
-          <p className="site-note" style={{ marginBottom: 20 }}>
-            Plans changed? Cancel here and the table goes back to someone else.
-            To change the time or party size, cancel and book again{c.contact.phone ? `, or call ${c.contact.phone}` : ""}.
+        <div className="site-stack">
+          <ChangeBooking
+            token={token} slug={site.slug}
+            date={localDate(booking.startsAt, booking.timezone)} party={booking.partySize}
+            today={localDate(new Date(), booking.timezone)} maxDate={maxDate(booking.timezone, site.bookingHorizonDays)}
+            maxParty={site.maxPartyOnline}
+          />
+          <p className="site-note" style={{ margin: "8px 0 0" }}>
+            Can&rsquo;t make it? Cancel and the table goes to someone on the waiting list.
           </p>
           <form action={cancelBooking}>
             <input type="hidden" name="token" value={token} />
             <input type="hidden" name="site" value={site.slug} />
             <button type="submit" className="site-btn ghost">Cancel this reservation</button>
           </form>
-        </>
+        </div>
       ) : (
         <Link href={`/s/${site.slug}/reserve`} className="site-btn">Book another table</Link>
       )}

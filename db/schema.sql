@@ -525,3 +525,25 @@ create table if not exists rate_events (
 );
 
 create index if not exists rate_events_key_idx on rate_events(key, created_at desc);
+
+-- When the reminder text went out, so it goes out once. Cleared when a
+-- guest moves the booking, so the new time gets its own reminder.
+alter table reservations add column if not exists reminder_sent_at timestamptz;
+
+-- "Tell me if a table opens." One row per request; texted in the order
+-- they asked when a matching table frees up.
+create table if not exists waitlist_requests (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null references orgs(id) on delete cascade,
+  venue_id    uuid not null references venues(id) on delete cascade,
+  name        text not null,
+  phone       text not null,
+  date        date not null,
+  party_size  integer not null check (party_size >= 1),
+  status      text not null default 'waiting' check (status in ('waiting', 'notified', 'closed')),
+  notified_at timestamptz,
+  created_at  timestamptz not null default now(),
+  unique (venue_id, phone, date)
+);
+
+create index if not exists waitlist_venue_date_idx on waitlist_requests(venue_id, date, status, created_at);

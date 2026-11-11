@@ -67,7 +67,11 @@ interface Bundle {
   closed: boolean;
 }
 
-async function loadBundle(q: Q, orgId: string, venueId: string, date: string): Promise<Bundle | null> {
+async function loadBundle(
+  q: Q, orgId: string, venueId: string, date: string,
+  /** A booking being moved: its own seat and pacing don't count against it. */
+  exclude: string | null = null,
+): Promise<Bundle | null> {
   const [v] = await q<{
     id: string; timezone: string; booking_horizon_days: number;
     min_notice_minutes: number; max_party_online: number;
@@ -97,12 +101,14 @@ async function loadBundle(q: Q, orgId: string, venueId: string, date: string): P
       from reservation_tables rt
       join dining_tables t on t.id = rt.table_id
       where t.venue_id = ${venueId} and rt.org_id = ${orgId} and rt.live
-        and rt.during && tstzrange(${from}, ${to})`,
+        and rt.during && tstzrange(${from}, ${to})
+        ${exclude ? q`and rt.reservation_id <> ${exclude}` : q``}`,
     q<{ starts_at: Date; party_size: number }[]>`
       select starts_at, party_size from reservations
       where venue_id = ${venueId} and org_id = ${orgId}
         and status = any(${LIVE}::reservation_status[])
-        and starts_at >= ${from} and starts_at < ${to}`,
+        and starts_at >= ${from} and starts_at < ${to}
+        ${exclude ? q`and id <> ${exclude}` : q``}`,
     q`select 1 from venue_closures where venue_id = ${venueId} and org_id = ${orgId} and date = ${date}`,
   ]);
 
@@ -137,9 +143,9 @@ async function loadBundle(q: Q, orgId: string, venueId: string, date: string): P
 
 export async function availableSlots(
   sql: Sql,
-  input: { orgId: string; venueId: string; date: string; partySize: number; channel: Channel; now?: Date },
+  input: { orgId: string; venueId: string; date: string; partySize: number; channel: Channel; now?: Date; exclude?: string },
 ): Promise<Slot[]> {
-  const b = await loadBundle(sql, input.orgId, input.venueId, input.date);
+  const b = await loadBundle(sql, input.orgId, input.venueId, input.date, input.exclude ?? null);
   if (!b) return [];
   return findSlots({ ...b, date: input.date, partySize: input.partySize, channel: input.channel, now: input.now ?? new Date() });
 }
@@ -485,4 +491,59 @@ export async function venuesFor(sql: Sql, tenant: Tenant): Promise<VenueSummary[
   const rows = await sql<VenueSummary[]>`
     select id, name, timezone from venues where org_id = ${tenant.orgId} order by name`;
   return rows.filter((v) => tenant.venueIds === null || tenant.venueIds.includes(v.id));
+}
+
+
+export type ModifyResult =
+  | { ok: true; startsAt: Date; partySize: number; tableLabel: string }
+  | { ok: false; reason: "not_found" | "not_changeable" | "unavailable" };
+
+/**
+ * A guest moving their own booking — new day, time or party size — in
+ * one step. The old table is held until the new one is secured: if the
+ * new time isn't available, nothing changes.
+ */
+export async function modifyByToken(
+  sql: Sql,
+  token: string,
+  change: { date: string; time: string; partySize: number },
+  now = new Date(),
+): Promise<ModifyResult> {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await sql.begin(async (tx): Promise<ModifyResult> => {
+        const [r] = await tx<{ id: string; org_id: string; venue_id: string; status: ReservationStatus; party_size: number; starts_at: Date }[]>`
+          select id, org_id, venue_id, status, party_size, starts_at from reservations
+          where manage_token = ${token} for update`;
+        if (!r) return { ok: false, reason: "not_found" };
+        if (r.status !== "booked" && r.status !== "confirmed") return { ok: false, reason: "not_changeable" };
+
+        const b = await loadBundle(tx, r.org_id, r.venue_id, change.date, r.id);
+        if (!b) return { ok: false, reason: "not_found" };
+        const slot = findSlots({ ...b, date: change.date, partySize: change.partySize, channel: "online", now })
+          .find((s) => s.time === change.time);
+        if (!slot) return { ok: false, reason: "unavailable" };
+
+        await tx`update reservation_tables set live = false where reservation_id = ${r.id}`;
+        await tx`delete from reservation_tables where reservation_id = ${r.id} and table_id = ${slot.tableId}`;
+        await tx`insert into reservation_tables (reservation_id, table_id, org_id, during)
+                 values (${r.id}, ${slot.tableId}, ${r.org_id}, tstzrange(${slot.startsAt}, ${slot.endsAt}, '[)'))`;
+        await tx`update reservations set starts_at = ${slot.startsAt}, ends_at = ${slot.endsAt},
+                   party_size = ${change.partySize}, deposit_cents = ${slot.depositCents},
+                   reminder_sent_at = null, updated_at = now()
+                 where id = ${r.id}`;
+        await log(tx, r.org_id, "guest", "reservation.modified", "reservation", r.id, {
+          from: { startsAt: r.starts_at, partySize: r.party_size },
+          to: { startsAt: slot.startsAt, partySize: change.partySize, tableId: slot.tableId },
+        });
+        const table = b.tables.find((t) => t.id === slot.tableId)!;
+        return { ok: true, startsAt: slot.startsAt, partySize: change.partySize, tableLabel: table.label };
+      });
+    } catch (err) {
+      if ((err as { code?: string }).code === "23P01" && attempt < 2) continue;
+      if ((err as { code?: string }).code === "23P01") return { ok: false, reason: "unavailable" };
+      throw err;
+    }
+  }
+  return { ok: false, reason: "unavailable" };
 }

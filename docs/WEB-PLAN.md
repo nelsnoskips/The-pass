@@ -45,9 +45,9 @@ live under their own routes and their own layout.
 
 | Phase | What | State |
 |---|---|---|
-| 1 | Schema (`sites`, `site_versions`), content type + validator, the Classic theme, public site, booking flow, manage-booking page, confirmation text, demo seed | **This phase** |
-| 2 | Host stand (today's book, seat, no-show, walk-ins), restaurant logins from `org_members`, guest list screen. From `FRICTION.md`: booking rate limits and one live booking per phone, reminders with one-tap cancel, change a booking in place, notices to the guest when the restaurant changes one | Next |
-| 2b | Notify list ("tell me if a table opens"), one-click export, import from the old system, deposits with the policy stated up front | |
+| 1 | Schema (`sites`, `site_versions`), content type + validator, the Classic theme, public site, booking flow, manage-booking page, confirmation text, demo seed | **Built** |
+| 2 | Host stand (today's book, seat, no-show, walk-ins), restaurant logins from `org_members`, guest list screen, agents queue. From `FRICTION.md`: booking rate limits and one live booking per phone, reminders with one-tap cancel, change a booking in place, notices to the guest when the restaurant cancels | **Built** |
+| 2b | Notify list and one-click export (**built**); import from the old system, deposits with the policy stated up front (to build) | |
 | 3 | Site editor (form + preview + publish + history), custom domains, per-site sitemap | |
 | 4 | Website agent: describe the change → draft version → preview → approve | |
 | 5 | Second theme, image uploads, Reserve with Google feed | |

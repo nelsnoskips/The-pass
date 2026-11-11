@@ -19,8 +19,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-export default async function ReservePage({ params }: Params) {
+export default async function ReservePage({ params, searchParams }: Params & { searchParams: Promise<{ date?: string; party?: string }> }) {
   const { site: slug } = await params;
+  const q = await searchParams;
   const sql = db();
   const site = sql ? await getPublishedSite(sql, slug) : null;
   if (!site) notFound();
@@ -53,7 +54,9 @@ export default async function ReservePage({ params }: Params) {
           </tbody>
         </table>
       </div>
-      <BookingWidget slug={site.slug} today={today} maxDate={maxDate} maxParty={site.maxPartyOnline} restaurant={c.brand.name} />
+      <BookingWidget slug={site.slug} today={today} maxDate={maxDate} maxParty={site.maxPartyOnline} restaurant={c.brand.name}
+        initialDate={q.date && /^\d{4}-\d{2}-\d{2}$/.test(q.date) ? q.date : undefined}
+        initialParty={q.party ? Number(q.party) || undefined : undefined} />
     </div>
   );
 }
