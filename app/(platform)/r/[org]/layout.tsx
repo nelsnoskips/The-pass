@@ -1,3 +1,4 @@
+import { PassMark } from "@/components/marketing/PassMark";
 import { PlatformNav } from "@/components/platform/PlatformNav";
 import { requireTenant } from "@/lib/platform/context";
 
@@ -10,7 +11,7 @@ export default async function OrgLayout({ children, params }: { children: React.
     <>
       <header className="pf-top">
         <div className="pf-top-inner">
-          <a href={`/r/${org.slug}`} className="pf-org">{org.name}</a>
+          <a href={`/r/${org.slug}`} className="pf-org"><PassMark size={20} />{org.name}</a>
           <PlatformNav org={org.slug} />
           <div className="pf-who">
             <span className="email">{email}</span>

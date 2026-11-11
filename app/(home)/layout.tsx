@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import "./home.css";
 
-const sans = Geist({ variable: "--font-hm-sans", subsets: ["latin"], display: "swap" });
 const mono = Geist_Mono({ variable: "--font-hm-mono", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
@@ -14,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
-  return <div className={`hm ${sans.variable} ${mono.variable}`}>{children}</div>;
+  return <div className={`hm ${mono.variable}`}>{children}</div>;
 }

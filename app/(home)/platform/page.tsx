@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PassMark } from "@/components/marketing/PassMark";
 
 /**
  * The platform's homepage. Every product and agent named here exists in
@@ -63,7 +64,7 @@ export default function PlatformHome() {
     <>
       <header className="hm-nav">
         <div className="hm-wrap">
-          <Link href="/platform" className="hm-logo"><i aria-hidden />The Pass</Link>
+          <Link href="/platform" className="hm-logo"><PassMark size={22} />The Pass</Link>
           <nav className="hm-links" aria-label="Main">
             <a href="#products">Products</a>
             <a href="#agents">Agents</a>

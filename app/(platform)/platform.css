@@ -20,27 +20,27 @@
 
 .pf {
   /* surfaces, darkest to lightest */
-  --bg: oklch(0.155 0.006 265);
-  --bg-2: oklch(0.18 0.007 265);
-  --panel: oklch(0.205 0.008 265);
-  --panel-2: oklch(0.235 0.009 265);
+  --bg: oklch(0.155 0.006 60);
+  --bg-2: oklch(0.18 0.007 60);
+  --panel: oklch(0.205 0.008 60);
+  --panel-2: oklch(0.235 0.009 60);
   --rule: oklch(1 0 0 / 0.08);
   --rule-strong: oklch(1 0 0 / 0.14);
-  --ink: oklch(0.96 0.004 265);
-  --muted: oklch(0.72 0.01 265);
-  --faint: oklch(0.55 0.012 265);
+  --ink: oklch(0.96 0.004 60);
+  --muted: oklch(0.72 0.01 60);
+  --faint: oklch(0.55 0.012 60);
 
   /* signal colours */
-  --brand: oklch(0.72 0.16 255);       /* electric blue */
-  --brand-2: oklch(0.70 0.18 300);     /* violet, for AI */
-  --go: oklch(0.78 0.16 155);
-  --go-soft: oklch(0.78 0.16 155 / 0.12);
+  --brand: oklch(0.72 0.075 78);       /* electric blue */
+  --brand-2: oklch(0.64 0.11 52);     /* violet, for AI */
+  --go: oklch(0.74 0.08 140);
+  --go-soft: oklch(0.74 0.08 140 / 0.12);
   --warn: oklch(0.82 0.14 75);
   --warn-soft: oklch(0.82 0.14 75 / 0.12);
-  --stop: oklch(0.70 0.18 25);
-  --stop-soft: oklch(0.70 0.18 25 / 0.12);
-  --info: oklch(0.78 0.11 245);
-  --info-soft: oklch(0.72 0.16 255 / 0.14);
+  --stop: oklch(0.62 0.13 25);
+  --stop-soft: oklch(0.62 0.13 25 / 0.12);
+  --info: oklch(0.80 0.07 80);
+  --info-soft: oklch(0.72 0.075 78 / 0.14);
 
   /* motion: a spring for presses, a soft ease for everything else */
   --spring: linear(0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%, 0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%, 1.001 85.3%, 1);
@@ -49,8 +49,8 @@
 
   color-scheme: dark;
   background:
-    radial-gradient(1200px 600px at 85% -10%, oklch(0.72 0.16 255 / 0.10), transparent 60%),
-    radial-gradient(900px 500px at -10% 0%, oklch(0.70 0.18 300 / 0.07), transparent 55%),
+    radial-gradient(1200px 600px at 85% -10%, oklch(0.72 0.075 78 / 0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 0%, oklch(0.64 0.11 52 / 0.07), transparent 55%),
     var(--bg);
   background-attachment: fixed;
   color: var(--ink);
@@ -64,14 +64,14 @@
 .pf *, .pf *::before, .pf *::after { box-sizing: border-box; }
 .pf a { color: inherit; }
 .pf :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 8px; }
-.pf ::selection { background: oklch(0.72 0.16 255 / 0.35); }
+.pf ::selection { background: oklch(0.72 0.075 78 / 0.35); }
 .pf .mono, .pf-stat b, .pf-slot-time, .pf-table td.num { font-family: var(--font-pf-mono), ui-monospace, monospace; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 
 /* ---------------------------------------------------------- shell --- */
-.pf-top { position: sticky; top: 0; z-index: 30; background: oklch(0.155 0.006 265 / 0.72); backdrop-filter: blur(16px) saturate(1.4); border-bottom: 1px solid var(--rule); }
+.pf-top { position: sticky; top: 0; z-index: 30; background: oklch(0.155 0.006 60 / 0.72); backdrop-filter: blur(16px) saturate(1.4); border-bottom: 1px solid var(--rule); }
 .pf-top-inner { display: flex; align-items: center; gap: 18px; padding: 0 20px; min-height: 58px; }
 .pf-org { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 14.5px; text-decoration: none; white-space: nowrap; }
-.pf-org::before { content: ""; width: 9px; height: 9px; border-radius: 3px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: 0 0 14px oklch(0.72 0.16 255 / 0.7); }
+.pf-org::before { content: ""; width: 9px; height: 9px; border-radius: 3px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: 0 0 14px oklch(0.72 0.075 78 / 0.7); }
 .pf-tabs { display: flex; gap: 2px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; padding: 4px; }
 .pf-tabs a, .pf-tabs .soon { position: relative; padding: 7px 12px; border-radius: 8px; text-decoration: none; font-size: 13.5px; white-space: nowrap; transition: color .2s var(--ease), background-color .2s var(--ease); }
 .pf-tabs a { color: var(--muted); }
@@ -115,16 +115,16 @@
 /* Primary: luminous, with a light along its top edge and a glow that
    wakes on hover. */
 .pf-btn.primary {
-  border-color: transparent; color: oklch(0.15 0.02 265);
+  border-color: transparent; color: oklch(0.16 0.01 60);
   background:
     linear-gradient(180deg, oklch(1 0 0 / 0.22), transparent 55%),
-    linear-gradient(135deg, oklch(0.80 0.13 240), oklch(0.70 0.17 265));
+    linear-gradient(135deg, oklch(0.86 0.06 85), oklch(0.72 0.075 78));
   box-shadow:
     inset 0 1px 0 oklch(1 0 0 / 0.45),
-    0 0 0 1px oklch(0.72 0.16 255 / 0.5),
-    0 8px 24px -8px oklch(0.72 0.16 255 / 0.65);
+    0 0 0 1px oklch(0.72 0.075 78 / 0.5),
+    0 8px 24px -8px oklch(0.72 0.075 78 / 0.65);
 }
-.pf-btn.primary:hover { box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.5), 0 0 0 1px oklch(0.72 0.16 255 / 0.7), 0 12px 32px -8px oklch(0.72 0.16 255 / 0.9); }
+.pf-btn.primary:hover { box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.5), 0 0 0 1px oklch(0.72 0.075 78 / 0.7), 0 12px 32px -8px oklch(0.72 0.075 78 / 0.9); }
 /* A sheen that crosses the button once on hover. */
 .pf-btn.primary::after, .pf-btn.go::after {
   content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -1; pointer-events: none;
@@ -135,9 +135,9 @@
 @keyframes pf-sheen { from { background-position: 120% 0; opacity: 1; } to { background-position: -40% 0; opacity: 1; } }
 
 .pf-btn.go {
-  border-color: transparent; color: oklch(0.18 0.04 155);
-  background: linear-gradient(180deg, oklch(1 0 0 / 0.2), transparent 55%), oklch(0.80 0.15 155);
-  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.45), 0 0 0 1px oklch(0.78 0.16 155 / 0.5), 0 8px 22px -10px oklch(0.78 0.16 155 / 0.8);
+  border-color: transparent; color: oklch(0.18 0.03 140);
+  background: linear-gradient(180deg, oklch(1 0 0 / 0.2), transparent 55%), oklch(0.76 0.08 140);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.45), 0 0 0 1px oklch(0.74 0.08 140 / 0.5), 0 8px 22px -10px oklch(0.74 0.08 140 / 0.8);
 }
 
 /* AI: a light that travels the border, for anything an agent proposes. */
@@ -167,8 +167,8 @@
 .pf-stat b { display: block; font-size: 26px; font-weight: 500; line-height: 1.1; }
 .pf-stat span { font-size: 12px; color: var(--muted); }
 .pf-stat.live b { color: var(--go); }
-.pf-stat.live::after { content: ""; position: absolute; top: 14px; right: 14px; width: 7px; height: 7px; border-radius: 50%; background: var(--go); box-shadow: 0 0 0 0 oklch(0.78 0.16 155 / 0.6); animation: pf-pulse 2.4s var(--ease) infinite; }
-@keyframes pf-pulse { 0% { box-shadow: 0 0 0 0 oklch(0.78 0.16 155 / 0.55); } 70% { box-shadow: 0 0 0 9px oklch(0.78 0.16 155 / 0); } 100% { box-shadow: 0 0 0 0 oklch(0.78 0.16 155 / 0); } }
+.pf-stat.live::after { content: ""; position: absolute; top: 14px; right: 14px; width: 7px; height: 7px; border-radius: 50%; background: var(--go); box-shadow: 0 0 0 0 oklch(0.74 0.08 140 / 0.6); animation: pf-pulse 2.4s var(--ease) infinite; }
+@keyframes pf-pulse { 0% { box-shadow: 0 0 0 0 oklch(0.74 0.08 140 / 0.55); } 70% { box-shadow: 0 0 0 9px oklch(0.74 0.08 140 / 0); } 100% { box-shadow: 0 0 0 0 oklch(0.74 0.08 140 / 0); } }
 
 /* ---------------------------------------------------------- panels -- */
 .pf-layout { display: grid; gap: 18px; }
@@ -208,10 +208,10 @@
 
 .pf-pill { display: inline-flex; align-items: center; gap: 6px; font: 500 11px/1 var(--font-pf-mono), monospace; letter-spacing: .02em; padding: 5px 8px; border-radius: 999px; background: oklch(1 0 0 / 0.06); color: var(--muted); border: 1px solid oklch(1 0 0 / 0.06); }
 .pf-pill.dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
-.pf-pill.go { background: var(--go-soft); color: var(--go); border-color: oklch(0.78 0.16 155 / 0.2); }
-.pf-pill.info { background: var(--info-soft); color: var(--info); border-color: oklch(0.72 0.16 255 / 0.25); }
+.pf-pill.go { background: var(--go-soft); color: var(--go); border-color: oklch(0.74 0.08 140 / 0.2); }
+.pf-pill.info { background: var(--info-soft); color: var(--info); border-color: oklch(0.72 0.075 78 / 0.25); }
 .pf-pill.warn { background: var(--warn-soft); color: var(--warn); border-color: oklch(0.82 0.14 75 / 0.2); }
-.pf-pill.stop { background: var(--stop-soft); color: var(--stop); border-color: oklch(0.70 0.18 25 / 0.25); }
+.pf-pill.stop { background: var(--stop-soft); color: var(--stop); border-color: oklch(0.62 0.13 25 / 0.25); }
 
 /* ---------------------------------------------------------- forms --- */
 .pf-field { display: grid; gap: 6px; }
@@ -226,12 +226,12 @@
 .pf-field input:hover, .pf-field select:hover, .pf-input:hover { border-color: oklch(1 0 0 / 0.22); }
 .pf-field input:focus, .pf-field select:focus, .pf-field textarea:focus, .pf-input:focus {
   outline: none; border-color: var(--brand); background: oklch(0 0 0 / 0.35);
-  box-shadow: 0 0 0 4px oklch(0.72 0.16 255 / 0.18), inset 0 1px 2px oklch(0 0 0 / 0.3);
+  box-shadow: 0 0 0 4px oklch(0.72 0.075 78 / 0.18), inset 0 1px 2px oklch(0 0 0 / 0.3);
 }
 .pf-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .pf-msg { font-size: 13px; border-radius: var(--radius); padding: 9px 12px; border: 1px solid transparent; }
-.pf-msg.ok { background: var(--go-soft); color: var(--go); border-color: oklch(0.78 0.16 155 / 0.2); }
-.pf-msg.err { background: var(--stop-soft); color: var(--stop); border-color: oklch(0.70 0.18 25 / 0.25); }
+.pf-msg.ok { background: var(--go-soft); color: var(--go); border-color: oklch(0.74 0.08 140 / 0.2); }
+.pf-msg.err { background: var(--stop-soft); color: var(--stop); border-color: oklch(0.62 0.13 25 / 0.25); }
 .pf-empty { padding: 56px 16px; text-align: center; color: var(--muted); }
 
 /* ---------------------------------------------------------- table --- */
@@ -249,12 +249,30 @@
   width: 100%; max-width: 400px; display: grid; gap: 16px; padding: 30px;
   background: linear-gradient(180deg, var(--panel-2), var(--panel));
   border: 1px solid var(--rule); border-radius: 20px;
-  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.06), 0 40px 80px -30px oklch(0 0 0 / 0.7), 0 0 0 1px oklch(0.72 0.16 255 / 0.06);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.06), 0 40px 80px -30px oklch(0 0 0 / 0.7), 0 0 0 1px oklch(0.72 0.075 78 / 0.06);
 }
 .pf-login-card h1 { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.035em; }
 .pf-mark { display: inline-flex; align-items: center; gap: 9px; font: 500 11px/1 var(--font-pf-mono), monospace; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
-.pf-mark::before { content: ""; width: 9px; height: 9px; border-radius: 3px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: 0 0 14px oklch(0.72 0.16 255 / 0.7); }
+.pf-mark::before { content: ""; width: 9px; height: 9px; border-radius: 3px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: 0 0 14px oklch(0.72 0.075 78 / 0.7); }
 
 @media (prefers-reduced-motion: reduce) {
   .pf *, .pf *::before, .pf *::after { animation: none !important; transition-duration: 0s !important; }
 }
+
+
+/* ---------------------------------------------------- the Pass brand --
+   Inter for words and Instrument Serif for headlines (both loaded at the
+   root, shared with the studio), the Pass mark as the logo, champagne as
+   the only glow — the heat lamp over the pass. */
+.pf { --font-pf-sans: var(--font-inter); --serif: var(--font-instrument), Georgia, serif; }
+.pf-head h1, .pf-login-card h1 { font-family: var(--serif); font-weight: 400; letter-spacing: -0.005em; }
+.pf-head h1 { font-size: 36px; line-height: 1.05; }
+.pf-login-card h1 { font-size: 30px; }
+.pf-org { font-family: var(--serif); font-weight: 400; font-size: 19px; letter-spacing: 0; }
+.pf-org::before { display: none; }
+.pf-org svg { color: var(--brand); filter: drop-shadow(0 0 8px oklch(0.72 0.075 78 / 0.55)); }
+.pf-panel > h2, .pf-field label, .pf-table th { font-family: var(--font-inter), sans-serif; letter-spacing: .16em; font-weight: 600; font-size: 10.5px; }
+.pf-panel > h2 { color: var(--brand); }
+.pf-mark::before { display: none; }
+.pf-mark svg { color: var(--brand); }
+.pf-btn.primary { color: oklch(0.15 0.01 60); }

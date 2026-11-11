@@ -88,7 +88,7 @@ export default async function Overview({ params }: { params: Promise<{ org: stri
               <Link key={w.date} href={`/r/${org}/host?date=${w.date}`} style={{ display: "grid", gridTemplateColumns: "70px minmax(0, 1fr) 90px", gap: 12, alignItems: "center", textDecoration: "none" }}>
                 <span className="mono" style={{ fontSize: 13, color: "var(--muted)" }}>{label(w.date)}</span>
                 <span style={{ height: 10, borderRadius: 999, background: "oklch(1 0 0 / 0.06)", overflow: "hidden" }}>
-                  <span style={{ display: "block", height: "100%", width: `${(w.covers / max) * 100}%`, borderRadius: 999, background: "linear-gradient(90deg, var(--brand), var(--brand-2))", boxShadow: "0 0 12px oklch(0.72 0.16 255 / 0.5)", transition: "width .6s var(--spring)" }} />
+                  <span style={{ display: "block", height: "100%", width: `${(w.covers / max) * 100}%`, borderRadius: 999, background: "linear-gradient(90deg, var(--brand), var(--brand-2))", boxShadow: "0 0 12px oklch(0.72 0.075 78 / 0.5)", transition: "width .6s var(--spring)" }} />
                 </span>
                 <span className="mono" style={{ fontSize: 13, textAlign: "right" }}>{w.covers} <span style={{ color: "var(--faint)" }}>covers</span></span>
               </Link>
