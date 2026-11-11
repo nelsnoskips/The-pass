@@ -2,6 +2,8 @@ import { SettingsNav } from "@/components/platform/SettingsNav";
 import { db } from "@/lib/db";
 import { googleConfigured } from "@/lib/integrations/google";
 import { squareConfigured } from "@/lib/integrations/square";
+import { googleAdsConfigured } from "@/lib/ads/google-ads";
+import { metaConfigured } from "@/lib/ads/meta";
 import { platformConfigured, PROVIDERS, type Category } from "@/lib/integrations/registry";
 import { integrationsKeyConfigured } from "@/lib/integrations/secrets";
 import { requireTenant } from "@/lib/platform/context";
@@ -27,6 +29,7 @@ export default async function Connections({ params, searchParams }: { params: Pr
   const manage = can(tenant, "manage_venue");
   const googleReady = googleConfigured() && integrationsKeyConfigured();
   const squareReady = squareConfigured() && integrationsKeyConfigured();
+  const adsReady = { google: googleAdsConfigured() && integrationsKeyConfigured(), meta: metaConfigured() && integrationsKeyConfigured() };
 
   return (
     <>
@@ -68,6 +71,10 @@ export default async function Connections({ params, searchParams }: { params: Pr
                           </>
                         ) : p.id === "google_business" && googleReady ? (
                           <a className="pf-btn small primary" href={`/api/integrations/google/start?org=${org}`}>Sign in with Google</a>
+                        ) : p.id === "google_ads" && adsReady.google ? (
+                          <a className="pf-btn small primary" href={`/api/integrations/google-ads/start?org=${org}`}>Sign in with Google</a>
+                        ) : p.id === "meta_ads" && adsReady.meta ? (
+                          <a className="pf-btn small primary" href={`/api/integrations/meta/start?org=${org}`}>Sign in with Facebook</a>
                         ) : p.id === "square" && squareReady ? (
                           <a className="pf-btn small primary" href={`/api/integrations/square/start?org=${org}`}>Sign in with Square</a>
                         ) : own?.status === "requested" ? null : (

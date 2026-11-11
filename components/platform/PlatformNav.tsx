@@ -9,6 +9,7 @@ const TABS = [
   { seg: "guests", label: "Guests" },
   { seg: "website", label: "Website" },
   { seg: "agents", label: "Agents" },
+  { seg: "reporting", label: "Reporting" },
   { seg: "messages", label: "Messages" },
   { seg: "reviews", label: "Reviews" },
   { seg: "gift-cards", label: "Gift cards" },

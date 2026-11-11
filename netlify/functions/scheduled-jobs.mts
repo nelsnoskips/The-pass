@@ -22,6 +22,13 @@ export default async function handler() {
   results.reminders = await fetch(`${base}/api/jobs/reminders`, { method: "POST", headers: auth })
     .then((r) => r.json()).catch((e) => ({ error: String(e) }));
 
+  // 08:00 UTC (3–4 am Eastern): re-read the last 30 days of ad numbers,
+  // before anyone opens the report.
+  if (new Date().getUTCHours() === 8) {
+    results.ads = await fetch(`${base}/api/jobs/ads-sync`, { method: "POST", headers: auth })
+      .then((r) => r.json()).catch((e) => ({ error: String(e) }));
+  }
+
   if (new Date().getUTCHours() === 15) {
     // Only the agents that have something to look at, per restaurant.
     const plan = await fetch(`${base}/api/jobs/orgs`, { headers: auth }).then((r) => r.json()).catch(() => ({ runs: [] }));

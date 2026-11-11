@@ -25,7 +25,7 @@ const GROUPS: { name: string; items: { n: string; title: string; does: string; l
       { n: "07", title: "Texts", does: "Confirmations, reminders and campaigns, with consent tracked for every guest.", live: true },
       { n: "08", title: "Waitlist", does: "“Text me if a table opens.” A cancellation fills itself.", live: true },
       { n: "09", title: "Reviews", does: "Your Google reviews in one place, answered from one place.", live: true },
-      { n: "10", title: "Ads", does: "Google and Meta reporting in plain language, with agents that flag waste.", live: false },
+      { n: "10", title: "Ads reporting", does: "Google and Meta spend, results and cost per result, refreshed nightly, beside your real bookings.", live: true },
       { n: "11", title: "Loyalty", does: "Every few visits earns a reward, counted automatically from bookings and your point of sale.", live: true },
       { n: "12", title: "Email", does: "Campaigns to guests who asked for them, with one-click unsubscribe built in.", live: true },
       { n: "13", title: "Mobile app & push", does: "Your own app for your regulars.", live: false },

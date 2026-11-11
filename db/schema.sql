@@ -701,3 +701,50 @@ do $$ begin
   alter table payments drop constraint if exists payments_kind_check;
   alter table payments add constraint payments_kind_check check (kind in ('deposit', 'no_show_fee', 'gift_card'));
 exception when others then null; end $$;
+
+-- ------------------------------------------------------ ads reporting --
+-- Campaigns and their daily numbers, as the ad platforms report them.
+-- One row per campaign per day, keyed on the platform's own ids, so a
+-- re-sync of a window replaces rather than adds (conversions arrive
+-- late; the nightly sync re-reads the last 30 days).
+create table if not exists ad_campaigns (
+  org_id       uuid not null references orgs(id) on delete cascade,
+  platform     text not null check (platform in ('google', 'meta')),
+  account_id   text not null,
+  campaign_id  text not null,
+  name         text not null,
+  status       text,
+  channel      text,
+  updated_at   timestamptz not null default now(),
+  primary key (org_id, platform, campaign_id)
+);
+
+create table if not exists ad_daily (
+  org_id         uuid not null references orgs(id) on delete cascade,
+  platform       text not null check (platform in ('google', 'meta')),
+  campaign_id    text not null,
+  date           date not null,
+  spend_cents    bigint not null default 0,
+  impressions    bigint not null default 0,
+  clicks         bigint not null default 0,
+  -- Meta reports unique reach; Google doesn't (null, shown as —).
+  reach          bigint,
+  conversions    numeric(12, 2) not null default 0,
+  conversion_value_cents bigint not null default 0,
+  synced_at      timestamptz not null default now(),
+  primary key (org_id, platform, campaign_id, date)
+);
+
+create index if not exists ad_daily_org_date_idx on ad_daily(org_id, date);
+
+-- Each sync, for the reporting tab's "last updated" and for errors.
+create table if not exists ad_syncs (
+  id         bigint generated always as identity primary key,
+  org_id     uuid not null references orgs(id) on delete cascade,
+  platform   text not null,
+  status     text not null check (status in ('ok', 'failed')),
+  rows       integer not null default 0,
+  error      text,
+  started_at timestamptz not null default now(),
+  finished_at timestamptz
+);

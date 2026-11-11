@@ -56,10 +56,11 @@ export const CONNECTORS: Partial<Record<ProviderId, Connector>> = {
   },
   reserve_with_google: shell("reserve_with_google",
     "Partner program (Actions Center). Feeds: merchants, services, availability from findSlots. Booking server endpoints: CheckAvailability, CreateBooking → book(channel 'online', source 'google')."),
-  google_ads: shell("google_ads",
-    "OAuth (adwords). sync: daily campaign metrics into the reporting tables (see lib/connectors). Writes: budget and negative-keyword mutations from approved proposals."),
-  meta_ads: shell("meta_ads",
-    "OAuth (ads_read, ads_management). sync: daily insights. Writes: budget changes from approved proposals."),
+  // Built in lib/ads/google-ads.ts (OAuth, nightly 30-day sync). Writes
+  // (budgets, negatives) come with the Paid Ads agent on live data.
+  google_ads: shell("google_ads", "See lib/ads/google-ads.ts."),
+  // Built in lib/ads/meta.ts (OAuth, nightly 30-day sync).
+  meta_ads: shell("meta_ads", "See lib/ads/meta.ts."),
   square: {
     id: "square",
     built: true,
