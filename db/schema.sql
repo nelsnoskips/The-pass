@@ -699,7 +699,7 @@ create table if not exists gift_card_redemptions (
 alter table payments add column if not exists gift_card_id uuid references gift_cards(id) on delete set null;
 do $$ begin
   alter table payments drop constraint if exists payments_kind_check;
-  alter table payments add constraint payments_kind_check check (kind in ('deposit', 'no_show_fee', 'gift_card'));
+  alter table payments add constraint payments_kind_check check (kind in ('deposit', 'no_show_fee', 'gift_card', 'order'));
 exception when others then null; end $$;
 
 -- ------------------------------------------------------ ads reporting --
@@ -773,3 +773,59 @@ create table if not exists ad_search_terms (
   until        date not null,
   primary key (org_id, platform, campaign_id, ad_group_id, term)
 );
+
+-- ------------------------------------------------- online ordering --
+-- Pickup and catering orders from the restaurant's own site. Prices
+-- come from the published menu at the moment of ordering and are copied
+-- into the order, so a later menu edit never changes what a guest paid.
+create table if not exists ordering_settings (
+  org_id              uuid primary key references orgs(id) on delete cascade,
+  pickup_enabled      boolean not null default false,
+  catering_enabled    boolean not null default false,
+  -- Sales tax in basis points (7% = 700).
+  tax_bps             integer not null default 0 check (tax_bps between 0 and 2500),
+  lead_minutes        integer not null default 25 check (lead_minutes between 5 and 240),
+  catering_lead_hours integer not null default 48 check (catering_lead_hours between 2 and 720),
+  catering_min_cents  integer not null default 0 check (catering_min_cents >= 0),
+  -- "We're slammed": no new pickup orders until this time.
+  paused_until        timestamptz,
+  -- Menu item ids that are sold out (86'd) today.
+  sold_out            text[] not null default '{}',
+  updated_by          text,
+  updated_at          timestamptz not null default now()
+);
+
+create table if not exists orders (
+  id             uuid primary key default gen_random_uuid(),
+  org_id         uuid not null references orgs(id) on delete cascade,
+  venue_id       uuid not null references venues(id) on delete cascade,
+  guest_id       uuid references guests(id) on delete set null,
+  -- Short, readable at the counter: "Order 4821".
+  number         integer not null,
+  kind           text not null check (kind in ('pickup', 'catering')),
+  status         text not null default 'placed'
+    check (status in ('awaiting_payment', 'placed', 'accepted', 'ready', 'completed', 'cancelled')),
+  payment        text not null default 'at_pickup' check (payment in ('at_pickup', 'pending', 'paid', 'refunded')),
+  name           text not null,
+  phone          text not null,
+  email          text,
+  ready_at       timestamptz not null,
+  headcount      integer,
+  notes          text not null default '',
+  items          jsonb not null,
+  subtotal_cents integer not null check (subtotal_cents >= 0),
+  tax_cents      integer not null default 0,
+  tip_cents      integer not null default 0 check (tip_cents >= 0),
+  total_cents    integer not null check (total_cents >= 0),
+  manage_token   text not null unique,
+  created_at     timestamptz not null default now(),
+  updated_at     timestamptz not null default now()
+);
+
+create index if not exists orders_org_ready_idx on orders(org_id, ready_at);
+
+alter table payments add column if not exists order_id uuid references orders(id) on delete set null;
+do $$ begin
+  alter table payments drop constraint if exists payments_kind_check;
+  alter table payments add constraint payments_kind_check check (kind in ('deposit', 'no_show_fee', 'gift_card', 'order'));
+end $$;

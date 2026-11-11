@@ -5,7 +5,7 @@ import { readableOn } from "@/lib/sites/format";
 import { siteBody, siteDisplay } from "./fonts";
 
 /** The Classic theme's frame: announcement, header, footer. */
-export function SiteShell({ content, base, children, banner }: { content: SiteContent; base: string; children: ReactNode; banner?: ReactNode }) {
+export function SiteShell({ content, base, children, banner, ordering = false }: { content: SiteContent; base: string; children: ReactNode; banner?: ReactNode; ordering?: boolean }) {
   const display = siteDisplay;
   const body = siteBody;
   const vars = {
@@ -26,6 +26,7 @@ export function SiteShell({ content, base, children, banner }: { content: SiteCo
             <span className="site-links">
               {content.menus.length > 0 && <Link href={`${base}#menu`}>Menu</Link>}
               <Link href={`${base}#visit`}>Hours &amp; Location</Link>
+              {ordering && <Link href={`${base}/order`}>Order online</Link>}
               <Link href={`${base}/gift-cards`}>Gift cards</Link>
             </span>
             <Link href={`${base}/reserve`} className="site-btn">Reserve</Link>

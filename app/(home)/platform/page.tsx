@@ -15,7 +15,7 @@ const GROUPS: { name: string; items: { n: string; title: string; does: string; l
       { n: "02", title: "Reservations", does: "Booking built into your site. No account, no app, no per-cover fee. Guests move or cancel from one link.", live: true },
       { n: "03", title: "Host stand", does: "Tonight's book on a tablet: seat, no-show, walk-ins, phone bookings, guest history at a glance.", live: true },
       { n: "04", title: "Deposits", does: "Hold the tables that matter. Refunds follow your policy automatically.", live: true },
-      { n: "05", title: "Online ordering & catering", does: "Pickup, delivery and catering orders from your own site, with no marketplace commission.", live: false },
+      { n: "05", title: "Online ordering & catering", does: "Pickup and catering orders from your own site, paid online, texted when ready. No marketplace commission.", live: true },
       { n: "06", title: "Gift cards", does: "Sold on your site, emailed as a code, spent across as many visits as it takes.", live: true },
     ],
   },

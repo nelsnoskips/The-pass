@@ -134,8 +134,8 @@ Website wave as its booking page and host stand.
 | 2 | **Loyalty** | Visit-based rewards on the CRM | Visit counts built |
 | 2 | **Referrals** | A small layer on loyalty + SMS | Not started |
 | 3 | **Gift cards** | Self-contained on Stripe; money in before it's spent | Not started |
-| 3 | **Ordering** | The largest build: menu, cart, payment, tax, tips, kitchen/POS hand-off | Not started |
-| 3 | **Catering** | Ordering for large orders: quotes, deposits, invoices | Not started |
+| 3 | **Ordering** | The largest build: menu, cart, payment, tax, tips, kitchen/POS hand-off | Pickup built: site menu, server-side pricing, tax, tips, Stripe, kitchen board, pause, sold-out, ready texts (`lib/ordering`). Still to do: delivery, modifiers, POS hand-off |
+| 3 | **Catering** | Ordering for large orders: quotes, deposits, invoices | Orders with notice, headcount and a minimum built; quotes and invoices to do |
 | 4 | **Mobile app** | A shell over ordering + loyalty; app-store review | Not started |
 | 4 | **Push** | Needs the app | Not started |
 

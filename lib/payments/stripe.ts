@@ -108,8 +108,8 @@ export async function applyStripeEvent(sql: Sql, event: StripeEvent): Promise<bo
   if (!paymentId || !/^[0-9a-f-]{36}$/i.test(paymentId)) return false;
 
   return sql.begin(async (tx) => {
-    const [p] = await tx<{ id: string; org_id: string; reservation_id: string | null; gift_card_id: string | null; status: string }[]>`
-      select id, org_id, reservation_id, gift_card_id, status from payments where id = ${paymentId} and provider = 'stripe' for update`;
+    const [p] = await tx<{ id: string; org_id: string; reservation_id: string | null; gift_card_id: string | null; order_id: string | null; status: string }[]>`
+      select id, org_id, reservation_id, gift_card_id, order_id, status from payments where id = ${paymentId} and provider = 'stripe' for update`;
     if (!p) return false;
     const audit = (action: string) =>
       tx`insert into change_log (org_id, actor, action, entity, entity_id, detail)
@@ -119,13 +119,19 @@ export async function applyStripeEvent(sql: Sql, event: StripeEvent): Promise<bo
       await tx`update payments set status = 'captured', provider_charge_ref = ${obj.payment_intent ?? null}, updated_at = now() where id = ${p.id}`;
       if (p.reservation_id) await tx`update reservations set deposit_status = 'captured', updated_at = now() where id = ${p.reservation_id}`;
       if (p.gift_card_id) await activateCard(tx, p.gift_card_id, "stripe");
-      await audit(p.gift_card_id ? "payment.gift_card_paid" : "payment.deposit_paid");
+      // A paid order reaches the kitchen only now.
+      if (p.order_id) await tx`update orders set payment = 'paid', status = 'placed', updated_at = now()
+                               where id = ${p.order_id} and status = 'awaiting_payment'`;
+      await audit(p.order_id ? "payment.order_paid" : p.gift_card_id ? "payment.gift_card_paid" : "payment.deposit_paid");
       return true;
     }
     if (event.type === "checkout.session.expired" && p.status === "pending") {
       await tx`update payments set status = 'canceled', updated_at = now() where id = ${p.id}`;
       // An unpaid gift card never existed as far as anyone can spend it.
       if (p.gift_card_id) await tx`update gift_cards set status = 'void' where id = ${p.gift_card_id} and status = 'pending'`;
+      // An unpaid order was never sent to the kitchen; it just closes.
+      if (p.order_id) await tx`update orders set status = 'cancelled', payment = 'pending', updated_at = now()
+                               where id = ${p.order_id} and status = 'awaiting_payment'`;
       if (p.reservation_id) {
         // Unpaid deposit: the table goes back. Only while still just booked.
         const released = await tx`
@@ -143,6 +149,7 @@ export async function applyStripeEvent(sql: Sql, event: StripeEvent): Promise<bo
     if (event.type === "charge.refunded" && p.status !== "refunded") {
       await tx`update payments set status = 'refunded', updated_at = now() where id = ${p.id}`;
       if (p.reservation_id) await tx`update reservations set deposit_status = 'refunded', updated_at = now() where id = ${p.reservation_id}`;
+      if (p.order_id) await tx`update orders set payment = 'refunded', updated_at = now() where id = ${p.order_id}`;
       await audit("payment.refunded");
       return true;
     }
@@ -174,6 +181,34 @@ export async function createGiftCardCheckout(
     "metadata[payment_id]": p.id,
     "payment_intent_data[metadata][payment_id]": p.id,
   }), key, `giftcard-${p.id}`);
+  await sql`update payments set provider_ref = ${session.id}, checkout_url = ${session.url}, updated_at = now() where id = ${p.id}`;
+  return session.url;
+}
+
+/** Checkout for an online order. The order waits as awaiting_payment;
+ *  the webhook sends it to the kitchen once the money is in. */
+export async function createOrderCheckout(
+  sql: Sql, key: string,
+  input: { orgId: string; orderId: string; number: number; totalCents: number; restaurant: string; returnUrl: string; cancelUrl: string; email: string | null },
+  f: Fetch = fetch,
+): Promise<string> {
+  const [p] = await sql<{ id: string }[]>`
+    insert into payments (org_id, order_id, kind, amount_cents, provider)
+    values (${input.orgId}, ${input.orderId}, 'order', ${input.totalCents}, 'stripe') returning id`;
+  const session = await call<{ id: string; url: string }>(f, "/checkout/sessions", form({
+    mode: "payment",
+    ...(input.email ? { customer_email: input.email } : {}),
+    "line_items[0][quantity]": 1,
+    "line_items[0][price_data][currency]": "usd",
+    "line_items[0][price_data][unit_amount]": input.totalCents,
+    "line_items[0][price_data][product_data][name]": `${input.restaurant} order ${input.number}`,
+    success_url: input.returnUrl,
+    cancel_url: input.cancelUrl,
+    // Unpaid orders shouldn't hold a pickup time for a day.
+    expires_at: Math.floor(Date.now() / 1000) + 30 * 60 + 60,
+    "metadata[payment_id]": p.id,
+    "payment_intent_data[metadata][payment_id]": p.id,
+  }), key, `order-${p.id}`);
   await sql`update payments set provider_ref = ${session.id}, checkout_url = ${session.url}, updated_at = now() where id = ${p.id}`;
   return session.url;
 }

@@ -1,3 +1,4 @@
+import { FormButton } from "@/components/platform/FormButton";
 import { db } from "@/lib/db";
 import { cardStatusAction, issueCardAction, redeemAction } from "@/lib/giftcards/actions";
 import { lookupCard } from "@/lib/giftcards";
@@ -53,11 +54,10 @@ export default async function GiftCardsAdmin({ params, searchParams }: { params:
                     <td><span className={`pf-pill dot ${TONE[c.status]}`}>{c.status}</span></td>
                     {manage && (
                       <td style={{ textAlign: "right" }}>
-                        <form action={cardStatusAction} style={{ display: "inline-flex", gap: 6 }}>
-                          <input type="hidden" name="org" value={org} /><input type="hidden" name="id" value={c.id} />
-                          {c.status === "pending" && <button className="pf-btn small" name="status" value="active">Mark paid</button>}
-                          {c.status !== "void" && <button className="pf-btn small quiet" name="status" value="void">Void</button>}
-                        </form>
+                        <span style={{ display: "inline-flex", gap: 6 }}>
+                          {c.status === "pending" && <FormButton action={cardStatusAction} fields={{ org, id: c.id, status: "active" }}>Mark paid</FormButton>}
+                          {c.status !== "void" && <FormButton action={cardStatusAction} fields={{ org, id: c.id, status: "void" }} className="pf-btn small quiet">Void</FormButton>}
+                        </span>
                       </td>
                     )}
                   </tr>

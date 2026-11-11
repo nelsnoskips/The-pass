@@ -148,3 +148,23 @@
 @media (prefers-reduced-motion: reduce) {
   .site *, .site *::before, .site *::after { animation: none !important; transition-duration: 0s !important; }
 }
+
+/* Online ordering */
+.site-order { display: grid; gap: 32px; align-items: start; }
+@media (min-width: 900px) { .site-order { grid-template-columns: minmax(0, 1fr) 380px; } .site-order-cart { position: sticky; top: 92px; } }
+.site-order-group { margin-top: 28px; }
+.site-order-group:first-of-type { margin-top: 0; }
+.site-order-item { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.site-order-item .name { font-family: var(--display); font-size: 19px; }
+.site-order-item p { margin: 4px 0 6px; color: var(--muted); font-size: 14.5px; max-width: 52ch; }
+.site-order-item .price { font-variant-numeric: tabular-nums; font-size: 15px; }
+.site-qty { display: flex; align-items: center; gap: 8px; flex: none; }
+.site-qty button { width: 38px; height: 38px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); font-size: 19px; line-height: 1; cursor: pointer; transition: transform .45s var(--spring), border-color .2s var(--ease); }
+.site-qty button:hover { border-color: var(--ink); }
+.site-qty button:active { transform: scale(0.92); transition-duration: .08s; }
+.site-qty output { min-width: 22px; text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; }
+.site-order-cart .site-summary div { padding: 10px 0; }
+.site .site-order-bar { position: sticky; bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 15px 20px; background: var(--ink); color: var(--paper); text-decoration: none; border-radius: 3px; box-shadow: 0 14px 34px -14px var(--ink); font-size: 15px; z-index: 5; }
+.site .site-order-bar span, .site .site-order-bar b { color: var(--paper); }
+@media (min-width: 900px) { .site .site-order-bar { display: none; } }
+.site-order-cart { scroll-margin-top: 84px; }

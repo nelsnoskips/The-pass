@@ -63,11 +63,12 @@ export default async function Connections({ params, searchParams }: { params: Pr
                         <input type="hidden" name="org" value={org} />
                         <input type="hidden" name="provider" value={p.id} />
                         {own?.status === "connected" ? (
-                          <button className="pf-btn small quiet" name="status" value="disconnected">Disconnect</button>
+                          <><input type="hidden" name="status" value="disconnected" /><button className="pf-btn small quiet">Disconnect</button></>
                         ) : staff && own?.status === "requested" ? (
                           <>
                             <input className="pf-input" name="label" placeholder="Account name" style={{ minHeight: 34, width: 160 }} />
-                            <button className="pf-btn small primary" name="status" value="connected">Mark connected</button>
+                            <input type="hidden" name="status" value="connected" />
+                            <button className="pf-btn small primary">Mark connected</button>
                           </>
                         ) : p.id === "google_business" && googleReady ? (
                           <a className="pf-btn small primary" href={`/api/integrations/google/start?org=${org}`}>Sign in with Google</a>
@@ -78,7 +79,7 @@ export default async function Connections({ params, searchParams }: { params: Pr
                         ) : p.id === "square" && squareReady ? (
                           <a className="pf-btn small primary" href={`/api/integrations/square/start?org=${org}`}>Sign in with Square</a>
                         ) : own?.status === "requested" ? null : (
-                          <button className="pf-btn small" name="status" value="requested">Connect</button>
+                          <><input type="hidden" name="status" value="requested" /><button className="pf-btn small">Connect</button></>
                         )}
                       </form>
                     )}
