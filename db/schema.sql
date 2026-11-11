@@ -547,3 +547,43 @@ create table if not exists waitlist_requests (
 );
 
 create index if not exists waitlist_venue_date_idx on waitlist_requests(venue_id, date, status, created_at);
+
+-- ---------------------------------------------------- integrations --
+-- A restaurant's connection to an outside service (its Google Business
+-- Profile, its Square account). Platform-wide services (Twilio, Stripe,
+-- the AI model) are configured by environment, not here.
+create table if not exists org_integrations (
+  org_id       uuid not null references orgs(id) on delete cascade,
+  provider     text not null,
+  status       text not null default 'requested'
+    check (status in ('requested', 'connected', 'error', 'disconnected')),
+  account_label text,
+  settings     jsonb not null default '{}'::jsonb,
+  error        text,
+  updated_by   text not null,
+  updated_at   timestamptz not null default now(),
+  primary key (org_id, provider)
+);
+
+-- Payments against a reservation (deposits now; no-show fees later).
+-- Provider-neutral: the provider's own id is kept, never card data.
+create table if not exists payments (
+  id             uuid primary key default gen_random_uuid(),
+  org_id         uuid not null references orgs(id) on delete cascade,
+  reservation_id uuid references reservations(id) on delete set null,
+  kind           text not null check (kind in ('deposit', 'no_show_fee')),
+  amount_cents   integer not null check (amount_cents > 0),
+  status         text not null default 'pending'
+    check (status in ('pending', 'held', 'captured', 'refunded', 'failed', 'canceled')),
+  provider       text not null,
+  provider_ref   text,
+  checkout_url   text,
+  created_at     timestamptz not null default now(),
+  updated_at     timestamptz not null default now()
+);
+
+create index if not exists payments_reservation_idx on payments(reservation_id);
+
+-- The policy a guest is shown before booking, per venue.
+alter table venues add column if not exists cancellation_policy text not null default '';
+alter table venues add column if not exists cancel_cutoff_hours integer not null default 24;

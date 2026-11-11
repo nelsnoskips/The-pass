@@ -25,7 +25,7 @@ export async function decideProposal(org: string, proposalId: string, decision: 
     // refreshes from the client so the message can be read first.
     const r = await approveProposal(sql, tenant, proposalId, make().tools);
     if (r.ok) return { error: null, result: summarize(r.result) };
-    if (r.reason === "not_now") return { error: r.detail ?? "Not right now." };
+    if (r.reason === "not_now") return { error: `${r.detail ?? "Not right now."} It's still waiting — approve it then.` };
     const why = { not_found: "Proposal not found.", already_decided: "Someone already decided this.", blocked: "Blocked", failed: "It failed" }[r.reason];
     return { error: r.detail ? `${why}: ${r.detail}` : why };
   } catch (err) {

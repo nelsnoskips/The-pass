@@ -27,11 +27,12 @@ export type Action =
   | "book" // take and change reservations, seat, mark no-show
   | "manage_venue" // tables, hours, deposits
   | "approve_spend" // agent proposals that move ad money
-  | "message_guests"; // marketing SMS / email
+  | "message_guests" // marketing SMS / email
+  | "manage_team"; // who can sign in, and as what
 
 const GRANTS: Record<TenantRole, Action[]> = {
-  staff: ["view", "book", "manage_venue", "approve_spend", "message_guests"],
-  owner: ["view", "book", "manage_venue", "approve_spend", "message_guests"],
+  staff: ["view", "book", "manage_venue", "approve_spend", "message_guests", "manage_team"],
+  owner: ["view", "book", "manage_venue", "approve_spend", "message_guests", "manage_team"],
   manager: ["view", "book", "manage_venue", "approve_spend", "message_guests"],
   host: ["view", "book"],
   viewer: ["view"],

@@ -18,6 +18,8 @@ export interface PublicSite {
   timezone: string;
   maxPartyOnline: number;
   bookingHorizonDays: number;
+  cancellationPolicy: string;
+  cancelCutoffHours: number;
   content: SiteContent;
 }
 
@@ -25,9 +27,10 @@ export async function getPublishedSite(sql: Sql, slug: string): Promise<PublicSi
   const [row] = await sql<{
     id: string; org_id: string; venue_id: string; slug: string; theme: string;
     timezone: string; max_party_online: number; booking_horizon_days: number; content: unknown;
+    cancellation_policy: string; cancel_cutoff_hours: number;
   }[]>`
     select s.id, s.org_id, s.venue_id, s.slug, s.theme,
-           v.timezone, v.max_party_online, v.booking_horizon_days, sv.content
+           v.timezone, v.max_party_online, v.booking_horizon_days, v.cancellation_policy, v.cancel_cutoff_hours, sv.content
     from sites s
     join venues v on v.id = s.venue_id
     join site_versions sv on sv.id = s.published_version_id
@@ -40,7 +43,8 @@ export async function getPublishedSite(sql: Sql, slug: string): Promise<PublicSi
   return {
     id: row.id, orgId: row.org_id, venueId: row.venue_id, slug: row.slug, theme: row.theme,
     timezone: row.timezone, maxPartyOnline: row.max_party_online,
-    bookingHorizonDays: row.booking_horizon_days, content: parsed.content,
+    bookingHorizonDays: row.booking_horizon_days, cancellationPolicy: row.cancellation_policy,
+    cancelCutoffHours: row.cancel_cutoff_hours, content: parsed.content,
   };
 }
 

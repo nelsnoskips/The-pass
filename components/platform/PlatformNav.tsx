@@ -8,8 +8,10 @@ const TABS = [
   { seg: "guests", label: "Guests" },
   { seg: "website", label: "Website" },
   { seg: "agents", label: "Agents" },
+  { seg: "messages", label: "Messages" },
+  { seg: "settings", label: "Settings" },
 ];
-const SOON = ["Messages", "Settings"];
+const SOON: string[] = [];
 
 export function PlatformNav({ org }: { org: string }) {
   const path = usePathname();

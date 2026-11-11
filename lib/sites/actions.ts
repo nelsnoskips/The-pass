@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "../db";
+import { paymentsProvider } from "../payments";
 import { allow, clientAddress } from "../platform/ratelimit";
 import { sendBookingConfirmation } from "../reservations/notify";
 import { joinWaitlist, notifyWaitlist } from "../reservations/followups";
@@ -106,6 +107,17 @@ export async function reserve(_prev: ReserveState, form: FormData): Promise<Rese
 
   const origin = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host") ?? ""}`;
   const path = `/s/${site.slug}/booking/${result.reservation.manageToken}`;
+  // A deposit is taken after the table is held, so a slow card form can't
+  // lose the guest their time. With a live processor the guest goes to its
+  // checkout; with the shell provider it's recorded for staff to collect.
+  let checkoutUrl: string | null = null;
+  if (result.reservation.depositCents > 0) {
+    const pay = await paymentsProvider().createDeposit(sql, {
+      orgId: site.orgId, reservationId: result.reservation.id, amountCents: result.reservation.depositCents,
+      returnUrl: `${origin}${path}`, description: `${site.content.brand.name} deposit`,
+    });
+    checkoutUrl = pay.checkoutUrl;
+  }
   // A failed text must not fail the booking: the table is already held.
   try {
     await sendBookingConfirmation(sql, {
@@ -118,7 +130,7 @@ export async function reserve(_prev: ReserveState, form: FormData): Promise<Rese
   } catch (err) {
     console.error("Booking confirmation failed", err);
   }
-  redirect(path);
+  redirect(checkoutUrl ?? path);
 }
 
 async function origin(): Promise<string> {

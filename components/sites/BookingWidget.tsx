@@ -17,6 +17,7 @@ export function BookingWidget({
   restaurant,
   initialDate,
   initialParty,
+  policy,
 }: {
   slug: string;
   /** Venue-local "yyyy-mm-dd". */
@@ -27,6 +28,8 @@ export function BookingWidget({
   /** From a waitlist text's link. */
   initialDate?: string;
   initialParty?: number;
+  /** Shown before booking, never after. */
+  policy?: string;
 }) {
   const [party, setParty] = useState(initialParty && initialParty <= maxParty ? initialParty : 2);
   const [date, setDate] = useState(initialDate && initialDate >= today && initialDate <= maxDate ? initialDate : today);
@@ -164,6 +167,17 @@ export function BookingWidget({
             <input type="checkbox" name="marketing" />
             <span>Text me occasional news and invitations from {restaurant}. Message and data rates may apply. Reply STOP any time. Not required to book.</span>
           </label>
+
+          {(chosen.depositCents > 0 || policy) && (
+            <div className="site-note" style={{ borderLeft: "2px solid var(--accent)", paddingLeft: 12 }}>
+              {chosen.depositCents > 0 && (
+                <p style={{ margin: "0 0 4px", color: "var(--ink)" }}>
+                  A ${(chosen.depositCents / 100).toFixed(0)} deposit holds this table. It comes off your bill.
+                </p>
+              )}
+              {policy && <p style={{ margin: 0 }}>{policy}</p>}
+            </div>
+          )}
 
           {state.error && <p className="site-error" role="alert">{state.error}</p>}
 

@@ -100,6 +100,11 @@ export default async function HostStand({ params, searchParams }: { params: Prom
                             {r.guestPhone.startsWith("+") && <a href={`tel:${r.guestPhone}`}>{formatPhone(r.guestPhone)}</a>}
                             {r.guestVisits > 0 && <span className="pf-pill go">{r.guestVisits} {r.guestVisits === 1 ? "visit" : "visits"}</span>}
                             {r.guestVisits === 0 && r.source !== "walk_in" && <span className="pf-pill">First visit</span>}
+                            {r.depositCents > 0 && (
+                              <span className={`pf-pill ${r.depositStatus === "held" ? "go" : "warn"}`}>
+                                ${(r.depositCents / 100).toFixed(0)} deposit {r.depositStatus === "held" ? "paid" : "due"}
+                              </span>
+                            )}
                             {priorNoShows(r) > 0 && <span className="pf-pill warn">{priorNoShows(r)} earlier no-show{priorNoShows(r) > 1 ? "s" : ""}</span>}
                           </div>
                           {r.notes && <div className="pf-res-note">{r.notes}</div>}

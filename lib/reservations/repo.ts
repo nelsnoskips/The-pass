@@ -43,6 +43,7 @@ export interface Reservation {
   /** Completed visits and no-shows before this booking. */
   guestVisits: number;
   guestNoShows: number;
+  depositStatus?: string;
 }
 
 /** Statuses that hold a table. */
@@ -358,10 +359,10 @@ export async function dayBook(sql: Sql, tenant: Tenant, venueId: string, date: s
     id: string; venue_id: string; guest_id: string; name: string; phone: string;
     party_size: number; starts_at: Date; ends_at: Date; status: ReservationStatus;
     source: string; notes: string | null; deposit_cents: number; manage_token: string;
-    labels: string[] | null; visit_count: number; no_show_count: number;
+    labels: string[] | null; visit_count: number; no_show_count: number; deposit_status: string;
   }[]>`
     select r.id, r.venue_id, r.guest_id, g.name, g.phone, r.party_size, r.starts_at, r.ends_at,
-           r.status, r.source, r.notes, r.deposit_cents, r.manage_token, g.visit_count, g.no_show_count,
+           r.status, r.source, r.notes, r.deposit_cents, r.manage_token, g.visit_count, g.no_show_count, r.deposit_status,
            array_agg(t.label order by t.label) filter (where t.label is not null) as labels
     from reservations r
     join guests g on g.id = r.guest_id
@@ -377,6 +378,7 @@ export async function dayBook(sql: Sql, tenant: Tenant, venueId: string, date: s
     partySize: r.party_size, startsAt: r.starts_at, endsAt: r.ends_at, status: r.status,
     source: r.source, notes: r.notes, depositCents: r.deposit_cents, manageToken: r.manage_token,
     tableLabels: r.labels ?? [], guestVisits: r.visit_count, guestNoShows: r.no_show_count,
+    depositStatus: r.deposit_status,
   }));
 }
 
