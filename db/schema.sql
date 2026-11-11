@@ -495,3 +495,33 @@ create table if not exists site_versions (
 );
 
 create index if not exists site_versions_site_idx on site_versions(site_id, created_at desc);
+
+-- ------------------------------------------------ restaurant logins --
+-- Separate from the studio's login_tokens/sessions on purpose: a studio
+-- session opens clients and proposals, and a host at a restaurant must
+-- never hold one. Same magic-link shape, different tables and cookie.
+create table if not exists member_login_tokens (
+  token      text primary key,
+  email      text not null,
+  expires_at timestamptz not null,
+  used_at    timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists member_sessions (
+  token      text primary key,
+  email      text not null,
+  expires_at timestamptz not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists member_sessions_expiry_idx on member_sessions(expires_at);
+
+-- Counters for public endpoints (booking, sign-in links). The key is a
+-- hash, never a raw address or phone number.
+create table if not exists rate_events (
+  key        text not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists rate_events_key_idx on rate_events(key, created_at desc);

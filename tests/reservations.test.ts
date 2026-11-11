@@ -106,6 +106,17 @@ describe("findSlots", () => {
     expect(findSlots(q({ holds: allHeld, channel: "staff" }))[0].tableId).toBe("bar");
   });
 
+  it("staff get bookable tables before staff-only ones of the same size", () => {
+    const withBarFirst = [tables[3], ...tables.slice(0, 3)];
+    expect(findSlots(q({ tables: withBarFirst, channel: "staff" }))[0].tableId).toBe("t2a");
+  });
+
+  it("orders table labels naturally (T2 before T10)", () => {
+    const t = (id: string, label: string): Table => ({ id, label, minCovers: 1, maxCovers: 2, online: true, active: true });
+    const s = zonedToUtc(FRI, "19:00", TZ);
+    expect(pickTable([t("a", "T10"), t("b", "T2")], [], 2, s, new Date(s.getTime() + 3_600_000), "online")!.label).toBe("T2");
+  });
+
   it("applies pacing caps per slot", () => {
     const paced = { ...dinner, maxCoversPerSlot: 6 };
     const at7 = zonedToUtc(FRI, "19:00", TZ);

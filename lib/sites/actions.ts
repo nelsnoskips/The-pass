@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "../db";
+import { allow, clientAddress } from "../platform/ratelimit";
 import { sendBookingConfirmation } from "../reservations/notify";
 import { availableSlots, book, bookingByToken, cancelByToken } from "../reservations/repo";
 import { formatClock, formatWhen } from "./format";
@@ -61,6 +62,10 @@ export async function reserve(_prev: ReserveState, form: FormData): Promise<Rese
   if (!site || !DATE.test(date) || !TIME.test(time) || !Number.isInteger(partySize)) {
     return { error: "Something was missing from that booking. Please pick a time again." };
   }
+  const h = await headers();
+  if (!(await allow(sql, "book", clientAddress(h), 10, 10))) {
+    return { error: "Too many attempts from this connection. Please wait a few minutes, or call us." };
+  }
   const name = get("name").slice(0, 120);
   const email = get("email").slice(0, 200);
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "That email doesn't look right." };
@@ -78,11 +83,12 @@ export async function reserve(_prev: ReserveState, form: FormData): Promise<Rese
       invalid_name: "Please tell us the name for the booking.",
       unavailable: "That time was just taken. Please choose another.",
       venue_not_found: "Booking is unavailable right now. Please call us.",
+      already_booked: "You already have a table that day. Use the link in your confirmation text to change it, or call us.",
+      too_many: "That's a lot of bookings in a short time. Please call us and we'll sort it out.",
     };
     return { error: messages[result.reason] };
   }
 
-  const h = await headers();
   const origin = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host") ?? ""}`;
   const path = `/s/${site.slug}/booking/${result.reservation.manageToken}`;
   // A failed text must not fail the booking: the table is already held.

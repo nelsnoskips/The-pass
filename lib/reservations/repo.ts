@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 import type { Sql, TransactionSql } from "postgres";
 import { assertCan, type Tenant } from "../platform/tenant";
 import {
@@ -13,7 +13,7 @@ import {
   type Table,
   type VenueRules,
 } from "./availability";
-import { zonedToUtc } from "./time";
+import { localDate as localDateOf, zonedToUtc } from "./time";
 
 /**
  * Reservations, in the database. Every function is scoped by org_id —
@@ -40,6 +40,9 @@ export interface Reservation {
   depositCents: number;
   manageToken: string;
   tableLabels: string[];
+  /** Completed visits and no-shows before this booking. */
+  guestVisits: number;
+  guestNoShows: number;
 }
 
 /** Statuses that hold a table. */
@@ -159,7 +162,7 @@ export interface BookInput {
 
 export type BookResult =
   | { ok: true; reservation: Reservation }
-  | { ok: false; reason: "invalid_phone" | "invalid_name" | "unavailable" | "venue_not_found" };
+  | { ok: false; reason: "invalid_phone" | "invalid_name" | "unavailable" | "venue_not_found" | "already_booked" | "too_many" };
 
 /**
  * Book a table. The slot is re-checked inside the transaction, and the
@@ -168,10 +171,21 @@ export type BookResult =
  * the next table that fits — or reports the time as gone.
  */
 export async function book(sql: Sql, input: BookInput): Promise<BookResult> {
-  const phone = normalizePhone(input.guest.phone);
+  // A walk-in at the host stand may have no phone. They get a guest
+  // record that can never be texted (no "+"), rather than a fake number.
+  const staffNoPhone = input.channel === "staff" && !input.guest.phone.trim();
+  const phone = staffNoPhone ? `none:${randomUUID()}` : normalizePhone(input.guest.phone);
   if (!phone) return { ok: false, reason: "invalid_phone" };
   const name = input.guest.name.trim();
   if (!name) return { ok: false, reason: "invalid_name" };
+
+  // Online, a booking belongs to a phone number, and a phone number gets
+  // one table per service day and a handful of attempts an hour. This is
+  // what makes hoarding tables to resell tedious; staff are not limited.
+  if (input.channel === "online") {
+    const limited = await onlineLimits(sql, input.orgId, input.venueId, phone, input.date);
+    if (limited) return { ok: false, reason: limited };
+  }
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
@@ -222,7 +236,7 @@ export async function book(sql: Sql, input: BookInput): Promise<BookResult> {
             guestPhone: guest.phone, partySize: input.partySize, startsAt: slot.startsAt,
             endsAt: slot.endsAt, status: "booked" as const, source: input.source,
             notes: input.notes ?? null, depositCents: slot.depositCents, manageToken: token,
-            tableLabels: [table.label],
+            tableLabels: [table.label], guestVisits: 0, guestNoShows: 0,
           },
         };
       });
@@ -237,22 +251,61 @@ export async function book(sql: Sql, input: BookInput): Promise<BookResult> {
   return { ok: false, reason: "unavailable" };
 }
 
+const MAX_BOOKINGS_PER_PHONE_PER_HOUR = 4;
+
+async function onlineLimits(
+  sql: Sql, orgId: string, venueId: string, phone: string, date: string,
+): Promise<"already_booked" | "too_many" | null> {
+  const [v] = await sql<{ timezone: string }[]>`
+    select timezone from venues where id = ${venueId} and org_id = ${orgId}`;
+  if (!v) return null;
+  const from = zonedToUtc(date, "00:00", v.timezone);
+  const to = new Date(from.getTime() + 24 * 3_600_000);
+  const [row] = await sql<{ same_day: number; last_hour: number }[]>`
+    select
+      count(*) filter (where r.venue_id = ${venueId} and r.status = any(${LIVE}::reservation_status[])
+                         and r.starts_at >= ${from} and r.starts_at < ${to})::int as same_day,
+      count(*) filter (where r.created_at > now() - interval '1 hour')::int as last_hour
+    from reservations r join guests g on g.id = r.guest_id
+    where r.org_id = ${orgId} and g.phone = ${phone}`;
+  if (row.same_day > 0) return "already_booked";
+  if (row.last_hour >= MAX_BOOKINGS_PER_PHONE_PER_HOUR) return "too_many";
+  return null;
+}
+
 /** Status changes from the host stand. */
+/**
+ * Which status may follow which. Enforced here, not in any screen, so a
+ * party that sat down can never later be charged as a no-show, and a
+ * released table can't be quietly re-held.
+ */
+const NEXT: Record<ReservationStatus, ReservationStatus[]> = {
+  booked: ["confirmed", "seated", "no_show", "cancelled"],
+  confirmed: ["seated", "no_show", "cancelled"],
+  seated: ["completed"],
+  completed: [],
+  cancelled: [],
+  no_show: [],
+};
+
+export type StatusResult = "ok" | "not_found" | "invalid";
+
 export async function setStatus(
   sql: Sql,
   tenant: Tenant,
   reservationId: string,
   status: ReservationStatus,
-): Promise<boolean> {
-  return sql.begin(async (tx) => {
+): Promise<StatusResult> {
+  return sql.begin(async (tx): Promise<StatusResult> => {
     const [r] = await tx<{ venue_id: string; guest_id: string; status: ReservationStatus }[]>`
       select venue_id, guest_id, status from reservations
       where id = ${reservationId} and org_id = ${tenant.orgId}
       for update
     `;
-    if (!r) return false;
+    if (!r) return "not_found";
     assertCan(tenant, "book", r.venue_id);
-    if (r.status === status) return true;
+    if (r.status === status) return "ok";
+    if (!NEXT[r.status].includes(status)) return "invalid";
 
     await tx`update reservations set status = ${status}, updated_at = now()
              where id = ${reservationId} and org_id = ${tenant.orgId}`;
@@ -269,7 +322,7 @@ export async function setStatus(
                where id = ${r.guest_id} and org_id = ${tenant.orgId}`;
     }
     await log(tx, tenant.orgId, tenant.actor, `reservation.${status}`, "reservation", reservationId, { from: r.status });
-    return true;
+    return "ok" as const;
   });
 }
 
@@ -299,10 +352,10 @@ export async function dayBook(sql: Sql, tenant: Tenant, venueId: string, date: s
     id: string; venue_id: string; guest_id: string; name: string; phone: string;
     party_size: number; starts_at: Date; ends_at: Date; status: ReservationStatus;
     source: string; notes: string | null; deposit_cents: number; manage_token: string;
-    labels: string[] | null;
+    labels: string[] | null; visit_count: number; no_show_count: number;
   }[]>`
     select r.id, r.venue_id, r.guest_id, g.name, g.phone, r.party_size, r.starts_at, r.ends_at,
-           r.status, r.source, r.notes, r.deposit_cents, r.manage_token,
+           r.status, r.source, r.notes, r.deposit_cents, r.manage_token, g.visit_count, g.no_show_count,
            array_agg(t.label order by t.label) filter (where t.label is not null) as labels
     from reservations r
     join guests g on g.id = r.guest_id
@@ -310,14 +363,14 @@ export async function dayBook(sql: Sql, tenant: Tenant, venueId: string, date: s
     left join dining_tables t on t.id = rt.table_id
     where r.org_id = ${tenant.orgId} and r.venue_id = ${venueId}
       and r.starts_at >= ${from} and r.starts_at < ${to}
-    group by r.id, g.name, g.phone
+    group by r.id, g.name, g.phone, g.visit_count, g.no_show_count
     order by r.starts_at, g.name
   `;
   return rows.map((r) => ({
     id: r.id, venueId: r.venue_id, guestId: r.guest_id, guestName: r.name, guestPhone: r.phone,
     partySize: r.party_size, startsAt: r.starts_at, endsAt: r.ends_at, status: r.status,
     source: r.source, notes: r.notes, depositCents: r.deposit_cents, manageToken: r.manage_token,
-    tableLabels: r.labels ?? [],
+    tableLabels: r.labels ?? [], guestVisits: r.visit_count, guestNoShows: r.no_show_count,
   }));
 }
 
@@ -363,4 +416,73 @@ export async function bookingByToken(sql: Sql, token: string): Promise<GuestBook
     id: r.id, orgId: r.org_id, venueId: r.venue_id, venueName: r.venue_name, timezone: r.timezone,
     guestName: r.name, partySize: r.party_size, startsAt: r.starts_at, status: r.status, notes: r.notes,
   };
+}
+
+export type WalkInResult =
+  | { ok: true; reservationId: string; tableLabel: string }
+  | { ok: false; reason: "no_table" | "invalid_name" | "invalid_phone" | "venue_not_found" };
+
+/**
+ * Seat a walk-in now, on the best free table for the whole turn. Staff
+ * only, so staff-held tables (the bar) count, and there is no slot grid:
+ * a walk-in arrives when they arrive.
+ */
+export async function seatWalkIn(
+  sql: Sql,
+  tenant: Tenant,
+  input: { venueId: string; partySize: number; name: string; phone: string; now?: Date },
+): Promise<WalkInResult> {
+  assertCan(tenant, "book", input.venueId);
+  const name = input.name.trim() || "Walk-in";
+  const phone = input.phone.trim() ? normalizePhone(input.phone) : `none:${randomUUID()}`;
+  if (!phone) return { ok: false, reason: "invalid_phone" };
+  const now = input.now ?? new Date();
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await sql.begin(async (tx) => {
+        const [v] = await tx<{ timezone: string }[]>`
+          select timezone from venues where id = ${input.venueId} and org_id = ${tenant.orgId}`;
+        if (!v) return { ok: false as const, reason: "venue_not_found" as const };
+        const b = await loadBundle(tx, tenant.orgId, input.venueId, localDateOf(now, v.timezone));
+        if (!b) return { ok: false as const, reason: "venue_not_found" as const };
+        const period = b.periods[0];
+        const turn = period ? turnFor(period, input.partySize) : 90;
+        const end = new Date(now.getTime() + turn * 60_000);
+        const table = pickTable(b.tables, b.holds, input.partySize, now, end, "staff");
+        if (!table) return { ok: false as const, reason: "no_table" as const };
+
+        const [g] = await tx<{ id: string }[]>`
+          insert into guests (org_id, phone, name) values (${tenant.orgId}, ${phone}, ${name})
+          on conflict (org_id, phone) do update set name = excluded.name
+          returning id`;
+        const [r] = await tx<{ id: string }[]>`
+          insert into reservations (org_id, venue_id, guest_id, party_size, starts_at, ends_at, status, source, manage_token)
+          values (${tenant.orgId}, ${input.venueId}, ${g.id}, ${input.partySize}, ${now}, ${end}, 'seated', 'walk_in',
+                  ${randomBytes(18).toString("base64url")})
+          returning id`;
+        await tx`insert into reservation_tables (reservation_id, table_id, org_id, during)
+                 values (${r.id}, ${table.id}, ${tenant.orgId}, tstzrange(${now}, ${end}, '[)'))`;
+        await log(tx, tenant.orgId, tenant.actor, "reservation.walk_in", "reservation", r.id, { partySize: input.partySize, tableId: table.id });
+        return { ok: true as const, reservationId: r.id, tableLabel: table.label };
+      });
+    } catch (err) {
+      if ((err as { code?: string }).code === "23P01" && attempt < 2) continue;
+      if ((err as { code?: string }).code === "23P01") return { ok: false, reason: "no_table" };
+      throw err;
+    }
+  }
+  return { ok: false, reason: "no_table" };
+}
+
+export interface VenueSummary {
+  id: string;
+  name: string;
+  timezone: string;
+}
+
+export async function venuesFor(sql: Sql, tenant: Tenant): Promise<VenueSummary[]> {
+  const rows = await sql<VenueSummary[]>`
+    select id, name, timezone from venues where org_id = ${tenant.orgId} order by name`;
+  return rows.filter((v) => tenant.venueIds === null || tenant.venueIds.includes(v.id));
 }

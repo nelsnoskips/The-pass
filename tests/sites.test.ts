@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import demo from "@/lib/sites/demo-content.json";
 import { formatPrice, parseSiteContent } from "@/lib/sites/content";
-import { formatClock, formatWhen, readableOn } from "@/lib/sites/format";
+import { formatClock, formatPhone, formatWhen, readableOn } from "@/lib/sites/format";
 
 const clone = () => structuredClone(demo) as Record<string, unknown> & typeof demo;
 
@@ -68,6 +68,11 @@ describe("formatting", () => {
     expect(formatClock("00:15")).toBe("12:15 AM");
     expect(formatClock("12:00")).toBe("12:00 PM");
     expect(formatWhen(new Date("2026-11-14T00:30:00Z"), "America/New_York")).toBe("Fri, Nov 13 at 7:30 PM");
+  });
+
+  it("formats US numbers and leaves others alone", () => {
+    expect(formatPhone("+19545551001")).toBe("(954) 555-1001");
+    expect(formatPhone("+442079460958")).toBe("+442079460958");
   });
 
   it("picks readable text for a button colour", () => {

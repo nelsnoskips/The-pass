@@ -7,6 +7,7 @@ import {
   cancelByToken,
   dayBook,
   normalizePhone,
+  seatWalkIn,
   setStatus,
 } from "@/lib/reservations/repo";
 import { can, Forbidden, resolveTenant, type Tenant } from "@/lib/platform/tenant";
@@ -101,7 +102,7 @@ d("reservations against Postgres", () => {
     const r = await bookAt("20:00", 21);
     if (!r.ok) throw new Error("setup");
     // B's staff can't see or touch A's reservation.
-    expect(await setStatus(sql, staffB, r.reservation.id, "cancelled")).toBe(false);
+    expect(await setStatus(sql, staffB, r.reservation.id, "cancelled")).toBe("not_found");
     expect(await dayBook(sql, staffB, ids.venueA, FRI)).toEqual([]);
     // Nor book into A's venue under B's org.
     const cross = await book(sql, {
@@ -110,14 +111,16 @@ d("reservations against Postgres", () => {
     });
     expect(cross).toEqual({ ok: false, reason: "venue_not_found" });
     // A's own staff still can.
-    expect(await setStatus(sql, staffA, r.reservation.id, "confirmed")).toBe(true);
+    expect(await setStatus(sql, staffA, r.reservation.id, "confirmed")).toBe("ok");
   });
 
   it("enforces roles: hosts seat, viewers can't", async () => {
     const r = await bookAt("20:30", 31);
     if (!r.ok) throw new Error("setup");
     await expect(setStatus(sql, viewerA, r.reservation.id, "seated")).rejects.toBeInstanceOf(Forbidden);
-    expect(await setStatus(sql, hostA, r.reservation.id, "seated")).toBe(true);
+    expect(await setStatus(sql, hostA, r.reservation.id, "seated")).toBe("ok");
+    // Sat down: can never become a no-show.
+    expect(await setStatus(sql, hostA, r.reservation.id, "no_show")).toBe("invalid");
     expect(can(hostA, "approve_spend")).toBe(false);
     expect(can(hostA, "book", ids.venueB)).toBe(false);
   });
@@ -136,7 +139,8 @@ d("reservations against Postgres", () => {
 
   it("recognises a returning guest by phone, and never overwrites consent", async () => {
     await bookAt("17:30", 51, { guest: { name: "Ana", phone: "954-555-9999", smsMarketingConsent: true } });
-    await bookAt("18:00", 52, { guest: { name: "Ana P.", phone: "+1 (954) 555 9999", smsMarketingConsent: false } });
+    // A different day: one online booking per phone per day.
+    await bookAt("18:00", 52, { date: "2026-11-12", guest: { name: "Ana P.", phone: "+1 (954) 555 9999", smsMarketingConsent: false } });
     const rows = await sql<{ name: string; sms_consent_at: Date | null }[]>`
       select name, sms_consent_at from guests where org_id = ${ids.orgA} and phone = '+19545559999'`;
     expect(rows).toHaveLength(1);
@@ -155,6 +159,43 @@ d("reservations against Postgres", () => {
       select actor, action from change_log where entity_id = ${r.reservation.id} order by id`;
     expect(log.map((l) => l.action)).toEqual(["reservation.created", "reservation.seated", "reservation.completed"]);
     expect(log[1].actor).toBe("host@alpha");
+  });
+
+  it("one live online booking per phone per day; staff aren't limited", async () => {
+    const SAT = "2026-11-14";
+    const at = (time: string, phone: string, channel: "online" | "staff" = "online") =>
+      book(sql, {
+        orgId: ids.orgA, venueId: ids.venueA, date: SAT, time, partySize: 2,
+        guest: { name: "Repeat", phone }, source: "website", actor: "guest", channel, now: NOW,
+      });
+    expect((await at("17:00", "954-555-7777")).ok).toBe(true);
+    expect(await at("19:00", "+1 954 555 7777")).toEqual({ ok: false, reason: "already_booked" });
+    expect((await at("19:30", "954-555-7777", "staff")).ok).toBe(true);
+  });
+
+  it("caps online booking attempts per phone per hour", async () => {
+    const results = [];
+    for (const date of ["2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20", "2026-11-21"]) {
+      results.push(await book(sql, {
+        orgId: ids.orgA, venueId: ids.venueA, date, time: "17:00", partySize: 2,
+        guest: { name: "Hoarder", phone: "954-555-8888" }, source: "website", actor: "guest", channel: "online", now: NOW,
+      }));
+    }
+    expect(results.slice(0, 4).every((r) => r.ok)).toBe(true);
+    expect(results[4]).toEqual({ ok: false, reason: "too_many" });
+  });
+
+  it("seats walk-ins with no phone, who can never be texted", async () => {
+    const r = await seatWalkIn(sql, hostA, { venueId: ids.venueA, partySize: 2, name: "", phone: "", now: zonedToUtc(FRI, "22:30", TZ) });
+    expect(r).toMatchObject({ ok: true });
+    if (!r.ok) return;
+    const [g] = await sql<{ name: string; phone: string; status: string }[]>`
+      select g.name, g.phone, r.status from reservations r join guests g on g.id = r.guest_id where r.id = ${r.reservationId}`;
+    expect(g.name).toBe("Walk-in");
+    expect(g.phone.startsWith("+")).toBe(false);
+    expect(g.status).toBe("seated");
+    // Viewers can't seat anyone.
+    await expect(seatWalkIn(sql, viewerA, { venueId: ids.venueA, partySize: 2, name: "x", phone: "" })).rejects.toBeInstanceOf(Forbidden);
   });
 
   it("resolves tenants from email, and nobody else", async () => {

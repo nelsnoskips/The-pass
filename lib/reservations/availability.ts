@@ -110,7 +110,14 @@ export function pickTable(
         t.minCovers <= partySize &&
         t.maxCovers >= partySize,
     )
-    .sort((a, b) => a.maxCovers - b.maxCovers || a.label.localeCompare(b.label));
+    // Tables held back from online booking (the bar) are the staff's
+    // last resort, not their first: same-size bookable tables go first.
+    .sort(
+      (a, b) =>
+        a.maxCovers - b.maxCovers ||
+        Number(b.online) - Number(a.online) ||
+        a.label.localeCompare(b.label, undefined, { numeric: true }),
+    );
   for (const t of candidates) {
     const clash = holds.some(
       (h) => h.tableId === t.id && h.start < end && start < h.end,

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { SESSION_COOKIE } from "@/lib/studio/cookie";
+import { MEMBER_COOKIE } from "@/lib/platform/cookie";
 
 /**
  * The client platform and the project portal were reachable by anyone
@@ -24,8 +25,21 @@ const PROTECTED = [
   "/keywords", "/locations", "/reports", "/settings", "/welcome", "/portal",
 ];
 
+/** The restaurant platform: a restaurant session or a studio one. */
+const PLATFORM = "/r";
+
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  if (pathname === PLATFORM || pathname.startsWith(`${PLATFORM}/`)) {
+    if (req.cookies.get(MEMBER_COOKIE)?.value || req.cookies.get(SESSION_COOKIE)?.value) {
+      return NextResponse.next();
+    }
+    const url = req.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
   const guarded = PROTECTED.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`),
   );
@@ -44,7 +58,7 @@ export const config = {
     "/dashboard/:path*", "/agents/:path*", "/calendar/:path*", "/campaigns/:path*",
     "/conversions/:path*", "/integrations/:path*", "/keywords/:path*",
     "/locations/:path*", "/reports/:path*", "/settings/:path*",
-    "/welcome/:path*", "/portal/:path*",
+    "/welcome/:path*", "/portal/:path*", "/r", "/r/:path*",
     "/dashboard", "/agents", "/calendar", "/campaigns", "/conversions", "/integrations",
     "/keywords", "/locations", "/reports", "/settings", "/welcome", "/portal",
   ],

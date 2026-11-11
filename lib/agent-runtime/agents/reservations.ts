@@ -176,6 +176,7 @@ async function textable(ctx: AgentContext, ids: string[]): Promise<{ id: string;
   return ctx.sql<{ id: string; phone: string }[]>`
     select g.id, g.phone from guests g
     where g.org_id = ${ctx.tenant.orgId} and g.id = any(${uuids}::uuid[])
+      and g.phone like '+%'
       and g.sms_consent_at is not null and g.sms_opted_out_at is null
       and not exists (select 1 from guest_messages m
                       where m.guest_id = g.id and m.kind = 'marketing' and m.created_at > ${recent})`;
