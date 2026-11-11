@@ -204,3 +204,203 @@ alter table projects add column if not exists mocks jsonb not null default '[]':
 -- it in. Notes say what to change; this says what to change *about
 -- what*, and without it a three-concept round comes back unanswerable.
 alter table review_rounds add column if not exists chosen text;
+
+-- ==================================================================
+-- The platform: restaurant accounts, reservations, guests.
+--
+-- Everything below belongs to one restaurant group (an "org"), and
+-- every row carries org_id directly — not only through a parent — so
+-- that every query can be scoped with one equality and a missing
+-- scope is visible in review. lib/platform/tenant.ts is the only way
+-- application code gets an org_id.
+-- ==================================================================
+
+-- Exclusion constraints over (uuid, range) need gist support for =.
+create extension if not exists btree_gist;
+
+create table if not exists orgs (
+  id         uuid primary key default gen_random_uuid(),
+  name       text not null,
+  slug       text not null unique,
+  created_at timestamptz not null default now()
+);
+
+-- Who can sign in to an org, and as what. Studio staff are not listed
+-- here: the studio allowlist makes them staff across every org.
+--   owner   — everything, including billing and spend approvals
+--   manager — runs the restaurant and approves spend
+--   host    — the host stand: bookings, seating, guests
+--   viewer  — read only
+-- venue_ids null means every venue in the org.
+create table if not exists org_members (
+  id         uuid primary key default gen_random_uuid(),
+  org_id     uuid not null references orgs(id) on delete cascade,
+  email      text not null,
+  role       text not null check (role in ('owner', 'manager', 'host', 'viewer')),
+  venue_ids  uuid[],
+  created_at timestamptz not null default now(),
+  unique (org_id, email)
+);
+
+create index if not exists org_members_email_idx on org_members(lower(email));
+
+-- A physical restaurant. Times for a venue are always reasoned about in
+-- its own timezone; storage is timestamptz.
+create table if not exists venues (
+  id         uuid primary key default gen_random_uuid(),
+  org_id     uuid not null references orgs(id) on delete cascade,
+  name       text not null,
+  slug       text not null,
+  timezone   text not null default 'America/New_York',
+  phone      text,
+  address    text,
+  -- Online booking window and cut-off.
+  booking_horizon_days integer not null default 60,
+  min_notice_minutes   integer not null default 60,
+  max_party_online     integer not null default 8,
+  created_at timestamptz not null default now(),
+  unique (org_id, slug)
+);
+
+create table if not exists dining_tables (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null references orgs(id) on delete cascade,
+  venue_id    uuid not null references venues(id) on delete cascade,
+  label       text not null,
+  area        text,
+  min_covers  integer not null default 1 check (min_covers >= 1),
+  max_covers  integer not null check (max_covers >= min_covers),
+  -- Held back from online booking (the walk-in two-top by the bar).
+  online      boolean not null default true,
+  active      boolean not null default true,
+  unique (venue_id, label)
+);
+
+-- When the room takes bookings. first_seating/last_seating are local
+-- wall-clock times; days_of_week uses 0 = Sunday.
+create table if not exists service_periods (
+  id             uuid primary key default gen_random_uuid(),
+  org_id         uuid not null references orgs(id) on delete cascade,
+  venue_id       uuid not null references venues(id) on delete cascade,
+  name           text not null,
+  days_of_week   smallint[] not null,
+  first_seating  time not null,
+  last_seating   time not null,
+  slot_minutes   integer not null default 15 check (slot_minutes > 0),
+  -- How long a party holds a table, by size. Keys are max party size,
+  -- e.g. {"2":75,"4":90,"99":120}; the smallest key >= party wins.
+  turn_minutes   jsonb not null default '{"2":75,"4":90,"6":105,"99":120}'::jsonb,
+  -- Pacing: most covers allowed to start in one slot. Null = no cap.
+  max_covers_per_slot integer,
+  -- Deposit per cover for this period, in cents. 0 = none.
+  deposit_cents_per_cover integer not null default 0
+);
+
+create table if not exists venue_closures (
+  id       uuid primary key default gen_random_uuid(),
+  org_id   uuid not null references orgs(id) on delete cascade,
+  venue_id uuid not null references venues(id) on delete cascade,
+  date     date not null,
+  reason   text,
+  unique (venue_id, date)
+);
+
+-- A guest belongs to the org, not a venue: a regular at one location is
+-- a regular of the group. Phone (E.164) is the identity, because it is
+-- what a host types and what SMS needs.
+create table if not exists guests (
+  id             uuid primary key default gen_random_uuid(),
+  org_id         uuid not null references orgs(id) on delete cascade,
+  phone          text not null,
+  name           text not null,
+  email          text,
+  notes          text,
+  tags           text[] not null default '{}',
+  -- Marketing consent is a record, not a flag: when, and how. Booking
+  -- confirmations are transactional and do not need it; promotions do.
+  sms_consent_at     timestamptz,
+  sms_consent_source text,
+  sms_opted_out_at   timestamptz,
+  visit_count    integer not null default 0,
+  no_show_count  integer not null default 0,
+  last_visit_at  timestamptz,
+  created_at     timestamptz not null default now(),
+  unique (org_id, phone)
+);
+
+do $$ begin
+  create type reservation_status as enum (
+    'booked', 'confirmed', 'seated', 'completed', 'cancelled', 'no_show'
+  );
+exception when duplicate_object then null; end $$;
+
+create table if not exists reservations (
+  id           uuid primary key default gen_random_uuid(),
+  org_id       uuid not null references orgs(id) on delete cascade,
+  venue_id     uuid not null references venues(id) on delete cascade,
+  guest_id     uuid not null references guests(id),
+  party_size   integer not null check (party_size >= 1),
+  starts_at    timestamptz not null,
+  ends_at      timestamptz not null check (ends_at > starts_at),
+  status       reservation_status not null default 'booked',
+  -- website, google, instagram, phone, walk_in, import, agent
+  source       text not null default 'website',
+  notes        text,
+  deposit_cents  integer not null default 0,
+  deposit_status text not null default 'none'
+    check (deposit_status in ('none', 'pending', 'held', 'captured', 'refunded')),
+  stripe_payment_intent text,
+  -- The guest's own link to view, change or cancel. Their whole
+  -- credential, like a review token.
+  manage_token text not null unique,
+  created_at   timestamptz not null default now(),
+  updated_at   timestamptz not null default now()
+);
+
+create index if not exists reservations_venue_day_idx on reservations(venue_id, starts_at);
+create index if not exists reservations_guest_idx on reservations(guest_id);
+
+-- Which tables a reservation holds, and when. The exclusion constraint
+-- is the double-booking guarantee: two live holds on one table cannot
+-- overlap in time, whatever the application does and however many
+-- requests race. Cancelling releases the hold by clearing `live`.
+create table if not exists reservation_tables (
+  reservation_id uuid not null references reservations(id) on delete cascade,
+  table_id       uuid not null references dining_tables(id),
+  org_id         uuid not null references orgs(id) on delete cascade,
+  during         tstzrange not null,
+  live           boolean not null default true,
+  primary key (reservation_id, table_id)
+);
+
+do $$ begin
+  alter table reservation_tables
+    add constraint reservation_tables_no_overlap
+    exclude using gist (table_id with =, during with &&) where (live);
+exception when duplicate_object or duplicate_table then null; end $$;
+
+-- Every change that matters, by whom: a person (their email), a guest
+-- ('guest'), or an agent ('agent:paid_ads'). The answer to "who moved
+-- my budget / cancelled this table" is a query, not a guess.
+create table if not exists change_log (
+  id         bigint generated always as identity primary key,
+  org_id     uuid not null references orgs(id) on delete cascade,
+  actor      text not null,
+  action     text not null,
+  entity     text not null,
+  entity_id  text,
+  detail     jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists change_log_org_idx on change_log(org_id, created_at desc);
+
+-- Approve/dismiss on agent proposals, replacing the browser-only record.
+create table if not exists agent_decisions (
+  org_id      uuid not null references orgs(id) on delete cascade,
+  proposal_id text not null,
+  decision    text not null check (decision in ('approved', 'dismissed')),
+  decided_by  text not null,
+  decided_at  timestamptz not null default now(),
+  primary key (org_id, proposal_id)
+);
