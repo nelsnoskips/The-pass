@@ -39,7 +39,7 @@ export const PROVIDERS: Provider[] = [
     does: "Sends confirmations, reminders, waitlist and campaign texts.", env: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_FROM"] },
   { id: "resend", name: "Resend", category: "Messaging", scope: "platform", build: "live",
     does: "Sends sign-in links and email.", env: ["RESEND_API_KEY"] },
-  { id: "stripe", name: "Stripe", category: "Payments", scope: "platform", build: "shell",
+  { id: "stripe", name: "Stripe", category: "Payments", scope: "platform", build: "live",
     does: "Takes deposits at booking; card details never touch The Pass.", env: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"] },
   { id: "google_business", name: "Google Business Profile", category: "Discovery", scope: "restaurant", build: "shell",
     does: "Keeps hours and details in sync on Google; reads and answers reviews.", env: [] },

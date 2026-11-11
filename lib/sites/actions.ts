@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "../db";
-import { paymentsProvider } from "../payments";
+import { paymentsProvider, refundDepositIfDue } from "../payments";
 import { allow, clientAddress } from "../platform/ratelimit";
 import { sendBookingConfirmation } from "../reservations/notify";
 import { joinWaitlist, notifyWaitlist } from "../reservations/followups";
@@ -157,6 +157,11 @@ export async function cancelBooking(form: FormData): Promise<void> {
   const booking = await bookingByToken(sql, token);
   if (!booking) return;
   if (await cancelByToken(sql, token)) {
+    try {
+      await refundDepositIfDue(sql, booking.orgId, booking.id, "guest");
+    } catch (err) {
+      console.error("Deposit refund failed", err);
+    }
     await afterRelease(booking.orgId, booking.venueId, booking.startsAt, booking.timezone);
   }
   redirect(`/s/${slug}/booking/${token}`);

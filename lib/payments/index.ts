@@ -1,4 +1,5 @@
 import type { Sql } from "postgres";
+import { stripePayments } from "./stripe";
 
 /**
  * Payments behind one interface, so the booking flow never knows which
@@ -41,14 +42,42 @@ export const manualPayments: PaymentsProvider = {
   },
 };
 
-/**
- * TODO(stripe): create a Checkout Session in setup/hold mode with
- * metadata { paymentId }, store session.id as provider_ref and its url
- * as checkout_url; a webhook (checkout.session.completed) marks the
- * payment held and the reservation's deposit_status 'held'.
- */
+/** Stripe when it's configured; otherwise deposits are recorded for staff. */
 export function paymentsProvider(): PaymentsProvider {
-  return manualPayments;
+  const key = process.env.STRIPE_SECRET_KEY?.trim();
+  return key ? stripePayments(key) : manualPayments;
+}
+
+function providerFor(id: string): PaymentsProvider | null {
+  if (id === "manual") return manualPayments;
+  const key = process.env.STRIPE_SECRET_KEY?.trim();
+  if (id === "stripe" && key) return stripePayments(key);
+  return null;
+}
+
+/**
+ * After a cancellation, give the deposit back when the policy says so:
+ * always when the restaurant cancels, and when the guest cancels before
+ * the venue's cut-off. Returns whether a refund was made.
+ */
+export async function refundDepositIfDue(
+  sql: Sql, orgId: string, reservationId: string, by: "guest" | "restaurant", now = new Date(),
+): Promise<boolean> {
+  const [p] = await sql<{ id: string; provider: string; starts_at: Date; cutoff: number }[]>`
+    select p.id, p.provider, r.starts_at, v.cancel_cutoff_hours as cutoff
+    from payments p join reservations r on r.id = p.reservation_id join venues v on v.id = r.venue_id
+    where p.reservation_id = ${reservationId} and p.org_id = ${orgId} and p.kind = 'deposit' and p.status in ('held', 'captured')
+    order by p.created_at desc limit 1`;
+  if (!p) return false;
+  const inTime = p.starts_at.getTime() - now.getTime() >= p.cutoff * 3_600_000;
+  if (by === "guest" && !inTime) return false;
+  const provider = providerFor(p.provider);
+  if (!provider) return false;
+  await provider.refund(sql, orgId, p.id);
+  await sql`update reservations set deposit_status = 'refunded', updated_at = now() where id = ${reservationId} and org_id = ${orgId}`;
+  await sql`insert into change_log (org_id, actor, action, entity, entity_id, detail)
+            values (${orgId}, ${by}, 'payment.refunded', 'reservation', ${reservationId}, ${sql.json({ paymentId: p.id, inTime })})`;
+  return true;
 }
 
 export async function markDepositPaid(sql: Sql, orgId: string, reservationId: string, actor: string): Promise<boolean> {

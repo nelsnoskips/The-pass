@@ -26,9 +26,9 @@ const STATUS: Record<string, { label: string; tone: "ok" | "off" }> = {
   no_show: { label: "Missed", tone: "off" },
 };
 
-export default async function BookingPage({ params, searchParams }: { params: Promise<{ site: string; token: string }>; searchParams: Promise<{ changed?: string }> }) {
+export default async function BookingPage({ params, searchParams }: { params: Promise<{ site: string; token: string }>; searchParams: Promise<{ changed?: string; paid?: string }> }) {
   const { site: slug, token } = await params;
-  const { changed } = await searchParams;
+  const { changed, paid } = await searchParams;
   const sql = db();
   if (!sql) notFound();
   const [site, booking] = await Promise.all([getPublishedSite(sql, slug), bookingByToken(sql, token)]);
@@ -51,6 +51,7 @@ export default async function BookingPage({ params, searchParams }: { params: Pr
             : "Your reservation"}
       </h1>
 
+      {paid && canCancel && <p className="site-note" role="status" style={{ marginTop: 14 }}>Deposit received — thank you. It comes off your bill.</p>}
       <dl className="site-summary">
         <div><dt>Where</dt><dd>{c.brand.name}</dd></div>
         <div><dt>When</dt><dd>{formatWhen(booking.startsAt, booking.timezone)}</dd></div>

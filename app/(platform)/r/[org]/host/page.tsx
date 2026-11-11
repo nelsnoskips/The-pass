@@ -101,8 +101,8 @@ export default async function HostStand({ params, searchParams }: { params: Prom
                             {r.guestVisits > 0 && <span className="pf-pill go">{r.guestVisits} {r.guestVisits === 1 ? "visit" : "visits"}</span>}
                             {r.guestVisits === 0 && r.source !== "walk_in" && <span className="pf-pill">First visit</span>}
                             {r.depositCents > 0 && (
-                              <span className={`pf-pill ${r.depositStatus === "held" ? "go" : "warn"}`}>
-                                ${(r.depositCents / 100).toFixed(0)} deposit {r.depositStatus === "held" ? "paid" : "due"}
+                              <span className={`pf-pill ${r.depositStatus === "held" || r.depositStatus === "captured" ? "go" : r.depositStatus === "refunded" ? "" : "warn"}`}>
+                                ${(r.depositCents / 100).toFixed(0)} deposit {r.depositStatus === "held" || r.depositStatus === "captured" ? "paid" : r.depositStatus === "refunded" ? "refunded" : "due"}
                               </span>
                             )}
                             {priorNoShows(r) > 0 && <span className="pf-pill warn">{priorNoShows(r)} earlier no-show{priorNoShows(r) > 1 ? "s" : ""}</span>}

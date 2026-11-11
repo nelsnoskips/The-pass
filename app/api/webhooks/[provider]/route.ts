@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { connector } from "@/lib/integrations/connectors";
+import { BadSignature, connector } from "@/lib/integrations/connectors";
 
 /**
  * Where providers push events (Stripe payments, Square checks, Google
@@ -18,6 +18,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ provide
   const sql = db();
   if (!sql) return NextResponse.json({ error: "No database." }, { status: 503 });
   const raw = await req.text();
-  const { handled } = await c.handleWebhook(sql, raw, req.headers);
-  return NextResponse.json({ handled });
+  try {
+    const { handled } = await c.handleWebhook(sql, raw, req.headers);
+    return NextResponse.json({ handled });
+  } catch (err) {
+    if (err instanceof BadSignature) return NextResponse.json({ error: "Bad signature." }, { status: 400 });
+    throw err;
+  }
 }

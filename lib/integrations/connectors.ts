@@ -1,4 +1,5 @@
 import type { Sql } from "postgres";
+import { applyStripeEvent, verifyStripeSignature } from "../payments/stripe";
 import type { ProviderId } from "./registry";
 
 /**
@@ -57,9 +58,28 @@ export const CONNECTORS: Partial<Record<ProviderId, Connector>> = {
     "OAuth (ORDERS_READ, CUSTOMERS_READ). Webhook payment.updated → match the card holder or phone to a guest, record a visit and spend."),
   toast: shell("toast",
     "Partner API. Webhook on closed checks → match to a guest by phone, record a visit and spend."),
-  stripe: shell("stripe",
-    "Checkout Session per deposit (see lib/payments). Webhook checkout.session.completed → payment held; charge.refunded → refunded."),
+  stripe: {
+    id: "stripe",
+    built: true,
+    authorizeUrl: () => null,
+    complete: async () => { throw new NotBuilt("stripe (platform account, configured by environment)"); },
+    sync: async () => ({ changed: 0 }),
+    async handleWebhook(sql, raw, headers) {
+      const secret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
+      if (!secret || !verifyStripeSignature(raw, headers.get("stripe-signature"), secret)) {
+        throw new BadSignature();
+      }
+      return { handled: await applyStripeEvent(sql, JSON.parse(raw)) };
+    },
+  },
 };
+
+export class BadSignature extends Error {
+  constructor() {
+    super("Signature didn't verify.");
+    this.name = "BadSignature";
+  }
+}
 
 export function connector(id: string): Connector | undefined {
   return CONNECTORS[id as ProviderId];

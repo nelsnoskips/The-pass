@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "../db";
+import { refundDepositIfDue } from "../payments";
 import { notifyWaitlist } from "../reservations/followups";
 import { sendCancellationNotice } from "../reservations/notify";
 import { localDate } from "../reservations/time";
@@ -48,6 +49,12 @@ export async function changeStatus(org: string, reservationId: string, status: R
       });
     } catch (err) {
       console.error("Cancellation notice failed", err);
+    }
+    try {
+      // The restaurant cancelled: the deposit always goes back.
+      await refundDepositIfDue(sql, tenant.orgId, reservationId, "restaurant");
+    } catch (err) {
+      console.error("Deposit refund failed", err);
     }
     try {
       const h = await headers();

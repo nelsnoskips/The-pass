@@ -587,3 +587,8 @@ create index if not exists payments_reservation_idx on payments(reservation_id);
 -- The policy a guest is shown before booking, per venue.
 alter table venues add column if not exists cancellation_policy text not null default '';
 alter table venues add column if not exists cancel_cutoff_hours integer not null default 24;
+
+-- The processor's id for the money itself (Stripe payment intent), kept
+-- apart from provider_ref (the checkout session) because refunds need it.
+alter table payments add column if not exists provider_charge_ref text;
+create index if not exists payments_provider_ref_idx on payments(provider, provider_ref);
