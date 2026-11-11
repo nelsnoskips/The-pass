@@ -1,15 +1,12 @@
 import { ProposalActions } from "@/components/platform/ProposalActions";
+import { AGENT_CARDS } from "@/lib/agent-runtime/catalog";
 import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
 import { can } from "@/lib/platform/tenant";
 
 export const dynamic = "force-dynamic";
 
-const AGENTS: Record<string, { name: string; what: string }> = {
-  reservations: { name: "Reservations Agent", what: "Watches the book for quiet nights and fills them from your own regulars." },
-  reviews: { name: "Reviews Agent", what: "Drafts a reply to every new Google review, for you to post." },
-  paid_ads: { name: "Paid Ads Agent", what: "Reads your Google and Meta numbers weekly. Proposes budget changes and blocks wasted searches." },
-};
+const AGENTS = Object.fromEntries(AGENT_CARDS.map((a) => [a.id, a]));
 
 const ago = (d: Date) => {
   const m = Math.round((Date.now() - d.getTime()) / 60_000);
@@ -28,7 +25,7 @@ export default async function Agents({ params }: { params: Promise<{ org: string
   const { tenant, org } = await requireTenant(slug);
   const sql = db()!;
 
-  const [pending, history, runs] = await Promise.all([
+  const [pending, history, runs, counts] = await Promise.all([
     sql<{ id: string; agent_id: string; title: string; rationale: string; input: { message?: string; guest_ids?: string[] }; created_at: Date }[]>`
       select id, agent_id, title, rationale, input, created_at from agent_proposals
       where org_id = ${tenant.orgId} and status = 'pending' order by created_at desc limit 50`,
@@ -38,7 +35,11 @@ export default async function Agents({ params }: { params: Promise<{ org: string
     sql<{ agent_id: string; status: string; summary: string | null; started_at: Date }[]>`
       select distinct on (agent_id) agent_id, status, summary, started_at from agent_runs
       where org_id = ${tenant.orgId} order by agent_id, started_at desc`,
+    sql<{ agent_id: string; proposed: number; approved: number }[]>`
+      select agent_id, count(*)::int as proposed, count(*) filter (where status = 'executed')::int as approved
+      from agent_proposals where org_id = ${tenant.orgId} and created_at > now() - interval '28 days' group by agent_id`,
   ]);
+  const stats = new Map(counts.map((c) => [c.agent_id, c]));
   const lastRun = new Map(runs.map((r) => [r.agent_id, r]));
   const canMessage = can(tenant, "message_guests");
   // Approving needs the same permission the action does.
@@ -49,22 +50,32 @@ export default async function Agents({ params }: { params: Promise<{ org: string
       <div className="pf-head">
         <div>
           <h1>Agents</h1>
-          <p className="pf-sub">They read your book, your guest list and your ads, and propose. Nothing reaches a guest or spends money until you approve it.</p>
+          <p className="pf-sub">They read your book, your guest list and your ads, and propose. Nothing reaches a guest or spends money until you approve it. Numbers cover the last 28 days.</p>
         </div>
       </div>
 
-      <div className="pf-stats" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-        {Object.entries(AGENTS).map(([id, a]) => {
-          const run = lastRun.get(id);
+      <div className="pf-agents">
+        {AGENT_CARDS.map((a) => {
+          const run = lastRun.get(a.id);
+          const st = stats.get(a.id);
+          const on = Boolean(run && Date.now() - run.started_at.getTime() < 14 * 86_400_000);
           return (
-            <div key={id} className={`pf-stat${run ? " live" : ""}`}>
-              <div style={{ fontWeight: 600, fontSize: 15 }}>{a.name}</div>
-              <span style={{ display: "block", marginTop: 4 }}>{a.what}</span>
-              <span className="mono" style={{ display: "block", marginTop: 10, color: "var(--faint)" }}>
-                {run ? `Last run ${ago(run.started_at)} · ${run.status}` : "Not run yet · runs on a schedule"}
-              </span>
-              {run?.summary && <span style={{ display: "block", marginTop: 8, color: "var(--ink)" }}>{run.summary}</span>}
-            </div>
+            <article key={a.id} className="pf-agent-card">
+              <div className="top">
+                <span className="ic" aria-hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={a.icon} /></svg></span>
+                <span className={`state${on ? " on" : ""}`}>{on ? "Working" : run ? "Idle" : "Not run yet"}</span>
+              </div>
+              <h3>{a.name}</h3>
+              <p className="tags">{a.tags.join(" · ")}</p>
+              <p className="does">{a.does}</p>
+              <p className="rule">{a.approval}</p>
+              <div className="metrics">
+                <div><span>Proposed</span><b className="mono">{st?.proposed ?? 0}</b></div>
+                <div><span>Approved</span><b className="mono">{st?.approved ?? 0}</b></div>
+                <div><span>Last run</span><b className="mono">{run ? ago(run.started_at) : "—"}</b></div>
+              </div>
+              {run?.summary && <p className="sum">{run.summary}</p>}
+            </article>
           );
         })}
       </div>
@@ -76,7 +87,7 @@ export default async function Agents({ params }: { params: Promise<{ org: string
             <p className="pf-empty">Nothing waiting. When an agent wants to act, it shows up here first.</p>
           ) : (
             pending.map((p) => (
-              <article key={p.id} style={{ padding: "16px", borderTop: "1px solid var(--rule)", display: "grid", gap: 12 }}>
+              <article key={p.id} id={`p-${p.id}`} style={{ scrollMarginTop: 80, padding: "16px", borderTop: "1px solid var(--rule)", display: "grid", gap: 12 }}>
                 <div className="pf-res-meta" style={{ marginTop: 0 }}>
                   <span className="pf-pill dot info">{AGENTS[p.agent_id]?.name ?? p.agent_id}</span>
                   <span className="mono">{ago(p.created_at)}</span>
