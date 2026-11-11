@@ -25,10 +25,10 @@ model. It is five pieces, and the value lives in pieces 3–5:
                           CHANGE LOG · APPROVAL QUEUE · UNDO
 ```
 
-1. **Triggers** — a scheduler POSTs to `/api/agents/run` (bearer
-   `AGENT_CRON_SECRET`) to start an agent for one org. Today that is a
-   cron or Netlify scheduled function; Inngest replaces it when we need
-   retries, fan-out and event triggers. Agents never run inside a page
+1. **Triggers** — `netlify/functions/scheduled-jobs.mts` runs hourly:
+   booking reminders every hour, and at 15:00 UTC each restaurant's
+   Reservations Agent via `/api/agents/run` (bearer `AGENT_CRON_SECRET`).
+   Inngest replaces it when we need retries, fan-out and event triggers. Agents never run inside a page
    request a guest or owner is waiting on.
 2. **Model + instructions** — Claude through the Messages API with a
    manual tool loop (`lib/agent-runtime/runner.ts`), so the policy check
@@ -82,10 +82,10 @@ Approve-tier actions need a role that `can(tenant, ...)` grants:
 | Reservations engine (the guest data source) | Built | `lib/reservations/` |
 | Paid Ads + Search Terms agents (rules, approval queue) | Built, rules only, demo data | `lib/agents/`, `/agents` |
 | Agent runtime: tools with tiers, policy, loop, proposals | Built | `lib/agent-runtime/` |
-| Trigger endpoint | Built (needs `AGENT_CRON_SECRET`, `ANTHROPIC_API_KEY`, a schedule) | `app/api/agents/run` |
+| Triggers | Built: hourly Netlify schedule, agent and reminder endpoints (need `AGENT_CRON_SECRET`, `ANTHROPIC_API_KEY`) | `netlify/functions`, `app/api/agents/run`, `app/api/jobs` |
 | Reservations agent (fill quiet shifts by SMS) | Built on the runtime | `lib/agent-runtime/agents/reservations.ts` |
 | SMS sending | Built; dry run until Twilio keys are set | `lib/messaging/sms.ts` |
-| Proposal queue UI for runtime agents | Not yet | — |
+| Proposal queue UI for runtime agents | Built | `/r/<org>/agents` |
 | Live Google/Meta/GBP tools | Not yet | `lib/connectors/` |
 
 ## Writing a new agent
