@@ -1,5 +1,6 @@
 import { SiteEditor } from "@/components/platform/SiteEditor";
 import { PublishVersionButton } from "@/components/platform/VersionActions";
+import { WebsiteAgentBox } from "@/components/platform/WebsiteAgentBox";
 import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
 import { can } from "@/lib/platform/tenant";
@@ -33,7 +34,11 @@ export default async function Website({ params }: { params: Promise<{ org: strin
       <div className="pf-layout">
         <div>
           {editable && latest ? (
-            <SiteEditor org={slug} initial={latest} liveUrl={`/s/${site.slug}`} />
+            <>
+              <WebsiteAgentBox org={slug} />
+              {/* Keyed on the newest version so an agent's draft reloads the form. */}
+              <SiteEditor key={versions[0]?.id} org={slug} initial={latest} liveUrl={`/s/${site.slug}`} />
+            </>
           ) : (
             <p className="pf-empty pf-panel">Only owners and managers can edit the website.</p>
           )}

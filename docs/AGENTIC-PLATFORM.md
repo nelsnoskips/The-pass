@@ -84,6 +84,7 @@ Approve-tier actions need a role that `can(tenant, ...)` grants:
 | Agent runtime: tools with tiers, policy, loop, proposals | Built | `lib/agent-runtime/` |
 | Triggers | Built: hourly Netlify schedule, agent and reminder endpoints (need `AGENT_CRON_SECRET`, `ANTHROPIC_API_KEY`) | `netlify/functions`, `app/api/agents/run`, `app/api/jobs` |
 | Reservations agent (fill quiet shifts by SMS) | Built on the runtime | `lib/agent-runtime/agents/reservations.ts` |
+| Website agent (describe a change → draft → preview → publish) | Built on the runtime; saves drafts only | `lib/agent-runtime/agents/website.ts` |
 | SMS sending | Built; dry run until Twilio keys are set | `lib/messaging/sms.ts` |
 | Proposal queue UI for runtime agents | Built | `/r/<org>/agents` |
 | Live Google/Meta/GBP tools | Not yet | `lib/connectors/` |
