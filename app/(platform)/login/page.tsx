@@ -10,7 +10,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
     <main className="pf-login">
       <form className="pf-login-card" method="post" action="/api/platform/login">
         <div>
-          <p className="pf-sub" style={{ margin: 0 }}>The Pass</p>
+          <p className="pf-mark" style={{ margin: "0 0 14px" }}>The Pass</p>
           <h1>Sign in to your restaurant</h1>
         </div>
         {sent ? (

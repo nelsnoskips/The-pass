@@ -14,7 +14,7 @@ export default async function OrgLayout({ children, params }: { children: React.
           <PlatformNav org={org.slug} />
           <div className="pf-who">
             <span className="email">{email}</span>
-            <span>{staff ? "Studio" : tenant.role[0].toUpperCase() + tenant.role.slice(1)}</span>
+            <span className="role">{staff ? "studio" : tenant.role}</span>
             {!staff && (
               <form method="post" action="/api/platform/logout"><button type="submit">Sign out</button></form>
             )}

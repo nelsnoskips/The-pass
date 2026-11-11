@@ -47,7 +47,7 @@ export default async function Guests({ params, searchParams }: { params: Promise
         </div>
         <form className="pf-daynav" role="search">
           <input name="q" defaultValue={term} placeholder="Name, phone or email" aria-label="Search guests"
-            className="pf-field" style={{ minHeight: 44, border: "1px solid var(--rule)", borderRadius: 8, padding: "0 12px", font: "inherit", width: 240 }} />
+            className="pf-input" style={{ width: 260 }} />
           <button className="pf-btn" type="submit">Search</button>
         </form>
       </div>
@@ -73,8 +73,8 @@ export default async function Guests({ params, searchParams }: { params: Promise
                   <td className="num">{date(g.last_visit_at)}</td>
                   <td className="num">{date(g.upcoming)}</td>
                   <td>
-                    {g.sms_opted_out_at ? <span className="pf-pill stop">Opted out</span>
-                      : g.sms_consent_at ? <span className="pf-pill go">Opted in</span>
+                    {g.sms_opted_out_at ? <span className="pf-pill dot stop">Opted out</span>
+                      : g.sms_consent_at ? <span className="pf-pill dot go">Opted in</span>
                       : <span className="pf-pill">Bookings only</span>}
                   </td>
                 </tr>

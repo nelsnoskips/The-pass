@@ -33,10 +33,18 @@
 .site-nav .site-links { display: none; gap: 28px; }
 @media (min-width: 760px) { .site-nav .site-links { display: flex; } }
 
-.site .site-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: var(--on-accent); border: 1px solid var(--accent); padding: 11px 20px; font: 600 14.5px/1 var(--body); text-decoration: none; border-radius: 2px; cursor: pointer; transition: filter 0.15s; }
-.site-btn:hover { filter: brightness(1.12); text-decoration: none !important; }
+.site { --spring: linear(0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%, 0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%, 1.001 85.3%, 1); --ease: cubic-bezier(0.2, 0.8, 0.2, 1); }
+.site .site-btn { position: relative; overflow: hidden; isolation: isolate; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: var(--on-accent); border: 1px solid var(--accent); padding: 11px 20px; font: 600 14.5px/1 var(--body); text-decoration: none; border-radius: 2px; cursor: pointer;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), 0 1px 2px rgb(0 0 0 / 0.12);
+  transition: transform .5s var(--spring), box-shadow .3s var(--ease), filter .2s var(--ease); }
+.site .site-btn::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.28) 50%, transparent 65%); background-size: 250% 100%; background-position: 120% 0; }
+.site .site-btn:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), 0 10px 24px -12px color-mix(in srgb, var(--accent) 80%, transparent); text-decoration: none !important; }
+.site .site-btn:hover::after { animation: site-sheen .9s var(--ease) forwards; }
+.site .site-btn:active { transform: scale(0.975); transition-duration: .08s; }
+@keyframes site-sheen { from { background-position: 120% 0; } to { background-position: -40% 0; } }
 .site-btn[disabled] { opacity: 0.55; cursor: default; }
-.site .site-btn.ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
+.site .site-btn.ghost::after { display: none; }
+.site .site-btn.ghost { background: transparent; color: var(--ink); box-shadow: none; border-color: var(--rule); }
 .site-btn.large { padding: 15px 26px; font-size: 15.5px; }
 
 .site-eyebrow { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
@@ -114,7 +122,9 @@
 @media (min-width: 520px) { .site-row { grid-template-columns: 1fr 1fr; } }
 .site-period { font-size: 13.5px; color: var(--muted); margin: 16px 0 0; }
 .site-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; margin-top: 10px; }
-.site-time { font: 500 15px/1 var(--body); padding: 13px 6px; background: var(--paper); color: var(--ink); border: 1px solid var(--rule); border-radius: 2px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.site-time { font: 500 15px/1 var(--body); padding: 13px 6px; background: var(--paper); color: var(--ink); border: 1px solid var(--rule); border-radius: 2px; cursor: pointer; font-variant-numeric: tabular-nums; transition: transform .45s var(--spring), border-color .2s var(--ease), background-color .2s var(--ease), color .2s var(--ease), box-shadow .3s var(--ease); }
+.site-time:active { transform: scale(0.96); transition-duration: .08s; }
+.site-time[aria-pressed="true"] { box-shadow: 0 8px 20px -12px var(--ink); }
 .site-time:hover { border-color: var(--ink); }
 .site-time[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .site-note { font-size: 14px; color: var(--muted); }
@@ -130,3 +140,11 @@
 .site-status { display: inline-block; font: 600 11.5px/1 var(--body); letter-spacing: 0.14em; text-transform: uppercase; padding: 7px 11px; border-radius: 999px; border: 1px solid var(--rule); }
 .site-status.ok { background: color-mix(in srgb, #1e8e4e 14%, var(--paper)); border-color: transparent; }
 .site-status.off { background: var(--wash); color: var(--muted); }
+
+@supports (transition-behavior: allow-discrete) {
+  .site-time, .site-error { transition-property: transform, border-color, background-color, color, box-shadow, opacity, translate; }
+  @starting-style { .site-time, .site-error { opacity: 0; translate: 0 4px; } }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site *, .site *::before, .site *::after { animation: none !important; transition-duration: 0s !important; }
+}

@@ -62,7 +62,7 @@ export default async function HostStand({ params, searchParams }: { params: Prom
         </div>
         <div className="pf-daynav">
           <Link className="pf-btn" href={href(shift(date, -1))} aria-label="Previous day">←</Link>
-          {date !== today && <Link className="pf-btn" href={href(today)}>Today</Link>}
+          {date !== today && <Link className="pf-btn primary" href={href(today)}>Today</Link>}
           <Link className="pf-btn" href={href(shift(date, 1))} aria-label="Next day">→</Link>
         </div>
       </div>
@@ -71,7 +71,7 @@ export default async function HostStand({ params, searchParams }: { params: Prom
         <div className="pf-stat"><b>{live.length}</b><span>bookings</span></div>
         <div className="pf-stat"><b>{live.reduce((s, r) => s + r.partySize, 0)}</b><span>covers</span></div>
         <div className="pf-stat"><b>{expected.length}</b><span>still to arrive</span></div>
-        <div className="pf-stat"><b>{book.filter((r) => r.status === "seated").length}</b><span>seated now</span></div>
+        <div className={`pf-stat${date === today && book.some((r) => r.status === "seated") ? " live" : ""}`}><b>{book.filter((r) => r.status === "seated").length}</b><span>seated now</span></div>
         <div className="pf-stat"><b>{book.filter((r) => r.status === "no_show").length}</b><span>no-shows</span></div>
       </div>
 
@@ -91,11 +91,11 @@ export default async function HostStand({ params, searchParams }: { params: Prom
                       <div key={r.id} className={`pf-res${done ? " done" : ""}`}>
                         <div>
                           <div className="pf-res-name">
-                            {r.guestName} <span style={{ fontWeight: 400, color: "var(--muted)" }}>· {r.partySize}</span>
+                            {r.guestName}<span className="party">×{r.partySize}</span>
                           </div>
                           <div className="pf-res-meta">
-                            <span className={`pf-pill ${pill.tone}`}>{pill.label}</span>
-                            {r.tableLabels.length > 0 && <span>Table {r.tableLabels.join(", ")}</span>}
+                            <span className={`pf-pill dot ${pill.tone}`}>{pill.label}</span>
+                            {r.tableLabels.length > 0 && <span className="mono">{r.tableLabels.join(", ")}</span>}
                             <span>{SOURCE[r.source] ?? r.source}</span>
                             {r.guestPhone.startsWith("+") && <a href={`tel:${r.guestPhone}`}>{formatPhone(r.guestPhone)}</a>}
                             {r.guestVisits > 0 && <span className="pf-pill go">{r.guestVisits} {r.guestVisits === 1 ? "visit" : "visits"}</span>}
@@ -115,7 +115,7 @@ export default async function HostStand({ params, searchParams }: { params: Prom
         </section>
 
         {canAct && (
-          <aside style={{ display: "grid", gap: 18 }}>
+          <aside className="pf-sticky">
             {date === today && (
               <section className="pf-panel">
                 <h2>Walk-in</h2>
