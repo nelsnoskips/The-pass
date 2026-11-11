@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState, useTransition } from "react";
-import { changeStatus, markPaid, phoneBooking, staffTimes, walkIn, type FormState } from "@/lib/platform/host-actions";
+import { changeStatus, markPaid, phoneBooking, redeemReward, staffTimes, walkIn, type FormState } from "@/lib/platform/host-actions";
 import type { ReservationStatus } from "@/lib/reservations/repo";
 
 export function StatusButtons({ org, id, status, canAct }: { org: string; id: string; status: ReservationStatus; canAct: boolean }) {
@@ -118,6 +118,16 @@ export function MarkPaidButton({ org, id }: { org: string; id: string }) {
   return (
     <button className="pf-btn small" disabled={pending} onClick={() => start(async () => { const r = await markPaid(org, id); if (r.error) alert(r.error); })}>
       {pending ? "…" : "Deposit paid"}
+    </button>
+  );
+}
+
+export function RedeemButton({ org, id, reward }: { org: string; id: string; reward: string }) {
+  const [pending, start] = useTransition();
+  return (
+    <button className="pf-btn small ai" disabled={pending} title={`Mark ${reward} as given`}
+      onClick={() => start(async () => { const r = await redeemReward(org, id); if (r.error) alert(r.error); })}>
+      <span aria-hidden>✦</span> {pending ? "…" : `Reward: ${reward}`}
     </button>
   );
 }

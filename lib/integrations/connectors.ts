@@ -1,5 +1,6 @@
 import type { Sql } from "postgres";
 import { applyStripeEvent, verifyStripeSignature } from "../payments/stripe";
+import { handleSquareEvent, verifySquareSignature } from "./square";
 import type { ProviderId } from "./registry";
 
 /**
@@ -59,8 +60,21 @@ export const CONNECTORS: Partial<Record<ProviderId, Connector>> = {
     "OAuth (adwords). sync: daily campaign metrics into the reporting tables (see lib/connectors). Writes: budget and negative-keyword mutations from approved proposals."),
   meta_ads: shell("meta_ads",
     "OAuth (ads_read, ads_management). sync: daily insights. Writes: budget changes from approved proposals."),
-  square: shell("square",
-    "OAuth (ORDERS_READ, CUSTOMERS_READ). Webhook payment.updated → match the card holder or phone to a guest, record a visit and spend."),
+  square: {
+    id: "square",
+    built: true,
+    authorizeUrl: () => null, // via /api/integrations/square/start
+    complete: async () => { throw new NotBuilt("square (via /api/integrations/square/callback)"); },
+    sync: async () => ({ changed: 0 }),
+    async handleWebhook(sql, raw, headers) {
+      const key = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY?.trim();
+      const site = (process.env.SITE_URL ?? process.env.URL ?? "").replace(/\/+$/, "");
+      if (!key || !site || !verifySquareSignature(raw, headers.get("x-square-hmacsha256-signature"), `${site}/api/webhooks/square`, key)) {
+        throw new BadSignature();
+      }
+      return { handled: await handleSquareEvent(sql, JSON.parse(raw)) };
+    },
+  },
   toast: shell("toast",
     "Partner API. Webhook on closed checks → match to a guest by phone, record a visit and spend."),
   stripe: {

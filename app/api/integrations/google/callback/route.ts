@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   const u = new URL(req.url);
   const state = readState(u.searchParams.get("state") ?? "");
-  if (!state) return NextResponse.redirect(siteLink(req, "/r"));
+  if (!state || state.provider !== "google_business") return NextResponse.redirect(siteLink(req, "/r"));
   const back = (q: string) => NextResponse.redirect(siteLink(req, `/r/${state.org}/settings?${q}`));
   if (u.searchParams.get("error")) return back(`err=${encodeURIComponent("Google access wasn't granted.")}`);
   const tenant = await tenantFor(state.org);

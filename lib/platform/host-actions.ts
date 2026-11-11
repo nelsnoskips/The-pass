@@ -138,3 +138,14 @@ export async function markPaid(org: string, reservationId: string): Promise<{ er
   revalidatePath(`/r/${org}/host`);
   return ok ? { error: null } : { error: "Already paid, or no deposit due." };
 }
+
+export async function redeemReward(org: string, rewardId: string): Promise<{ error: string | null }> {
+  const sql = db();
+  if (!sql) return { error: "Unavailable." };
+  const { tenant } = await requireTenant(org);
+  if (!can(tenant, "book")) return { error: "Your role can't do that." };
+  const { redeem } = await import("../guests/loyalty");
+  const ok = await redeem(sql, tenant, rewardId);
+  revalidatePath(`/r/${org}/host`);
+  return ok ? { error: null } : { error: "Already given." };
+}

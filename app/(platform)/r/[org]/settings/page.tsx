@@ -1,6 +1,7 @@
 import { SettingsNav } from "@/components/platform/SettingsNav";
 import { db } from "@/lib/db";
 import { googleConfigured } from "@/lib/integrations/google";
+import { squareConfigured } from "@/lib/integrations/square";
 import { platformConfigured, PROVIDERS, type Category } from "@/lib/integrations/registry";
 import { integrationsKeyConfigured } from "@/lib/integrations/secrets";
 import { requireTenant } from "@/lib/platform/context";
@@ -25,6 +26,7 @@ export default async function Connections({ params, searchParams }: { params: Pr
   const mine = new Map((await listOrgIntegrations(db()!, tenant)).map((i) => [i.provider, i]));
   const manage = can(tenant, "manage_venue");
   const googleReady = googleConfigured() && integrationsKeyConfigured();
+  const squareReady = squareConfigured() && integrationsKeyConfigured();
 
   return (
     <>
@@ -66,6 +68,8 @@ export default async function Connections({ params, searchParams }: { params: Pr
                           </>
                         ) : p.id === "google_business" && googleReady ? (
                           <a className="pf-btn small primary" href={`/api/integrations/google/start?org=${org}`}>Sign in with Google</a>
+                        ) : p.id === "square" && squareReady ? (
+                          <a className="pf-btn small primary" href={`/api/integrations/square/start?org=${org}`}>Sign in with Square</a>
                         ) : own?.status === "requested" ? null : (
                           <button className="pf-btn small" name="status" value="requested">Connect</button>
                         )}

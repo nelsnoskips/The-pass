@@ -1,5 +1,7 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import type { Sql, TransactionSql } from "postgres";
+import { countVisit } from "../guests/visits";
+import { normalizePhone } from "../guests/phone";
 import { assertCan, type Tenant } from "../platform/tenant";
 import {
   findSlots,
@@ -49,15 +51,7 @@ export interface Reservation {
 /** Statuses that hold a table. */
 const LIVE: ReservationStatus[] = ["booked", "confirmed", "seated"];
 
-/** US-default E.164. Returns null for anything that can't be a phone. */
-export function normalizePhone(raw: string): string | null {
-  const plus = raw.trim().startsWith("+");
-  const digits = raw.replace(/\D/g, "");
-  if (plus) return digits.length >= 8 && digits.length <= 15 ? `+${digits}` : null;
-  if (digits.length === 10) return `+1${digits}`;
-  if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
-  return null;
-}
+export { normalizePhone };
 
 interface Bundle {
   venue: VenueRules & { id: string };
@@ -321,8 +315,8 @@ export async function setStatus(
                where reservation_id = ${reservationId} and org_id = ${tenant.orgId}`;
     }
     if (status === "completed" && r.status !== "completed") {
-      await tx`update guests set visit_count = visit_count + 1, last_visit_at = now()
-               where id = ${r.guest_id} and org_id = ${tenant.orgId}`;
+      // Counts the visit and earns any loyalty reward it completes.
+      await countVisit(tx, tenant.orgId, r.guest_id, new Date());
     }
     if (status === "no_show" && r.status !== "no_show") {
       await tx`update guests set no_show_count = no_show_count + 1

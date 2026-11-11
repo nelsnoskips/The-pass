@@ -76,3 +76,10 @@ export async function integrationAction(form: FormData) {
   await run(form, "", ({ tenant }) => setIntegration(db()!, tenant, s(form, "provider"), status, s(form, "label")),
     status === "requested" ? "Requested. The Pass team will set it up with you." : status === "connected" ? "Marked connected." : "Disconnected.");
 }
+
+export async function saveLoyaltyAction(form: FormData) {
+  const { saveProgram } = await import("../guests/loyalty");
+  await run(form, "/loyalty", ({ tenant }) => saveProgram(db()!, tenant, {
+    active: form.get("active") === "on", visitsRequired: n(form, "visits"), reward: s(form, "reward"),
+  }), "Loyalty saved.");
+}

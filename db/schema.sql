@@ -615,3 +615,47 @@ create table if not exists reviews (
 );
 
 create index if not exists reviews_org_idx on reviews(org_id, reviewed_at desc);
+
+-- ------------------------------------------------- visits & spend --
+-- A closed check from the point of sale, matched to a guest. One row per
+-- check (unique per source), so a webhook delivered twice counts once.
+create table if not exists guest_checks (
+  id           uuid primary key default gen_random_uuid(),
+  org_id       uuid not null references orgs(id) on delete cascade,
+  guest_id     uuid references guests(id) on delete set null,
+  source       text not null,
+  external_id  text not null,
+  amount_cents integer not null check (amount_cents >= 0),
+  closed_at    timestamptz not null,
+  created_at   timestamptz not null default now(),
+  unique (org_id, source, external_id)
+);
+
+create index if not exists guest_checks_guest_idx on guest_checks(guest_id, closed_at desc);
+
+alter table guests add column if not exists total_spend_cents bigint not null default 0;
+
+-- ---------------------------------------------------------- loyalty --
+-- Visit-based rewards: every N visits earns the reward. Simple enough to
+-- explain at the host stand in one sentence.
+create table if not exists loyalty_programs (
+  org_id          uuid primary key references orgs(id) on delete cascade,
+  active          boolean not null default false,
+  visits_required integer not null default 5 check (visits_required between 2 and 50),
+  reward          text not null default 'A dessert on us',
+  updated_at      timestamptz not null default now()
+);
+
+create table if not exists loyalty_rewards (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null references orgs(id) on delete cascade,
+  guest_id    uuid not null references guests(id) on delete cascade,
+  reward      text not null,
+  earned_at_visit integer not null,
+  earned_at   timestamptz not null default now(),
+  redeemed_at timestamptz,
+  redeemed_by text,
+  unique (guest_id, earned_at_visit)
+);
+
+create index if not exists loyalty_rewards_guest_idx on loyalty_rewards(guest_id) where redeemed_at is null;

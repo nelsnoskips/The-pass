@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { HostControls } from "./HostControlsBridge";
 import { db } from "@/lib/db";
+import { openRewards } from "@/lib/guests/loyalty";
 import { requireTenant } from "@/lib/platform/context";
 import { can } from "@/lib/platform/tenant";
 import { dayBook, type Reservation } from "@/lib/reservations/repo";
@@ -40,6 +41,7 @@ export default async function HostStand({ params, searchParams }: { params: Prom
   const today = localDate(new Date(), venue.timezone);
   const date = q.date && /^\d{4}-\d{2}-\d{2}$/.test(q.date) ? q.date : today;
   const book = await dayBook(sql, tenant, venue.id, date);
+  const rewards = await openRewards(sql, tenant, [...new Set(book.map((r) => r.guestId))]);
   const live = book.filter((r) => r.status !== "cancelled");
   const expected = live.filter((r) => r.status === "booked" || r.status === "confirmed");
   const canAct = can(tenant, "book", venue.id);
@@ -110,6 +112,9 @@ export default async function HostStand({ params, searchParams }: { params: Prom
                           {r.notes && <div className="pf-res-note">{r.notes}</div>}
                         </div>
                         <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                          {canAct && rewards.get(r.guestId) && !["cancelled", "no_show"].includes(r.status) && (
+                            <HostControls.Redeem org={org.slug} id={rewards.get(r.guestId)!.id} reward={rewards.get(r.guestId)!.reward} />
+                          )}
                           {canAct && r.depositCents > 0 && r.depositStatus === "pending" && !done && <HostControls.MarkPaid org={org.slug} id={r.id} />}
                           <HostControls.Status org={org.slug} id={r.id} status={r.status} canAct={canAct} />
                         </div>
