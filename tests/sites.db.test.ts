@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import postgres from "postgres";
 import { randomUUID } from "node:crypto";
 import demo from "@/lib/sites/demo-content.json";
-import { getPublishedSite, listVersions, publishVersion, saveVersion } from "@/lib/sites/repo";
+import { getPublishedSite, getVersion, listVersions, publishVersion, saveVersion, siteForOrg } from "@/lib/sites/repo";
 import { Forbidden, type Tenant } from "@/lib/platform/tenant";
 
 const url = process.env.TEST_DATABASE_URL;
@@ -76,5 +76,14 @@ d("site engine against Postgres", () => {
     const [v] = await listVersions(sql, owner, siteId);
     expect(await publishVersion(sql, stranger, siteId, v.id)).toBe(false);
     expect(await listVersions(sql, stranger, siteId)).toEqual([]);
+  });
+
+  it("drafts are visible to the restaurant's own team only", async () => {
+    const [v] = await listVersions(sql, owner, siteId);
+    expect((await getVersion(sql, host, v.id))?.brand.name).toBe("Santorini by Georgios");
+    expect(await getVersion(sql, stranger, v.id)).toBeNull();
+    expect(await getVersion(sql, owner, "not-a-uuid")).toBeNull();
+    expect((await siteForOrg(sql, owner))?.id).toBe(siteId);
+    expect(await siteForOrg(sql, stranger)).toBeNull();
   });
 });

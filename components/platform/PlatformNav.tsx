@@ -6,9 +6,10 @@ import { usePathname } from "next/navigation";
 const TABS = [
   { seg: "host", label: "Host stand" },
   { seg: "guests", label: "Guests" },
+  { seg: "website", label: "Website" },
   { seg: "agents", label: "Agents" },
 ];
-const SOON = ["Website", "Messages", "Settings"];
+const SOON = ["Messages", "Settings"];
 
 export function PlatformNav({ org }: { org: string }) {
   const path = usePathname();

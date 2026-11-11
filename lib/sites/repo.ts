@@ -84,3 +84,27 @@ export async function listVersions(sql: Sql, tenant: Tenant, siteId: string) {
     where sv.site_id = ${siteId} and sv.org_id = ${tenant.orgId}
     order by sv.created_at desc limit 50`;
 }
+
+export interface OrgSite {
+  id: string;
+  slug: string;
+  publishedVersionId: string | null;
+}
+
+export async function siteForOrg(sql: Sql, tenant: Tenant): Promise<OrgSite | null> {
+  assertCan(tenant, "view");
+  const [s] = await sql<{ id: string; slug: string; published_version_id: string | null }[]>`
+    select id, slug, published_version_id from sites where org_id = ${tenant.orgId} order by created_at limit 1`;
+  return s ? { id: s.id, slug: s.slug, publishedVersionId: s.published_version_id } : null;
+}
+
+/** Any version of the org's site — drafts included — for the editor and preview. */
+export async function getVersion(sql: Sql, tenant: Tenant, versionId: string): Promise<SiteContent | null> {
+  assertCan(tenant, "view");
+  if (!/^[0-9a-f-]{36}$/i.test(versionId)) return null;
+  const [v] = await sql<{ content: unknown }[]>`
+    select content from site_versions where id = ${versionId} and org_id = ${tenant.orgId}`;
+  if (!v) return null;
+  const parsed = parseSiteContent(v.content);
+  return parsed.ok ? parsed.content : null;
+}
