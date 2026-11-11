@@ -15,7 +15,7 @@ const GROUPS: { name: string; items: { n: string; title: string; does: string; l
       { n: "03", title: "Host stand", does: "Tonight's book on a tablet: seat, no-show, walk-ins, phone bookings, guest history at a glance.", live: true },
       { n: "04", title: "Deposits", does: "Hold the tables that matter. Refunds follow your policy automatically.", live: true },
       { n: "05", title: "Online ordering", does: "Pickup and delivery from your own site, with no marketplace commission.", live: false },
-      { n: "06", title: "Gift cards & catering", does: "Sell gift cards and take catering orders on the same platform.", live: false },
+      { n: "06", title: "Gift cards", does: "Sold on your site, emailed as a code, spent across as many visits as it takes.", live: true },
     ],
   },
   {

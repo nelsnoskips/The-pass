@@ -11,6 +11,7 @@ const TABS = [
   { seg: "agents", label: "Agents" },
   { seg: "messages", label: "Messages" },
   { seg: "reviews", label: "Reviews" },
+  { seg: "gift-cards", label: "Gift cards" },
   { seg: "settings", label: "Settings" },
 ];
 const SOON: string[] = [];

@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { Sql } from "postgres";
+import { activateCard } from "../giftcards";
 import type { DepositRequest, PaymentsProvider } from "./index";
 
 /**
@@ -107,8 +108,8 @@ export async function applyStripeEvent(sql: Sql, event: StripeEvent): Promise<bo
   if (!paymentId || !/^[0-9a-f-]{36}$/i.test(paymentId)) return false;
 
   return sql.begin(async (tx) => {
-    const [p] = await tx<{ id: string; org_id: string; reservation_id: string | null; status: string }[]>`
-      select id, org_id, reservation_id, status from payments where id = ${paymentId} and provider = 'stripe' for update`;
+    const [p] = await tx<{ id: string; org_id: string; reservation_id: string | null; gift_card_id: string | null; status: string }[]>`
+      select id, org_id, reservation_id, gift_card_id, status from payments where id = ${paymentId} and provider = 'stripe' for update`;
     if (!p) return false;
     const audit = (action: string) =>
       tx`insert into change_log (org_id, actor, action, entity, entity_id, detail)
@@ -117,11 +118,14 @@ export async function applyStripeEvent(sql: Sql, event: StripeEvent): Promise<bo
     if (event.type === "checkout.session.completed" && p.status === "pending") {
       await tx`update payments set status = 'captured', provider_charge_ref = ${obj.payment_intent ?? null}, updated_at = now() where id = ${p.id}`;
       if (p.reservation_id) await tx`update reservations set deposit_status = 'captured', updated_at = now() where id = ${p.reservation_id}`;
-      await audit("payment.deposit_paid");
+      if (p.gift_card_id) await activateCard(tx, p.gift_card_id, "stripe");
+      await audit(p.gift_card_id ? "payment.gift_card_paid" : "payment.deposit_paid");
       return true;
     }
     if (event.type === "checkout.session.expired" && p.status === "pending") {
       await tx`update payments set status = 'canceled', updated_at = now() where id = ${p.id}`;
+      // An unpaid gift card never existed as far as anyone can spend it.
+      if (p.gift_card_id) await tx`update gift_cards set status = 'void' where id = ${p.gift_card_id} and status = 'pending'`;
       if (p.reservation_id) {
         // Unpaid deposit: the table goes back. Only while still just booked.
         const released = await tx`
@@ -144,4 +148,32 @@ export async function applyStripeEvent(sql: Sql, event: StripeEvent): Promise<bo
     }
     return false;
   });
+}
+
+/** Checkout for a gift card. The card is created pending; the webhook activates it. */
+export async function createGiftCardCheckout(
+  sql: Sql, key: string,
+  input: { orgId: string; giftCardId: string; amountCents: number; description: string; returnUrl: string; email: string },
+  f: Fetch = fetch,
+): Promise<string> {
+  const [p] = await sql<{ id: string }[]>`
+    insert into payments (org_id, gift_card_id, kind, amount_cents, provider)
+    values (${input.orgId}, ${input.giftCardId}, 'gift_card', ${input.amountCents}, 'stripe') returning id`;
+  const back = new URL(input.returnUrl);
+  const done = new URL(back);
+  done.searchParams.set("paid", "1");
+  const session = await call<{ id: string; url: string }>(f, "/checkout/sessions", form({
+    mode: "payment",
+    customer_email: input.email,
+    "line_items[0][quantity]": 1,
+    "line_items[0][price_data][currency]": "usd",
+    "line_items[0][price_data][unit_amount]": input.amountCents,
+    "line_items[0][price_data][product_data][name]": input.description,
+    success_url: done.toString(),
+    cancel_url: back.toString(),
+    "metadata[payment_id]": p.id,
+    "payment_intent_data[metadata][payment_id]": p.id,
+  }), key, `giftcard-${p.id}`);
+  await sql`update payments set provider_ref = ${session.id}, checkout_url = ${session.url}, updated_at = now() where id = ${p.id}`;
+  return session.url;
 }

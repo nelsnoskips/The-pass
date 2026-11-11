@@ -665,3 +665,39 @@ create index if not exists loyalty_rewards_guest_idx on loyalty_rewards(guest_id
 alter table guests add column if not exists email_consent_at timestamptz;
 alter table guests add column if not exists email_consent_source text;
 alter table guests add column if not exists email_opted_out_at timestamptz;
+
+-- ------------------------------------------------------- gift cards --
+create table if not exists gift_cards (
+  id              uuid primary key default gen_random_uuid(),
+  org_id          uuid not null references orgs(id) on delete cascade,
+  -- XXXX-XXXX-XXXX from an alphabet without look-alikes (no 0/O, 1/I/L).
+  code            text not null unique,
+  initial_cents   integer not null check (initial_cents between 500 and 100000),
+  balance_cents   integer not null check (balance_cents >= 0),
+  status          text not null default 'pending' check (status in ('pending', 'active', 'void')),
+  purchaser_name  text not null,
+  purchaser_email text not null,
+  recipient_name  text,
+  recipient_email text,
+  message         text,
+  activated_at    timestamptz,
+  created_at      timestamptz not null default now()
+);
+
+create index if not exists gift_cards_org_idx on gift_cards(org_id, created_at desc);
+
+create table if not exists gift_card_redemptions (
+  id           uuid primary key default gen_random_uuid(),
+  org_id       uuid not null references orgs(id) on delete cascade,
+  gift_card_id uuid not null references gift_cards(id) on delete cascade,
+  amount_cents integer not null check (amount_cents > 0),
+  redeemed_by  text not null,
+  created_at   timestamptz not null default now()
+);
+
+-- Payments can now be for a gift card as well as a reservation.
+alter table payments add column if not exists gift_card_id uuid references gift_cards(id) on delete set null;
+do $$ begin
+  alter table payments drop constraint if exists payments_kind_check;
+  alter table payments add constraint payments_kind_check check (kind in ('deposit', 'no_show_fee', 'gift_card'));
+exception when others then null; end $$;

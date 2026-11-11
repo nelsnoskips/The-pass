@@ -26,6 +26,7 @@ export function SiteShell({ content, base, children, banner }: { content: SiteCo
             <span className="site-links">
               {content.menus.length > 0 && <Link href={`${base}#menu`}>Menu</Link>}
               <Link href={`${base}#visit`}>Hours &amp; Location</Link>
+              <Link href={`${base}/gift-cards`}>Gift cards</Link>
             </span>
             <Link href={`${base}/reserve`} className="site-btn">Reserve</Link>
           </nav>
