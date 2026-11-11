@@ -1,3 +1,4 @@
+import { paidAdsAgent } from "./agents/paid-ads";
 import { reservationsAgent } from "./agents/reservations";
 import { reviewsAgent } from "./agents/reviews";
 import { websiteAgent } from "./agents/website";
@@ -8,4 +9,5 @@ export const RUNNABLE_AGENTS: Record<string, () => AgentSpec> = {
   reservations: () => reservationsAgent(),
   website: () => websiteAgent(),
   reviews: () => reviewsAgent(),
+  paid_ads: () => paidAdsAgent(),
 };

@@ -748,3 +748,28 @@ create table if not exists ad_syncs (
   started_at timestamptz not null default now(),
   finished_at timestamptz
 );
+
+-- Budgets, for the Paid Ads Agent. Google keeps a budget as its own
+-- object (budget_ref is its resource name); a budget shared by several
+-- campaigns is never changed from one campaign's numbers. Meta budgets
+-- are read-only here until write access is approved.
+alter table ad_campaigns add column if not exists daily_budget_cents bigint;
+alter table ad_campaigns add column if not exists budget_ref text;
+alter table ad_campaigns add column if not exists budget_shared boolean not null default false;
+
+-- What people actually searched before clicking a Google ad, totalled
+-- over the sync window. Replaced on every sync.
+create table if not exists ad_search_terms (
+  org_id       uuid not null references orgs(id) on delete cascade,
+  platform     text not null default 'google' check (platform in ('google')),
+  campaign_id  text not null,
+  ad_group_id  text not null,
+  term         text not null,
+  impressions  bigint not null default 0,
+  clicks       bigint not null default 0,
+  spend_cents  bigint not null default 0,
+  conversions  numeric(12, 2) not null default 0,
+  since        date not null,
+  until        date not null,
+  primary key (org_id, platform, campaign_id, ad_group_id, term)
+);

@@ -80,7 +80,7 @@ Approve-tier actions need a role that `can(tenant, ...)` grants:
 | Tenant scoping and roles | Built | `lib/platform/tenant.ts` |
 | Change log, agent decisions tables | Built | `db/schema.sql` |
 | Reservations engine (the guest data source) | Built | `lib/reservations/` |
-| Paid Ads + Search Terms agents (rules, approval queue) | Built, rules only, demo data | `lib/agents/`, `/agents` |
+| Paid Ads + Search Terms agents (rules, approval queue) | Built on real Google Ads and Meta data; Google writes (budget, pause, negative keyword) on approval; Meta read-only | `lib/agent-runtime/agents/paid-ads.ts` |
 | Agent runtime: tools with tiers, policy, loop, proposals | Built | `lib/agent-runtime/` |
 | Triggers | Built: hourly Netlify schedule, agent and reminder endpoints (need `AGENT_CRON_SECRET`, `ANTHROPIC_API_KEY`) | `netlify/functions`, `app/api/agents/run`, `app/api/jobs` |
 | Reservations agent (fill quiet shifts by SMS) | Built on the runtime | `lib/agent-runtime/agents/reservations.ts` |

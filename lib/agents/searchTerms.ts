@@ -20,7 +20,7 @@ const PROMOTE_IF_CPA_BELOW = 0.85;
 const MAX_PROMOTIONS_PER_CAMPAIGN = 3;
 
 /** Intent no restaurant ad should pay for, whatever the numbers say. */
-const NEVER_PAY_FOR = [
+export const NEVER_PAY_FOR = [
   "job", "jobs", "hiring", "career", "careers", "salary",
   "recipe", "recipes", "how to make", "calories", "nutrition",
   "menu prices pdf", "coupon code", "wholesale",

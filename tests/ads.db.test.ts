@@ -54,9 +54,16 @@ d("Google Ads and Meta reporting against Postgres", () => {
     if (u.includes("/customers/222/googleAds:searchStream") && String(init?.body).includes("FROM customer")) {
       return ok([{ results: [{ customer: { id: "222", descriptiveName: "Santorini Ads", manager: false } }] }]);
     }
+    if (u.includes("/customers/222/googleAds:searchStream") && String(init?.body).includes("FROM search_term_view")) {
+      return ok([{ results: [
+        { searchTermView: { searchTerm: "Greek Restaurant Jobs" }, campaign: { id: "9001" }, adGroup: { id: "77" },
+          metrics: { costMicros: "4200000", impressions: "90", clicks: "6", conversions: 0 } },
+      ] }]);
+    }
     if (u.includes("/customers/222/googleAds:searchStream")) {
       return ok([{ results: [
         { campaign: { id: "9001", name: "Search | Las Olas", status: "ENABLED", advertisingChannelType: "SEARCH" }, segments: { date: "2026-11-09" },
+          campaignBudget: { resourceName: "customers/222/campaignBudgets/5", amountMicros: "25000000", explicitlyShared: false },
           metrics: { costMicros: googleCost, impressions: "1000", clicks: "40", conversions: 5, conversionsValue: 250 } },
         { campaign: { id: "9001", name: "Search | Las Olas", status: "ENABLED", advertisingChannelType: "SEARCH" }, segments: { date: "2026-11-10" },
           metrics: { costMicros: "7500000", impressions: "800", clicks: "30", conversions: 3, conversionsValue: 0 } },
@@ -113,6 +120,11 @@ d("Google Ads and Meta reporting against Postgres", () => {
     const rows = await sql<{ date: string; spend_cents: string }[]>`
       select to_char(date, 'YYYY-MM-DD') as date, spend_cents from ad_daily where org_id = ${orgId} and platform = 'google' order by date`;
     expect(rows.map((r) => [r.date, Number(r.spend_cents)])).toEqual([["2026-11-09", 1500], ["2026-11-10", 750]]);
+    const [c] = await sql<{ daily_budget_cents: string; budget_ref: string }[]>`
+      select daily_budget_cents, budget_ref from ad_campaigns where org_id = ${orgId} and campaign_id = '9001'`;
+    expect([Number(c.daily_budget_cents), c.budget_ref]).toEqual([2500, "customers/222/campaignBudgets/5"]);
+    const terms = await sql<{ term: string; spend_cents: string }[]>`select term, spend_cents from ad_search_terms where org_id = ${orgId}`;
+    expect(terms.map((t) => [t.term, Number(t.spend_cents)])).toEqual([["greek restaurant jobs", 420]]);
   });
 
   it("Meta: long-lived token, every page of insights, and only real results counted", async () => {

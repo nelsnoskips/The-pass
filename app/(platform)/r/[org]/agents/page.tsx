@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 const AGENTS: Record<string, { name: string; what: string }> = {
   reservations: { name: "Reservations Agent", what: "Watches the book for quiet nights and fills them from your own regulars." },
   reviews: { name: "Reviews Agent", what: "Drafts a reply to every new Google review, for you to post." },
+  paid_ads: { name: "Paid Ads Agent", what: "Reads your Google and Meta numbers weekly. Proposes budget changes and blocks wasted searches." },
 };
 
 const ago = (d: Date) => {
@@ -40,13 +41,15 @@ export default async function Agents({ params }: { params: Promise<{ org: string
   ]);
   const lastRun = new Map(runs.map((r) => [r.agent_id, r]));
   const canMessage = can(tenant, "message_guests");
+  // Approving needs the same permission the action does.
+  const canApprove = (agent: string) => (agent === "paid_ads" ? can(tenant, "approve_spend") : canMessage);
 
   return (
     <>
       <div className="pf-head">
         <div>
           <h1>Agents</h1>
-          <p className="pf-sub">They read your book and your guest list, and propose. Nothing reaches a guest until you approve it.</p>
+          <p className="pf-sub">They read your book, your guest list and your ads, and propose. Nothing reaches a guest or spends money until you approve it.</p>
         </div>
       </div>
 
@@ -92,7 +95,7 @@ export default async function Agents({ params }: { params: Promise<{ org: string
                     {p.input.message} <span style={{ color: "var(--faint)" }}>Reply STOP to opt out.</span>
                   </blockquote>
                 )}
-                <ProposalActions org={org.slug} id={p.id} canApprove={canMessage} />
+                <ProposalActions org={org.slug} id={p.id} canApprove={canApprove(p.agent_id)} />
               </article>
             ))
           )}

@@ -14,6 +14,20 @@ export interface AdCampaignRow {
   name: string;
   status: string | null;
   channel: string | null;
+  /** Google only, for now. */
+  dailyBudgetCents?: number | null;
+  budgetRef?: string | null;
+  budgetShared?: boolean;
+}
+
+export interface AdSearchTermRow {
+  campaignId: string;
+  adGroupId: string;
+  term: string;
+  impressions: number;
+  clicks: number;
+  spendCents: number;
+  conversions: number;
 }
 
 export interface AdDayRow {
@@ -29,16 +43,18 @@ export interface AdDayRow {
 
 export async function storeSync(
   sql: Sql,
-  input: { orgId: string; platform: AdPlatform; accountId: string; campaigns: AdCampaignRow[]; days: AdDayRow[]; since: string; until: string },
+  input: { orgId: string; platform: AdPlatform; accountId: string; campaigns: AdCampaignRow[]; days: AdDayRow[]; since: string; until: string; terms?: AdSearchTermRow[] },
 ): Promise<number> {
   return sql.begin(async (tx) => {
     for (const c of input.campaigns) {
       await tx`
-        insert into ad_campaigns (org_id, platform, account_id, campaign_id, name, status, channel)
-        values (${input.orgId}, ${input.platform}, ${input.accountId}, ${c.campaignId}, ${c.name}, ${c.status}, ${c.channel})
+        insert into ad_campaigns (org_id, platform, account_id, campaign_id, name, status, channel, daily_budget_cents, budget_ref, budget_shared)
+        values (${input.orgId}, ${input.platform}, ${input.accountId}, ${c.campaignId}, ${c.name}, ${c.status}, ${c.channel},
+                ${c.dailyBudgetCents ?? null}, ${c.budgetRef ?? null}, ${c.budgetShared ?? false})
         on conflict (org_id, platform, campaign_id) do update set
           name = excluded.name, status = excluded.status, channel = excluded.channel,
-          account_id = excluded.account_id, updated_at = now()`;
+          account_id = excluded.account_id, daily_budget_cents = excluded.daily_budget_cents,
+          budget_ref = excluded.budget_ref, budget_shared = excluded.budget_shared, updated_at = now()`;
     }
     // The platform's answer for this window is the whole truth for it:
     // a day that has since gone to zero (or a campaign removed) goes too.
@@ -53,6 +69,18 @@ export async function storeSync(
           spend_cents = excluded.spend_cents, impressions = excluded.impressions, clicks = excluded.clicks,
           reach = excluded.reach, conversions = excluded.conversions,
           conversion_value_cents = excluded.conversion_value_cents, synced_at = now()`;
+    }
+    if (input.terms) {
+      await tx`delete from ad_search_terms where org_id = ${input.orgId} and platform = ${input.platform}`;
+      for (const t of input.terms) {
+        await tx`
+          insert into ad_search_terms (org_id, platform, campaign_id, ad_group_id, term, impressions, clicks, spend_cents, conversions, since, until)
+          values (${input.orgId}, ${input.platform}, ${t.campaignId}, ${t.adGroupId}, ${t.term}, ${t.impressions}, ${t.clicks},
+                  ${t.spendCents}, ${t.conversions}, ${input.since}, ${input.until})
+          on conflict (org_id, platform, campaign_id, ad_group_id, term) do update set
+            impressions = excluded.impressions, clicks = excluded.clicks, spend_cents = excluded.spend_cents,
+            conversions = excluded.conversions, since = excluded.since, until = excluded.until`;
+      }
     }
     return input.days.length;
   });

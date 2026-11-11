@@ -44,8 +44,8 @@ const GROUPS: { name: string; items: { n: string; title: string; does: string; l
 const AGENTS = [
   { name: "Website Agent", does: "“The lamb chops are $52 now.” It drafts the change, lists exactly what changed, and waits for your Publish.", live: true },
   { name: "Reservations Agent", does: "Spots the quiet nights ahead and drafts a text to regulars who haven’t been in. You approve before anyone hears from you.", live: true },
-  { name: "Paid Ads Agent", does: "Finds spend that isn’t bringing guests and budget that should move, with the numbers behind each call.", live: false },
-  { name: "Search Terms Agent", does: "Reads what people actually searched to find you, and blocks the searches that waste money.", live: false },
+  { name: "Paid Ads Agent", does: "Every week, finds spend that isn’t bringing guests and budget that should move, with the numbers behind each call. Changes go to Google only after your yes.", live: true },
+  { name: "Search Terms Agent", does: "Reads what people actually searched to find you, and blocks the searches that waste money. Never your own name, never a search that brought a guest.", live: true },
   { name: "Reviews Agent", does: "Drafts a reply to every new Google review in your voice. You approve it, it posts.", live: true },
   { name: "Guest Support Agent", does: "Answers questions about hours, parking and allergens by text, day and night.", live: false },
 ];

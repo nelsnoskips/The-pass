@@ -1,11 +1,13 @@
 import type { Sql } from "postgres";
 import { log } from "../reservations/repo";
 import { open, seal } from "../integrations/secrets";
-import { recordedSync, storeSync, windowDates, type AdCampaignRow, type AdDayRow } from "./store";
+import { recordedSync, storeSync, windowDates, type AdCampaignRow, type AdDayRow, type AdSearchTermRow } from "./store";
 
 /**
- * Google Ads, read-only for now: an owner signs in, we find their ad
- * account, and every night re-read the last 30 days of campaign numbers.
+ * Google Ads: an owner signs in, we find their ad account, and every
+ * night re-read the last 30 days of campaign numbers, budgets and search
+ * terms. Writes (a budget, a pause, a negative keyword) happen only
+ * through an approved Paid Ads Agent proposal — see `mutate` below.
  *
  *   GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET  (the same OAuth client as
  *     Business Profile; add the Google Ads API and this redirect URI:
@@ -109,6 +111,7 @@ export async function syncGoogleAds(sql: Sql, orgId: string, days = 30, f: Fetch
     const { since, until } = windowDates(days, now);
     const results = await search(f, t.access_token, row.settings.customerId, `
       SELECT campaign.id, campaign.name, campaign.status, campaign.advertising_channel_type,
+             campaign_budget.resource_name, campaign_budget.amount_micros, campaign_budget.explicitly_shared,
              segments.date, metrics.cost_micros, metrics.impressions, metrics.clicks,
              metrics.conversions, metrics.conversions_value
       FROM campaign
@@ -119,7 +122,13 @@ export async function syncGoogleAds(sql: Sql, orgId: string, days = 30, f: Fetch
       const c = r.campaign as { id: string; name: string; status?: string; advertisingChannelType?: string };
       const m = r.metrics as { costMicros?: string; impressions?: string; clicks?: string; conversions?: number; conversionsValue?: number };
       const s = r.segments as { date: string };
-      campaigns.set(c.id, { campaignId: c.id, name: c.name, status: c.status?.toLowerCase() ?? null, channel: c.advertisingChannelType?.toLowerCase() ?? null });
+      const b = r.campaignBudget as { resourceName?: string; amountMicros?: string; explicitlyShared?: boolean } | undefined;
+      const prev = campaigns.get(c.id);
+      campaigns.set(c.id, {
+        campaignId: c.id, name: c.name, status: c.status?.toLowerCase() ?? null, channel: c.advertisingChannelType?.toLowerCase() ?? null,
+        dailyBudgetCents: b?.amountMicros ? Math.round(Number(b.amountMicros) / 10_000) : prev?.dailyBudgetCents ?? null,
+        budgetRef: b?.resourceName ?? prev?.budgetRef ?? null, budgetShared: b ? Boolean(b.explicitlyShared) : prev?.budgetShared ?? false,
+      });
       dayRows.push({
         campaignId: c.id, date: s.date,
         // Money arrives in micros (millionths of the currency unit).
@@ -129,6 +138,40 @@ export async function syncGoogleAds(sql: Sql, orgId: string, days = 30, f: Fetch
         conversionValueCents: Math.round(Number(m.conversionsValue ?? 0) * 100),
       });
     }
-    return storeSync(sql, { orgId, platform: "google", accountId: row.settings.customerId, campaigns: [...campaigns.values()], days: dayRows, since, until });
+    // Search terms, totalled over the window: what the Search Terms rules read.
+    const termRows = await search(f, t.access_token, row.settings.customerId, `
+      SELECT search_term_view.search_term, campaign.id, ad_group.id,
+             metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions
+      FROM search_term_view
+      WHERE segments.date BETWEEN '${since}' AND '${until}' AND metrics.clicks > 0`);
+    const terms: AdSearchTermRow[] = termRows.map((r) => {
+      const m = r.metrics as { costMicros?: string; impressions?: string; clicks?: string; conversions?: number };
+      return {
+        term: String((r.searchTermView as { searchTerm: string }).searchTerm).toLowerCase().trim(),
+        campaignId: String((r.campaign as { id: string }).id), adGroupId: String((r.adGroup as { id: string }).id),
+        impressions: Number(m.impressions ?? 0), clicks: Number(m.clicks ?? 0),
+        spendCents: Math.round(Number(m.costMicros ?? 0) / 10_000), conversions: Number(m.conversions ?? 0),
+      };
+    });
+    return storeSync(sql, { orgId, platform: "google", accountId: row.settings.customerId, campaigns: [...campaigns.values()], days: dayRows, since, until, terms });
   });
+}
+
+/**
+ * One write to the restaurant's Google Ads account. Only called from an
+ * approved proposal (lib/agent-runtime/agents/paid-ads.ts), never from a
+ * page or a model directly.
+ */
+export async function googleAdsMutate(
+  sql: Sql, orgId: string, resource: "campaignBudgets" | "campaigns" | "campaignCriteria",
+  operations: Record<string, unknown>[], f: Fetch = fetch,
+): Promise<{ customerId: string; results: { resourceName: string }[] }> {
+  const [row] = await sql<{ secret: string | null; settings: { customerId: string }; status: string }[]>`
+    select secret, settings, status from org_integrations where org_id = ${orgId} and provider = 'google_ads'`;
+  if (!row || row.status !== "connected" || !row.secret) throw new Error("Google Ads isn't connected.");
+  const t = await token(f, { grant_type: "refresh_token", refresh_token: open(row.secret) });
+  const out = await json<{ results?: { resourceName: string }[] }>(await f(`${API()}/customers/${row.settings.customerId}/${resource}:mutate`, {
+    method: "POST", headers: headers(t.access_token), body: JSON.stringify({ operations }),
+  }), "change");
+  return { customerId: row.settings.customerId, results: out.results ?? [] };
 }
