@@ -404,3 +404,65 @@ create table if not exists agent_decisions (
   decided_at  timestamptz not null default now(),
   primary key (org_id, proposal_id)
 );
+
+-- ------------------------------------------------- agent runtime --
+-- One row per time an agent ran: what woke it, how it ended, what it
+-- cost. The change_log holds the individual actions.
+create table if not exists agent_runs (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null references orgs(id) on delete cascade,
+  agent_id    text not null,
+  trigger     text not null,
+  status      text not null default 'running'
+    check (status in ('running', 'completed', 'failed', 'stopped')),
+  summary     text,
+  error       text,
+  usage       jsonb not null default '{}'::jsonb,
+  started_at  timestamptz not null default now(),
+  finished_at timestamptz
+);
+
+create index if not exists agent_runs_org_idx on agent_runs(org_id, started_at desc);
+
+-- An action an agent wanted to take that policy says a person must
+-- approve. The tool and its exact input are stored, so approval runs
+-- precisely what was reviewed — no model is involved at approval time.
+create table if not exists agent_proposals (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null references orgs(id) on delete cascade,
+  agent_id    text not null,
+  run_id      uuid references agent_runs(id) on delete set null,
+  tool        text not null,
+  input       jsonb not null,
+  title       text not null,
+  rationale   text not null,
+  status      text not null default 'pending'
+    check (status in ('pending', 'executed', 'rejected', 'failed', 'blocked')),
+  result      jsonb,
+  decided_by  text,
+  decided_at  timestamptz,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists agent_proposals_org_idx on agent_proposals(org_id, status, created_at desc);
+
+-- Every message to a guest, sent or not. The record behind frequency
+-- caps ("not more than one promotion a week") and behind any question
+-- about who was texted what, when, and on whose say-so.
+create table if not exists guest_messages (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null references orgs(id) on delete cascade,
+  guest_id    uuid not null references guests(id) on delete cascade,
+  channel     text not null default 'sms',
+  -- transactional: about the guest's own booking. marketing: needs consent.
+  kind        text not null check (kind in ('transactional', 'marketing')),
+  body        text not null,
+  -- dry_run: no SMS provider configured, nothing left the building.
+  status      text not null check (status in ('sent', 'dry_run', 'failed')),
+  provider_id text,
+  error       text,
+  sent_by     text not null,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists guest_messages_guest_idx on guest_messages(guest_id, created_at desc);

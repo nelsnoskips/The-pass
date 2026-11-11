@@ -25,10 +25,14 @@ model. It is five pieces, and the value lives in pieces 3–5:
                           CHANGE LOG · APPROVAL QUEUE · UNDO
 ```
 
-1. **Triggers** — background jobs (Inngest) start an agent on a schedule
-   or an event. Agents never run inside a page request.
-2. **Model + instructions** — Claude via tool calling (Claude Agent SDK
-   or the Messages API). A role, a goal, the restaurant's context.
+1. **Triggers** — a scheduler POSTs to `/api/agents/run` (bearer
+   `AGENT_CRON_SECRET`) to start an agent for one org. Today that is a
+   cron or Netlify scheduled function; Inngest replaces it when we need
+   retries, fan-out and event triggers. Agents never run inside a page
+   request a guest or owner is waiting on.
+2. **Model + instructions** — Claude through the Messages API with a
+   manual tool loop (`lib/agent-runtime/runner.ts`), so the policy check
+   sits in front of every call. A role, a goal, the restaurant's context.
 3. **Tools** — typed functions over our own data and external APIs. Each
    tool is scoped to one org through a `Tenant`
    (`lib/platform/tenant.ts`) and cannot reach another restaurant's rows.
@@ -77,17 +81,33 @@ Approve-tier actions need a role that `can(tenant, ...)` grants:
 | Change log, agent decisions tables | Built | `db/schema.sql` |
 | Reservations engine (the guest data source) | Built | `lib/reservations/` |
 | Paid Ads + Search Terms agents (rules, approval queue) | Built, rules only, demo data | `lib/agents/`, `/agents` |
-| Triggers (Inngest) | Not yet | — |
-| Model + tool calling runtime | Not yet | — |
-| Policy layer as code | Partly (roles, consent field) | — |
-| Live Google/Meta/GBP/Twilio tools | Not yet | `lib/connectors/` |
+| Agent runtime: tools with tiers, policy, loop, proposals | Built | `lib/agent-runtime/` |
+| Trigger endpoint | Built (needs `AGENT_CRON_SECRET`, `ANTHROPIC_API_KEY`, a schedule) | `app/api/agents/run` |
+| Reservations agent (fill quiet shifts by SMS) | Built on the runtime | `lib/agent-runtime/agents/reservations.ts` |
+| SMS sending | Built; dry run until Twilio keys are set | `lib/messaging/sms.ts` |
+| Proposal queue UI for runtime agents | Not yet | — |
+| Live Google/Meta/GBP tools | Not yet | `lib/connectors/` |
+
+## Writing a new agent
+
+1. Write its tools with `defineTool`: a schema, a tier (`auto` or
+   `approve`), the permission it `requires`, and a `check` for the hard
+   rules. `check` runs when the agent asks and again when the action
+   fires; rules about the moment of sending belong to the `execute` phase.
+2. Write the `AgentSpec`: a system prompt that states the goal, when
+   doing nothing is the right answer, and that a refused tool is not to
+   be worked around.
+3. Register it in `lib/agent-runtime/registry.ts`.
+4. Test it with a scripted model (`tests/agent-runtime.db.test.ts`):
+   the guarantees are about what policy does with whatever the model
+   asks for, so they don't need a live model to prove.
 
 ## Agent roster
 
-Live: **Paid Ads**, **Search Terms**. Planned: **Local SEO** (Google
-Business Profile), **Website** (describe the change → preview →
-publish), **Reservations** (fill slow shifts, waitlist, no-show
-follow-up), **Guest Marketing** (SMS/email to the right regulars),
+Live: **Paid Ads**, **Search Terms** (rules), **Reservations** (runtime:
+fill quiet shifts; waitlist and no-show follow-up to come). Planned:
+**Local SEO** (Google Business Profile), **Website** (describe the
+change → preview → publish), **Guest Marketing** (SMS/email to the right regulars),
 **Guest Support** (questions on site and by text), **Loyalty**.
 
 The edge over platforms built on ordering data is reservations data:
