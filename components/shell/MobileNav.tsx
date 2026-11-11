@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import {
+  Bot,
   CalendarDays,
   FileText,
   LayoutDashboard,
@@ -26,6 +27,7 @@ const PRIMARY = [
 ];
 
 const MORE = [
+  { href: "/agents", label: "Agents", icon: Bot },
   { href: "/keywords", label: "Keywords & Search Terms", icon: SearchCheck },
   { href: "/locations", label: "Locations", icon: MapPin },
   { href: "/reports", label: "Reports", icon: FileText },

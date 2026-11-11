@@ -20,7 +20,7 @@ import { SESSION_COOKIE } from "@/lib/studio/cookie";
  * noindex but meant to be forwarded.
  */
 const PROTECTED = [
-  "/dashboard", "/calendar", "/campaigns", "/conversions", "/integrations",
+  "/dashboard", "/agents", "/calendar", "/campaigns", "/conversions", "/integrations",
   "/keywords", "/locations", "/reports", "/settings", "/welcome", "/portal",
 ];
 
@@ -41,11 +41,11 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/dashboard/:path*", "/calendar/:path*", "/campaigns/:path*",
+    "/dashboard/:path*", "/agents/:path*", "/calendar/:path*", "/campaigns/:path*",
     "/conversions/:path*", "/integrations/:path*", "/keywords/:path*",
     "/locations/:path*", "/reports/:path*", "/settings/:path*",
     "/welcome/:path*", "/portal/:path*",
-    "/dashboard", "/calendar", "/campaigns", "/conversions", "/integrations",
+    "/dashboard", "/agents", "/calendar", "/campaigns", "/conversions", "/integrations",
     "/keywords", "/locations", "/reports", "/settings", "/welcome", "/portal",
   ],
 };

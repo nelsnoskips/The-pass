@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
+  Bot,
   CalendarDays,
   FileText,
   LayoutDashboard,
@@ -17,6 +18,7 @@ import clsx from "clsx";
 
 const NAV = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/agents", label: "Agents", icon: Bot },
   { href: "/campaigns", label: "Campaigns", icon: Megaphone },
   { href: "/keywords", label: "Keywords & Search Terms", icon: SearchCheck },
   { href: "/conversions", label: "Conversions", icon: MousePointerClick },
