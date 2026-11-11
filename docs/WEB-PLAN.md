@@ -4,6 +4,9 @@ How restaurant websites work on the platform. This is the Website
 product (wave 1 in `AGENTIC-PLATFORM.md`), and the surface every later
 product — booking, ordering, gift cards, sign-up — is served from.
 
+What we build, and in what order, is shaped by `FRICTION.md`: the
+documented complaints about OpenTable, Resy and SevenRooms.
+
 Nothing here touches The Pass's own marketing site. Restaurant sites
 live under their own routes and their own layout.
 
@@ -43,7 +46,8 @@ live under their own routes and their own layout.
 | Phase | What | State |
 |---|---|---|
 | 1 | Schema (`sites`, `site_versions`), content type + validator, the Classic theme, public site, booking flow, manage-booking page, confirmation text, demo seed | **This phase** |
-| 2 | Host stand (today's book, seat, no-show, walk-ins), restaurant logins from `org_members`, guest list screen | Next |
+| 2 | Host stand (today's book, seat, no-show, walk-ins), restaurant logins from `org_members`, guest list screen. From `FRICTION.md`: booking rate limits and one live booking per phone, reminders with one-tap cancel, change a booking in place, notices to the guest when the restaurant changes one | Next |
+| 2b | Notify list ("tell me if a table opens"), one-click export, import from the old system, deposits with the policy stated up front | |
 | 3 | Site editor (form + preview + publish + history), custom domains, per-site sitemap | |
 | 4 | Website agent: describe the change → draft version → preview → approve | |
 | 5 | Second theme, image uploads, Reserve with Google feed | |
