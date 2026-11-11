@@ -1,6 +1,8 @@
 import { SettingsNav } from "@/components/platform/SettingsNav";
 import { db } from "@/lib/db";
+import { googleConfigured } from "@/lib/integrations/google";
 import { platformConfigured, PROVIDERS, type Category } from "@/lib/integrations/registry";
+import { integrationsKeyConfigured } from "@/lib/integrations/secrets";
 import { requireTenant } from "@/lib/platform/context";
 import { listOrgIntegrations } from "@/lib/platform/settings";
 import { integrationAction } from "@/lib/platform/settings-actions";
@@ -22,6 +24,7 @@ export default async function Connections({ params, searchParams }: { params: Pr
   const { tenant, staff } = await requireTenant(org);
   const mine = new Map((await listOrgIntegrations(db()!, tenant)).map((i) => [i.provider, i]));
   const manage = can(tenant, "manage_venue");
+  const googleReady = googleConfigured() && integrationsKeyConfigured();
 
   return (
     <>
@@ -61,6 +64,8 @@ export default async function Connections({ params, searchParams }: { params: Pr
                             <input className="pf-input" name="label" placeholder="Account name" style={{ minHeight: 34, width: 160 }} />
                             <button className="pf-btn small primary" name="status" value="connected">Mark connected</button>
                           </>
+                        ) : p.id === "google_business" && googleReady ? (
+                          <a className="pf-btn small primary" href={`/api/integrations/google/start?org=${org}`}>Sign in with Google</a>
                         ) : own?.status === "requested" ? null : (
                           <button className="pf-btn small" name="status" value="requested">Connect</button>
                         )}

@@ -592,3 +592,26 @@ alter table venues add column if not exists cancel_cutoff_hours integer not null
 -- apart from provider_ref (the checkout session) because refunds need it.
 alter table payments add column if not exists provider_charge_ref text;
 create index if not exists payments_provider_ref_idx on payments(provider, provider_ref);
+
+-- Provider credentials for a restaurant's own account (OAuth refresh
+-- tokens), encrypted with INTEGRATIONS_KEY before they reach the row.
+alter table org_integrations add column if not exists secret text;
+
+-- Reviews pulled from Google (and later others). The reply is ours to
+-- write; posting it back is an approve-tier action.
+create table if not exists reviews (
+  id           uuid primary key default gen_random_uuid(),
+  org_id       uuid not null references orgs(id) on delete cascade,
+  source       text not null,
+  external_id  text not null,
+  author       text,
+  rating       smallint check (rating between 1 and 5),
+  body         text,
+  reviewed_at  timestamptz,
+  reply        text,
+  replied_at   timestamptz,
+  created_at   timestamptz not null default now(),
+  unique (org_id, source, external_id)
+);
+
+create index if not exists reviews_org_idx on reviews(org_id, reviewed_at desc);

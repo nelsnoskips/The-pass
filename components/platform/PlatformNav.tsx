@@ -10,6 +10,7 @@ const TABS = [
   { seg: "website", label: "Website" },
   { seg: "agents", label: "Agents" },
   { seg: "messages", label: "Messages" },
+  { seg: "reviews", label: "Reviews" },
   { seg: "settings", label: "Settings" },
 ];
 const SOON: string[] = [];

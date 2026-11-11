@@ -41,7 +41,7 @@ export const PROVIDERS: Provider[] = [
     does: "Sends sign-in links and email.", env: ["RESEND_API_KEY"] },
   { id: "stripe", name: "Stripe", category: "Payments", scope: "platform", build: "live",
     does: "Takes deposits at booking; card details never touch The Pass.", env: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"] },
-  { id: "google_business", name: "Google Business Profile", category: "Discovery", scope: "restaurant", build: "shell",
+  { id: "google_business", name: "Google Business Profile", category: "Discovery", scope: "restaurant", build: "live",
     does: "Keeps hours and details in sync on Google; reads and answers reviews.", env: [] },
   { id: "reserve_with_google", name: "Reserve with Google", category: "Discovery", scope: "restaurant", build: "shell",
     does: "A Reserve button on Google Search and Maps that books straight into The Pass.", env: [] },

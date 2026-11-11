@@ -46,8 +46,13 @@ function shell(id: ProviderId, plan: string): Connector {
 }
 
 export const CONNECTORS: Partial<Record<ProviderId, Connector>> = {
-  google_business: shell("google_business",
-    "OAuth (business.manage). sync: push hours/special hours from the venue, pull reviews into a reviews table for a Reviews agent. Webhook: Pub/Sub review notifications."),
+  // Built in lib/integrations/google.ts: OAuth via /api/integrations/google,
+  // hours pushed from service periods, reviews pulled, replies posted.
+  // Still to do: special (holiday) hours, Pub/Sub review notifications.
+  google_business: {
+    ...shell("google_business", "See lib/integrations/google.ts."),
+    built: false,
+  },
   reserve_with_google: shell("reserve_with_google",
     "Partner program (Actions Center). Feeds: merchants, services, availability from findSlots. Booking server endpoints: CheckAvailability, CreateBooking → book(channel 'online', source 'google')."),
   google_ads: shell("google_ads",
