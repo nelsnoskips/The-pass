@@ -154,18 +154,19 @@ d("agent runtime", () => {
 
     // A host can't approve messaging; the proposal stays pending for someone who can.
     await expect(approveProposal(sql, host, id, agent.tools, DAY)).rejects.toBeInstanceOf(Forbidden);
-    // Outside the sending window it is blocked, not sent.
-    // (Blocked proposals are final; propose again for the daytime case.)
+    // Outside the sending window nothing is sent, and the proposal waits.
     const night = await approveProposal(sql, owner, id, agent.tools, NIGHT);
-    expect(night).toMatchObject({ ok: false, reason: "blocked" });
+    expect(night).toMatchObject({ ok: false, reason: "not_now" });
     expect(sent).toEqual([]);
+    const [still] = await sql<{ status: string }[]>`select status from agent_proposals where id = ${id}`;
+    expect(still.status).toBe("pending");
 
-    const again = await run([[toolUse("send_guest_sms", { guest_ids: [g.consented, g.noConsent, g.optedOut], message: "Thursday's quiet — come see us.", rationale: "r" })]]);
-    const res = await approveProposal(sql, owner, again.outcome.actions[0].detail!, agent.tools, DAY);
+    // In the morning the same proposal goes through.
+    const res = await approveProposal(sql, owner, id, agent.tools, DAY);
     expect(res).toMatchObject({ ok: true, result: { sent: 1, skipped: 2 } });
     expect(sent).toEqual([{ to: "+19545550001", body: "Thursday's quiet — come see us. Reply STOP to opt out." }]);
     // Approving twice does nothing.
-    expect(await approveProposal(sql, owner, again.outcome.actions[0].detail!, agent.tools, DAY)).toMatchObject({ ok: false, reason: "already_decided" });
+    expect(await approveProposal(sql, owner, id, agent.tools, DAY)).toMatchObject({ ok: false, reason: "already_decided" });
 
     const msgs = await sql<{ sent_by: string; kind: string }[]>`select sent_by, kind from guest_messages where org_id = ${orgId}`;
     expect(msgs).toEqual([{ sent_by: "agent:reservations", kind: "marketing" }]);

@@ -142,7 +142,7 @@ export function sendGuestSms(sender: SmsSender = sendSms): ToolDef {
       if (phase === "execute") {
         const hour = Number(localTime(ctx.now, await venueTimezone(ctx)).slice(0, 2));
         if (hour < SEND_WINDOW.startHour || hour >= SEND_WINDOW.endHour) {
-          return { ok: false, reason: `Outside the sending window (${SEND_WINDOW.startHour}:00–${SEND_WINDOW.endHour}:00 local). Approve it during the day.` };
+          return { ok: false, later: true, reason: `Texts only go out between ${SEND_WINDOW.startHour} am and ${SEND_WINDOW.endHour - 12} pm. It's still waiting — approve it then.` };
         }
       }
       return { ok: true };

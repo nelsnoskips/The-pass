@@ -10,7 +10,7 @@ import type { AgentContext, Phase, ToolDef } from "./tool";
 export type Verdict =
   | { kind: "run" }
   | { kind: "propose" }
-  | { kind: "deny"; reason: string };
+  | { kind: "deny"; reason: string; later?: boolean };
 
 export async function evaluate(
   tool: ToolDef,
@@ -23,7 +23,7 @@ export async function evaluate(
   }
   if (tool.check) {
     const c = await tool.check(ctx, input, phase);
-    if (!c.ok) return { kind: "deny", reason: c.reason };
+    if (!c.ok) return { kind: "deny", reason: c.reason, later: c.later };
   }
   // An approved proposal has had its person; it runs.
   if (phase === "execute") return { kind: "run" };

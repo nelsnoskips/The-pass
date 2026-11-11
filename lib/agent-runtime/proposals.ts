@@ -12,7 +12,7 @@ import type { AgentContext, ToolDef } from "./tool";
 
 export type ApproveResult =
   | { ok: true; result: unknown }
-  | { ok: false; reason: "not_found" | "already_decided" | "blocked" | "failed"; detail?: string };
+  | { ok: false; reason: "not_found" | "already_decided" | "blocked" | "failed" | "not_now"; detail?: string };
 
 export async function approveProposal(
   sql: Sql,
@@ -50,6 +50,11 @@ export async function approveProposal(
     tenant: { ...tenant, actor: `agent:${p.agent_id}` },
   };
   const verdict = await evaluate(tool, ctx, p.input, "execute");
+  if (verdict.kind === "deny" && verdict.later) {
+    // Right action, wrong moment: hand it back to the queue.
+    await sql`update agent_proposals set status = 'pending', decided_by = null, decided_at = null where id = ${p.id}`;
+    return { ok: false, reason: "not_now", detail: verdict.reason };
+  }
   if (verdict.kind === "deny") return fail("blocked", verdict.reason);
 
   try {

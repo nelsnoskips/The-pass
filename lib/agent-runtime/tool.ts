@@ -28,7 +28,9 @@ export interface AgentContext {
   now: Date;
 }
 
-export type CheckResult = { ok: true } | { ok: false; reason: string };
+/** `later`: the action is fine but not now (e.g. outside sending hours);
+ *  an approval that hits it leaves the proposal waiting. */
+export type CheckResult = { ok: true } | { ok: false; reason: string; later?: boolean };
 
 export interface ToolDef<I = Record<string, unknown>> {
   name: string;
