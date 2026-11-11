@@ -10,7 +10,7 @@ export default async function OrgLayout({ children, params }: { children: React.
     <>
       <header className="pf-top">
         <div className="pf-top-inner">
-          <a href={`/r/${org.slug}/host`} className="pf-org">{org.name}</a>
+          <a href={`/r/${org.slug}`} className="pf-org">{org.name}</a>
           <PlatformNav org={org.slug} />
           <div className="pf-who">
             <span className="email">{email}</span>

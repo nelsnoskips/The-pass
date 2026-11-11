@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS = [
+  { seg: "", label: "Overview" },
   { seg: "host", label: "Host stand" },
   { seg: "guests", label: "Guests" },
   { seg: "website", label: "Website" },
@@ -18,9 +19,10 @@ export function PlatformNav({ org }: { org: string }) {
   return (
     <nav className="pf-tabs" aria-label="Restaurant">
       {TABS.map((t) => {
-        const href = `/r/${org}/${t.seg}`;
+        const href = t.seg ? `/r/${org}/${t.seg}` : `/r/${org}`;
+        const active = t.seg ? path.startsWith(href) : path === href;
         return (
-          <Link key={t.seg} href={href} aria-current={path.startsWith(href) ? "page" : undefined}>{t.label}</Link>
+          <Link key={t.seg || "overview"} href={href} aria-current={active ? "page" : undefined}>{t.label}</Link>
         );
       })}
       {SOON.map((s) => <span key={s} className="soon" title="Coming soon">{s}</span>)}
