@@ -109,7 +109,10 @@ export default async function HostStand({ params, searchParams }: { params: Prom
                           </div>
                           {r.notes && <div className="pf-res-note">{r.notes}</div>}
                         </div>
-                        <HostControls.Status org={org.slug} id={r.id} status={r.status} canAct={canAct} />
+                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                          {canAct && r.depositCents > 0 && r.depositStatus === "pending" && !done && <HostControls.MarkPaid org={org.slug} id={r.id} />}
+                          <HostControls.Status org={org.slug} id={r.id} status={r.status} canAct={canAct} />
+                        </div>
                       </div>
                     );
                   })}

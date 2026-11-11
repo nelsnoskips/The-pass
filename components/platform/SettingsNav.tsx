@@ -7,6 +7,7 @@ const TABS = [
   { seg: "", label: "Connections" },
   { seg: "/floor", label: "Floor, hours & rules" },
   { seg: "/team", label: "Team" },
+  { seg: "/import", label: "Import" },
 ];
 
 export function SettingsNav({ org, ok, err }: { org: string; ok?: string; err?: string }) {

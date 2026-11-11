@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState, useTransition } from "react";
-import { changeStatus, phoneBooking, staffTimes, walkIn, type FormState } from "@/lib/platform/host-actions";
+import { changeStatus, markPaid, phoneBooking, staffTimes, walkIn, type FormState } from "@/lib/platform/host-actions";
 import type { ReservationStatus } from "@/lib/reservations/repo";
 
 export function StatusButtons({ org, id, status, canAct }: { org: string; id: string; status: ReservationStatus; canAct: boolean }) {
@@ -110,5 +110,14 @@ export function PhoneBookingForm({ org, venueId, date }: { org: string; venueId:
       {state.ok && <p className="pf-msg ok" role="status">{state.ok}</p>}
       {state.error && <p className="pf-msg err" role="alert">{state.error}</p>}
     </form>
+  );
+}
+
+export function MarkPaidButton({ org, id }: { org: string; id: string }) {
+  const [pending, start] = useTransition();
+  return (
+    <button className="pf-btn small" disabled={pending} onClick={() => start(async () => { const r = await markPaid(org, id); if (r.error) alert(r.error); })}>
+      {pending ? "…" : "Deposit paid"}
+    </button>
   );
 }

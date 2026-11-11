@@ -120,3 +120,14 @@ export async function phoneBooking(_prev: FormState, form: FormData): Promise<Fo
   revalidatePath(`/r/${org}/host`);
   return { ok: `Booked ${r.reservation.guestName}, ${party} at ${formatClock(String(form.get("time")))}, table ${r.reservation.tableLabels[0]}.`, error: null };
 }
+
+export async function markPaid(org: string, reservationId: string): Promise<{ error: string | null }> {
+  const sql = db();
+  if (!sql) return { error: "Unavailable." };
+  const { tenant } = await requireTenant(org);
+  if (!can(tenant, "book")) return { error: "Your role can't do that." };
+  const { markDepositPaid } = await import("../payments");
+  const ok = await markDepositPaid(sql, tenant.orgId, reservationId, tenant.actor);
+  revalidatePath(`/r/${org}/host`);
+  return ok ? { error: null } : { error: "Already paid, or no deposit due." };
+}

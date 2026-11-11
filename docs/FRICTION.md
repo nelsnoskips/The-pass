@@ -36,7 +36,7 @@ reviews). Re-check prices before quoting them to a prospect.
 | Opaque pricing | SevenRooms publishes none | Prices on the website | When pricing is set |
 | Guest data exposed through a vendor | SevenRooms breach, Dec 2022 | Hold only what a booking needs; every query scoped to one restaurant and tested; few vendors | Isolation built and tested |
 | Setup is fiddly; weak offline | SevenRooms reviews *(snippet)* | We set up the floor and hours for them; host stand keeps working through a dropped connection | Host stand built; offline mode to build |
-| Switching is a slog for staff | SF Standard | Import, a host stand that looks like what hosts know, and a person from the studio doing the move | To build |
+| Switching is a slog for staff | SF Standard | Import, a host stand that looks like what hosts know, and a person from the studio doing the move | Import and host stand built |
 
 What operators do **not** complain about, as far as this found: support
 (Capterra 4.5 and 4.9 *snippet*), host-stand usability, outages. And
@@ -69,6 +69,9 @@ Done: rate limits and one-live-booking-per-phone; reminders with
 one-tap cancel; change a booking in place; the notify list;
 cancellation notices to guests; one-click export.
 
-Still to build: import from the old system; deposits with the policy
-shown up front and processing at cost; broker-pattern flags; host stand
-offline mode.
+Since built: import from the old system (guests and future bookings,
+dry run first, no assumed consent); deposits recorded with the policy
+shown before booking (manual provider; Stripe to plug in).
+
+Still to build: live Stripe deposits at processing cost; broker-pattern
+flags; host stand offline mode.
