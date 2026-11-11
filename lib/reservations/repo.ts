@@ -152,7 +152,7 @@ export interface BookInput {
   /** "HH:MM", venue-local. */
   time: string;
   partySize: number;
-  guest: { name: string; phone: string; email?: string | null; smsMarketingConsent?: boolean };
+  guest: { name: string; phone: string; email?: string | null; smsMarketingConsent?: boolean; emailMarketingConsent?: boolean };
   source: string;
   notes?: string | null;
   /** Email of the staff member, or "guest". */
@@ -200,15 +200,19 @@ export async function book(sql: Sql, input: BookInput): Promise<BookResult> {
         if (!slot) return { ok: false as const, reason: "unavailable" as const };
 
         const consent = input.guest.smsMarketingConsent === true;
+        const emailConsent = input.guest.emailMarketingConsent === true && Boolean(input.guest.email);
         const [guest] = await tx<{ id: string; name: string; phone: string }[]>`
-          insert into guests (org_id, phone, name, email, sms_consent_at, sms_consent_source)
+          insert into guests (org_id, phone, name, email, sms_consent_at, sms_consent_source, email_consent_at, email_consent_source)
           values (${input.orgId}, ${phone}, ${name}, ${input.guest.email ?? null},
-                  ${consent ? new Date() : null}, ${consent ? `booking:${input.source}` : null})
+                  ${consent ? new Date() : null}, ${consent ? `booking:${input.source}` : null},
+                  ${emailConsent ? new Date() : null}, ${emailConsent ? `booking:${input.source}` : null})
           on conflict (org_id, phone) do update set
             name = excluded.name,
             email = coalesce(excluded.email, guests.email),
             sms_consent_at = coalesce(guests.sms_consent_at, excluded.sms_consent_at),
-            sms_consent_source = coalesce(guests.sms_consent_source, excluded.sms_consent_source)
+            sms_consent_source = coalesce(guests.sms_consent_source, excluded.sms_consent_source),
+            email_consent_at = coalesce(guests.email_consent_at, excluded.email_consent_at),
+            email_consent_source = coalesce(guests.email_consent_source, excluded.email_consent_source)
           returning id, name, phone
         `;
 

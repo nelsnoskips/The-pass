@@ -88,7 +88,7 @@ export async function reserve(_prev: ReserveState, form: FormData): Promise<Rese
 
   const result = await book(sql, {
     orgId: site.orgId, venueId: site.venueId, date, time, partySize,
-    guest: { name, phone: get("phone"), email: email || null, smsMarketingConsent: form.get("marketing") === "on" },
+    guest: { name, phone: get("phone"), email: email || null, smsMarketingConsent: form.get("marketing") === "on", emailMarketingConsent: form.get("emailMarketing") === "on" },
     notes: get("notes").slice(0, 500) || null,
     source: "website", actor: "guest", channel: "online",
   });

@@ -659,3 +659,9 @@ create table if not exists loyalty_rewards (
 );
 
 create index if not exists loyalty_rewards_guest_idx on loyalty_rewards(guest_id) where redeemed_at is null;
+
+-- Email marketing consent, kept apart from SMS: a guest can want one and
+-- not the other. Same shape — when, how, and when they left.
+alter table guests add column if not exists email_consent_at timestamptz;
+alter table guests add column if not exists email_consent_source text;
+alter table guests add column if not exists email_opted_out_at timestamptz;

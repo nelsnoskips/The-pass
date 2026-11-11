@@ -167,6 +167,10 @@ export function BookingWidget({
             <input type="checkbox" name="marketing" />
             <span>Text me occasional news and invitations from {restaurant}. Message and data rates may apply. Reply STOP any time. Not required to book.</span>
           </label>
+          <label className="site-check">
+            <input type="checkbox" name="emailMarketing" />
+            <span>Email me news from {restaurant} too (if you gave an email). Unsubscribe any time.</span>
+          </label>
 
           {(chosen.depositCents > 0 || policy) && (
             <div className="site-note" style={{ borderLeft: "2px solid var(--accent)", paddingLeft: 12 }}>
