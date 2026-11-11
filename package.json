@@ -12,7 +12,8 @@
     "db:migrate": "node scripts/migrate.mjs",
     "invoice": "node scripts/invoice.mjs",
     "test:db": "vitest run tests/*.db.test.ts",
-    "seed:demo": "node scripts/seed-demo.mjs"
+    "seed:demo": "node scripts/seed-demo.mjs",
+    "add-owner": "node scripts/add-owner.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",
