@@ -236,11 +236,11 @@ Everything below is an **assumption**.
 
 | Result | Value |
 |---|---|
-| Locations added per month | ~6 |
-| CAC per location, fully loaded (incl. founder time) | ~$1,850 + $300 onboarding = **~$2,150** |
-| CAC per location, cash only | ~$240 + $300 = **~$540** |
+| Locations added per month | ~6.5 |
+| CAC per location, fully loaded (incl. founder time) | ~$1,770 + $300 onboarding = **~$2,070** |
+| CAC per location, cash only | ~$230 + $300 = **~$530** |
 | Monthly gross profit per location | ~$148 |
-| **Payback, fully loaded** | **~14–15 months** |
+| **Payback, fully loaded** | **~14 months** |
 | **Payback, cash** | **~4 months** |
 
 ### Scenario B: paid acquisition and a salesperson, list prices
@@ -256,12 +256,12 @@ Everything below is an **assumption**.
 | Onboarding per location | $300 |
 | Plan mix | 60% Reservations / 40% suite |
 | Blended price (list, after multi-location discount) | ~$343 |
-| Blended gross margin | ~75% |
+| Blended gross margin | ~75% (cost of revenue ~$87) |
 
 | Result | Value |
 |---|---|
 | CAC per location | ~$5,250 / 1.3 + $300 = **~$4,340** |
-| Monthly gross profit per location | ~$257 |
+| Monthly gross profit per location | ~$256 |
 | **Payback** | **~17 months** |
 
 ### Payback sensitivity (months), Scenario B economics
@@ -269,22 +269,22 @@ Everything below is an **assumption**.
 | CAC per location → | $2,000 | $3,000 | $4,340 | $6,000 |
 |---|---|---|---|---|
 | Mix 80% Res / 20% suite (GP ~$195) | 10 | 15 | 22 | 31 |
-| Mix 60% / 40% (GP ~$257) | 8 | 12 | 17 | 23 |
-| Mix 40% / 60% (GP ~$320) | 6 | 9 | 14 | 19 |
+| Mix 60% / 40% (GP ~$256) | 8 | 12 | 17 | 23 |
+| Mix 40% / 60% (GP ~$317) | 6 | 9 | 14 | 19 |
 
 ### LTV at the base churn assumption (2% monthly logo churn)
 
 | | Founder-led | Paid |
 |---|---|---|
-| Gross profit per location per month | ~$148 | ~$257 |
+| Gross profit per location per month | ~$148 | ~$256 |
 | Lifetime (1 / 2%) | 50 months | 50 months |
-| LTV (gross profit) | ~$7,400 | ~$12,850 |
-| LTV : CAC | ~3.4 (loaded) | ~3.0 |
+| LTV (gross profit) | ~$7,400 | ~$12,800 |
+| LTV : CAC | ~3.6 (loaded) | ~2.9 |
 
 Readings:
 
-- Paid acquisition only works at a **≥40% suite mix** or a CAC under
-  ~$3,000. Do not scale paid spend until the measured suite upgrade rate
+- Paid acquisition stays inside an 18-month payback only at a **≥40%
+  suite mix** or a CAC under ~$3,000. Do not scale paid spend until the measured suite upgrade rate
   and audit conversion support it.
 - Founder-led selling at founding prices pays back in cash quickly. The
   real cost is founder time, which caps it at roughly 5 restaurants a month.
