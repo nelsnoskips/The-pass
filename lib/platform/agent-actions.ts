@@ -35,6 +35,7 @@ export async function decideProposal(org: string, proposalId: string, decision: 
 }
 
 function summarize(result: unknown): string {
+  if (result && typeof result === "object" && "posted" in result) return "Reply posted on Google.";
   if (result && typeof result === "object" && "sent" in result) {
     const t = result as { sent: number; dry_run: number; failed: number; skipped: number };
     const parts = [

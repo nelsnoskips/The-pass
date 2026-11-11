@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 const AGENTS: Record<string, { name: string; what: string }> = {
   reservations: { name: "Reservations Agent", what: "Watches the book for quiet nights and fills them from your own regulars." },
+  reviews: { name: "Reviews Agent", what: "Drafts a reply to every new Google review, for you to post." },
 };
 
 const ago = (d: Date) => {
@@ -79,6 +80,12 @@ export default async function Agents({ params }: { params: Promise<{ org: string
                 </div>
                 <div className="pf-res-name">{p.title}</div>
                 {p.rationale && <p style={{ margin: 0, color: "var(--muted)" }}>{p.rationale}</p>}
+                {(p.input as { reply?: string }).reply && (
+                  <blockquote style={{ margin: 0, padding: "12px 14px", borderRadius: 12, background: "oklch(0 0 0 / 0.25)", border: "1px solid var(--rule)" }}>
+                    <span className="pf-field"><label style={{ marginBottom: 6 }}>The reply, as it will appear on Google</label></span>
+                    {(p.input as { reply?: string }).reply}
+                  </blockquote>
+                )}
                 {p.input.message && (
                   <blockquote style={{ margin: 0, padding: "12px 14px", borderRadius: 12, background: "oklch(0 0 0 / 0.25)", border: "1px solid var(--rule)" }}>
                     <span className="pf-field"><label style={{ marginBottom: 6 }}>The text, as guests will get it</label></span>

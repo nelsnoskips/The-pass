@@ -25,16 +25,17 @@ const GROUPS: { name: string; items: { n: string; title: string; does: string; l
       { n: "08", title: "Waitlist", does: "“Text me if a table opens.” A cancellation fills itself.", live: true },
       { n: "09", title: "Reviews", does: "Your Google reviews in one place, answered from one place.", live: true },
       { n: "10", title: "Ads", does: "Google and Meta reporting in plain language, with agents that flag waste.", live: false },
-      { n: "11", title: "Email & loyalty", does: "Rewards for regulars and email to the right guests.", live: false },
-      { n: "12", title: "Mobile app & push", does: "Your own app for your regulars.", live: false },
+      { n: "11", title: "Loyalty", does: "Every few visits earns a reward, counted automatically from bookings and your point of sale.", live: true },
+      { n: "12", title: "Email", does: "Campaigns and receipts by email to the right guests.", live: false },
+      { n: "13", title: "Mobile app & push", does: "Your own app for your regulars.", live: false },
     ],
   },
   {
     name: "Data",
     items: [
-      { n: "13", title: "Guest list", does: "Every guest, visit and no-show, built from your own bookings. Yours, not a network's.", live: true },
-      { n: "14", title: "Reporting", does: "Covers, guests, messages and marketing in one view.", live: true },
-      { n: "15", title: "Import & export", does: "Bring your guests and bookings in from a CSV export. Take everything out in one click, any time.", live: true },
+      { n: "14", title: "Guest list", does: "Every guest, visit, no-show and dollar spent, from your bookings and your point of sale. Yours, not a network's.", live: true },
+      { n: "15", title: "Reporting", does: "Covers, guests, messages and marketing in one view.", live: true },
+      { n: "16", title: "Import & export", does: "Bring your guests and bookings in from a CSV export. Take everything out in one click, any time.", live: true },
     ],
   },
 ];
@@ -44,7 +45,7 @@ const AGENTS = [
   { name: "Reservations Agent", does: "Spots the quiet nights ahead and drafts a text to regulars who haven’t been in. You approve before anyone hears from you.", live: true },
   { name: "Paid Ads Agent", does: "Finds spend that isn’t bringing guests and budget that should move, with the numbers behind each call.", live: false },
   { name: "Search Terms Agent", does: "Reads what people actually searched to find you, and blocks the searches that waste money.", live: false },
-  { name: "Reviews Agent", does: "Drafts a reply to every review in your voice, for you to post.", live: false },
+  { name: "Reviews Agent", does: "Drafts a reply to every new Google review in your voice. You approve it, it posts.", live: true },
   { name: "Guest Support Agent", does: "Answers questions about hours, parking and allergens by text, day and night.", live: false },
 ];
 

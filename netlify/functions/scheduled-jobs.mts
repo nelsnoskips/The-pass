@@ -4,7 +4,8 @@
  * lives in the app (and its tests) rather than in here.
  *
  *  - every hour:  reminders for bookings 20–28 hours out
- *  - 15:00 UTC:   each restaurant's Reservations Agent (10–11 am US Eastern,
+ *  - 15:00 UTC:   each restaurant's agents that have work — Reservations,
+ *                 and Reviews where replies are waiting (10–11 am US Eastern,
  *                 inside the texting window, so an owner can approve the
  *                 same morning)
  *
@@ -22,10 +23,11 @@ export default async function handler() {
     .then((r) => r.json()).catch((e) => ({ error: String(e) }));
 
   if (new Date().getUTCHours() === 15) {
-    const orgs = await fetch(`${base}/api/jobs/orgs`, { headers: auth }).then((r) => r.json()).catch(() => ({ orgs: [] }));
-    for (const org of (orgs.orgs ?? []) as string[]) {
-      results[`agent:${org}`] = await fetch(`${base}/api/agents/run`, {
-        method: "POST", headers: auth, body: JSON.stringify({ org, agent: "reservations" }),
+    // Only the agents that have something to look at, per restaurant.
+    const plan = await fetch(`${base}/api/jobs/orgs`, { headers: auth }).then((r) => r.json()).catch(() => ({ runs: [] }));
+    for (const { org, agent } of (plan.runs ?? []) as { org: string; agent: string }[]) {
+      results[`${agent}:${org}`] = await fetch(`${base}/api/agents/run`, {
+        method: "POST", headers: auth, body: JSON.stringify({ org, agent }),
       }).then((r) => r.json()).catch((e) => ({ error: String(e) }));
     }
   }
