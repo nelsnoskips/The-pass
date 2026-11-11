@@ -1,5 +1,6 @@
 "use server";
 
+import { withLeverDiff } from "../levers";
 import { redirect } from "next/navigation";
 import { db } from "../db";
 import { requireTenant } from "./context";
@@ -64,11 +65,11 @@ export async function deletePeriodAction(form: FormData) {
 }
 
 export async function saveRulesAction(form: FormData) {
-  await run(form, "/floor", ({ tenant }) => saveVenueRules(db()!, tenant, s(form, "venue"), {
+  await run(form, "/floor", ({ tenant }) => withLeverDiff(db()!, tenant, "reservations", "settings", () => saveVenueRules(db()!, tenant, s(form, "venue"), {
     bookingHorizonDays: n(form, "horizon"), minNoticeMinutes: n(form, "notice"), maxPartyOnline: n(form, "maxParty"),
     cancellationPolicy: s(form, "policy"), cancelCutoffHours: n(form, "cutoff"),
     phone: s(form, "phone"), address: s(form, "address"), timezone: s(form, "timezone"),
-  }), "Booking rules saved.");
+  })), "Booking rules saved.");
 }
 
 export async function integrationAction(form: FormData) {
@@ -79,7 +80,7 @@ export async function integrationAction(form: FormData) {
 
 export async function saveLoyaltyAction(form: FormData) {
   const { saveProgram } = await import("../guests/loyalty");
-  await run(form, "/loyalty", ({ tenant }) => saveProgram(db()!, tenant, {
+  await run(form, "/loyalty", ({ tenant }) => withLeverDiff(db()!, tenant, "loyalty", "settings", () => saveProgram(db()!, tenant, {
     active: form.get("active") === "on", visitsRequired: n(form, "visits"), reward: s(form, "reward"),
-  }), "Loyalty saved.");
+  })), "Loyalty saved.");
 }

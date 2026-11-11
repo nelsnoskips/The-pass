@@ -1,3 +1,4 @@
+import { PillarLevers } from "@/components/platform/PillarLevers";
 import { SettingsNav } from "@/components/platform/SettingsNav";
 import { db } from "@/lib/db";
 import { getProgram } from "@/lib/guests/loyalty";
@@ -22,6 +23,7 @@ export default async function Loyalty({ params, searchParams }: { params: Promis
     <>
       <div className="pf-head"><div><h1>Settings</h1><p className="pf-sub">Reward the regulars. Every visit counts automatically, from a booking marked done or a matched check from your point of sale.</p></div></div>
       <SettingsNav org={org} ok={q.ok} err={q.err} />
+      <PillarLevers pillar="loyalty" org={org} tenant={tenant} />
       <div className="pf-stats">
         <div className="pf-stat"><b>{stats.members}</b><span>guests with a visit</span></div>
         <div className="pf-stat"><b>{stats.earned}</b><span>rewards earned</span></div>

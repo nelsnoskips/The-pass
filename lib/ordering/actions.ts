@@ -1,5 +1,6 @@
 "use server";
 
+import { withLeverDiff } from "../levers";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "../db";
@@ -83,7 +84,7 @@ export async function orderingSettingsAction(form: FormData) {
   };
   let err: string | null;
   try {
-    err = await saveOrderingSettings(sql, tenant, {
+    err = await withLeverDiff(sql, tenant, "ordering", "settings", () => saveOrderingSettings(sql, tenant, {
       ...cur,
       pickupEnabled: form.get("pickup") === "on",
       cateringEnabled: form.get("catering") === "on",
@@ -91,7 +92,7 @@ export async function orderingSettingsAction(form: FormData) {
       leadMinutes: num("lead", cur.leadMinutes),
       cateringLeadHours: num("cateringLead", cur.cateringLeadHours),
       cateringMinCents: Math.round(num("cateringMin", cur.cateringMinCents / 100) * 100),
-    });
+    }));
   } catch (e) {
     if (!(e instanceof Forbidden)) throw e;
     err = "Your role can't change ordering settings.";
@@ -113,7 +114,7 @@ export async function kitchenAction(form: FormData) {
   if (item) next.soldOut = cur.soldOut.includes(item) ? cur.soldOut.filter((i) => i !== item) : [...cur.soldOut, item].slice(0, 500);
   let err: string | null = null;
   try {
-    await setKitchenState(sql, tenant, next);
+    await withLeverDiff(sql, tenant, "ordering", "kitchen board", () => setKitchenState(sql, tenant, next));
   } catch (e) {
     if (!(e instanceof Forbidden)) throw e;
     err = "Your role can't pause ordering or mark items sold out.";

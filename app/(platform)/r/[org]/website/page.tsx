@@ -1,3 +1,4 @@
+import { PillarLevers } from "@/components/platform/PillarLevers";
 import { SiteEditor } from "@/components/platform/SiteEditor";
 import { PublishVersionButton } from "@/components/platform/VersionActions";
 import { WebsiteAgentBox } from "@/components/platform/WebsiteAgentBox";
@@ -31,6 +32,7 @@ export default async function Website({ params }: { params: Promise<{ org: strin
           </p>
         </div>
       </div>
+      <PillarLevers pillar="website" org={slug} tenant={tenant} />
       <div className="pf-layout">
         <div>
           {editable && latest ? (

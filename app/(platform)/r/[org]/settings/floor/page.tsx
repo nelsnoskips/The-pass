@@ -1,3 +1,4 @@
+import { PillarLevers } from "@/components/platform/PillarLevers";
 import { SettingsNav } from "@/components/platform/SettingsNav";
 import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
@@ -26,6 +27,7 @@ export default async function Floor({ params, searchParams }: { params: Promise<
     <>
       <div className="pf-head"><div><h1>Settings</h1><p className="pf-sub">{venue.name} · {tables.length} tables · {seats} seats</p></div></div>
       <SettingsNav org={org} ok={q.ok} err={q.err} />
+      <PillarLevers pillar="reservations" org={org} tenant={tenant} />
 
       <section className="pf-panel" style={{ marginBottom: 14 }}>
         <h2>Service hours</h2>

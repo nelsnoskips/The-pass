@@ -411,3 +411,80 @@
   .pf-hour i { font-size: 9px; }
   .pf-hour:nth-child(even) i { visibility: hidden; }
 }
+
+/* ------------------------------------------------------------ chat --- */
+.pf-app .pf-main:has(.pf-chat) { max-width: none; padding: 0; }
+.pf-chat { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: calc(100vh - 58px); }
+.pf-chat-list { min-width: 0; border-right: 1px solid var(--rule); padding: 14px 12px; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 2px; overflow-x: hidden; overflow-y: auto; max-height: calc(100vh - 58px); position: sticky; top: 58px; }
+.pf-chat-thread { display: block; padding: 8px; border-radius: 8px; font-size: 13.5px; color: var(--muted); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-chat-thread:hover { background: oklch(1 0 0 / 0.045); color: var(--ink); }
+.pf-chat-thread[aria-current="page"] { background: oklch(1 0 0 / 0.07); color: var(--ink); }
+.pf-chat-main { display: flex; flex-direction: column; min-width: 0; }
+.pf-chat-welcome { margin: auto; width: min(720px, 100% - 40px); padding: 40px 0; text-align: center; display: grid; gap: 12px; }
+.pf-chat-welcome h1 { font-family: var(--serif); font-weight: 400; font-size: 40px; margin: 0; }
+.pf-chat-welcome .pf-sub { max-width: 56ch; margin: 0 auto 10px; }
+.pf-chat-log { flex: 1; width: min(780px, 100% - 40px); margin: 0 auto; padding: 28px 0 20px; display: grid; align-content: start; gap: 18px; }
+.pf-chat-foot { position: sticky; bottom: 0; padding: 12px 20px 20px; background: linear-gradient(transparent, var(--bg) 30%); }
+.pf-chat-foot > * { width: min(780px, 100%); margin: 0 auto; }
+.pf-turn { display: grid; gap: 10px; }
+.pf-turn.user { justify-items: end; }
+.pf-bubble { max-width: 85%; padding: 11px 14px; border-radius: 14px; font-size: 14.5px; line-height: 1.55; white-space: pre-wrap; }
+.pf-bubble.you { background: oklch(1 0 0 / 0.08); border: 1px solid var(--rule); justify-self: end; border-bottom-right-radius: 4px; }
+.pf-bubble.it { padding-left: 0; padding-right: 0; max-width: 100%; }
+.pf-compose { display: grid; gap: 10px; text-align: left; }
+.pf-compose-box { position: relative; border: 1px solid var(--rule-strong); border-radius: 16px; background: var(--panel); padding: 12px 52px 12px 14px; transition: border-color .2s var(--ease), box-shadow .3s var(--ease); }
+.pf-compose-box:focus-within { border-color: oklch(0.72 0.075 78 / 0.55); box-shadow: 0 0 0 4px oklch(0.72 0.075 78 / 0.08), 0 20px 50px -30px oklch(0.72 0.075 78 / 0.5); }
+.pf-compose-box textarea { width: 100%; resize: none; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 14.5px; line-height: 1.5; }
+.pf-compose-box textarea:focus-visible { outline: 0; }
+.pf-compose.big .pf-compose-box { padding: 16px 56px 16px 18px; }
+.pf-send { position: absolute; right: 10px; bottom: 10px; width: 34px; height: 34px; border-radius: 999px; border: 0; display: grid; place-items: center; cursor: pointer; background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: oklch(0.15 0.01 60); transition: transform .45s var(--spring), opacity .2s var(--ease); }
+.pf-send:disabled { opacity: .35; cursor: default; }
+.pf-send:not(:disabled):active { transform: scale(.9); }
+.pf-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.pf-compose:not(.big) .pf-chips { justify-content: flex-start; }
+.pf-chip { border: 1px solid var(--rule-strong); background: transparent; color: var(--ink); border-radius: 999px; padding: 7px 12px; font: inherit; font-size: 12.5px; cursor: pointer; transition: background-color .2s var(--ease), border-color .2s var(--ease); }
+.pf-chip:hover { background: oklch(1 0 0 / 0.05); border-color: oklch(0.72 0.075 78 / 0.5); }
+.pf-thinking { display: grid; gap: 10px; }
+.pf-working { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.pf-working .dots { display: inline-flex; gap: 4px; }
+.pf-working .dots i { width: 6px; height: 6px; border-radius: 999px; background: var(--brand); animation: pf-pulse 1.2s var(--ease) infinite; }
+.pf-working .dots i:nth-child(2) { animation-delay: .15s; }
+.pf-working .dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes pf-pulse { 0%, 80%, 100% { opacity: .25; transform: scale(.8); } 40% { opacity: 1; transform: scale(1); } }
+
+/* a change the assistant made or wants to make */
+.pf-change { display: grid; gap: 10px; padding: 14px 16px; border: 1px solid var(--rule-strong); border-radius: 14px; background: var(--panel); scroll-margin-top: 90px; }
+.pf-change.pending { border-color: oklch(0.82 0.14 75 / 0.45); box-shadow: 0 0 0 3px oklch(0.82 0.14 75 / 0.06); }
+.pf-change.undone, .pf-change.dismissed { opacity: .65; }
+.pf-change .h { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.pf-change .where { font: 600 10.5px/1.2 var(--font-inter), sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--brand); }
+.pf-change .diff { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; font-size: 15px; }
+.pf-change .before { color: var(--muted); text-decoration: line-through; text-decoration-color: oklch(0.62 0.13 25 / 0.6); }
+.pf-change .arrow { color: var(--faint); }
+.pf-change .after { color: var(--ink); font-weight: 600; }
+.pf-change .why { margin: 0; font-size: 13px; color: var(--muted); }
+.pf-change .f { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center; padding-top: 10px; border-top: 1px solid var(--rule); }
+.pf-change .who { font-size: 11.5px; color: var(--faint); }
+.pf-change .acts { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* a pillar's settings at a glance */
+.pf-h2-note a { color: var(--brand); }
+.pf-lever-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.pf-lever { display: grid; gap: 4px; align-content: start; padding: 14px 16px; border-top: 1px solid var(--rule); border-right: 1px solid var(--rule); }
+.pf-lever .l { font-size: 12px; color: var(--muted); }
+.pf-lever b { font-size: 15px; font-weight: 550; overflow-wrap: anywhere; }
+.pf-lever .h { font-size: 11.5px; color: var(--faint); }
+.pf-lever .c { font-size: 11.5px; color: var(--brand); }
+.pf-lever.fresh { background: oklch(0.72 0.075 78 / 0.06); box-shadow: inset 2px 0 0 var(--brand); }
+.pf-lever-log { border-top: 1px solid var(--rule); }
+.pf-lever-log summary { cursor: pointer; padding: 12px 16px; font-size: 13px; color: var(--muted); }
+.pf-lever-log ol { list-style: none; margin: 0; padding: 0 16px 14px; display: grid; gap: 10px; }
+.pf-lever-log li { display: grid; gap: 2px; padding-left: 12px; border-left: 2px solid var(--rule-strong); }
+.pf-lever-log .t { font-size: 13.5px; }
+.pf-lever-log .s { font-size: 11.5px; color: var(--faint); }
+
+@media (max-width: 900px) {
+  .pf-chat { grid-template-columns: 1fr; }
+  .pf-chat-list { display: none; }
+}
+.pf-chat-list > div { min-width: 0; }

@@ -1,3 +1,4 @@
+import { PillarLevers } from "@/components/platform/PillarLevers";
 import Link from "next/link";
 import { FormButton } from "@/components/platform/FormButton";
 import { db } from "@/lib/db";
@@ -86,6 +87,7 @@ export default async function Orders({ params, searchParams }: { params: Promise
       </div>
       {q.ok && <p className="pf-msg ok" role="status" style={{ marginBottom: 14 }}>{q.ok}</p>}
       {q.err && <p className="pf-msg err" role="alert" style={{ marginBottom: 14 }}>{q.err}</p>}
+      <PillarLevers pillar="ordering" org={org} tenant={tenant} />
 
       <div className="pf-stats" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", alignItems: "start" }}>
         {[["placed", "New"], ["accepted", "Being made"], ["ready", "Ready for pickup"]].map(([s, label]) => (

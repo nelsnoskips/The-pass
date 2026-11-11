@@ -6,7 +6,7 @@ import { searchAction } from "@/lib/platform/search-actions";
 import type { SearchHit } from "@/lib/platform/search";
 
 const PAGES = [
-  ["Home", ""], ["Agents", "agents"], ["Website", "website"], ["Host stand", "host"], ["Orders", "orders"],
+  ["Home", ""], ["Chat", "chat"], ["Agents", "agents"], ["Website", "website"], ["Host stand", "host"], ["Orders", "orders"],
   ["Gift cards", "gift-cards"], ["Guests", "guests"], ["Reviews", "reviews"], ["Messages", "messages"],
   ["Reporting", "reporting"], ["Settings", "settings"], ["Floor plan", "settings/floor"], ["Team", "settings/team"],
   ["Loyalty", "settings/loyalty"], ["Import guests", "settings/import"],

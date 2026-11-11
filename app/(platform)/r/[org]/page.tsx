@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChatComposer } from "@/components/platform/ChatComposer";
 import { db } from "@/lib/db";
 import { actionWords, AGENT_CARDS, agentName } from "@/lib/agent-runtime/catalog";
 import { getOrderingSettings } from "@/lib/ordering";
@@ -123,6 +124,10 @@ export default async function Home({ params }: { params: Promise<{ org: string }
           <p className="pf-sub">{venue.name} · {longDate}</p>
         </div>
         <Link className="pf-btn primary" href={`/r/${org}/host`}>Open the host stand</Link>
+      </div>
+
+      <div style={{ marginBottom: 18 }}>
+        <ChatComposer org={org} thread={null} suggestions={["How does tonight look?", "Pause pickup orders for 20 minutes", "What are my reservation settings?"]} />
       </div>
 
       <section className="pf-panel">

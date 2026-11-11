@@ -829,3 +829,49 @@ do $$ begin
   alter table payments drop constraint if exists payments_kind_check;
   alter table payments add constraint payments_kind_check check (kind in ('deposit', 'no_show_fee', 'gift_card', 'order'));
 end $$;
+
+-- ------------------------------------------------------- assistant --
+-- The chat: a restaurant's conversations with its assistant, and every
+-- change the assistant made or proposed, with before and after, so a
+-- person can see exactly what happened and undo or apply it.
+create table if not exists chat_threads (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null references orgs(id) on delete cascade,
+  title       text not null default 'New chat',
+  created_by  text not null,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+create index if not exists chat_threads_org_idx on chat_threads(org_id, updated_at desc);
+
+create table if not exists chat_messages (
+  id          uuid primary key default gen_random_uuid(),
+  thread_id   uuid not null references chat_threads(id) on delete cascade,
+  org_id      uuid not null references orgs(id) on delete cascade,
+  role        text not null check (role in ('user', 'assistant')),
+  body        text not null,
+  created_at  timestamptz not null default now()
+);
+create index if not exists chat_messages_thread_idx on chat_messages(thread_id, created_at);
+
+create table if not exists chat_changes (
+  id           uuid primary key default gen_random_uuid(),
+  org_id       uuid not null references orgs(id) on delete cascade,
+  thread_id    uuid not null references chat_threads(id) on delete cascade,
+  message_id   uuid references chat_messages(id) on delete set null,
+  pillar       text not null,
+  lever        text not null,
+  label        text not null,
+  value        text not null,
+  before       jsonb,
+  after        jsonb,
+  risk         text not null check (risk in ('auto', 'confirm')),
+  status       text not null check (status in ('applied', 'pending', 'undone', 'dismissed', 'failed')),
+  reason       text not null default '',
+  error        text,
+  requested_by text not null,
+  decided_by   text,
+  created_at   timestamptz not null default now(),
+  decided_at   timestamptz
+);
+create index if not exists chat_changes_thread_idx on chat_changes(thread_id, created_at);
