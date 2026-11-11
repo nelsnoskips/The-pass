@@ -1,0 +1,163 @@
+"use client";
+
+import { useActionState, useEffect, useRef, useState, useTransition } from "react";
+import { findTimes, reserve, type ReserveState, type TimeOption } from "@/lib/sites/actions";
+
+/**
+ * The guest's booking flow: party and date, then a time, then who they
+ * are. The only client JavaScript on a restaurant site. Times come from
+ * the reservations engine and are re-checked when the booking is made,
+ * so a stale button can't double-book a table.
+ */
+export function BookingWidget({
+  slug,
+  today,
+  maxDate,
+  maxParty,
+  restaurant,
+}: {
+  slug: string;
+  /** Venue-local "yyyy-mm-dd". */
+  today: string;
+  maxDate: string;
+  maxParty: number;
+  restaurant: string;
+}) {
+  const [party, setParty] = useState(2);
+  const [date, setDate] = useState(today);
+  const [times, setTimes] = useState<TimeOption[] | null>(null);
+  const [time, setTime] = useState<string | null>(null);
+  const [loading, startLoading] = useTransition();
+  const [state, submit, pending] = useActionState<ReserveState, FormData>(reserve, { error: null });
+  const detailsRef = useRef<HTMLDivElement>(null);
+  const request = useRef(0);
+
+  useEffect(() => {
+    const id = ++request.current;
+    startLoading(async () => {
+      const found = await findTimes(slug, date, party);
+      // A slower, older answer must not overwrite a newer one.
+      if (id !== request.current) return;
+      setTimes(found);
+      setTime((current) => (found.some((t) => t.time === current) ? current : null));
+    });
+  }, [slug, date, party]);
+
+  // "That time was just taken": the list is stale, so fetch it again.
+  useEffect(() => {
+    if (!state.error) return;
+    const id = ++request.current;
+    startLoading(async () => {
+      const found = await findTimes(slug, date, party);
+      if (id !== request.current) return;
+      setTimes(found);
+      setTime((current) => (found.some((t) => t.time === current) ? current : null));
+    });
+    // Only when a new error arrives.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
+
+  const choose = (t: string) => {
+    setTime(t);
+    requestAnimationFrame(() => detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }));
+  };
+
+  const chosen = times?.find((t) => t.time === time) ?? null;
+  // Times arrive in order, so grouping by service keeps them in order.
+  const groups: [string, TimeOption[]][] = [];
+  for (const t of times ?? []) {
+    const last = groups[groups.length - 1];
+    if (last && last[0] === t.period) last[1].push(t);
+    else groups.push([t.period, [t]]);
+  }
+
+  return (
+    <form action={submit} className="site-panel site-stack">
+      <input type="hidden" name="site" value={slug} />
+      <input type="hidden" name="time" value={time ?? ""} />
+      <div className="site-hp" aria-hidden>
+        <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label>
+      </div>
+
+      <div className="site-row">
+        <div className="site-field">
+          <label htmlFor="bk-party">Guests</label>
+          <select id="bk-party" name="party" value={party} onChange={(e) => setParty(Number(e.target.value))}>
+            {Array.from({ length: maxParty }, (_, i) => i + 1).map((n) => (
+              <option key={n} value={n}>{n} {n === 1 ? "guest" : "guests"}</option>
+            ))}
+          </select>
+        </div>
+        <div className="site-field">
+          <label htmlFor="bk-date">Date</label>
+          <input id="bk-date" type="date" name="date" value={date} min={today} max={maxDate} required
+            onChange={(e) => e.target.value && setDate(e.target.value)} />
+        </div>
+      </div>
+
+      <div>
+        <p className="site-legend" id="bk-times">Time</p>
+        <div aria-live="polite">
+          {times === null ? (
+            <p className="site-note" style={{ marginTop: 10 }}>Finding tables…</p>
+          ) : times.length === 0 ? (
+            <p className="site-note" style={{ marginTop: 10 }}>
+              No tables online for {party} on that day. Try another date, or call us — we keep a few tables back for the phone.
+            </p>
+          ) : (
+            <div role="group" aria-labelledby="bk-times" style={{ opacity: loading ? 0.5 : 1 }}>
+              {groups.map(([period, options]) => (
+                <div key={period}>
+                  {groups.length > 1 && <p className="site-period">{period}</p>}
+                  <div className="site-times">
+                    {options.map((t) => (
+                      <button key={t.time} type="button" className="site-time" aria-pressed={time === t.time} onClick={() => choose(t.time)}>
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <p className="site-note" style={{ marginTop: 12 }}>More than {maxParty}? Call us and we&rsquo;ll set it up.</p>
+      </div>
+
+      {chosen && (
+        <div ref={detailsRef} className="site-stack" style={{ borderTop: "1px solid var(--rule)", paddingTop: 22 }}>
+          <div className="site-row">
+            <div className="site-field">
+              <label htmlFor="bk-name">Name</label>
+              <input id="bk-name" name="name" autoComplete="name" required maxLength={120} />
+            </div>
+            <div className="site-field">
+              <label htmlFor="bk-phone">Mobile</label>
+              <input id="bk-phone" name="phone" type="tel" autoComplete="tel" inputMode="tel" required placeholder="(555) 555-0100" />
+            </div>
+          </div>
+          <div className="site-field">
+            <label htmlFor="bk-email">Email (optional)</label>
+            <input id="bk-email" name="email" type="email" autoComplete="email" maxLength={200} />
+          </div>
+          <div className="site-field">
+            <label htmlFor="bk-notes">Anything we should know? (optional)</label>
+            <textarea id="bk-notes" name="notes" maxLength={500} placeholder="Allergies, a birthday, a high chair…" />
+          </div>
+          <label className="site-check">
+            <input type="checkbox" name="marketing" />
+            <span>Text me occasional news and invitations from {restaurant}. Message and data rates may apply. Reply STOP any time. Not required to book.</span>
+          </label>
+
+          {state.error && <p className="site-error" role="alert">{state.error}</p>}
+
+          <button type="submit" className="site-btn large" disabled={pending}>
+            {pending ? "Booking…" : `Book ${party} at ${chosen.label}`}
+          </button>
+          <p className="site-note">We&rsquo;ll text a confirmation to your mobile with a link to change or cancel.</p>
+        </div>
+      )}
+      {!chosen && state.error && <p className="site-error" role="alert">{state.error}</p>}
+    </form>
+  );
+}

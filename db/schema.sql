@@ -466,3 +466,32 @@ create table if not exists guest_messages (
 );
 
 create index if not exists guest_messages_guest_idx on guest_messages(guest_id, created_at desc);
+
+-- ------------------------------------------------------ site engine --
+-- A restaurant's website. The content is not here: it is in
+-- site_versions, and published_version_id says which one is live.
+create table if not exists sites (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null references orgs(id) on delete cascade,
+  -- The venue the site takes bookings for.
+  venue_id    uuid not null references venues(id) on delete cascade,
+  slug        text not null unique,
+  theme       text not null default 'classic',
+  custom_domain text unique,
+  published_version_id uuid,
+  created_at  timestamptz not null default now()
+);
+
+-- Every save is a new row and no row is ever edited, so preview,
+-- history and rollback are all just "which row".
+create table if not exists site_versions (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null references orgs(id) on delete cascade,
+  site_id     uuid not null references sites(id) on delete cascade,
+  content     jsonb not null,
+  note        text,
+  created_by  text not null,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists site_versions_site_idx on site_versions(site_id, created_at desc);

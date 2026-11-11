@@ -1,0 +1,74 @@
+{
+  "brand": { "name": "Santorini by Georgios", "tagline": "Greek cooking over open fire, on Las Olas.", "cuisine": "Greek", "priceRange": "$$$" },
+  "theme": { "paper": "#f6f1e7", "ink": "#16263a", "accent": "#1f4f8f" },
+  "hero": {
+    "headline": "Whole fish, wood fire, and a table that isn't in a hurry.",
+    "sub": "Family recipes from the Cyclades, cooked the long way. Dinner Tuesday through Sunday, brunch on weekends.",
+    "image": "/images/dining-daylight.jpg"
+  },
+  "story": {
+    "heading": "Three generations, one grill",
+    "body": "Georgios Stavros learned to cook on his grandmother's terrace in Oia, where dinner started when the boats came in and ended when the wine did. The restaurant keeps her rules: fish from that morning, lamb that has had all day, olive oil from the family's trees, and nobody rushed off a table.\n\nThe room opens onto Las Olas Boulevard. Come early for the light, or late for the saganaki."
+  },
+  "menus": [
+    {
+      "id": "dinner",
+      "name": "Dinner",
+      "sections": [
+        {
+          "id": "meze", "name": "Meze", "note": "To share, while you decide.",
+          "items": [
+            { "id": "tzatziki", "name": "Tzatziki", "description": "Strained yogurt, cucumber, garlic, dill, warm pita.", "priceCents": 1200, "tags": ["vegetarian"] },
+            { "id": "saganaki", "name": "Flaming Saganaki", "description": "Kefalograviera, brandy, lemon. Lit at the table.", "priceCents": 1800, "tags": ["vegetarian"] },
+            { "id": "octopus", "name": "Grilled Octopus", "description": "Charred over oak, fava purée, capers, red onion.", "priceCents": 2400, "tags": ["gluten-free"] },
+            { "id": "dolmades", "name": "Dolmades", "description": "Vine leaves, rice, herbs, avgolemono.", "priceCents": 1400, "tags": ["vegetarian"] }
+          ]
+        },
+        {
+          "id": "fire", "name": "From the Fire", "note": "",
+          "items": [
+            { "id": "lavraki", "name": "Whole Lavraki", "description": "Mediterranean sea bass, ladolemono, wild greens. For one or two.", "priceCents": null, "tags": ["gluten-free"] },
+            { "id": "lamb-chops", "name": "Lamb Chops", "description": "Oregano, lemon, hand-cut potatoes.", "priceCents": 4800, "tags": ["gluten-free"] },
+            { "id": "kleftiko", "name": "Lamb Kleftiko", "description": "Slow-roasted in parchment for six hours, with kefalotyri.", "priceCents": 4200, "tags": [] },
+            { "id": "moussaka", "name": "Moussaka", "description": "Eggplant, spiced beef, béchamel. Yiayia's recipe.", "priceCents": 2900, "tags": [] },
+            { "id": "gemista", "name": "Gemista", "description": "Tomatoes and peppers stuffed with rice, pine nuts and mint.", "priceCents": 2600, "tags": ["vegan"] }
+          ]
+        },
+        {
+          "id": "sweet", "name": "Sweet", "note": "",
+          "items": [
+            { "id": "baklava", "name": "Baklava", "description": "Walnut, pistachio, thyme honey.", "priceCents": 1200, "tags": ["vegetarian"] },
+            { "id": "yogurt", "name": "Yogurt & Honey", "description": "Sheep's milk yogurt, honeycomb, walnuts.", "priceCents": 1000, "tags": ["vegetarian", "gluten-free"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "brunch",
+      "name": "Brunch",
+      "sections": [
+        {
+          "id": "brunch-plates", "name": "Plates", "note": "Saturday and Sunday, 11 to 2.",
+          "items": [
+            { "id": "strapatsada", "name": "Strapatsada", "description": "Soft eggs, tomato, feta, grilled bread.", "priceCents": 1700, "tags": ["vegetarian"] },
+            { "id": "bougatsa", "name": "Bougatsa", "description": "Warm custard pie, cinnamon, powdered sugar.", "priceCents": 1300, "tags": ["vegetarian"] },
+            { "id": "gyro-plate", "name": "Pork Gyro Plate", "description": "Hand-stacked pork, pita, tomato, tzatziki, fries.", "priceCents": 2200, "tags": [] }
+          ]
+        }
+      ]
+    }
+  ],
+  "hours": [
+    { "days": "Monday", "hours": "Closed" },
+    { "days": "Tuesday – Friday", "hours": "5 pm – 10 pm" },
+    { "days": "Saturday – Sunday", "hours": "11 am – 2:30 pm · 5 pm – 10 pm" }
+  ],
+  "contact": {
+    "address": "1104 East Las Olas Boulevard, Fort Lauderdale, FL 33301",
+    "phone": "(954) 555-0142",
+    "email": "hello@santorinibygeorgios.example",
+    "mapUrl": "https://www.google.com/maps/search/?api=1&query=1104+E+Las+Olas+Blvd+Fort+Lauderdale+FL"
+  },
+  "announcement": "",
+  "social": { "instagram": "" }
+}

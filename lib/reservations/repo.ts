@@ -331,3 +331,36 @@ export async function log(
 
 // Re-exported for callers that seat walk-ins on a specific table.
 export { pickTable, turnFor };
+
+/** What a guest sees from their own link. */
+export interface GuestBooking {
+  id: string;
+  orgId: string;
+  venueId: string;
+  venueName: string;
+  timezone: string;
+  guestName: string;
+  partySize: number;
+  startsAt: Date;
+  status: ReservationStatus;
+  notes: string | null;
+}
+
+export async function bookingByToken(sql: Sql, token: string): Promise<GuestBooking | null> {
+  if (!token || token.length > 64) return null;
+  const [r] = await sql<{
+    id: string; org_id: string; venue_id: string; venue_name: string; timezone: string;
+    name: string; party_size: number; starts_at: Date; status: ReservationStatus; notes: string | null;
+  }[]>`
+    select r.id, r.org_id, r.venue_id, v.name as venue_name, v.timezone, g.name,
+           r.party_size, r.starts_at, r.status, r.notes
+    from reservations r
+    join venues v on v.id = r.venue_id
+    join guests g on g.id = r.guest_id
+    where r.manage_token = ${token}`;
+  if (!r) return null;
+  return {
+    id: r.id, orgId: r.org_id, venueId: r.venue_id, venueName: r.venue_name, timezone: r.timezone,
+    guestName: r.name, partySize: r.party_size, startsAt: r.starts_at, status: r.status, notes: r.notes,
+  };
+}
