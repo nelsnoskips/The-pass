@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Bodoni_Moda, Manrope } from "next/font/google";
+import { Manrope } from "next/font/google";
+import localFont from "next/font/local";
 import { BlueHeader } from "@/components/blue/BlueHeader";
 import { BlueMotion } from "@/components/blue/BlueMotion";
 import "./blue.css";
@@ -7,11 +8,16 @@ import "./blue.css";
 /* The room's pairing, scoped to this route rather than the root layout:
    loaded in the root it would preload two extra families on every page
    of the app that never renders a word of them. */
-const bodoni = Bodoni_Moda({
+/* Bodoni Moda is self-hosted: Google Fonts intermittently answers with a
+   `fonts.gstatic.com/l/font?kit=…` URL that Turbopack's next/font/google
+   loader cannot resolve, failing the production build. The file is the
+   exact latin woff2 next/font/google shipped (variable, wght 400–900),
+   OFL-licensed; see ./fonts/OFL.txt. */
+const bodoni = localFont({
+  src: [{ path: "./fonts/BodoniModa-latin.woff2", weight: "400 500", style: "normal" }],
   variable: "--font-bodoni",
-  subsets: ["latin"],
-  weight: ["400", "500"],
   display: "swap",
+  adjustFontFallback: "Times New Roman",
 });
 
 const manrope = Manrope({
