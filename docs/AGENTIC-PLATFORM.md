@@ -90,7 +90,7 @@ Approve-tier actions need a role that `can(tenant, ...)` grants:
 | Loyalty and visits from the point of sale | Built | `lib/guests` |
 | SMS sending | Built; dry run until Twilio keys are set | `lib/messaging/sms.ts` |
 | Proposal queue UI for runtime agents | Built | `/r/<org>/agents` |
-| Live Google/Meta/GBP tools | Not yet | `lib/connectors/` |
+| Live Google/Meta/GBP tools | Google Business Profile (hours, reviews, replies) and Google Ads (reporting, approved budget/pause/negative-keyword changes) live; Meta read-only | `lib/integrations/`, `lib/ads/` |
 
 ## Writing a new agent
 
@@ -108,11 +108,14 @@ Approve-tier actions need a role that `can(tenant, ...)` grants:
 
 ## Agent roster
 
-Live: **Paid Ads**, **Search Terms** (rules), **Reservations** (runtime:
-fill quiet shifts; waitlist and no-show follow-up to come). Planned:
-**Local SEO** (Google Business Profile), **Website** (describe the
-change → preview → publish), **Guest Marketing** (SMS/email to the right regulars),
-**Guest Support** (questions on site and by text), **Loyalty**.
+Live: **Reservations** (fill quiet shifts from lapsed regulars),
+**Website** (describe the change → draft → owner publishes), **Reviews**
+(draft a reply to each Google review → approve → posted), **Paid Ads**
+with search terms (real Google Ads and Meta numbers; Google budget,
+pause and negative-keyword changes on approval). Planned: **Local SEO**
+(listing drift guard, holiday hours), **Guest Marketing** (SMS/email to
+the right regulars), **Guest Support** (questions on site and by text),
+**Loyalty**.
 
 The edge over platforms built on ordering data is reservations data:
 covers, visit frequency, occasions and no-shows. Agents should use it.
@@ -133,7 +136,7 @@ Website wave as its booking page and host stand.
 | 2 | **Email** | Same campaign model as SMS, on Resend | Resend wired for studio mail only |
 | 2 | **Loyalty** | Visit-based rewards on the CRM | Visit counts built |
 | 2 | **Referrals** | A small layer on loyalty + SMS | Not started |
-| 3 | **Gift cards** | Self-contained on Stripe; money in before it's spent | Not started |
+| 3 | **Gift cards** | Self-contained on Stripe; money in before it's spent | Built: sold on the site, emailed codes, partial redemption (`lib/giftcards`) |
 | 3 | **Ordering** | The largest build: menu, cart, payment, tax, tips, kitchen/POS hand-off | Pickup built: site menu, server-side pricing, tax, tips, Stripe, kitchen board, pause, sold-out, ready texts (`lib/ordering`). Still to do: delivery, modifiers, POS hand-off |
 | 3 | **Catering** | Ordering for large orders: quotes, deposits, invoices | Orders with notice, headcount and a minimum built; quotes and invoices to do |
 | 4 | **Mobile app** | A shell over ordering + loyalty; app-store review | Not started |

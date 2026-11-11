@@ -370,6 +370,8 @@ discounts):
 | List price (60 × $199, 40 × $599) | 100 | $35,900 |
 | **Total** | **150** | **≈ $49,350 MRR (≈ $592K ARR)** |
 
+The 150-location target sits between the conservative and base cases of the three-year model in [04-pricing-and-unit-economics.md](04-pricing-and-unit-economics.md) (base case: 86 locations at the end of 2027, 337 at the end of 2028). That model, not this table, is the source for ARR, burn and headcount.
+
 **Benchmarks for scale:** Toast earns about $564 per location per month
 in subscription ARR
 ([Toast 8-K](https://www.sec.gov/Archives/edgar/data/0001650164/000165016426000214/tost-20260930xexhibit991.htm),

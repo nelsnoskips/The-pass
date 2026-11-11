@@ -48,7 +48,7 @@ export const PROVIDERS: Provider[] = [
   { id: "google_ads", name: "Google Ads", category: "Marketing", scope: "restaurant", build: "live",
     does: "Reads campaigns for reporting; applies approved budget and keyword changes.", env: [] },
   { id: "meta_ads", name: "Meta Ads", category: "Marketing", scope: "restaurant", build: "live",
-    does: "Reads Instagram and Facebook campaigns; applies approved changes.", env: [] },
+    does: "Reads Instagram and Facebook campaign spend and results each night. Changes stay in Meta Ads Manager for now.", env: [] },
   { id: "square", name: "Square", category: "Point of sale", scope: "restaurant", build: "live",
     does: "Matches checks to guests so visits and spend fill the guest list.", env: [] },
   { id: "toast", name: "Toast", category: "Point of sale", scope: "restaurant", build: "shell",
