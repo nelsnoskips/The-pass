@@ -49,7 +49,7 @@ export async function searchEverything(sql: Sql, t: Tenant, org: string, raw: st
   const when = (d: Date, tz: string) => new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: tz }).format(d);
   const ymd = (d: Date, tz: string) => new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(d);
   return [
-    ...guests.map((g): SearchHit => ({ kind: "guest", title: g.name, detail: `${g.phone.startsWith("+") ? g.phone : "no phone"} · ${g.visit_count} visit${g.visit_count === 1 ? "" : "s"}`, href: `/r/${org}/guests?q=${encodeURIComponent(g.name)}` })),
+    ...guests.map((g): SearchHit => ({ kind: "guest", title: g.name, detail: `${g.phone.startsWith("+") ? g.phone : "no phone"} · ${g.visit_count} visit${g.visit_count === 1 ? "" : "s"}`, href: `/r/${org}/guests/${g.id}` })),
     ...bookings.map((b): SearchHit => ({ kind: "booking", title: `${b.name} ×${b.party_size}`, detail: `${when(b.starts_at, b.tz)} · ${b.status}`, href: `/r/${org}/host?date=${ymd(b.starts_at, b.tz)}` })),
     ...orders.map((o): SearchHit => ({ kind: "order", title: `Order #${o.number} · ${o.name}`, detail: `${money(o.total_cents)} · ${o.status.replace("_", " ")}`, href: `/r/${org}/orders` })),
     ...cards.map((c): SearchHit => ({ kind: "gift_card", title: `Gift card ${c.code}`, detail: `${money(c.balance_cents)} left · ${c.status}`, href: `/r/${org}/gift-cards?code=${encodeURIComponent(c.code)}` })),
