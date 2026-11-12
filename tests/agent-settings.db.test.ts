@@ -16,7 +16,6 @@ import type { AgentContext, ToolDef } from "@/lib/agent-runtime/tool";
 import { Forbidden, type Tenant } from "@/lib/platform/tenant";
 
 type Block = Anthropic.Beta.Messages.BetaContentBlock;
-const toolUse = (name: string, input: unknown): Block => ({ type: "tool_use", id: `toolu_${randomUUID()}`, name, input }) as Block;
 const text = (t: string): Block => ({ type: "text", text: t, citations: null }) as Block;
 
 function scripted(turns: Block[][]) {

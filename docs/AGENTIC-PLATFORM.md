@@ -90,6 +90,8 @@ Approve-tier actions need a role that `can(tenant, ...)` grants:
 | Loyalty and visits from the point of sale | Built | `lib/guests` |
 | SMS sending | Built; dry run until Twilio keys are set | `lib/messaging/sms.ts` |
 | Proposal queue UI for runtime agents | Built | `/r/<org>/agents` |
+| Per-restaurant agent settings: on/off, owner's instructions (appended to the system prompt in a fenced block that can't override policy), tighter-only limits enforced in tool checks, activity log | Built | `lib/agent-runtime/settings.ts`, `/r/<org>/agents/<id>` |
+| STOP / START by text | Built: signed Twilio webhook sets `guests.sms_opted_out_at` for the phone at every restaurant (one shared sending number) | `app/api/webhooks/twilio`, `lib/messaging/inbound.ts` |
 | Live Google/Meta/GBP tools | Google Business Profile (hours, reviews, replies) and Google Ads (reporting, approved budget/pause/negative-keyword changes) live; Meta read-only | `lib/integrations/`, `lib/ads/` |
 
 ## Writing a new agent
@@ -101,7 +103,11 @@ Approve-tier actions need a role that `can(tenant, ...)` grants:
 2. Write the `AgentSpec`: a system prompt that states the goal, when
    doing nothing is the right answer, and that a refused tool is not to
    be worked around.
-3. Register it in `lib/agent-runtime/registry.ts`.
+3. Register it in `lib/agent-runtime/registry.ts`. If the owner should be
+   able to set limits for it, add them to `AGENT_GOALS` in
+   `lib/agent-runtime/settings.ts` with hard bounds, read them in the
+   tool's `check` with `agentGoals(ctx)`, and never let a stored value
+   loosen a limit the code sets.
 4. Test it with a scripted model (`tests/agent-runtime.db.test.ts`):
    the guarantees are about what policy does with whatever the model
    asks for, so they don't need a live model to prove.
