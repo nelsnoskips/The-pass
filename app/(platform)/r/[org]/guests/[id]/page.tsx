@@ -7,6 +7,7 @@ import { requireTenant } from "@/lib/platform/context";
 import { can } from "@/lib/platform/tenant";
 import { money } from "@/lib/reports/format";
 import { formatPhone } from "@/lib/sites/format";
+import { formatIn, venueTz } from "@/lib/platform/when";
 
 export const dynamic = "force-dynamic";
 
@@ -25,12 +26,13 @@ export default async function GuestProfilePage({ params, searchParams }: {
 }) {
   const { org, id } = await params;
   const q = await searchParams;
-  const { tenant } = await requireTenant(org);
+  const { tenant, venues } = await requireTenant(org);
+  const tz = venueTz(venues);
   const p = await guestProfile(db()!, tenant, id);
   if (!p) notFound();
   const g = p.guest;
   const manage = can(tenant, "manage_venue");
-  const day = (d: Date) => new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(d);
+  const day = (d: Date) => formatIn(d, tz, "date");
   const at = (b: ProfileBooking) => new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: b.timezone }).format(b.startsAt);
   const ymd = (b: ProfileBooking) => new Intl.DateTimeFormat("en-CA", { timeZone: b.timezone }).format(b.startsAt);
   const openRewards = p.rewards.filter((r) => !r.redeemedAt);

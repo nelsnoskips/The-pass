@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Sql } from "postgres";
 import { DEFAULT_MODEL, type MessagesClient } from "../agent-runtime/runner";
-import { formatLever, LEVERS, lever, menuNames, parseLeverValue, PILLARS, rawOf, readLevers, setLever, type LeverValue, type Pillar } from "../levers";
+import { formatLever, LEVERS, lever, menuNames, orgTimezone, parseLeverValue, PILLARS, rawOf, readLevers, setLever, type LeverValue, type Pillar } from "../levers";
 import { campaignResults, listCampaigns, saveDraft } from "../marketing/campaigns";
 import { describeRules, listSegments, segmentCounts } from "../marketing/segments";
 import { ordersBoard } from "../ordering";
@@ -99,9 +99,9 @@ const TOOLS: Tool[] = [
     input_schema: obj({ pillar: { type: "string", enum: ["reservations", "ordering", "website", "loyalty", "all"] } }, ["pillar"]),
     async run({ sql, tenant }, { pillar }) {
       const p = pillar === "all" ? undefined : (pillar as Pillar);
-      const names = await menuNames(sql, tenant);
+      const [names, tz] = await Promise.all([menuNames(sql, tenant), orgTimezone(sql, tenant)]);
       const levers = (await readLevers(sql, tenant, p)).map(({ def, value }) => ({
-        pillar: def.pillar, key: def.key, label: def.label, does: def.help, value, shown: formatLever(def, value, names),
+        pillar: def.pillar, key: def.key, label: def.label, does: def.help, value, shown: formatLever(def, value, names, tz),
         applies: def.risk === "auto" ? "at once (can be undone)" : "after the owner presses Apply",
         ...(def.min !== undefined ? { min: def.min, max: def.max, unit: def.unit } : {}),
         youCanChange: can(tenant, def.requires),
@@ -202,7 +202,7 @@ export async function proposeChange(sql: Sql, t: Tenant, threadId: string, pilla
   // The value it would become, for the card; nothing changes yet.
   let after: LeverValue = parsed.value;
   if (def.kind === "minutes_from_now") after = parsed.value ? new Date(now.getTime() + (parsed.value as number) * 60_000).toISOString() : null;
-  if (JSON.stringify(current.value) === JSON.stringify(after)) return { error: `${def.label} is already ${formatLever(def, after)}.` };
+  if (JSON.stringify(current.value) === JSON.stringify(after)) return { error: `${def.label} is already ${formatLever(def, after, undefined, await orgTimezone(sql, t))}.` };
   const [c] = await sql<{ id: string }[]>`
     insert into chat_changes (org_id, thread_id, pillar, lever, label, value, before, after, risk, status, reason, requested_by)
     values (${t.orgId}, ${threadId}, ${def.pillar}, ${def.key}, ${def.label}, ${value}, ${sql.json(current.value as never)}, ${sql.json(after as never)},

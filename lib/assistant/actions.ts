@@ -16,7 +16,7 @@ export async function sendMessage(org: string, threadId: string | null, text: st
   const { tenant } = await requireTenant(org);
   const body = String(text ?? "").trim().slice(0, 2000);
   if (!body) return { error: "Type a message." };
-  if (!process.env.ANTHROPIC_API_KEY) return { error: "The AI model isn't connected yet (ANTHROPIC_API_KEY). Everything here still works by hand from the menu on the left." };
+  if (!process.env.ANTHROPIC_API_KEY) return { error: "The assistant isn't switched on for your restaurant yet. Everything here still works by hand." };
   if (!(await allow(sql, "assistant", tenant.orgId, 120, 60))) return { error: "That's a lot of messages this hour. Try again in a few minutes." };
   let id = threadId && /^[0-9a-f-]{36}$/i.test(threadId) ? threadId : null;
   if (id) {

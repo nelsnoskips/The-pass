@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { db } from "../db";
 import { requireTenant } from "./context";
 import {
-  addMember, deletePeriod, removeMember, savePeriod, saveTable, saveVenueRules, setIntegration,
+  addMember, deletePeriod, removeMember, savePeriod, saveTable, saveTables, saveVenueRules, setIntegration, type TableInput,
 } from "./settings";
 import { Forbidden } from "./tenant";
 
@@ -46,6 +46,25 @@ export async function saveTableAction(form: FormData) {
     id: s(form, "id") || undefined, label: s(form, "label"), area: s(form, "area"),
     minCovers: n(form, "min"), maxCovers: n(form, "max"), online: form.get("online") === "on", active: form.get("active") === "on",
   }), "Table saved.");
+}
+
+/** The floor editor's one "Save changes": every changed or new table, all or nothing. */
+export async function saveTablesAction(form: FormData) {
+  let rows: TableInput[] = [];
+  try {
+    const raw = JSON.parse(s(form, "tables") || "[]") as unknown[];
+    rows = (Array.isArray(raw) ? raw : []).slice(0, 200).map((x) => {
+      const r = (x ?? {}) as Record<string, unknown>;
+      return {
+        id: typeof r.id === "string" && r.id ? r.id : undefined, label: String(r.label ?? ""), area: String(r.area ?? ""),
+        minCovers: Number(r.minCovers), maxCovers: Number(r.maxCovers), online: r.online === true, active: r.active === true,
+      };
+    });
+  } catch {
+    rows = [];
+  }
+  await run(form, "/floor", ({ tenant }) => saveTables(db()!, tenant, s(form, "venue"), rows),
+    `${rows.length} table${rows.length === 1 ? "" : "s"} saved.`);
 }
 
 export async function savePeriodAction(form: FormData) {

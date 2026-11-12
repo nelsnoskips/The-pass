@@ -43,8 +43,8 @@ export function CampaignComposer({
       <fieldset className="pf-field" style={{ border: 0, padding: 0, margin: 0 }}>
         <legend className="pf-sub" style={{ marginBottom: 6 }}>Send as</legend>
         <div style={{ display: "flex", gap: 14, fontSize: 13.5 }}>
-          <label style={{ display: "flex", gap: 6 }}><input type="radio" name="channel" value="sms" checked={channel === "sms"} onChange={() => setChannel("sms")} /> Text</label>
-          <label style={{ display: "flex", gap: 6 }}><input type="radio" name="channel" value="email" checked={channel === "email"} onChange={() => setChannel("email")} /> Email</label>
+          <label className="pf-choice"><input type="radio" name="channel" value="sms" checked={channel === "sms"} onChange={() => setChannel("sms")} /> Text</label>
+          <label className="pf-choice"><input type="radio" name="channel" value="email" checked={channel === "email"} onChange={() => setChannel("email")} /> Email</label>
         </div>
       </fieldset>
 

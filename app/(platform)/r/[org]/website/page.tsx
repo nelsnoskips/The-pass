@@ -6,20 +6,26 @@ import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
 import { can } from "@/lib/platform/tenant";
 import { getVersion, listVersions, siteForOrg } from "@/lib/sites/repo";
+import { formatIn, venueTz } from "@/lib/platform/when";
+import { hoursFromPeriods } from "@/lib/platform/hours";
+import { listPeriods } from "@/lib/platform/settings";
 
 export const dynamic = "force-dynamic";
 
 export default async function Website({ params }: { params: Promise<{ org: string }> }) {
   const { org: slug } = await params;
-  const { tenant } = await requireTenant(slug);
+  const { tenant, venues } = await requireTenant(slug);
+  const tz = venueTz(venues);
   const sql = db()!;
   const site = await siteForOrg(sql, tenant);
-  if (!site) return <p className="pf-empty">This restaurant doesn&rsquo;t have a website on The Pass yet.</p>;
+  if (!site) return <><div className="pf-head"><div><h1>Website</h1></div></div><p className="pf-empty pf-panel">Your website isn&rsquo;t on The Pass yet. The Pass team sets it up with you; ask them, or start in <a href={`/r/${slug}/settings`}>Settings</a>.</p></>;
   const versions = await listVersions(sql, tenant, site.id);
   // Edit from the newest version, so an unpublished draft isn't lost.
   const latest = versions[0] ? await getVersion(sql, tenant, versions[0].id) : null;
   const editable = can(tenant, "manage_venue");
-  const when = (d: Date) => new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(d);
+  const when = (d: Date) => formatIn(d, tz, "datetime");
+  const periods = venues[0] ? await listPeriods(sql, tenant, venues[0].id) : [];
+  const serviceHours = hoursFromPeriods(periods);
 
   return (
     <>
@@ -39,7 +45,7 @@ export default async function Website({ params }: { params: Promise<{ org: strin
             <>
               <WebsiteAgentBox org={slug} />
               {/* Keyed on the newest version so an agent's draft reloads the form. */}
-              <SiteEditor key={versions[0]?.id} org={slug} initial={latest} liveUrl={`/s/${site.slug}`} />
+              <SiteEditor key={versions[0]?.id} org={slug} initial={latest} liveUrl={`/s/${site.slug}`} versionId={versions[0]?.id ?? ""} serviceHours={serviceHours} tz={tz} />
             </>
           ) : (
             <p className="pf-empty pf-panel">Only owners and managers can edit the website.</p>

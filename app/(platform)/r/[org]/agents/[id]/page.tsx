@@ -8,12 +8,12 @@ import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
 import { saveAgentGoalsAction, saveAgentInstructionsAction, setAgentEnabledAction } from "@/lib/platform/agent-settings-actions";
 import { can } from "@/lib/platform/tenant";
+import { formatIn, venueTz } from "@/lib/platform/when";
 
 export const dynamic = "force-dynamic";
 
 const PER_PAGE = 20;
 
-const when = (d: Date) => d.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 
 const RUN = {
   completed: { text: "Finished", tone: "go" },
@@ -53,7 +53,9 @@ export default async function AgentPage({ params, searchParams }: {
   const q = await searchParams;
   const card = AGENT_CARDS.find((a) => a.id === id);
   if (!card) notFound();
-  const { tenant, org } = await requireTenant(slug);
+  const { tenant, org, venues } = await requireTenant(slug);
+  const tz = venueTz(venues);
+  const when = (d: Date) => formatIn(d, tz, "datetime");
   const sql = db()!;
   const page = Math.max(0, Math.floor(Number(q.page) || 0));
 

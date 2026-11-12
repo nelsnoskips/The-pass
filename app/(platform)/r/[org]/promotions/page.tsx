@@ -100,15 +100,15 @@ export default async function Promotions({ params, searchParams }: { params: Pro
                 <div className="pf-field"><label htmlFor="pr-name">Name</label><input id="pr-name" name="name" maxLength={80} required placeholder="Weeknight pickup" /></div>
                 <fieldset className="pf-field" style={{ border: 0, padding: 0, margin: 0 }}>
                   <legend className="pf-sub" style={{ marginBottom: 6 }}>How guests get it</legend>
-                  <label style={{ display: "flex", gap: 8, fontSize: 13.5, marginBottom: 6 }}><input type="radio" name="how" value="code" defaultChecked /> With a code</label>
-                  <label style={{ display: "flex", gap: 8, fontSize: 13.5 }}><input type="radio" name="how" value="automatic" /> Automatically, no code</label>
+                  <label className="pf-choice"><input type="radio" name="how" value="code" defaultChecked /> With a code</label>
+                  <label className="pf-choice"><input type="radio" name="how" value="automatic" /> Automatically, no code</label>
                 </fieldset>
                 <div className="pf-field"><label htmlFor="pr-code">Code</label><input id="pr-code" name="code" maxLength={24} placeholder="WELCOME10" className="mono" style={{ textTransform: "uppercase" }} /></div>
                 <fieldset className="pf-field" style={{ border: 0, padding: 0, margin: 0 }}>
                   <legend className="pf-sub" style={{ marginBottom: 6 }}>What it takes off</legend>
-                  <label style={{ display: "flex", gap: 8, fontSize: 13.5, marginBottom: 6 }}><input type="radio" name="kind" value="percent_order" defaultChecked /> A percent of the order</label>
-                  <label style={{ display: "flex", gap: 8, fontSize: 13.5, marginBottom: 6 }}><input type="radio" name="kind" value="amount_order" /> A dollar amount off the order</label>
-                  <label style={{ display: "flex", gap: 8, fontSize: 13.5 }}><input type="radio" name="kind" value="amount_item" /> A dollar amount off each of one dish</label>
+                  <label className="pf-choice"><input type="radio" name="kind" value="percent_order" defaultChecked /> A percent of the order</label>
+                  <label className="pf-choice"><input type="radio" name="kind" value="amount_order" /> A dollar amount off the order</label>
+                  <label className="pf-choice"><input type="radio" name="kind" value="amount_item" /> A dollar amount off each of one dish</label>
                 </fieldset>
                 <div className="pf-row2">
                   <div className="pf-field"><label htmlFor="pr-pct">Percent off</label><input id="pr-pct" name="percent" type="number" min={1} max={100} inputMode="numeric" placeholder="10" /></div>

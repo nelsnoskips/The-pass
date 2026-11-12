@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
 import { can } from "@/lib/platform/tenant";
 import { formatPhone } from "@/lib/sites/format";
+import { formatIn, venueTz } from "@/lib/platform/when";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,8 @@ export const dynamic = "force-dynamic";
 export default async function Guests({ params, searchParams }: { params: Promise<{ org: string }>; searchParams: Promise<{ q?: string }> }) {
   const { org: slug } = await params;
   const { q = "" } = await searchParams;
-  const { tenant } = await requireTenant(slug);
+  const { tenant, venues } = await requireTenant(slug);
+  const tz = venueTz(venues);
   const sql = db()!;
   const term = q.trim().slice(0, 80);
   const like = `%${term.replace(/[%_\\]/g, (c) => `\\${c}`)}%`;
@@ -38,7 +40,7 @@ export default async function Guests({ params, searchParams }: { params: Promise
            count(*) filter (where sms_consent_at is not null and sms_opted_out_at is null and phone like '+%')::int as textable
     from guests where org_id = ${tenant.orgId}`;
 
-  const date = (d: Date | null) => d ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(d) : "—";
+  const date = (d: Date | null) => formatIn(d, tz, "date");
 
   return (
     <>

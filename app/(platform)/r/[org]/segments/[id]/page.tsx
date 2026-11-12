@@ -7,6 +7,7 @@ import { describeRules, getSegment, segmentCounts, segmentMembers } from "@/lib/
 import { requireTenant } from "@/lib/platform/context";
 import { can } from "@/lib/platform/tenant";
 import { formatPhone } from "@/lib/sites/format";
+import { formatIn, venueTz } from "@/lib/platform/when";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,8 @@ export default async function SegmentPage({ params, searchParams }: {
 }) {
   const { org, id } = await params;
   const q = await searchParams;
-  const { tenant } = await requireTenant(org);
+  const { tenant, venues } = await requireTenant(org);
+  const tz = venueTz(venues);
   const sql = db()!;
   const seg = await getSegment(sql, tenant, id);
   if (!seg) notFound();
@@ -27,7 +29,7 @@ export default async function SegmentPage({ params, searchParams }: {
   const pages = Math.max(1, Math.ceil(counts.members / PAGE));
   const page = Math.min(Math.max(1, Math.floor(Number(q.page) || 1)), pages);
   const members = await segmentMembers(sql, tenant, seg.rules, { page, pageSize: PAGE }, now);
-  const date = (d: Date | null) => d ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(d) : "—";
+  const date = (d: Date | null) => formatIn(d, tz, "date");
   const money = (c: number) => (c ? `$${(c / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}` : "—");
   const href = (p: number) => `/r/${org}/segments/${id}${p > 1 ? `?page=${p}` : ""}`;
 

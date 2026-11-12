@@ -96,6 +96,32 @@ export async function saveTable(
   return null;
 }
 
+export type TableInput = { id?: string; label: string; area: string; minCovers: number; maxCovers: number; online: boolean; active: boolean };
+
+/**
+ * Save several tables at once (the floor editor's single "Save changes"):
+ * all of them or none. The first problem is returned with the table's
+ * label, and nothing is written.
+ */
+export async function saveTables(sql: Sql, t: Tenant, venueId: string, rows: TableInput[]): Promise<string | null> {
+  assertCan(t, "manage_venue", venueId);
+  if (rows.length === 0) return "Nothing to save.";
+  if (rows.length > 200) return "Too many tables at once.";
+  class Stop extends Error {}
+  try {
+    await sql.begin(async (tx) => {
+      for (const r of rows) {
+        const err = await saveTable(tx as unknown as Sql, t, venueId, r);
+        if (err) throw new Stop(`${r.label.trim() || "New table"}: ${err}`);
+      }
+    });
+  } catch (err) {
+    if (err instanceof Stop) return err.message;
+    throw err;
+  }
+  return null;
+}
+
 export interface PeriodRow {
   id: string; name: string; daysOfWeek: number[]; firstSeating: string; lastSeating: string;
   slotMinutes: number; maxCoversPerSlot: number | null; depositCentsPerCover: number;

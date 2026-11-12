@@ -84,7 +84,7 @@ export default async function Segments({ params, searchParams }: { params: Promi
                     ["smsConsent", "said yes to texts"],
                     ["emailConsent", "said yes to emails"],
                   ] as const).map(([k, label]) => (
-                    <label key={k} style={{ display: "flex", gap: 8, fontSize: 13.5, marginBottom: 6 }}>
+                    <label key={k} className="pf-choice">
                       <input type="checkbox" name={k} /> {label}
                     </label>
                   ))}

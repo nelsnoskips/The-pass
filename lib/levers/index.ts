@@ -6,6 +6,7 @@ import { assertCan, can, type Action, type Tenant } from "../platform/tenant";
 import { log } from "../reservations/repo";
 import type { SiteContent } from "../sites/content";
 import { getVersion, publishVersion, saveVersion, siteForOrg } from "../sites/repo";
+import { DEFAULT_TZ, formatIn } from "../platform/when";
 
 /**
  * Levers: the settings each part of the business runs on, defined once.
@@ -115,20 +116,31 @@ export function parseLeverValue(def: LeverDef, raw: string): { ok: true; value: 
   }
 }
 
-export function formatLever(def: LeverDef, v: LeverValue, names?: Map<string, string>): string {
+/**
+ * A lever's value in words. `tz` is the restaurant's timezone, for
+ * values that are times (a pickup pause "until 6:31 PM"): pass it
+ * explicitly, because the server runs in UTC.
+ */
+export function formatLever(def: LeverDef, v: LeverValue, names?: Map<string, string>, tz: string = DEFAULT_TZ): string {
   if (v === null || v === undefined) return "—";
   switch (def.kind) {
     case "bool": return v ? "On" : "Off";
     case "money": return `$${((v as number) / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
     case "percent": return `${v}%`;
     case "items": return (v as string[]).length ? (v as string[]).map((id) => names?.get(id) ?? id).join(", ") : "Nothing";
-    case "minutes_from_now": return v ? `Paused until ${new Date(v as string).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}` : "Taking orders";
+    case "minutes_from_now": return v ? `Paused until ${formatIn(v as string, tz, "time")}` : "Taking orders";
     case "text": return (v as string) || "(empty)";
     default: return `${v}${def.unit ? ` ${def.unit}` : ""}`;
   }
 }
 
 /* ------------------------------------------------------------ read -- */
+
+/** The restaurant's timezone (its first venue's), for formatting lever values. */
+export async function orgTimezone(sql: Sql, t: Tenant): Promise<string> {
+  const [v] = await sql<{ timezone: string }[]>`select timezone from venues where org_id = ${t.orgId} order by created_at limit 1`;
+  return v?.timezone || DEFAULT_TZ;
+}
 
 async function firstVenue(sql: Sql, t: Tenant) {
   const [v] = await sql<{ id: string }[]>`select id from venues where org_id = ${t.orgId} order by created_at limit 1`;
@@ -217,7 +229,7 @@ export async function setLever(
     if (unknown.length) return { ok: false, error: `Not on the menu: ${unknown.join(", ")}.` };
   }
   if (def.kind === "minutes_from_now") value = value ? new Date(now.getTime() + (value as number) * 60_000).toISOString() : null;
-  if (JSON.stringify(before) === JSON.stringify(value)) return { ok: false, error: `${def.label} is already ${formatLever(def, value)}.` };
+  if (JSON.stringify(before) === JSON.stringify(value)) return { ok: false, error: `${def.label} is already ${formatLever(def, value, undefined, await orgTimezone(sql, t))}.` };
 
   let err: string | null = null;
   if (def.pillar === "reservations") {

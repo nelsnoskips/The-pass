@@ -3,6 +3,8 @@
 import { db } from "../db";
 import { approveProposal, rejectProposal } from "../agent-runtime/proposals";
 import { RUNNABLE_AGENTS } from "../agent-runtime/registry";
+import { revalidatePath } from "next/cache";
+import { dismissAllFromAgent } from "./approvals";
 import { requireTenant } from "./context";
 import { Forbidden } from "./tenant";
 
@@ -47,4 +49,19 @@ function summarize(result: unknown): string {
     return parts.join(" · ") || "Done.";
   }
   return "Done.";
+}
+
+/** "Dismiss all from this agent" on the approvals queue. */
+export async function dismissAllAction(org: string, agentId: string): Promise<{ error: string | null; result?: string }> {
+  const sql = db();
+  if (!sql) return { error: "Unavailable." };
+  const { tenant } = await requireTenant(org);
+  try {
+    const n = await dismissAllFromAgent(sql, tenant, String(agentId));
+    revalidatePath(`/r/${org}`, "layout");
+    return { error: null, result: n ? `Dismissed ${n}.` : "Nothing was waiting." };
+  } catch (err) {
+    if (err instanceof Forbidden) return { error: "Your role can't dismiss these." };
+    throw err;
+  }
 }
