@@ -7,6 +7,7 @@ import { ChangeBooking } from "@/components/sites/ChangeBooking";
 import {
   cancelOutcome, cancelledDepositText, depositState, formatDeposit, policySentence, refundDeadline,
 } from "@/lib/reservations/policy";
+import { appIsLive, publicProgram } from "@/lib/app/repo";
 import { bookingByToken } from "@/lib/reservations/repo";
 import { localDate } from "@/lib/reservations/time";
 import { formatPhone, formatWhen, formatWhenZoned, mapHref, telHref } from "@/lib/sites/format";
@@ -54,6 +55,9 @@ export default async function BookingPage({ params, searchParams }: { params: Pr
   const outcome = cancelOutcome({ ...booking, cutoffHours: booking.cancelCutoffHours, now });
   const guests = `${booking.partySize} ${booking.partySize === 1 ? "guest" : "guests"}`;
   const rebook = `/s/${site.slug}/reserve?party=${booking.partySize}`;
+  // The restaurant's app shows this guest's rewards progress from this (private) link.
+  const [appLive, program] = await Promise.all([appIsLive(sql, site.orgId), publicProgram(sql, site.orgId)]);
+  const openInApp = appLive ? `/s/${site.slug}/app${program ? `/rewards?b=${encodeURIComponent(token)}` : ""}` : null;
 
   return (
     <div className="site-wrap" style={{ maxWidth: 640, padding: "64px 24px 96px" }}>
@@ -125,6 +129,12 @@ export default async function BookingPage({ params, searchParams }: { params: Pr
         </div>
       ) : (
         <Link href={rebook} className="site-btn">{booking.status === "cancelled" ? "Book another time" : "Book another table"}</Link>
+      )}
+      {openInApp && (
+        <p className="site-note" style={{ marginTop: 28 }}>
+          <a href={openInApp} className="site-btn ghost">Open in the app</a>{" "}
+          {program ? "See your rewards progress and keep us on your home screen." : "Keep us on your home screen."}
+        </p>
       )}
     </div>
   );

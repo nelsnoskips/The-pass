@@ -145,6 +145,6 @@ Website wave as its booking page and host stand.
 | 3 | **Gift cards** | Self-contained on Stripe; money in before it's spent | Built: sold on the site, emailed codes, partial redemption (`lib/giftcards`) |
 | 3 | **Ordering** | The largest build: menu, cart, payment, tax, tips, kitchen/POS hand-off | Pickup built: site menu, server-side pricing, tax, tips, Stripe, kitchen board, pause, sold-out, ready texts (`lib/ordering`). Still to do: delivery, modifiers, POS hand-off |
 | 3 | **Catering** | Ordering for large orders: quotes, deposits, invoices | Orders with notice, headcount and a minimum built; quotes and invoices to do |
-| 4 | **Mobile app** | A shell over ordering + loyalty; app-store review | Not started |
-| 4 | **Push** | Needs the app | Not started |
+| 4 | **Mobile app** | A shell over ordering + loyalty; app-store review | Built as an installable web app (PWA): builder with live phone preview, draft/publish, levers for the assistant, offline menu and hours (`lib/app`, `/r/<org>/app`, `/s/<site>/app`). App-store wrapping to do |
+| 4 | **Push** | Needs the app | Shell: guests' "Get updates" subscriptions stored once `VAPID_PUBLIC_KEY` is set; sending not built |
 

@@ -96,7 +96,7 @@ const TOOLS: Tool[] = [
   {
     name: "get_settings",
     description: "The settings (levers) a part of the business runs on, with current values, what each does, and whether changing it applies at once or needs the owner to press Apply. For ordering, also the menu item ids (for sold_out).",
-    input_schema: obj({ pillar: { type: "string", enum: ["reservations", "ordering", "website", "loyalty", "all"] } }, ["pillar"]),
+    input_schema: obj({ pillar: { type: "string", enum: ["reservations", "ordering", "website", "loyalty", "app", "all"] } }, ["pillar"]),
     async run({ sql, tenant }, { pillar }) {
       const p = pillar === "all" ? undefined : (pillar as Pillar);
       const [names, tz] = await Promise.all([menuNames(sql, tenant), orgTimezone(sql, tenant)]);
@@ -113,7 +113,7 @@ const TOOLS: Tool[] = [
     name: "change_setting",
     description: "Change one setting from get_settings. value is text: a number for counts (no units), 'on'/'off' for switches, dollars for money, a percentage for tax, minutes for a pickup pause (0 resumes), comma-separated menu item ids for sold_out (the full new list). Say why in reason, in one plain sentence. Settings that apply at once are applied; the others are shown to the owner as a change to approve. Only call this when the owner asked for the change.",
     input_schema: obj({
-      pillar: { type: "string", enum: ["reservations", "ordering", "website", "loyalty"] },
+      pillar: { type: "string", enum: ["reservations", "ordering", "website", "loyalty", "app"] },
       key: { type: "string" }, value: { type: "string" }, reason: { type: "string" },
     }, ["pillar", "key", "value", "reason"]),
     async run(ctx, input) {

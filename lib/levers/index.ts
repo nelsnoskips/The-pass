@@ -1,4 +1,6 @@
 import type { Sql } from "postgres";
+import { TILE_IDS, TILES, type AppConfig, type TileId } from "../app/config";
+import { liveAppConfig, patchAndPublish } from "../app/repo";
 import { getProgram, saveProgram } from "../guests/loyalty";
 import { getOrderingSettings, orderableItems, saveOrderingSettings, setKitchenState } from "../ordering";
 import { getVenueRules, saveVenueRules } from "../platform/settings";
@@ -21,12 +23,13 @@ import { DEFAULT_TZ, formatIn } from "../platform/when";
  *                   exact before → after is shown and a person presses Apply.
  */
 
-export type Pillar = "reservations" | "ordering" | "website" | "loyalty";
+export type Pillar = "reservations" | "ordering" | "website" | "loyalty" | "app";
 export const PILLARS: Record<Pillar, { label: string; page: string }> = {
   reservations: { label: "Reservations", page: "settings/floor" },
   ordering: { label: "Online ordering", page: "orders" },
   website: { label: "Website", page: "website" },
   loyalty: { label: "Loyalty", page: "settings/loyalty" },
+  app: { label: "App", page: "app" },
 };
 
 type Kind = "int" | "bool" | "text" | "money" | "percent" | "minutes_from_now" | "items";
@@ -71,6 +74,16 @@ export const LEVERS: LeverDef[] = [
   { pillar: "loyalty", key: "active", label: "Loyalty program", help: "Count visits and earn rewards.", kind: "bool", risk: "confirm", requires: "manage_venue" },
   { pillar: "loyalty", key: "visits_required", label: "Visits per reward", help: "Every this many visits earns the reward.", kind: "int", min: 2, max: 50, unit: "visits", risk: "auto", requires: "manage_venue" },
   { pillar: "loyalty", key: "reward", label: "Reward", help: "What the guest gets.", kind: "text", max: 120, risk: "auto", requires: "manage_venue" },
+  // App (the restaurant's own installable app; guests see every change, so each is confirmed and goes live)
+  { pillar: "app", key: "app_name", label: "App name", help: "The name in the app's top bar and install prompt.", kind: "text", max: 30, risk: "confirm", requires: "manage_venue" },
+  { pillar: "app", key: "welcome_line", label: "Welcome line", help: "The line under the name on the app's home.", kind: "text", max: 80, risk: "confirm", requires: "manage_venue" },
+  { pillar: "app", key: "announcement", label: "App announcement", help: "A line across the top of the app's home. Empty hides it.", kind: "text", max: 120, risk: "confirm", requires: "manage_venue" },
+  { pillar: "app", key: "accent_colour", label: "App accent colour", help: "Buttons, the top bar and the icon, as a hex colour like #1f3a5f. Must stand out on the app's background.", kind: "text", max: 7, risk: "confirm", requires: "manage_venue" },
+  ...TILE_IDS.map((id): LeverDef => ({
+    pillar: "app", key: `tile_${id}`, label: `${TILES[id].label} button`,
+    help: `The ${TILES[id].label} button on the app's home. Only shows when that part of the business is on.`,
+    kind: "bool", risk: "confirm", requires: "manage_venue",
+  })),
 ];
 
 export const lever = (pillar: string, key: string) => LEVERS.find((l) => l.pillar === pillar && l.key === key);
@@ -191,6 +204,13 @@ export async function readLevers(sql: Sql, t: Tenant, pillar?: Pillar): Promise<
     const p = await getProgram(sql, t);
     push("loyalty", { active: p.active, visits_required: p.visitsRequired, reward: p.reward });
   }
+  if (want("app")) {
+    const a = await liveAppConfig(sql, t);
+    if (a) push("app", {
+      app_name: a.name, welcome_line: a.welcome, announcement: a.announcement, accent_colour: a.accent,
+      ...Object.fromEntries(a.tiles.map((x) => [`tile_${x.id}`, x.on])),
+    });
+  }
   return out;
 }
 
@@ -281,6 +301,18 @@ export async function setLever(
       visitsRequired: key === "visits_required" ? (value as number) : p.visitsRequired,
       reward: key === "reward" ? (value as string) : p.reward,
     });
+  }
+  else if (def.pillar === "app") {
+    const patch = (c: AppConfig): AppConfig => {
+      if (key === "app_name") c.name = value as string;
+      if (key === "welcome_line") c.welcome = value as string;
+      if (key === "announcement") c.announcement = value as string;
+      if (key === "accent_colour") c.accent = String(value).toLowerCase();
+      if (key.startsWith("tile_")) c.tiles = c.tiles.map((x) => (x.id === (key.slice(5) as TileId) ? { ...x, on: value as boolean } : x));
+      return c;
+    };
+    const r = await patchAndPublish(sql, t, patch, via);
+    if (!r.ok) err = r.error;
   }
   if (err) return { ok: false, error: err };
   await log(sql, t.orgId, t.actor, "lever.changed", def.pillar, def.key, { label: def.label, before, after: value, via });

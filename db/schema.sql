@@ -1015,3 +1015,30 @@ create index if not exists walkin_waitlist_venue_idx on walkin_waitlist(venue_id
 
 -- The host stand looks up a reservation's own history (undo, seated-at).
 create index if not exists change_log_entity_idx on change_log(org_id, entity, entity_id, id desc);
+
+-- app builder
+-- ------------------------------------------------------------------
+-- The restaurant's own installable app (a PWA at /s/<site>/app). One
+-- row per org: the draft the owner edits and the published copy guests
+-- get. Both are validated by lib/app/config.ts on the way in and out.
+create table if not exists app_configs (
+  org_id       uuid primary key references orgs(id) on delete cascade,
+  draft        jsonb not null,
+  published    jsonb,
+  published_at timestamptz,
+  updated_by   text not null,
+  updated_at   timestamptz not null default now()
+);
+
+-- Browsers that said yes to "Get updates" in the app. Stored only when
+-- push keys are configured; sending is not built yet.
+create table if not exists push_subscriptions (
+  id           uuid primary key default gen_random_uuid(),
+  org_id       uuid not null references orgs(id) on delete cascade,
+  endpoint     text not null unique,
+  keys         jsonb not null,
+  guest_id     uuid references guests(id) on delete set null,
+  created_at   timestamptz not null default now(),
+  last_seen_at timestamptz not null default now()
+);
+create index if not exists push_subscriptions_org_idx on push_subscriptions(org_id);

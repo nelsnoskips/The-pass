@@ -28,7 +28,7 @@ const GROUPS: { name: string; items: { n: string; title: string; does: string; l
       { n: "10", title: "Ads reporting", does: "Google and Meta spend, results and cost per result, refreshed nightly, beside your real bookings.", live: true },
       { n: "11", title: "Loyalty", does: "Every few visits earns a reward, counted automatically from bookings and your point of sale.", live: true },
       { n: "12", title: "Email", does: "Campaigns to guests who asked for them, with one-click unsubscribe built in.", live: true },
-      { n: "13", title: "Mobile app & push", does: "Your own app for your regulars.", live: false },
+      { n: "13", title: "Mobile app & push", does: "Your own app on your guests' home screens: order, book, rewards. App-store versions and push notifications coming next.", live: true },
     ],
   },
   {
