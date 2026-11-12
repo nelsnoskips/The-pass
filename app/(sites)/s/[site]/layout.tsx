@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { BackToApp } from "@/components/app/BackToApp";
 import { SiteShell } from "@/components/sites/SiteShell";
 import { db } from "@/lib/db";
 import { getOrderingSettings } from "@/lib/ordering";
@@ -22,7 +23,8 @@ export default async function SiteLayout({
   const ordering = await getOrderingSettings(sql, site.orgId);
   return (
     <SiteShell content={site.content} base={`/s/${site.slug}`} ordering={ordering.pickupEnabled || ordering.cateringEnabled}
-      giftCardsOnline={Boolean(process.env.STRIPE_SECRET_KEY?.trim())}>
+      giftCardsOnline={Boolean(process.env.STRIPE_SECRET_KEY?.trim())}
+      banner={<BackToApp base={`/s/${site.slug}`} />}>
       {children}
     </SiteShell>
   );
