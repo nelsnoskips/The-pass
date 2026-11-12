@@ -1,4 +1,5 @@
 import type { Sql, TransactionSql } from "postgres";
+import { isIncluded } from "../billing/entitlements";
 import { normalizePhone } from "./phone";
 
 /**
@@ -74,6 +75,8 @@ export async function countVisit(q: Q, orgId: string, guestId: string, at: Date)
 export async function earnReward(q: Q, orgId: string, guestId: string, visitCount: number): Promise<string | null> {
   const [p] = await q<{ visits_required: number; reward: string }[]>`
     select visits_required, reward from loyalty_programs where org_id = ${orgId} and active`;
+  // Visits always count; rewards are only earned on a plan with loyalty.
+  if (p && !(await isIncluded(q as Sql, orgId, "loyalty"))) return null;
   if (!p || visitCount === 0 || visitCount % p.visits_required !== 0) return null;
   const rows = await q`
     insert into loyalty_rewards (org_id, guest_id, reward, earned_at_visit)

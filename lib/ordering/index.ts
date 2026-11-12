@@ -1,5 +1,6 @@
 import { randomBytes } from "node:crypto";
 import type { Sql } from "postgres";
+import { assertIncluded, isIncluded } from "../billing/entitlements";
 import { normalizePhone } from "../guests/phone";
 import { choosePromotion, promotionsForOrder, type PromoChoice } from "../marketing/promotions";
 import { sendSms, type SmsSender } from "../messaging/sms";
@@ -49,6 +50,7 @@ export async function getOrderingSettings(sql: Sql, orgId: string): Promise<Orde
 
 export async function saveOrderingSettings(sql: Sql, t: Tenant, s: OrderingSettings): Promise<string | null> {
   assertCan(t, "manage_venue");
+  await assertIncluded(sql, t.orgId, "ordering");
   if (!Number.isInteger(s.taxBps) || s.taxBps < 0 || s.taxBps > 2500) return "Tax must be between 0% and 25%.";
   if (!Number.isInteger(s.leadMinutes) || s.leadMinutes < 5 || s.leadMinutes > 240) return "Pickup lead time must be 5 to 240 minutes.";
   if (!Number.isInteger(s.cateringLeadHours) || s.cateringLeadHours < 2 || s.cateringLeadHours > 720) return "Catering notice must be 2 to 720 hours.";
@@ -70,6 +72,7 @@ export async function saveOrderingSettings(sql: Sql, t: Tenant, s: OrderingSetti
 /** Pause and sold-out: what anyone on the floor can change mid-service. */
 export async function setKitchenState(sql: Sql, t: Tenant, k: { pausedUntil: Date | null; soldOut: string[] }): Promise<void> {
   assertCan(t, "book");
+  await assertIncluded(sql, t.orgId, "ordering");
   await sql`
     insert into ordering_settings (org_id, paused_until, sold_out, updated_by) values (${t.orgId}, ${k.pausedUntil}, ${k.soldOut}, ${t.actor})
     on conflict (org_id) do update set paused_until = excluded.paused_until, sold_out = excluded.sold_out,
@@ -280,6 +283,10 @@ export async function placeOrder(sql: Sql, input: PlaceInput): Promise<PlaceResu
   const settings = await getOrderingSettings(sql, input.orgId);
   if (input.kind === "pickup" && !settings.pickupEnabled) return { ok: false, error: "Online ordering is off right now." };
   if (input.kind === "catering" && !settings.cateringEnabled) return { ok: false, error: "Catering orders aren't taken online right now." };
+  // The restaurant's plan has to include it; the switch alone isn't enough.
+  if (!(await isIncluded(sql, input.orgId, input.kind === "catering" ? "catering" : "ordering"))) {
+    return { ok: false, error: "Online ordering isn't available here. Please call the restaurant to order." };
+  }
   const name = input.name.trim().slice(0, 80);
   if (!name) return { ok: false, error: "Please add your name.", field: "name" };
   const phone = normalizePhone(input.phone);

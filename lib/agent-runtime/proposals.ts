@@ -1,4 +1,5 @@
 import type { Sql } from "postgres";
+import { includes, notIncludedReason, planFor, stationFeature } from "../billing/entitlements";
 import { log } from "../reservations/repo";
 import { assertCan, type Tenant } from "../platform/tenant";
 import { evaluate } from "./policy";
@@ -21,10 +22,18 @@ export async function approveProposal(
   tools: ToolDef[],
   now = new Date(),
 ): Promise<ApproveResult> {
-  const [pending] = await sql<{ tool: string; status: string }[]>`
-    select tool, status from agent_proposals where id = ${proposalId} and org_id = ${tenant.orgId}`;
+  const [pending] = await sql<{ tool: string; status: string; agent_id: string }[]>`
+    select tool, status, agent_id from agent_proposals where id = ${proposalId} and org_id = ${tenant.orgId}`;
   if (!pending) return { ok: false, reason: "not_found" };
   if (pending.status !== "pending") return { ok: false, reason: "already_decided" };
+
+  // A proposal from a station the plan no longer includes stays waiting,
+  // untouched: upgrading brings it back.
+  const station = stationFeature(pending.agent_id);
+  if (station) {
+    const plan = await planFor(sql, tenant.orgId);
+    if (!includes(plan, station)) return { ok: false, reason: "blocked", detail: notIncludedReason(station, plan.plan) };
+  }
 
   // The approver needs the permission themselves — checked before the
   // proposal is claimed, so a refusal leaves it pending for someone who can.

@@ -1,3 +1,4 @@
+import { planLock } from "@/components/platform/NotInPlan";
 import { actorLabel } from "@/lib/agent-runtime/catalog";
 import Link from "next/link";
 import { db } from "@/lib/db";
@@ -12,6 +13,8 @@ export default async function Campaigns({ params, searchParams }: { params: Prom
   const { org } = await params;
   const q = await searchParams;
   const { tenant, venues } = await requireTenant(org);
+  const locked = await planLock(org, tenant, "campaigns", { back: `/r/${org}/campaigns` });
+  if (locked) return locked;
   const timeZone = venues[0]?.timezone ?? "America/New_York";
   const sql = db()!;
   const campaigns = await listCampaigns(sql, tenant);

@@ -1,3 +1,4 @@
+import { includes, planFor } from "@/lib/billing/entitlements";
 import { notFound } from "next/navigation";
 import { BackToApp } from "@/components/app/BackToApp";
 import { SiteShell } from "@/components/sites/SiteShell";
@@ -20,11 +21,13 @@ export default async function SiteLayout({
   const sql = db();
   const site = sql ? await getPublishedSite(sql, slug) : null;
   if (!site || !sql) notFound();
-  const ordering = await getOrderingSettings(sql, site.orgId);
+  const [ordering, plan] = await Promise.all([getOrderingSettings(sql, site.orgId), planFor(sql, site.orgId)]);
+  // Only what the restaurant's plan includes is linked: no dead links.
+  const orderingOpen = (includes(plan, "ordering") && ordering.pickupEnabled) || (includes(plan, "catering") && ordering.cateringEnabled);
   return (
-    <SiteShell content={site.content} base={`/s/${site.slug}`} ordering={ordering.pickupEnabled || ordering.cateringEnabled}
+    <SiteShell content={site.content} base={`/s/${site.slug}`} ordering={orderingOpen} giftCards={includes(plan, "gift_cards")}
       giftCardsOnline={Boolean(process.env.STRIPE_SECRET_KEY?.trim())}
-      banner={<BackToApp base={`/s/${site.slug}`} />}>
+      banner={includes(plan, "app") ? <BackToApp base={`/s/${site.slug}`} /> : null}>
       {children}
     </SiteShell>
   );

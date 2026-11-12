@@ -4,6 +4,7 @@ import { withLeverDiff } from "../levers";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { NotIncluded } from "../billing/entitlements";
 import { db } from "../db";
 import { createOrderCheckout } from "../payments/stripe";
 import { requireTenant } from "../platform/context";
@@ -122,8 +123,9 @@ export async function orderingSettingsAction(form: FormData) {
       cateringMinCents: Math.round(num("cateringMin", cur.cateringMinCents / 100) * 100),
     }));
   } catch (e) {
-    if (!(e instanceof Forbidden)) throw e;
-    err = "Your role can't change ordering settings.";
+    if (e instanceof NotIncluded) err = e.message;
+    else if (!(e instanceof Forbidden)) throw e;
+    else err = "Your role can't change ordering settings.";
   }
   back(org, err ? `err=${encodeURIComponent(err)}` : "ok=Saved.");
 }
@@ -144,8 +146,9 @@ export async function kitchenAction(form: FormData) {
   try {
     await withLeverDiff(sql, tenant, "ordering", "kitchen board", () => setKitchenState(sql, tenant, next));
   } catch (e) {
-    if (!(e instanceof Forbidden)) throw e;
-    err = "Your role can't pause ordering or mark items sold out.";
+    if (e instanceof NotIncluded) err = e.message;
+    else if (!(e instanceof Forbidden)) throw e;
+    else err = "Your role can't pause ordering or mark items sold out.";
   }
   back(org, err ? `err=${encodeURIComponent(err)}` : "");
 }
@@ -206,6 +209,7 @@ export async function kitchenInline(org: string, change: { pause?: string; item?
   try {
     await withLeverDiff(sql, tenant, "ordering", "kitchen board", () => setKitchenState(sql, tenant, next));
   } catch (e) {
+    if (e instanceof NotIncluded) return { error: e.message };
     if (e instanceof Forbidden) return { error: "Your role can't pause ordering or mark dishes 86'd." };
     throw e;
   }

@@ -8,6 +8,8 @@ import { buildMorningPass } from "../brief";
 import { ordersBoard } from "../ordering";
 import { assertCan, can, type Tenant } from "../platform/tenant";
 import { localDate, zonedToUtc } from "../reservations/time";
+import { includes, notIncludedReason, PILLAR_FEATURE, planFor, type Feature, type OrgPlan } from "../billing/entitlements";
+import { PLANS } from "../billing/plans";
 import { ACTIONS, applyAction, proposeAction, type ActionArea, type ApplyOptions } from "./chat-actions";
 
 /**
@@ -34,7 +36,7 @@ export interface ChangeRow {
   kind: "lever" | "action"; action: string | null; action_input: Record<string, unknown> | null; result: Record<string, unknown> | null;
 }
 
-type Ctx = { sql: Sql; tenant: Tenant; threadId: string; now: Date; changes: string[] };
+type Ctx = { sql: Sql; tenant: Tenant; threadId: string; now: Date; changes: string[]; plan?: OrgPlan };
 interface Tool { name: string; description: string; input_schema: Anthropic.Beta.Messages.BetaTool["input_schema"]; run(ctx: Ctx, input: Record<string, unknown>): Promise<unknown> }
 
 const obj = (properties: Record<string, unknown>, required: string[]) => ({ type: "object" as const, properties, required, additionalProperties: false });
@@ -108,16 +110,18 @@ const TOOLS: Tool[] = [
     name: "get_settings",
     description: "The settings (levers) a part of the business runs on, with current values, what each does, and whether changing it applies at once or needs the owner to press Apply. For ordering, also the menu item ids (for sold_out).",
     input_schema: obj({ pillar: { type: "string", enum: ["reservations", "ordering", "website", "loyalty", "app", "all"] } }, ["pillar"]),
-    async run({ sql, tenant }, { pillar }) {
+    async run({ sql, tenant, plan }, { pillar }) {
       const p = pillar === "all" ? undefined : (pillar as Pillar);
+      const inPlan = (x: string) => !plan || !PILLAR_FEATURE[x] || includes(plan, PILLAR_FEATURE[x]!);
+      if (p && !inPlan(p)) return { error: notIncludedReason(PILLAR_FEATURE[p]!, plan!.plan) };
       const [names, tz] = await Promise.all([menuNames(sql, tenant), orgTimezone(sql, tenant)]);
-      const levers = (await readLevers(sql, tenant, p)).map(({ def, value }) => ({
+      const levers = (await readLevers(sql, tenant, p)).filter(({ def }) => inPlan(def.pillar)).map(({ def, value }) => ({
         pillar: def.pillar, key: def.key, label: def.label, does: def.help, value, shown: formatLever(def, value, names, tz),
         applies: def.risk === "auto" ? "at once (can be undone)" : "after the owner presses Apply",
         ...(def.min !== undefined ? { min: def.min, max: def.max, unit: def.unit } : {}),
         youCanChange: can(tenant, def.requires),
       }));
-      return { levers, ...(p === "ordering" || !p ? { menu: [...names.entries()].map(([id, name]) => ({ id, name })) } : {}) };
+      return { levers, ...((p === "ordering" || !p) && inPlan("ordering") ? { menu: [...names.entries()].map(([id, name]) => ({ id, name })) } : {}) };
     },
   },
   {
@@ -196,6 +200,11 @@ export async function proposeChange(sql: Sql, t: Tenant, threadId: string, pilla
   const def = lever(pillar, key);
   if (!def) return { error: `Unknown setting ${pillar}.${key}. Call get_settings to see the options.` };
   if (!can(t, def.requires)) return { error: `The person you're helping can't change ${def.label.toLowerCase()}.` };
+  const feature = PILLAR_FEATURE[def.pillar];
+  if (feature) {
+    const plan = await planFor(sql, t.orgId);
+    if (!includes(plan, feature)) return { error: notIncludedReason(feature, plan.plan) };
+  }
   const parsed = parseLeverValue(def, value);
   if (!parsed.ok) return { error: parsed.error };
   const current = (await readLevers(sql, t, def.pillar)).find((l) => l.def.key === key);
@@ -272,6 +281,34 @@ You can also take a booking (create_booking), cancel one (cancel_booking), move 
 
 Money in tool results is integer cents; write it in dollars. A null number is unknown: write "—" or say it isn't known, never 0. Keep replies short and specific: a sentence or two, or a short list. No filler.`;
 
+/** Tools that belong to a part of the business a plan can leave out. */
+const TOOL_FEATURE: Record<string, Feature> = {
+  list_open_orders: "ordering", update_order_status: "ordering",
+  list_segments: "segments", list_campaigns: "campaigns", draft_campaign: "campaigns",
+};
+
+/**
+ * The tools the model is offered for this restaurant's plan: nothing for
+ * what the plan leaves out, and get_settings / change_setting list only
+ * the pillars it includes. change_setting still refuses an excluded
+ * pillar in code (proposeChange, setLever), whatever the model sends.
+ */
+export function toolsForPlan(plan: OrgPlan): Tool[] {
+  const pillarOk = (x: string) => !PILLAR_FEATURE[x] || includes(plan, PILLAR_FEATURE[x]!);
+  return TOOLS.filter((x) => !TOOL_FEATURE[x.name] || includes(plan, TOOL_FEATURE[x.name])).map((x) => {
+    if (x.name !== "get_settings" && x.name !== "change_setting") return x;
+    const schema = structuredClone(x.input_schema) as unknown as { properties: { pillar: { enum: string[] } } };
+    schema.properties.pillar.enum = schema.properties.pillar.enum.filter(pillarOk);
+    return { ...x, input_schema: schema as unknown as Tool["input_schema"] };
+  });
+}
+
+/** What the plan leaves out, so the model says so plainly instead of guessing. */
+export function planNote(plan: OrgPlan): string {
+  if (includes(plan, "ordering")) return "";
+  return `\n\nThis restaurant is on the ${PLANS[plan.plan].name} plan, which doesn't include online ordering and catering, promotions, campaigns and segments, loyalty, gift cards, reviews, ads, the guest app or financials. If asked about any of those, say plainly that they come with The Pass plan and that an owner can ask about upgrading under Settings → Plan & billing. Never pretend to do them.`;
+}
+
 export interface ChatTurn { reply: string; changes: string[] }
 
 /** Answer one message in a thread, recording both sides and any changes. */
@@ -286,17 +323,24 @@ export async function chat(
     ...history.reverse().map((m) => ({ role: m.role, content: m.body })),
     { role: "user", content: text },
   ];
-  const ctx: Ctx = { sql, tenant: t, threadId, now, changes: [] };
-  const tools = TOOLS.map((x) => ({ name: x.name, description: x.description, input_schema: x.input_schema, strict: true }));
-  const byName = new Map(TOOLS.map((x) => [x.name, x]));
+  const plan = await planFor(sql, t.orgId);
+  const ctx: Ctx = { sql, tenant: t, threadId, now, changes: [], plan };
+  const offered = toolsForPlan(plan);
+  const tools = offered.map((x) => ({ name: x.name, description: x.description, input_schema: x.input_schema, strict: true }));
+  const byName = new Map(offered.map((x) => [x.name, x]));
   let reply = "";
+  // Tokens used for this reply, kept on the message for usage metering.
+  const usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0 };
   for (let turn = 0; turn < 8; turn++) {
     const res = await client.beta.messages.create({
       model: DEFAULT_MODEL, max_tokens: 4000,
       betas: ["server-side-fallback-2026-07-01"], fallbacks: "default",
       output_config: { effort: "low" }, cache_control: { type: "ephemeral" },
-      system: SYSTEM, tools, messages,
+      system: SYSTEM + planNote(plan), tools, messages,
     });
+    usage.input_tokens += res.usage?.input_tokens ?? 0;
+    usage.output_tokens += res.usage?.output_tokens ?? 0;
+    usage.cache_read_input_tokens += res.usage?.cache_read_input_tokens ?? 0;
     messages.push({ role: "assistant", content: res.content });
     reply = res.content.filter((b): b is Anthropic.Beta.Messages.BetaTextBlock => b.type === "text").map((b) => b.text).join("\n").trim();
     if (res.stop_reason === "pause_turn") continue;
@@ -315,7 +359,7 @@ export async function chat(
     messages.push({ role: "user", content: results });
   }
   if (!reply) reply = ctx.changes.length ? "Done — the changes are below." : "I couldn't finish that. Nothing was changed.";
-  const [m] = await sql<{ id: string }[]>`insert into chat_messages (thread_id, org_id, role, body) values (${threadId}, ${t.orgId}, 'assistant', ${reply}) returning id`;
+  const [m] = await sql<{ id: string }[]>`insert into chat_messages (thread_id, org_id, role, body, usage) values (${threadId}, ${t.orgId}, 'assistant', ${reply}, ${sql.json(usage)}) returning id`;
   if (ctx.changes.length) await sql`update chat_changes set message_id = ${m.id} where id = any(${ctx.changes}) and org_id = ${t.orgId}`;
   await sql`update chat_threads set updated_at = now() where id = ${threadId} and org_id = ${t.orgId}`;
   return { reply, changes: ctx.changes };

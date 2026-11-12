@@ -1,4 +1,5 @@
 import type { Sql } from "postgres";
+import { planRefusal } from "../billing/entitlements";
 import { log } from "../reservations/repo";
 import { assertCan, type Tenant } from "../platform/tenant";
 
@@ -19,6 +20,8 @@ export async function getProgram(sql: Sql, t: Tenant): Promise<Program> {
 
 export async function saveProgram(sql: Sql, t: Tenant, p: Program): Promise<string | null> {
   assertCan(t, "manage_venue");
+  const refused = await planRefusal(sql, t.orgId, "loyalty");
+  if (refused) return refused;
   const reward = p.reward.trim().slice(0, 120);
   if (!reward) return "Say what the reward is.";
   if (!Number.isInteger(p.visitsRequired) || p.visitsRequired < 2 || p.visitsRequired > 50) return "Visits must be between 2 and 50.";

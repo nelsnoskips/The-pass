@@ -1,3 +1,4 @@
+import { planLock } from "@/components/platform/NotInPlan";
 import { FormButton } from "@/components/platform/FormButton";
 import { db } from "@/lib/db";
 import { menuNames } from "@/lib/levers";
@@ -19,6 +20,8 @@ export default async function Promotions({ params, searchParams }: { params: Pro
   const { org } = await params;
   const q = await searchParams;
   const { tenant, venues } = await requireTenant(org);
+  const locked = await planLock(org, tenant, "promotions", { back: `/r/${org}/promotions` });
+  if (locked) return locked;
   const sql = db()!;
   const now = new Date();
   const [promos, names] = await Promise.all([listPromotions(sql, tenant, now), menuNames(sql, tenant)]);

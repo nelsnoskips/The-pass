@@ -876,3 +876,63 @@ a.pf-mp-block:hover { background: oklch(1 0 0 / 0.025); }
 .pf-mp-phone { margin: 0 0 8px 28px; max-width: 260px; }
 .pf-mp-preview { margin: 0; padding: 14px 16px; white-space: pre-wrap; overflow-wrap: anywhere; font: 12.5px/1.55 var(--font-pf-mono), ui-monospace, monospace; color: var(--muted); }
 @media (max-width: 620px) { .pf-mp-block { border-right: 0; } }
+
+
+/* ------------------------------------------------- plans and billing -- */
+/* Sidebar: a page the plan doesn't include stays listed, marked. */
+.pf-side-plan { margin-left: auto; font: 500 10px/1 var(--font-pf-mono), monospace; letter-spacing: .04em; padding: 3px 6px; border-radius: 999px; color: var(--info); background: var(--info-soft); white-space: nowrap; }
+.pf-side-out > span { opacity: .8; }
+
+/* "Included in The Pass plan" */
+.pf-plan-lock { max-width: 760px; }
+.pf-plan-lock .pf-body { padding-top: 20px; gap: 14px; }
+.pf-plan-lock .pf-pill { justify-self: start; }
+.pf-plan-lock-h { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+.pf-plan-lock-does { margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink); max-width: 62ch; }
+.pf-plan-lock-cta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding-top: 4px; }
+.pf-plan-lock-cta form { display: contents; }
+
+/* Stations page: a station that isn't in the plan */
+.pf-agent-out { opacity: .78; }
+.pf-agent-out .state.off { color: var(--info); }
+
+/* Billing page */
+.pf-bill-off { background: var(--info-soft); color: var(--ink); border-color: oklch(0.72 0.075 78 / 0.3); margin: 0 0 18px; }
+.pf-bill-plan { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.pf-bill-name { margin: 0 0 4px; font-size: 24px; font-weight: 600; letter-spacing: -0.03em; display: flex; align-items: center; gap: 10px; }
+.pf-bill-price { margin: 0; text-align: right; }
+.pf-bill-price b { display: block; font-size: 26px; font-weight: 500; }
+.pf-bill-price span { font-size: 12px; color: var(--muted); }
+.pf-bill-h3 { margin: 6px 0 0; font: 500 11.5px/1.2 var(--font-pf-mono), monospace; text-transform: uppercase; letter-spacing: .1em; color: var(--faint); }
+.pf-bill-inc { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+@media (min-width: 720px) { .pf-bill-inc { grid-template-columns: 1fr 1fr; } }
+.pf-bill-inc li { display: grid; gap: 4px; padding: 12px; border-radius: var(--radius); border: 1px solid var(--rule); background: oklch(1 0 0 / 0.02); }
+.pf-bill-inc li b { font-size: 14px; font-weight: 600; }
+.pf-bill-inc li span { font-size: 13px; color: var(--muted); line-height: 1.45; }
+.pf-bill-inc li em { font-style: normal; font: 500 11px/1 var(--font-pf-mono), monospace; color: var(--go); }
+.pf-bill-inc li.off em { color: var(--info); }
+.pf-bill-inc li.off b { color: var(--muted); }
+.pf-bill-inc.compact li { grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding: 9px 12px; }
+.pf-bill-every { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13.5px; color: var(--muted); }
+.pf-meter { display: grid; gap: 8px; padding: 12px; border-radius: var(--radius); border: 1px solid var(--rule); }
+.pf-meter-top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 14px; }
+.pf-meter-top span { color: var(--muted); font-size: 13px; }
+.pf-meter-bar { height: 8px; border-radius: 999px; background: oklch(1 0 0 / 0.07); overflow: hidden; }
+.pf-meter-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--brand), var(--brand-2)); }
+.pf-meter-bar i.over { background: var(--warn); }
+.pf-invoice td { padding: 10px 0; }
+.pf-invoice td:first-child { padding-right: 12px; }
+.pf-invoice td .pf-sub { display: block; font-size: 12px; margin-top: 2px; }
+.pf-invoice td.num { text-align: right; white-space: nowrap; }
+.pf-invoice tfoot td { font-weight: 600; border-bottom: 0; padding-top: 12px; }
+.pf-invoice tbody tr:hover { background: none; }
+.pf-bill-promises { list-style: none; margin: 0; padding: 0 16px 16px; display: grid; gap: 10px; }
+.pf-bill-promises li { display: grid; gap: 2px; font-size: 13px; }
+.pf-bill-promises li b { font-weight: 600; }
+.pf-bill-promises li span { color: var(--muted); }
+.pf-bill-requests { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); }
+.pf-bill-staff { border-color: oklch(0.82 0.14 75 / 0.3); }
+.pf-bill-staff > h2 { color: var(--warn); }
+.pf-check { display: flex; gap: 8px; align-items: center; font-size: 13.5px; }
+.pf-over-warn { background: var(--warn-soft); color: var(--ink); border-color: oklch(0.82 0.14 75 / 0.35); margin: 0; }
+.pf-over-warn a { color: var(--warn); }

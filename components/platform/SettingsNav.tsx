@@ -10,6 +10,7 @@ const TABS = [
   { seg: "/team", label: "Team" },
   { seg: "/import", label: "Import" },
   { seg: "/morning-pass", label: "Morning pass" },
+  { seg: "/billing", label: "Plan & billing" },
 ];
 
 export function SettingsNav({ org, ok, err }: { org: string; ok?: string; err?: string }) {

@@ -1,3 +1,4 @@
+import { planLock } from "@/components/platform/NotInPlan";
 import { PillarLevers } from "@/components/platform/PillarLevers";
 import { SettingsNav } from "@/components/platform/SettingsNav";
 import { db } from "@/lib/db";
@@ -12,6 +13,16 @@ export default async function Loyalty({ params, searchParams }: { params: Promis
   const { org } = await params;
   const q = await searchParams;
   const { tenant } = await requireTenant(org);
+  const locked = await planLock(org, tenant, "loyalty", { back: `/r/${org}/settings/loyalty`, inline: true });
+  if (locked) {
+    return (
+      <>
+        <div className="pf-head"><div><h1>Settings</h1><p className="pf-sub">Loyalty</p></div></div>
+        <SettingsNav org={org} ok={q.ok} err={q.err} />
+        {locked}
+      </>
+    );
+  }
   const sql = db()!;
   const p = await getProgram(sql, tenant);
   const [stats] = await sql<{ earned: number; redeemed: number; members: number }[]>`

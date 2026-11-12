@@ -1,3 +1,5 @@
+import { marketingWarningFor } from "@/lib/billing/usage";
+import { planLock } from "@/components/platform/NotInPlan";
 import { actorLabel } from "@/lib/agent-runtime/catalog";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -24,6 +26,8 @@ export default async function CampaignPage({ params, searchParams }: {
   const { org, id } = await params;
   const q = await searchParams;
   const { tenant, venues, org: orgRow } = await requireTenant(org);
+  const locked = await planLock(org, tenant, "campaigns", { back: `/r/${org}/campaigns` });
+  if (locked) return locked;
   const sql = db()!;
   const c = await getCampaign(sql, tenant, id);
   if (!c) notFound();
@@ -36,6 +40,8 @@ export default async function CampaignPage({ params, searchParams }: {
   const results = await campaignResults(sql, tenant, c);
   const recipients = audience?.recipients.length ?? 0;
   const confirming = q.confirm === "1" && open && mayMessage;
+  // Marketing texts past the month's allowance: a warning, never a block.
+  const overWarning = confirming && c.channel === "sms" && recipients > 0 ? await marketingWarningFor(sql, tenant.orgId, recipients, now) : null;
   const channelWord = c.channel === "sms" ? "texts" : "emails";
   const parts = smsParts(c.body);
   // Tomorrow at noon, the restaurant's time, as the schedule default.
@@ -82,6 +88,12 @@ export default async function CampaignPage({ params, searchParams }: {
               {c.channel === "sms" && <li>&ldquo;Reply STOP to opt out.&rdquo; is added. Texts only go out {SEND_WINDOW.startHour} am to {SEND_WINDOW.endHour - 12} pm, your time.</li>}
               {c.channel === "email" && <li>Each email carries a one-click unsubscribe.</li>}
             </ul>
+            {overWarning && (
+              <p className="pf-msg pf-over-warn" role="note">
+                {overWarning.text} You can still send it; texts over your plan&rsquo;s allowance are billed at cost, with no markup.{" "}
+                <Link href={`/r/${org}/settings/billing`}>See this month&rsquo;s texts</Link>
+              </p>
+            )}
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <FormButton action={sendCampaignAction} fields={{ org, id: c.id, expected: String(recipients) }} className="pf-btn primary" disabled={recipients === 0}>
                 Send to {n(recipients)} guest{recipients === 1 ? "" : "s"}

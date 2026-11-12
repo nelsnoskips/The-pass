@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { sendGuestSms } from "../agent-runtime/agents/reservations";
 import type { AgentContext } from "../agent-runtime/tool";
 import { headers } from "next/headers";
+import { planRefusal } from "../billing/entitlements";
 import { db } from "../db";
 import { integrationsKeyConfigured } from "../integrations/secrets";
 import { sendEmailCampaign } from "../messaging/email";
@@ -23,6 +24,8 @@ export async function sendCampaign(form: FormData) {
   const { tenant } = await requireTenant(org);
   const back = (q: string) => redirect(`/r/${org}/messages?${q}`);
   if (!can(tenant, "message_guests")) back(`err=${encodeURIComponent("Your role can't send campaigns.")}`);
+  const refused = await planRefusal(db()!, tenant.orgId, "campaigns");
+  if (refused) back(`err=${encodeURIComponent(refused)}`);
 
   const audience = String(form.get("audience") ?? "") as Audience;
   if (!["lapsed", "regulars", "everyone"].includes(audience)) back(`err=${encodeURIComponent("Pick who it goes to.")}`);

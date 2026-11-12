@@ -1,3 +1,4 @@
+import { planLock } from "@/components/platform/NotInPlan";
 import { headers } from "next/headers";
 import { AppBuilder } from "@/components/platform/AppBuilder";
 import { CopyLink } from "@/components/platform/CopyLink";
@@ -17,6 +18,8 @@ export const dynamic = "force-dynamic";
 export default async function AppPage({ params }: { params: Promise<{ org: string }> }) {
   const { org: slug } = await params;
   const { tenant, venues } = await requireTenant(slug);
+  const locked = await planLock(slug, tenant, "app", { back: `/r/${slug}/app` });
+  if (locked) return locked;
   const tz = venueTz(venues);
   const sql = db()!;
   const state = await getAppState(sql, tenant);

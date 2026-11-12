@@ -1,5 +1,6 @@
 import { randomInt } from "node:crypto";
 import type { Sql, TransactionSql } from "postgres";
+import { assertIncluded } from "../billing/entitlements";
 import { sendMail } from "../email";
 import { log } from "../reservations/repo";
 import { assertCan, type Tenant } from "../platform/tenant";
@@ -46,6 +47,8 @@ export function validatePurchase(p: Purchase): string | null {
 }
 
 export async function createCard(q: Q, orgId: string, p: Purchase): Promise<{ id: string; code: string }> {
+  // Selling needs a plan with gift cards; cards already sold stay good.
+  await assertIncluded(q as Sql, orgId, "gift_cards");
   for (let attempt = 0; attempt < 5; attempt++) {
     const code = newCode();
     const rows = await q<{ id: string }[]>`

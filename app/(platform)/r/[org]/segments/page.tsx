@@ -1,3 +1,4 @@
+import { planLock } from "@/components/platform/NotInPlan";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { createSegmentAction } from "@/lib/marketing/actions";
@@ -16,6 +17,8 @@ export default async function Segments({ params, searchParams }: { params: Promi
   const { org } = await params;
   const q = await searchParams;
   const { tenant } = await requireTenant(org);
+  const locked = await planLock(org, tenant, "segments", { back: `/r/${org}/segments` });
+  if (locked) return locked;
   const sql = db()!;
   const now = new Date();
   const segments = await listSegments(sql, tenant);

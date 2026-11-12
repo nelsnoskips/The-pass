@@ -1,6 +1,7 @@
 import type { Sql } from "postgres";
 import { sendGuestSms, textable } from "../agent-runtime/agents/reservations";
 import type { AgentContext } from "../agent-runtime/tool";
+import { planRefusal } from "../billing/entitlements";
 import { integrationsKeyConfigured } from "../integrations/secrets";
 import { emailable, sendEmail, sendEmailCampaign, type EmailSender } from "../messaging/email";
 import { sendSms, type SmsSender } from "../messaging/sms";
@@ -57,6 +58,8 @@ export async function saveDraft(
   sql: Sql, t: Tenant, input: DraftInput, opts: { createdBy?: string } = {},
 ): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
   assertCan(t, "message_guests");
+  const refused = await planRefusal(sql, t.orgId, "campaigns");
+  if (refused) return { ok: false, error: refused };
   const name = input.name.trim().replace(/\s+/g, " ").slice(0, 100);
   const channel: Channel | null = input.channel === "sms" || input.channel === "email" ? input.channel : null;
   const body = input.body.trim();
@@ -162,6 +165,8 @@ async function venueTimezone(sql: Sql, orgId: string) {
 /** Send a draft or scheduled campaign now. Needs message_guests. */
 export async function sendNow(sql: Sql, t: Tenant, id: string, opts: SendOptions): Promise<SendResult> {
   assertCan(t, "message_guests");
+  const refused = await planRefusal(sql, t.orgId, "campaigns");
+  if (refused) return { ok: false, error: refused };
   const now = opts.now ?? new Date();
   const c = await getCampaign(sql, t, id);
   if (!c) return { ok: false, error: "Campaign not found." };
@@ -219,6 +224,8 @@ export async function sendNow(sql: Sql, t: Tenant, id: string, opts: SendOptions
 /** Schedule a draft. `when` is "yyyy-mm-ddTHH:MM" in the restaurant's time. */
 export async function schedule(sql: Sql, t: Tenant, id: string, when: string, now = new Date()): Promise<{ ok: true; at: Date } | { ok: false; error: string }> {
   assertCan(t, "message_guests");
+  const refused = await planRefusal(sql, t.orgId, "campaigns");
+  if (refused) return { ok: false, error: refused };
   const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})$/.exec(when.trim());
   if (!m) return { ok: false, error: "Pick a date and time." };
   const at = zonedToUtc(m[1], m[2], await venueTimezone(sql, t.orgId));

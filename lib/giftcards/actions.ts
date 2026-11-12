@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { isIncluded } from "../billing/entitlements";
 import { db } from "../db";
 import { mailConfigured } from "../email";
 import { createGiftCheckoutUrl } from "./checkout";
@@ -22,6 +23,7 @@ export async function buyGiftCard(_prev: { error: string | null }, form: FormDat
   if (!(await allow(sql, "giftcard", clientAddress(h), 6, 30))) return { error: "Too many attempts. Please wait a few minutes." };
   const site = await getPublishedSite(sql, get("site"));
   if (!site) return { error: "Unavailable right now." };
+  if (!(await isIncluded(sql, site.orgId, "gift_cards"))) return { error: "Gift cards aren't sold online here. Ask your server next time you're in." };
   const amount = Math.round(Number(get("amount") === "custom" ? get("custom") : get("amount")) * 100);
   const purchase = {
     amountCents: amount, purchaserName: get("name"), purchaserEmail: get("email"),

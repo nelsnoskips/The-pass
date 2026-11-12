@@ -1,4 +1,6 @@
 import type { Sql } from "postgres";
+import { includes, stationFeature } from "../billing/entitlements";
+import { DEFAULT_PLAN, isPlanId, type PlanId } from "../billing/plans";
 import { resolveGoals } from "./settings";
 
 /**
@@ -28,7 +30,14 @@ export async function scheduledRuns(sql: Sql): Promise<{ orgs: string[]; runs: {
     select org_id, agent_id, enabled, goals from agent_settings`;
   const key = (org: string, agent: string) => `${org}/${agent}`;
   const byKey = new Map(settings.map((s) => [key(s.org_id, s.agent_id), s]));
-  const on = (org: string, agent: string) => byKey.get(key(org, agent))?.enabled ?? true;
+  // Stations the restaurant's plan doesn't include are skipped (no row: the default plan).
+  const plans = new Map((await sql<{ org_id: string; plan: string }[]>`select org_id, plan from org_plans`)
+    .map((p) => [p.org_id, isPlanId(p.plan) ? p.plan : DEFAULT_PLAN] as [string, PlanId]));
+  const inPlan = (org: string, agent: string) => {
+    const f = stationFeature(agent);
+    return !f || includes(plans.get(org) ?? DEFAULT_PLAN, f);
+  };
+  const on = (org: string, agent: string) => inPlan(org, agent) && (byKey.get(key(org, agent))?.enabled ?? true);
   const goals = (org: string, agent: string) => resolveGoals(agent, byKey.get(key(org, agent))?.goals);
 
   const runs = rows.flatMap((r) => {

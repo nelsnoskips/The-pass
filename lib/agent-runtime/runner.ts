@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Sql } from "postgres";
+import { includes, notIncludedReason, planFor, stationFeature } from "../billing/entitlements";
 import { log } from "../reservations/repo";
 import type { Tenant } from "../platform/tenant";
 import { evaluate } from "./policy";
@@ -64,6 +65,14 @@ export async function runAgent(input: RunInput): Promise<RunOutcome> {
   const { sql, agent } = input;
   const client = input.client ?? new Anthropic();
   const tenant: Tenant = { ...input.tenant, actor: `agent:${agent.id}` };
+
+  // A station the restaurant's plan doesn't include never runs, whoever
+  // wakes it. Nothing is recorded as a run: nothing ran.
+  const station = stationFeature(agent.id);
+  if (station) {
+    const plan = await planFor(sql, tenant.orgId);
+    if (!includes(plan, station)) return { runId: "", status: "stopped", summary: notIncludedReason(station, plan.plan), actions: [] };
+  }
 
   // The restaurant's switch and notes. A switched-off agent doesn't run,
   // whoever wakes it; the notes are appended after the agent's own rules.

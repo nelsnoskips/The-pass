@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { assertIncluded } from "../billing/entitlements";
 import { db } from "../db";
 import { pullReviews, pushHours, replyToReview } from "../integrations/google";
 import { requireTenant } from "./context";
@@ -31,6 +32,7 @@ export async function postReply(form: FormData) {
   if (reply.length < 2) back(org, `err=${encodeURIComponent("Write a reply first.")}`);
   let msg: string;
   try {
+    await assertIncluded(db()!, tenant.orgId, "reviews");
     await replyToReview(db()!, tenant.orgId, String(form.get("review") ?? ""), reply, tenant.actor);
     msg = `ok=${encodeURIComponent("Reply posted on Google.")}`;
   } catch (err) {

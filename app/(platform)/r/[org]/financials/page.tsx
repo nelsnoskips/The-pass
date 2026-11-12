@@ -1,3 +1,4 @@
+import { planLock } from "@/components/platform/NotInPlan";
 import Link from "next/link";
 import { Kpi, PeriodNav, TabNav, hrefWith } from "@/components/platform/ReportBits";
 import { db } from "@/lib/db";
@@ -26,6 +27,8 @@ export default async function Financials({ params, searchParams }: {
   const { org } = await params;
   const q = await searchParams;
   const { tenant } = await requireTenant(org);
+  const locked = await planLock(org, tenant, "financials", { back: `/r/${org}/financials` });
+  if (locked) return locked;
   assertCan(tenant, "view");
   const sql = db()!;
   const tab = q.tab === "transactions" ? "transactions" : "summary";

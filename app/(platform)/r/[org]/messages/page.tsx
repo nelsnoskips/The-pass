@@ -1,4 +1,5 @@
 import { CampaignForm } from "@/components/platform/CampaignForm";
+import { isIncluded } from "@/lib/billing/entitlements";
 import { textable } from "@/lib/agent-runtime/agents/reservations";
 import { db } from "@/lib/db";
 import { emailable } from "@/lib/messaging/email";
@@ -37,7 +38,8 @@ export default async function Messages({ params, searchParams }: { params: Promi
     Promise.all(AUDIENCES.map((a) => audienceIds(tenant.orgId, a, "sms"))),
     Promise.all(AUDIENCES.map((a) => audienceIds(tenant.orgId, a, "email"))),
   ]);
-  const sender = can(tenant, "message_guests");
+  // Writing campaigns comes with The Pass plan; the message log is on every plan.
+  const sender = can(tenant, "message_guests") && (await isIncluded(sql, tenant.orgId, "campaigns"));
   // The exact number each choice reaches if sent now: the same checks the
   // send runs (consent, opt-out, nothing promotional this week).
   const reach = sender ? {

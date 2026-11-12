@@ -1,3 +1,4 @@
+import { includes, planFor, type Feature } from "@/lib/billing/entitlements";
 import Link from "next/link";
 import { DismissAll, ProposalActions } from "@/components/platform/ProposalActions";
 import { actorLabel, AGENT_CARDS, agentName, wantsTo } from "@/lib/agent-runtime/catalog";
@@ -52,7 +53,7 @@ export default async function Stations({ params, searchParams }: { params: Promi
   const recipients = new Map<string, Recipient[]>(await Promise.all(
     pending.filter((p) => Array.isArray(p.input.guest_ids)).map(async (p) => [p.id, await proposalRecipients(sql, tenant, p.input.guest_ids)] as [string, Recipient[]]),
   ));
-  const settings = await readAllAgentSettings(sql, tenant.orgId);
+  const [settings, plan] = await Promise.all([readAllAgentSettings(sql, tenant.orgId), planFor(sql, tenant.orgId)]);
   const stats = new Map(counts.map((c) => [c.agent_id, c]));
   const lastRun = new Map(runs.map((r) => [r.agent_id, r]));
   const lastProp = new Map(lastProposed.map((r) => [r.agent_id, r.last]));
@@ -167,7 +168,23 @@ export default async function Stations({ params, searchParams }: { params: Promi
           const off = settings.get(a.id)?.enabled === false;
           // Proposals are activity too: a station with work in the queue has run.
           const last = [run?.started_at, lastProp.get(a.id)].filter((d): d is Date => Boolean(d)).sort((x, y) => y.getTime() - x.getTime())[0] ?? null;
-          const on = !off && Boolean(last && now.getTime() - last.getTime() < 14 * 86_400_000);
+          const outOfPlan = !includes(plan, `station:${a.id}` as Feature);
+          const on = !off && !outOfPlan && Boolean(last && now.getTime() - last.getTime() < 14 * 86_400_000);
+          if (outOfPlan) {
+            return (
+              <article key={a.id} className="pf-agent-card pf-agent-out">
+                <div className="top">
+                  <span className="ic" aria-hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={a.icon} /></svg></span>
+                  <span className="state off">In The Pass plan</span>
+                </div>
+                <h3><Link href={`/r/${org.slug}/agents/${a.id}`} className="pf-agent-link">{a.name}</Link></h3>
+                <p className="pf-station-of">Station of The Pass</p>
+                <p className="does">{a.does}</p>
+                <p className="rule">Not running: this station comes with The Pass plan. Nothing it did before has been deleted.</p>
+                <p className="more"><Link href={`/r/${org.slug}/agents/${a.id}`}>What it would do →</Link></p>
+              </article>
+            );
+          }
           return (
             <article key={a.id} className="pf-agent-card">
               <div className="top">

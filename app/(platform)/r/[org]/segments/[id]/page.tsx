@@ -1,3 +1,4 @@
+import { planLock } from "@/components/platform/NotInPlan";
 import { actorLabel } from "@/lib/agent-runtime/catalog";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -21,6 +22,8 @@ export default async function SegmentPage({ params, searchParams }: {
   const { org, id } = await params;
   const q = await searchParams;
   const { tenant, venues } = await requireTenant(org);
+  const locked = await planLock(org, tenant, "segments", { back: `/r/${org}/segments` });
+  if (locked) return locked;
   const tz = venueTz(venues);
   const sql = db()!;
   const seg = await getSegment(sql, tenant, id);

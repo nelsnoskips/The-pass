@@ -1,3 +1,4 @@
+import { includes, planFor } from "@/lib/billing/entitlements";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
@@ -30,7 +31,9 @@ export default async function SitePage({ params }: Params) {
   const site = await load(params);
   if (!site) notFound();
   const sql = db();
-  const o = sql ? await getOrderingSettings(sql, site.orgId) : null;
-  const ordering = o?.pickupEnabled ? "pickup" : o?.cateringEnabled ? "catering" : false;
+  const [o, plan] = sql ? await Promise.all([getOrderingSettings(sql, site.orgId), planFor(sql, site.orgId)]) : [null, null];
+  const pickup = Boolean(o?.pickupEnabled && plan && includes(plan, "ordering"));
+  const catering = Boolean(o?.cateringEnabled && plan && includes(plan, "catering"));
+  const ordering = pickup ? "pickup" : catering ? "catering" : false;
   return <SiteHome content={site.content} base={`/s/${site.slug}`} ordering={ordering} />;
 }

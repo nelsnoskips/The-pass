@@ -1,3 +1,4 @@
+import { isIncluded } from "@/lib/billing/entitlements";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { GiftCardForm } from "@/components/sites/GiftCardForm";
@@ -19,7 +20,9 @@ export default async function GiftCards({ params, searchParams }: Params) {
   const { paid } = await searchParams;
   const sql = db();
   const site = sql ? await getPublishedSite(sql, slug) : null;
-  if (!site) notFound();
+  if (!site || !sql) notFound();
+  // Not in the restaurant's plan: there is no gift card page.
+  if (!(await isIncluded(sql, site.orgId, "gift_cards"))) notFound();
   const online = Boolean(process.env.STRIPE_SECRET_KEY?.trim());
   const { phone } = site.content.contact;
   return (

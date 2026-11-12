@@ -1,3 +1,4 @@
+import { isIncluded } from "../billing/entitlements";
 import { createHash } from "node:crypto";
 import type { Sql } from "postgres";
 import { recordCheck } from "../guests/visits";
@@ -295,6 +296,8 @@ async function recordOrders(sql: Sql, orgId: string, orders: ToastOrder[]): Prom
  * https://doc.toasttab.com/doc/devguide/apiUsingTheStockApi.html
  */
 async function syncStock(sql: Sql, orgId: string, s: Session, previous: string[]): Promise<string[] | null> {
+  // No online ordering on this plan: nothing to mirror the 86 list to.
+  if (!(await isIncluded(sql, orgId, "ordering"))) return null;
   const { body } = await get<{ guid?: string; status?: string }[]>(s, "/stock/v1/inventory?status=OUT_OF_STOCK", "stock");
   const out = new Set((Array.isArray(body) ? body : []).filter((i) => i?.status === "OUT_OF_STOCK" && i.guid).map((i) => itemIdFor(i.guid!)));
   const system: Tenant = { orgId, actor: TOAST_ACTOR, role: "manager", venueIds: null };

@@ -1,4 +1,5 @@
 import type { Sql } from "postgres";
+import { isIncluded, planRefusal } from "../billing/entitlements";
 import { getOrderingSettings } from "../ordering";
 import { assertCan, resolveTenant, type Tenant } from "../platform/tenant";
 import { log } from "../reservations/repo";
@@ -70,6 +71,8 @@ export async function saveAppDraft(sql: Sql, t: Tenant, input: unknown): Promise
 /** Make the saved draft what guests get. */
 export async function publishApp(sql: Sql, t: Tenant, via = "app builder"): Promise<{ ok: true } | { ok: false; error: string }> {
   assertCan(t, "manage_venue");
+  const refused = await planRefusal(sql, t.orgId, "app");
+  if (refused) return { ok: false, error: refused };
   const r = await row(sql, t.orgId);
   const draft = valid(r?.draft);
   if (!draft) return { ok: false, error: "Save a draft first." };
@@ -86,6 +89,8 @@ export async function publishApp(sql: Sql, t: Tenant, via = "app builder"): Prom
  */
 export async function patchAndPublish(sql: Sql, t: Tenant, patch: (c: AppConfig) => AppConfig, via: string): Promise<{ ok: true } | { ok: false; error: string }> {
   assertCan(t, "manage_venue");
+  const refused = await planRefusal(sql, t.orgId, "app");
+  if (refused) return { ok: false, error: refused };
   const state = await getAppState(sql, t);
   const base = state.published ?? state.draft;
   const nextPublished = parseAppConfig(patch(structuredClone(base)));
@@ -147,6 +152,8 @@ export interface GuestApp {
 export async function loadGuestApp(sql: Sql, slug: string, opts: { wantDraft?: boolean; viewer?: Viewer | null } = {}): Promise<GuestApp | null> {
   const site = await getPublishedSite(sql, slug);
   if (!site) return null;
+  // Not in the restaurant's plan: no app for guests (the builder is hidden too).
+  if (!(await isIncluded(sql, site.orgId, "app"))) return null;
   const r = await row(sql, site.orgId);
   let config: AppConfig | null = null;
   let draft = false;
@@ -170,6 +177,7 @@ export async function canPreview(sql: Sql, orgId: string, viewer: Viewer): Promi
 
 /** Whether the restaurant's app is live, for "Open in the app" links. */
 export async function appIsLive(sql: Sql, orgId: string): Promise<boolean> {
+  if (!(await isIncluded(sql, orgId, "app"))) return false;
   const [r] = await sql`select 1 from app_configs where org_id = ${orgId} and published is not null`;
   return Boolean(r);
 }
@@ -192,6 +200,7 @@ export interface RewardsProgress {
  */
 export async function rewardsForBooking(sql: Sql, orgId: string, token: string): Promise<RewardsProgress | null> {
   if (!token || token.length > 64 || !/^[A-Za-z0-9_-]+$/.test(token)) return null;
+  if (!(await isIncluded(sql, orgId, "loyalty"))) return null;
   const [r] = await sql<{ id: string; name: string; visit_count: number; visits_required: number; reward: string; active: boolean }[]>`
     select g.id, g.name, g.visit_count, p.visits_required, p.reward, p.active
     from reservations r
@@ -210,6 +219,7 @@ export async function rewardsForBooking(sql: Sql, orgId: string, token: string):
 
 /** The program as guests may see it: "every 5 visits earns a dessert". */
 export async function publicProgram(sql: Sql, orgId: string): Promise<{ visitsRequired: number; reward: string } | null> {
+  if (!(await isIncluded(sql, orgId, "loyalty"))) return null;
   const [p] = await sql<{ active: boolean; visits_required: number; reward: string }[]>`
     select active, visits_required, reward from loyalty_programs where org_id = ${orgId}`;
   return p?.active ? { visitsRequired: p.visits_required, reward: p.reward } : null;

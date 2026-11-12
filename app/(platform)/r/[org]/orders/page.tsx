@@ -1,3 +1,4 @@
+import { planLock } from "@/components/platform/NotInPlan";
 import { PillarLevers } from "@/components/platform/PillarLevers";
 import Link from "next/link";
 import { EightySix, PauseControls, SettingsDrawer, TicketActions } from "@/components/platform/KitchenControls";
@@ -29,6 +30,8 @@ export default async function Orders({ params, searchParams }: { params: Promise
   const { org } = await params;
   const q = await searchParams;
   const { tenant, venues } = await requireTenant(org);
+  const locked = await planLock(org, tenant, "ordering", { back: `/r/${org}/orders` });
+  if (locked) return locked;
   const sql = db()!;
   const now = new Date();
   const [orders, settings, site] = await Promise.all([ordersBoard(sql, tenant, now), getOrderingSettings(sql, tenant.orgId), siteForOrg(sql, tenant)]);

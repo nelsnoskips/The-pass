@@ -1,4 +1,5 @@
 import type { Sql } from "postgres";
+import { isIncluded, planRefusal } from "../billing/entitlements";
 import { assertCan, type Tenant } from "../platform/tenant";
 import { log } from "../reservations/repo";
 
@@ -112,6 +113,8 @@ const holdsUse = (sql: Sql, now: Date) =>
  * guest isn't signed in) — read-only, and only that org's rows.
  */
 export async function promotionsForOrder(sql: Sql, orgId: string, phone: string | null, now: Date, ids?: string[]): Promise<Promotion[]> {
+  // A plan without promotions: no code or automatic discount applies to a new order.
+  if (!ids && !(await isIncluded(sql, orgId, "promotions"))) return [];
   const rows = await sql<Row[]>`
     select p.*,
       (select count(*)::int from orders o where o.promotion_id = p.id and o.org_id = p.org_id and ${holdsUse(sql, now)}) as uses,
@@ -123,6 +126,7 @@ export async function promotionsForOrder(sql: Sql, orgId: string, phone: string 
 }
 
 export async function hasAutomaticPromotions(sql: Sql, orgId: string, now = new Date()): Promise<boolean> {
+  if (!(await isIncluded(sql, orgId, "promotions"))) return false;
   const [r] = await sql<{ n: number }[]>`
     select count(*)::int as n from promotions where org_id = ${orgId} and active and code is null
       and (starts_at is null or starts_at <= ${now}) and (ends_at is null or ends_at > ${now})`;
@@ -167,6 +171,8 @@ export async function createPromotion(
   sql: Sql, t: Tenant, input: PromotionInput, validItems?: Set<string>,
 ): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
   assertCan(t, "manage_venue");
+  const refused = await planRefusal(sql, t.orgId, "promotions");
+  if (refused) return { ok: false, error: refused };
   const name = input.name.trim().replace(/\s+/g, " ").slice(0, 80);
   if (!name) return { ok: false, error: "Give the promotion a name." };
   const code = input.automatic ? null : input.code.trim().toUpperCase().replace(/\s+/g, "");

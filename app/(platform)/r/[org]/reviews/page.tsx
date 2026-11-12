@@ -1,3 +1,4 @@
+import { planLock } from "@/components/platform/NotInPlan";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
@@ -12,6 +13,8 @@ export default async function Reviews({ params, searchParams }: { params: Promis
   const { org } = await params;
   const q = await searchParams;
   const { tenant, venues } = await requireTenant(org);
+  const locked = await planLock(org, tenant, "reviews", { back: `/r/${org}/reviews` });
+  if (locked) return locked;
   const tz = venueTz(venues);
   const sql = db()!;
   const google = (await listOrgIntegrations(sql, tenant)).find((i) => i.provider === "google_business");

@@ -1,6 +1,7 @@
 import type { Sql } from "postgres";
 import { TILE_IDS, TILES, type AppConfig, type TileId } from "../app/config";
 import { liveAppConfig, patchAndPublish } from "../app/repo";
+import { includes, notIncludedReason, PILLAR_FEATURE, planFor } from "../billing/entitlements";
 import { getProgram, saveProgram } from "../guests/loyalty";
 import { getOrderingSettings, orderableItems, saveOrderingSettings, setKitchenState } from "../ordering";
 import { getVenueRules, saveVenueRules } from "../platform/settings";
@@ -236,6 +237,11 @@ export async function setLever(
   const def = lever(pillar, key);
   if (!def) return { ok: false, error: `There's no setting called ${pillar}.${key}.` };
   if (!can(t, def.requires)) return { ok: false, error: `Your role can't change ${def.label.toLowerCase()}.` };
+  const feature = PILLAR_FEATURE[def.pillar];
+  if (feature) {
+    const plan = await planFor(sql, t.orgId);
+    if (!includes(plan, feature)) return { ok: false, error: notIncludedReason(feature, plan.plan) };
+  }
   const parsed = parseLeverValue(def, raw);
   if (!parsed.ok) return parsed;
   let value = parsed.value;

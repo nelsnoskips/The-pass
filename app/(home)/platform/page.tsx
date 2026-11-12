@@ -84,6 +84,7 @@ export default function PlatformHome() {
             <a href="#stations">Stations</a>
             <a href="#products">What it runs</a>
             <a href="#promises">Why us</a>
+            <Link href="/platform/pricing">Pricing</Link>
             <Link href="/s/santorini">Live demo</Link>
           </nav>
           <div className="hm-nav-cta">
@@ -251,7 +252,7 @@ export default function PlatformHome() {
         <div className="hm-wrap">
           <span>© {new Date().getFullYear()} The Pass by Madison Four</span>
           <span style={{ display: "flex", gap: 18 }}>
-            <Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/login">Sign in</Link>
+            <Link href="/platform/pricing">Pricing</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/login">Sign in</Link>
           </span>
         </div>
       </footer>

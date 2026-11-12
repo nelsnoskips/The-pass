@@ -1094,3 +1094,39 @@ create table if not exists brief_sends (
   created_at  timestamptz not null default now(),
   unique (org_id, local_date)
 );
+
+-- ------------------------------------------- billing: plans and usage --
+-- Which plan a restaurant group is on. Prices live in code
+-- (lib/billing/plans.ts), not here. No row means the default plan
+-- (The Pass), so restaurants set up before plans existed keep
+-- everything they had. Only The Pass's own staff change a row; every
+-- change is logged to change_log as plan.changed. Changing plan never
+-- deletes data: what a plan doesn't include is hidden and stopped.
+create table if not exists org_plans (
+  org_id               uuid primary key references orgs(id) on delete cascade,
+  plan                 text not null default 'the_pass' check (plan in ('host', 'the_pass', 'group')),
+  founding             boolean not null default false,
+  founding_locked_until date,
+  locations            integer not null default 1 check (locations between 1 and 500),
+  started_at           timestamptz not null default now(),
+  updated_by           text,
+  updated_at           timestamptz not null default now()
+);
+
+-- "Talk to us about upgrading": a request from the restaurant, for The
+-- Pass's team to follow up. No payment is taken.
+create table if not exists plan_requests (
+  id           uuid primary key default gen_random_uuid(),
+  org_id       uuid not null references orgs(id) on delete cascade,
+  requested_by text not null,
+  plan         text not null check (plan in ('host', 'the_pass', 'group')),
+  feature      text,
+  note         text not null default '',
+  status       text not null default 'open' check (status in ('open', 'done')),
+  created_at   timestamptz not null default now()
+);
+create index if not exists plan_requests_org_idx on plan_requests(org_id, created_at desc);
+
+-- Tokens the chat used, per reply, for AI usage metering (shown to The
+-- Pass's staff only). Same shape as agent_runs.usage.
+alter table chat_messages add column if not exists usage jsonb;

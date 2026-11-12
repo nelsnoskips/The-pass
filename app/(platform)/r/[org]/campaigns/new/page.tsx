@@ -1,3 +1,4 @@
+import { planLock } from "@/components/platform/NotInPlan";
 import Link from "next/link";
 import { CampaignComposer, type ComposerSegment } from "@/components/platform/CampaignComposer";
 import { db } from "@/lib/db";
@@ -16,6 +17,8 @@ export default async function NewCampaign({ params, searchParams }: {
   const { org } = await params;
   const q = await searchParams;
   const { tenant } = await requireTenant(org);
+  const locked = await planLock(org, tenant, "campaigns", { back: `/r/${org}/campaigns` });
+  if (locked) return locked;
   const sql = db()!;
   const back = <p className="pf-sub" style={{ margin: "0 0 6px" }}><Link href={`/r/${org}/campaigns`}>Campaigns</Link></p>;
   if (!can(tenant, "message_guests")) {

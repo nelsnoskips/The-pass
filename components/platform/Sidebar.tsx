@@ -37,15 +37,19 @@ const GROUPS: { name: string | null; items: { seg: string; label: string; icon: 
   ] },
 ];
 
-export function Sidebar({ org }: { org: string }) {
+/** `outOfPlan`: pages the restaurant's plan doesn't include. They stay
+ *  in the menu, marked, and open a page saying what they'd add. */
+export function Sidebar({ org, outOfPlan = [] }: { org: string; outOfPlan?: string[] }) {
   const path = usePathname();
   const item = (seg: string, label: string, icon: string) => {
     const href = seg ? `/r/${org}/${seg}` : `/r/${org}`;
     const active = seg ? path.startsWith(href) : path === href;
+    const out = outOfPlan.includes(seg);
     return (
-      <Link key={seg || "home"} href={href} aria-current={active ? "page" : undefined} className="pf-side-link">
+      <Link key={seg || "home"} href={href} aria-current={active ? "page" : undefined} className={`pf-side-link${out ? " pf-side-out" : ""}`}>
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d={icon} /></svg>
         <span>{label}</span>
+        {out && <small className="pf-side-plan" title="Included in The Pass plan">Pass plan</small>}
       </Link>
     );
   };

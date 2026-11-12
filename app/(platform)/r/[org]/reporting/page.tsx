@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { planLock } from "@/components/platform/NotInPlan";
 import { PeriodNav, TabNav, hrefWith } from "@/components/platform/ReportBits";
 import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
@@ -32,6 +33,9 @@ export default async function Reporting({ params, searchParams }: {
   const days = parseDays(q.days);
   const compare = q.compare !== "off";
   const { tenant } = await requireTenant(org);
+  // Online orders and ads reporting are full reporting: The Pass plan.
+  const locked = tab === "orders" || tab === "ads"
+    ? await planLock(org, tenant, "reporting_full", { back: `/r/${org}/reporting`, inline: true }) : null;
   const p = await periodsForOrg(db()!, tenant.orgId, days);
   const base = `/r/${org}/reporting`;
   const keep = { tab, compare: compare ? null : "off" };
@@ -61,9 +65,9 @@ export default async function Reporting({ params, searchParams }: {
 
       {tab === "overview" && <OverviewTab org={org} tenant={tenant} p={p} compare={compare} />}
       {tab === "bookings" && <BookingsTab org={org} tenant={tenant} p={p} compare={compare} />}
-      {tab === "orders" && <OrdersTab org={org} tenant={tenant} p={p} compare={compare} />}
+      {tab === "orders" && (locked ?? <OrdersTab org={org} tenant={tenant} p={p} compare={compare} />)}
       {tab === "guests" && <GuestsTab org={org} tenant={tenant} p={p} compare={compare} />}
-      {tab === "ads" && <AdsTab org={org} tenant={tenant} days={days} />}
+      {tab === "ads" && (locked ?? <AdsTab org={org} tenant={tenant} days={days} />)}
     </>
   );
 }

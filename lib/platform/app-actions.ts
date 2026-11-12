@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import type { AppConfig, AppError } from "../app/config";
 import { getAppState, publishApp, saveAppDraft } from "../app/repo";
+import { planRefusal } from "../billing/entitlements";
 import { db } from "../db";
 import { withLeverDiff } from "../levers";
 import { requireTenant } from "./context";
@@ -22,6 +23,8 @@ export async function saveAppAction(org: string, config: AppConfig, publish: boo
   if (!sql) return fail("Unavailable right now.");
   const { tenant } = await requireTenant(org);
   if (!can(tenant, "manage_venue")) return fail("Your role can't change the app.");
+  const refused = await planRefusal(sql, tenant.orgId, "app");
+  if (refused) return fail(refused);
   const state = await getAppState(sql, tenant);
   if (!state.site) return fail("Your website isn't live yet, and the app is built on it.");
   const saved = await saveAppDraft(sql, tenant, config);

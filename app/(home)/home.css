@@ -243,3 +243,65 @@
 @media (min-width: 720px) { .hm-day li { grid-template-columns: 150px minmax(0, 1fr); gap: 24px; } }
 .hm-day .mono { color: var(--brand); font-size: 14px; padding-top: 3px; }
 .hm-day p { margin: 0; font-size: 17px; line-height: 1.55; color: var(--muted); max-width: 70ch; }
+
+
+/* ------------------------------------------------------------ pricing -- */
+.hm-links a[aria-current="page"] { color: var(--ink); }
+.hm-price-hero { padding-bottom: 24px; }
+.hm-price-hero::after { height: 560px; }
+.hm-price-sec { border-top: 0; padding-top: 24px; }
+.hm-plans { display: grid; gap: 16px; }
+@media (min-width: 900px) { .hm-plans { grid-template-columns: 1fr 1fr; align-items: stretch; } }
+.hm-plan {
+  position: relative; display: flex; flex-direction: column; gap: 14px; padding: 28px; border-radius: 20px;
+  border: 1px solid var(--rule); background: linear-gradient(180deg, var(--panel-2), var(--panel) 200px);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.05);
+}
+.hm-plan-main { border-color: oklch(0.72 0.075 78 / 0.45); box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.07), 0 30px 80px -40px oklch(0.72 0.075 78 / 0.6); }
+.hm-plan .hm-kicker { margin: 0; }
+.hm-plan-h { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 3.6vw, 40px); line-height: 1.05; }
+.hm-plan-price { margin: 4px 0 0; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.hm-plan-price b { font-family: var(--serif); font-weight: 400; font-size: clamp(52px, 6vw, 68px); line-height: 1; letter-spacing: -0.01em; }
+.hm-plan-price span { color: var(--muted); font-size: 15px; }
+.hm-plan-found { margin: 0; font-size: 14px; color: var(--brand); }
+.hm-plan-st { margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.hm-plan-st span { width: 100%; font: 600 11px/1 var(--font-inter), sans-serif; letter-spacing: .18em; text-transform: uppercase; color: var(--faint); margin-bottom: 4px; }
+.hm-plan-st i { font-style: normal; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--rule-2); background: oklch(1 0 0 / 0.03); font-size: 13px; }
+.hm-plan-list { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 10px; flex: 1; }
+.hm-plan-list li { position: relative; padding-left: 26px; color: var(--muted); font-size: 15px; line-height: 1.5; }
+.hm-plan-list li::before { content: "✓"; position: absolute; left: 0; top: 1px; width: 18px; height: 18px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; color: var(--go); background: oklch(0.74 0.08 140 / 0.14); }
+.hm-plan-list li.lead { padding-left: 0; color: var(--ink); font-weight: 600; }
+.hm-plan-list li.lead::before { display: none; }
+.hm-plan-texts { margin: 0; padding-top: 14px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--ink); }
+.hm-plan .hm-btn { align-self: flex-start; }
+.hm-group-line { margin-top: 16px; padding: 18px 22px; border-radius: 16px; border: 1px solid var(--rule); background: oklch(1 0 0 / 0.02); display: grid; gap: 6px; }
+.hm-group-line p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
+.hm-group-line b { color: var(--ink); }
+.hm-price-honest { margin: 22px 0 0; font-size: 14.5px; color: var(--muted); max-width: 70ch; }
+
+.hm-calc { margin-top: 40px; display: grid; gap: 16px; border: 1px solid var(--rule); border-radius: 20px; padding: 22px; background: linear-gradient(180deg, var(--panel-2), var(--panel) 200px); }
+@media (min-width: 860px) { .hm-calc { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 32px; padding: 30px; } }
+.hm-calc-in { display: grid; gap: 20px; align-content: start; }
+.hm-calc-plans { border: 0; margin: 0; padding: 0; display: flex; gap: 8px; flex-wrap: wrap; }
+.hm-calc-plans legend, .hm-calc-field > label { font: 600 11px/1 var(--font-inter), sans-serif; letter-spacing: .18em; text-transform: uppercase; color: var(--faint); margin-bottom: 10px; padding: 0; }
+.hm-calc-plans label { position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 11px; border: 1px solid var(--rule-2); cursor: pointer; font-size: 15px; }
+.hm-calc-plans label.on { border-color: var(--brand); background: oklch(0.72 0.075 78 / 0.12); }
+.hm-calc-plans input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.hm-calc-plans label:has(input:focus-visible) { outline: 2px solid var(--brand); outline-offset: 3px; }
+.hm-calc-field { display: grid; }
+.hm-calc-step { display: inline-flex; align-items: stretch; border: 1px solid var(--rule-2); border-radius: 11px; overflow: hidden; width: max-content; }
+.hm-calc-step button { width: 44px; min-height: 44px; border: 0; background: oklch(1 0 0 / 0.04); color: var(--ink); font-size: 20px; cursor: pointer; }
+.hm-calc-step button:hover { background: oklch(1 0 0 / 0.09); }
+.hm-calc-step input { width: 72px; border: 0; border-inline: 1px solid var(--rule-2); background: transparent; color: var(--ink); text-align: center; font: 500 17px/1 var(--font-hm-mono), monospace; -moz-appearance: textfield; }
+.hm-calc-step input::-webkit-inner-spin-button, .hm-calc-step input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.hm-calc-check { display: flex; gap: 10px; align-items: center; font-size: 15px; color: var(--muted); min-height: 44px; }
+.hm-calc-check input { width: 18px; height: 18px; accent-color: oklch(0.72 0.075 78); }
+.hm-calc-out { display: grid; gap: 14px; align-content: start; }
+.hm-calc-total { margin: 0; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.hm-calc-total b { font-family: var(--serif); font-weight: 400; font-size: clamp(48px, 6vw, 64px); line-height: 1; }
+.hm-calc-total span { color: var(--muted); }
+.hm-calc-out ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+.hm-calc-out li { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--rule); font-size: 14.5px; color: var(--muted); }
+.hm-calc-out li span:last-child { color: var(--ink); white-space: nowrap; }
+.hm-calc-note { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--faint); }
+.hm-pass-copy p b { color: var(--ink); }

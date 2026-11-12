@@ -1,3 +1,4 @@
+import { includes, planFor } from "@/lib/billing/entitlements";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { OrderBuilder, type ReadyOption } from "@/components/sites/OrderBuilder";
@@ -21,6 +22,9 @@ export default async function Order({ params, searchParams }: Params) {
   const sql = db();
   const site = sql ? await getPublishedSite(sql, slug) : null;
   if (!site || !sql) notFound();
+  // Not in the restaurant's plan: there is no order page.
+  const plan = await planFor(sql, site.orgId);
+  if (!includes(plan, "ordering") && !includes(plan, "catering")) notFound();
   const settings = await getOrderingSettings(sql, site.orgId);
   const kinds = [...(settings.pickupEnabled ? ["pickup" as const] : []), ...(settings.cateringEnabled ? ["catering" as const] : [])];
   const items = [...orderableItems(site.content, settings.soldOut).values()];

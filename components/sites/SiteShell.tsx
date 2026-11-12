@@ -6,8 +6,10 @@ import { siteBody, siteDisplay } from "./fonts";
 import { OfflineNotice, SiteMenu, type SiteLink } from "./SiteMenu";
 
 /** The Classic theme's frame: announcement, header, footer. */
-export function SiteShell({ content, base, children, banner, ordering = false, giftCardsOnline = false }: {
+export function SiteShell({ content, base, children, banner, ordering = false, giftCardsOnline = false, giftCards = true }: {
   content: SiteContent; base: string; children: ReactNode; banner?: ReactNode; ordering?: boolean;
+  /** The restaurant's plan includes gift cards; without them there's no gift card page to link to. */
+  giftCards?: boolean;
   /** Gift cards can be bought on the site (a card processor is set up). */
   giftCardsOnline?: boolean;
 }) {
@@ -24,7 +26,7 @@ export function SiteShell({ content, base, children, banner, ordering = false, g
   const links: SiteLink[] = [
     ...(content.menus.length > 0 ? [{ href: `${base}#menu`, label: "Menu" }] : []),
     ...(ordering ? [{ href: `${base}/order`, label: "Order online" }] : []),
-    { href: `${base}/gift-cards`, label: giftCardsOnline ? "Gift cards" : "Gift cards (at the restaurant)" },
+    ...(giftCards ? [{ href: `${base}/gift-cards`, label: giftCardsOnline ? "Gift cards" : "Gift cards (at the restaurant)" }] : []),
     { href: `${base}#visit`, label: "Hours & location" },
   ];
   const phone = content.contact.phone;
@@ -42,7 +44,7 @@ export function SiteShell({ content, base, children, banner, ordering = false, g
               {content.menus.length > 0 && <Link href={`${base}#menu`}>Menu</Link>}
               <Link href={`${base}#visit`}>Hours &amp; Location</Link>
               {ordering && <Link href={`${base}/order`}>Order online</Link>}
-              <Link href={`${base}/gift-cards`}>Gift cards</Link>
+              {giftCards && <Link href={`${base}/gift-cards`}>Gift cards</Link>}
             </span>
             <SiteMenu links={[...links, ...(phone ? [{ href: telHref(phone), label: `Call ${phone}`, external: true }] : [])]} />
             <Link href={`${base}/reserve`} className="site-btn">Reserve</Link>

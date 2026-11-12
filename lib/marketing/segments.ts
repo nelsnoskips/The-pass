@@ -1,4 +1,5 @@
 import type { Sql } from "postgres";
+import { planRefusal } from "../billing/entitlements";
 import { consentFilter } from "../platform/audiences";
 import { assertCan, type Tenant } from "../platform/tenant";
 import { log } from "../reservations/repo";
@@ -230,6 +231,8 @@ export async function createSegment(
   sql: Sql, t: Tenant, name: string, input: Record<string, unknown>,
 ): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
   assertCan(t, "message_guests");
+  const refused = await planRefusal(sql, t.orgId, "segments");
+  if (refused) return { ok: false, error: refused };
   const n = name.trim().replace(/\s+/g, " ").slice(0, 80);
   if (!n) return { ok: false, error: "Give the segment a name." };
   const parsed = parseRules(input);

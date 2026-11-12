@@ -1,3 +1,4 @@
+import { planLock } from "@/components/platform/NotInPlan";
 import { FormButton } from "@/components/platform/FormButton";
 import { RedeemForm } from "@/components/platform/RedeemForm";
 import { db } from "@/lib/db";
@@ -19,6 +20,13 @@ export default async function GiftCardsAdmin({ params, searchParams }: { params:
   const { tenant, venues } = await requireTenant(org);
   const tz = venueTz(venues);
   const sql = db()!;
+  // Not in the plan: no selling. Cards guests already hold are still
+  // honoured, so while any has money on it the page stays for taking
+  // payments, with the plan note on top.
+  const locked = await planLock(org, tenant, "gift_cards", { back: `/r/${org}/gift-cards`, inline: true });
+  const [{ held }] = locked ? await sql<{ held: number }[]>`
+    select count(*)::int as held from gift_cards where org_id = ${tenant.orgId} and status = 'active' and balance_cents > 0` : [{ held: 0 }];
+  if (locked && !held) return <><div className="pf-head"><div><h1>Gift cards</h1></div></div>{locked}</>;
   const [cards, [totals]] = await Promise.all([
     sql<{ id: string; code: string; status: string; initial_cents: number; balance_cents: number; purchaser_name: string; recipient_name: string | null; created_at: Date }[]>`
       select id, code, status, initial_cents, balance_cents, purchaser_name, recipient_name, created_at
@@ -76,7 +84,8 @@ export default async function GiftCardsAdmin({ params, searchParams }: { params:
             <RedeemForm org={org} action={redeemAction} code={q.code}
               found={found ? { code: found.code, balanceCents: found.balance_cents, status: found.status } : null} />
           </section>
-          {manage && (
+          {locked && <p className="pf-msg" role="note">Cards already sold are still honoured here. Selling new cards comes with The Pass plan.</p>}
+          {manage && !locked && (
             <section className="pf-panel">
               <h2>Sold at the counter</h2>
               <form action={issueCardAction} className="pf-body">

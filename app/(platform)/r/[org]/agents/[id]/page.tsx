@@ -1,3 +1,5 @@
+import { planLock } from "@/components/platform/NotInPlan";
+import type { Feature } from "@/lib/billing/entitlements";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FormButton } from "@/components/platform/FormButton";
@@ -60,6 +62,8 @@ export default async function AgentPage({ params, searchParams }: {
   const card = AGENT_CARDS.find((a) => a.id === id);
   if (!card) notFound();
   const { tenant, org, venues } = await requireTenant(slug);
+  const locked = await planLock(slug, tenant, `station:${id}` as Feature, { back: `/r/${slug}/agents/${id}` });
+  if (locked) return locked;
   const tz = venueTz(venues);
   const when = (d: Date) => formatIn(d, tz, "datetime");
   const sql = db()!;
