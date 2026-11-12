@@ -783,3 +783,6 @@
   .pf-res-actions, .pf-ticket-actions { gap: 10px; }
   .pf-res-actions .pf-more { margin-left: 28px; }
 }
+
+/* the booking you searched for */
+.pf-res.found { background: oklch(0.72 0.075 78 / 0.10); box-shadow: inset 3px 0 0 var(--brand); scroll-margin-top: 120px; }

@@ -93,7 +93,7 @@ d("platform UX against Postgres", () => {
   it("finds bookings by time in the restaurant's timezone and links to the host stand with a highlight", async () => {
     const tonight = await searchEverything(sql, host, slug, "8pm", NOW);
     expect(tonight.map((h) => h.title)).toEqual(["Gia Guest ×2"]);
-    expect(tonight[0].href).toBe(`/r/${slug}/host?date=2026-11-12&highlight=${eightPm}`);
+    expect(tonight[0].href).toBe(`/r/${slug}/host?date=2026-11-12&highlight=${eightPm}#res-${eightPm}`);
     expect(tonight[0].detail).toMatch(/8:00 PM · Booked$/);
     expect((await searchEverything(sql, host, slug, "tomorrow", NOW)).map((h) => h.title)).toEqual(["Ned Noconsent ×2"]);
     expect(await searchEverything(sql, host, slug, "tomorrow 8pm", NOW)).toEqual([]);

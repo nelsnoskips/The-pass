@@ -134,7 +134,7 @@ export async function searchEverything(sql: Sql, t: Tenant, org: string, raw: st
   return [
     ...guests.map((g): SearchHit => ({ kind: "guest", title: g.name, detail: `${g.phone.startsWith("+") ? formatPhone(g.phone) : "no phone"} · ${g.visit_count} visit${g.visit_count === 1 ? "" : "s"}`, href: `/r/${org}/guests/${g.id}` })),
     // The host stand opens on that day with this booking highlighted.
-    ...bookings.map((b): SearchHit => ({ kind: "booking", title: `${b.name} ×${b.party_size}`, detail: `${when(b.starts_at, b.tz)} · ${statusLabel(b.status)}`, href: `/r/${org}/host?date=${localDate(b.starts_at, b.tz)}&highlight=${b.id}` })),
+    ...bookings.map((b): SearchHit => ({ kind: "booking", title: `${b.name} ×${b.party_size}`, detail: `${when(b.starts_at, b.tz)} · ${statusLabel(b.status)}`, href: `/r/${org}/host?date=${localDate(b.starts_at, b.tz)}&highlight=${b.id}#res-${b.id}` })),
     ...orders.map((o): SearchHit => ({ kind: "order", title: `Order #${o.number} · ${o.name}`, detail: `${money(o.total_cents)} · ${statusLabel(o.status)}`, href: `/r/${org}/orders` })),
     ...cards.map((c): SearchHit => ({ kind: "gift_card", title: `Gift card ${c.code}`, detail: `${money(c.balance_cents)} left · ${statusLabel(c.status)}`, href: `/r/${org}/gift-cards?code=${encodeURIComponent(c.code)}` })),
   ];

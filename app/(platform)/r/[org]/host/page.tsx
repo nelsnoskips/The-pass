@@ -34,7 +34,7 @@ function shift(date: string, days: number) {
   return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
 }
 
-export default async function HostStand({ params, searchParams }: { params: Promise<{ org: string }>; searchParams: Promise<{ date?: string; venue?: string }> }) {
+export default async function HostStand({ params, searchParams }: { params: Promise<{ org: string }>; searchParams: Promise<{ date?: string; venue?: string; highlight?: string }> }) {
   const { org: slug } = await params;
   const q = await searchParams;
   const { tenant, venues, org } = await requireTenant(slug);
@@ -87,7 +87,7 @@ export default async function HostStand({ params, searchParams }: { params: Prom
     const last = r.lastChange;
     const undoUntil = last && UNDO_LABEL[last.action] && last.action === r.status ? last.at.getTime() + UNDO_MINUTES * 60_000 : null;
     return (
-      <div key={r.id} className={`pf-res${done ? " done" : ""}${isLateRow ? " late" : ""}`}>
+      <div key={r.id} id={`res-${r.id}`} className={`pf-res${done ? " done" : ""}${isLateRow ? " late" : ""}${r.id === q.highlight ? " found" : ""}`}>
         <div>
           <div className="pf-res-name">
             {r.guestName}<span className="party">×{r.partySize}</span>

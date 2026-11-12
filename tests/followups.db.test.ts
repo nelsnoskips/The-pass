@@ -75,12 +75,19 @@ d("booking follow-ups", () => {
     await seatWalkIn(sql, host, { venueId, partySize: 2, name: "", phone: "", now: zonedToUtc(SAT, "18:00", TZ) });
     const at = zonedToUtc("2026-11-13", "19:00", TZ); // 24h before
     sent.length = 0;
-    const first = await sendDueReminders(sql, "https://pass.example", at, sender);
-    expect(first.sent).toBe(1);
-    expect(sent[0].to).toBe(r.reservation.guestPhone);
-    expect(sent[0].body).toContain(`/booking/${r.reservation.manageToken}`);
-    expect(sent[0].body).toContain("table for 2");
-    expect((await sendDueReminders(sql, "https://pass.example", at, sender)).sent).toBe(0);
+    // The job scans every restaurant; other tests share the database, so
+    // count only what went to this restaurant's guests.
+    const ours = () => sent.filter((m) => m.body.includes(`/booking/${r.reservation.manageToken}`) || m.to === r.reservation.guestPhone);
+    await sendDueReminders(sql, "https://pass.example", at, sender);
+    expect(ours()).toHaveLength(1);
+    expect(ours()[0].to).toBe(r.reservation.guestPhone);
+    expect(ours()[0].body).toContain("table for 2");
+    await sendDueReminders(sql, "https://pass.example", at, sender);
+    expect(ours()).toHaveLength(1); // not twice
+    // The walk-in has no phone, so nothing for it at all.
+    const [{ n }] = await sql<{ n: number }[]>`select count(*)::int as n from guest_messages m join guests g on g.id = m.guest_id
+      where m.org_id = ${orgId} and g.phone not like '+%'`;
+    expect(n).toBe(0);
   });
 
   it("texts the waitlist in order when a table opens, at most three, then only once", async () => {
