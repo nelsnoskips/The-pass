@@ -71,7 +71,7 @@ export function SiteEditor({ org, initial, liveUrl, versionId, serviceHours, tz 
   }, [dirty]);
 
   // In-app navigation (the sidebar, any link) doesn't fire beforeunload:
-  // catch the click before Next's router sees it, and ask.
+  // catch the click on window, before React (whose root is the document) and Next's router see it, and ask.
   useEffect(() => {
     if (!dirty) return;
     const guard = (e: MouseEvent) => {
@@ -83,8 +83,8 @@ export function SiteEditor({ org, initial, liveUrl, versionId, serviceHours, tz 
       if (url.pathname === window.location.pathname && url.hash) return;
       if (!window.confirm(LEAVE)) { e.preventDefault(); e.stopPropagation(); }
     };
-    document.addEventListener("click", guard, true);
-    return () => document.removeEventListener("click", guard, true);
+    window.addEventListener("click", guard, true);
+    return () => window.removeEventListener("click", guard, true);
   }, [dirty]);
 
   // Bring back unsaved work from this device, once, after the first render.
@@ -93,8 +93,6 @@ export function SiteEditor({ org, initial, liveUrl, versionId, serviceHours, tz 
     loaded.current = true;
     const d = readDraft(org);
     if (!d || JSON.stringify(d.content) === JSON.stringify(initial)) { if (d) writeDraft(org, null); return; }
-    // Restoring local state after mount is the point here (localStorage isn't readable during SSR).
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (d.base === versionId) { setC(d.content); setRestored({ at: d.at, older: null }); }
     else setRestored({ at: d.at, older: d });
     // eslint-disable-next-line react-hooks/exhaustive-deps

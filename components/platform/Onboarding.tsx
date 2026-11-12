@@ -13,7 +13,8 @@ export function Onboarding({ org, name }: { org: string; name?: string }) {
   return (
     <section className="pf-panel pf-onboard" aria-labelledby="pf-onboard-h">
       <div className="pf-body" style={{ paddingTop: 22 }}>
-        <h1 id="pf-onboard-h" className="pf-onboard-h">{name ? `Welcome, ${name}.` : "Welcome."} We&rsquo;re setting up your floor and hours — here&rsquo;s what&rsquo;s next</h1>
+        <p className="pf-sub" style={{ margin: 0, overflowWrap: "anywhere" }}>Welcome to The Pass{name ? `, ${name}` : ""}.</p>
+        <h1 id="pf-onboard-h" className="pf-onboard-h">We&rsquo;re setting up your floor and hours — here&rsquo;s what&rsquo;s next</h1>
         <p className="pf-sub" style={{ margin: 0, maxWidth: "62ch" }}>
           The Pass team is adding your dining room: tables, service hours and booking rules. When that&rsquo;s done, your host stand, bookings and this page fill in. Meanwhile:
         </p>

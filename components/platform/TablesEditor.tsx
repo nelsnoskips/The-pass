@@ -38,7 +38,7 @@ export function TablesEditor({ org, venue, tables, edit, action }: {
     <form action={action} onSubmit={(e) => { if (!dirty) e.preventDefault(); }}>
       <input type="hidden" name="org" value={org} />
       <input type="hidden" name="venue" value={venue} />
-      <input type="hidden" name="tables" value={JSON.stringify(changed.map(({ key: _key, ...r }) => r))} />
+      <input type="hidden" name="tables" value={JSON.stringify(changed.map((r) => ({ id: r.id, label: r.label, area: r.area, minCovers: r.minCovers, maxCovers: r.maxCovers, online: r.online, active: r.active })))} />
       <div className="pf-scroll">
         <table className="pf-table pf-floor">
           <thead>
