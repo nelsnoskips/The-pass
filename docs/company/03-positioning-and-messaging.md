@@ -21,6 +21,8 @@ early team.
 
 ## 1. Positioning statement
 
+> **Superseded (2026-11-12):** the positioning is now "one agent runs your front of house; nothing leaves the pass without you" — see [08-positioning-the-one-agent.md](08-positioning-the-one-agent.md). The pillars, talk tracks, objections and discovery script below still apply, re-framed by 08.
+
 > **For** full-service independent restaurants with 1–20 locations
 > **who** want to own their guest list and stop paying a cut on every
 > cover and deposit,

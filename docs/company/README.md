@@ -15,6 +15,7 @@ and its notes in `research_notes/`.
 | 05 | [Product roadmap](05-product-roadmap.md) | Product, engineering | What's built, what the wedge still needs, by quarter |
 | 06 | [Risks and compliance](06-risks-and-compliance.md) | Founders, counsel | Risk register, compliance checklist, questions for a lawyer |
 | 07 | [Pitch outline](07-pitch-outline.md) | Fundraising | 13 slides: the point of each and the evidence behind it |
+| 08 | [Positioning: the one agent](08-positioning-the-one-agent.md) | Everyone | The positioning and story: one agent runs your front of house; nothing leaves the pass without you |
 
 ## Decisions these documents share
 
