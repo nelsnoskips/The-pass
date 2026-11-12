@@ -4,7 +4,8 @@
  * lives in the app (and its tests) rather than in here.
  *
  *  - every hour:  reminders for bookings 20–28 hours out, and scheduled
- *                 marketing campaigns that are due (/api/jobs/campaigns)
+ *                 marketing campaigns that are due (/api/jobs/campaigns),
+ *                 and Toast checks and 86s (/api/jobs/pos-sync)
  *  - 15:00 UTC:   each restaurant's agents that have work — Reservations,
  *                 and Reviews where replies are waiting (10–11 am US Eastern,
  *                 inside the texting window, so an owner can approve the
@@ -23,6 +24,9 @@ export default async function handler() {
   results.reminders = await fetch(`${base}/api/jobs/reminders`, { method: "POST", headers: auth })
     .then((r) => r.json()).catch((e) => ({ error: String(e) }));
   results.campaigns = await fetch(`${base}/api/jobs/campaigns`, { method: "POST", headers: auth })
+    .then((r) => r.json()).catch((e) => ({ error: String(e) }));
+  // Closed checks and 86'd dishes from each connected Toast location.
+  results.pos = await fetch(`${base}/api/jobs/pos-sync`, { method: "POST", headers: auth })
     .then((r) => r.json()).catch((e) => ({ error: String(e) }));
 
   // 08:00 UTC (3–4 am Eastern): re-read the last 30 days of ad numbers,

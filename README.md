@@ -68,5 +68,12 @@ Concept rooms (the Test Kitchen — demo restaurant sites, not part of the app):
 - **Filters:** brand/location/platform/date/comparison state lives in the
   URL and persists across pages and exports.
 
+- **Toast (point of sale):** an owner pastes read-only Standard API access
+  credentials in Settings → Connections (`lib/integrations/toast.ts`).
+  `/api/jobs/pos-sync` runs hourly: closed checks become visits and spend
+  on matching guests, and Toast's 86 list sets the ordering sold-out
+  lever. "Import menu as a website draft" never publishes. Optional
+  `TOAST_API_HOST` (default `https://ws-api.toasttab.com`).
+
 Deploying: `netlify.toml` is included; connect the repo in Netlify (or
 Vercel) and deploy with defaults.

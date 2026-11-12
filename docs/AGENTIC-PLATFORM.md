@@ -88,6 +88,7 @@ Approve-tier actions need a role that `can(tenant, ...)` grants:
 | Reviews agent (draft replies → approve → posted to Google) | Built on the runtime | `lib/agent-runtime/agents/reviews.ts` |
 | Connections: Stripe deposits, Google Business Profile, Square | Built (OAuth, sealed tokens, signed webhooks) | `lib/payments`, `lib/integrations` |
 | Loyalty and visits from the point of sale | Built | `lib/guests` |
+| Toast (read-only, Standard API access) | Built: owner pastes credentials (sealed); hourly sync of closed checks → guests, visits, spend, loyalty; 86 list → sold-out lever (`via "Toast"`); menu import as a website draft on request. Toast only shares guest details on takeout/delivery, so dine-in checks count in sales but match no guest. Open: confirm with Toast that a vendor may use a restaurant's standard credentials on its behalf; order injection, webhooks and two-way menus need the Integration Partner program | `lib/integrations/toast.ts`, `/api/jobs/pos-sync` |
 | SMS sending | Built; dry run until Twilio keys are set | `lib/messaging/sms.ts` |
 | Proposal queue UI for runtime agents | Built | `/r/<org>/agents` |
 | Per-restaurant agent settings: on/off, owner's instructions (appended to the system prompt in a fenced block that can't override policy), tighter-only limits enforced in tool checks, activity log | Built | `lib/agent-runtime/settings.ts`, `/r/<org>/agents/<id>` |

@@ -1,6 +1,7 @@
 import type { Sql } from "postgres";
 import { applyStripeEvent, verifyStripeSignature } from "../payments/stripe";
 import { handleSquareEvent, verifySquareSignature } from "./square";
+import { syncToast } from "./toast";
 import type { ProviderId } from "./registry";
 
 /**
@@ -76,8 +77,22 @@ export const CONNECTORS: Partial<Record<ProviderId, Connector>> = {
       return { handled: await handleSquareEvent(sql, JSON.parse(raw)) };
     },
   },
-  toast: shell("toast",
-    "Partner API. Webhook on closed checks → match to a guest by phone, record a visit and spend."),
+  // Built in lib/integrations/toast.ts on Standard API access: the owner
+  // pastes read-only credentials in Settings; hourly sync via
+  // /api/jobs/pos-sync. No webhooks: those need the Integration Partner
+  // program, as do order injection and writing menus back.
+  toast: {
+    id: "toast",
+    built: true,
+    authorizeUrl: () => null,
+    complete: async () => { throw new NotBuilt("toast (via the Connect form in Settings)"); },
+    async sync(sql, orgId) {
+      const r = await syncToast(sql, orgId);
+      if (!r.ok) throw new Error(r.error ?? "Toast sync failed.");
+      return { changed: r.rows };
+    },
+    handleWebhook: async () => { throw new NotBuilt("toast webhooks (Integration Partner program only)"); },
+  },
   stripe: {
     id: "stripe",
     built: true,

@@ -3,6 +3,10 @@ import { SettingsNav } from "@/components/platform/SettingsNav";
 import { db } from "@/lib/db";
 import { googleConfigured } from "@/lib/integrations/google";
 import { squareConfigured } from "@/lib/integrations/square";
+import { toastConfigured, toastStatus } from "@/lib/integrations/toast";
+import { ToastConnection } from "@/components/platform/ToastConnection";
+import { orgTimezone } from "@/lib/levers";
+import { formatIn } from "@/lib/platform/when";
 import { googleAdsConfigured } from "@/lib/ads/google-ads";
 import { metaConfigured } from "@/lib/ads/meta";
 import { platformConfigured, PROVIDERS, type Category } from "@/lib/integrations/registry";
@@ -56,6 +60,11 @@ export default async function Connections({ params, searchParams }: { params: Pr
   const googleReady = googleConfigured() && integrationsKeyConfigured();
   const squareReady = squareConfigured() && integrationsKeyConfigured();
   const adsReady = { google: googleAdsConfigured() && integrationsKeyConfigured(), meta: metaConfigured() && integrationsKeyConfigured() };
+  const toast = await toastStatus(db()!, tenant);
+  const tz = await orgTimezone(db()!, tenant);
+  const toastLast = toast.lastSync
+    ? `${formatIn(toast.lastSync.at, tz)} · ${toast.lastSync.ok ? `${toast.lastSync.rows} new check${toast.lastSync.rows === 1 ? "" : "s"}, ${toast.lastSync.matched} matched to guests` : "didn't finish"}`
+    : null;
 
   return (
     <>
@@ -83,7 +92,13 @@ export default async function Connections({ params, searchParams }: { params: Pr
                       <p className="pf-sub" style={{ margin: "4px 0 0" }}>{p.does}</p>
                       {own?.accountLabel && <p className="pf-sub mono" style={{ margin: "4px 0 0" }}>{own.accountLabel}</p>}
                     </div>
-                    {p.scope === "restaurant" && manage && (p.build !== "shell" || staff) && (
+                    {p.id === "toast" && manage && (
+                      <div style={{ gridColumn: "1 / -1" }}>
+                        <ToastConnection org={org} connected={toast.connected} restaurantName={toast.restaurantName} lastSync={toastLast}
+                          problem={toast.error} available={toastConfigured()} />
+                      </div>
+                    )}
+                    {p.scope === "restaurant" && p.id !== "toast" && manage && (p.build !== "shell" || staff) && (
                       <form action={integrationAction} style={{ display: "flex", gap: 6 }}>
                         <input type="hidden" name="org" value={org} />
                         <input type="hidden" name="provider" value={p.id} />

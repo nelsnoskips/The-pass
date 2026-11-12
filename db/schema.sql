@@ -1042,3 +1042,22 @@ create table if not exists push_subscriptions (
   last_seen_at timestamptz not null default now()
 );
 create index if not exists push_subscriptions_org_idx on push_subscriptions(org_id);
+
+-- toast
+-- ------------------------------------------------------------------
+-- Toast through Standard API access (read-only credentials the
+-- restaurant creates in Toast Web). Credentials live sealed in
+-- org_integrations.secret; checks land in guest_checks (source 'toast').
+-- Each sync is recorded here, so Settings can say when it last ran and
+-- what went wrong.
+create table if not exists toast_syncs (
+  id          bigint generated always as identity primary key,
+  org_id      uuid not null references orgs(id) on delete cascade,
+  status      text not null check (status in ('ok', 'failed')),
+  rows        integer not null default 0,
+  matched     integer not null default 0,
+  error       text,
+  started_at  timestamptz not null default now(),
+  finished_at timestamptz
+);
+create index if not exists toast_syncs_org_idx on toast_syncs(org_id, id desc);

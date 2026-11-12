@@ -51,8 +51,8 @@ export const PROVIDERS: Provider[] = [
     does: "Reads Instagram and Facebook campaign spend and results each night. Changes stay in Meta Ads Manager for now.", env: [] },
   { id: "square", name: "Square", category: "Point of sale", scope: "restaurant", build: "live",
     does: "Matches checks to guests so visits and spend fill the guest list.", env: [] },
-  { id: "toast", name: "Toast", category: "Point of sale", scope: "restaurant", build: "shell",
-    does: "Matches checks to guests so visits and spend fill the guest list.", env: [] },
+  { id: "toast", name: "Toast", category: "Point of sale", scope: "restaurant", build: "live",
+    does: "Reads closed checks every hour and matches takeout and delivery guests (Toast doesn't share guest details on dine-in checks), imports your menu as a website draft, and mirrors 86'd dishes. Read-only: nothing is changed in Toast.", env: [] },
 ];
 
 export function provider(id: string): Provider | undefined {
