@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
 import { can } from "@/lib/platform/tenant";
@@ -72,7 +73,7 @@ export default async function Guests({ params, searchParams }: { params: Promise
               {guests.map((g) => (
                 <tr key={g.id}>
                   <td>
-                    <div style={{ fontWeight: 600 }}>{g.name}</div>
+                    <Link href={`/r/${slug}/guests/${g.id}`} style={{ fontWeight: 600 }}>{g.name}</Link>
                     <div className="pf-sub" style={{ marginTop: 0 }}>{[g.phone.startsWith("+") ? formatPhone(g.phone) : null, g.email].filter(Boolean).join(" · ") || "No contact"}</div>
                   </td>
                   <td className="num">

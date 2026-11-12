@@ -21,6 +21,7 @@ const GROUPS: { name: string | null; items: { seg: string; label: string; icon: 
   { name: "Ecommerce", items: [
     { seg: "orders", label: "Orders", icon: "M6 7h12l-1 13H7zM9 7a3 3 0 0 1 6 0" },
     { seg: "gift-cards", label: "Gift cards", icon: "M3 8h18v4H3zM5 12v8h14v-8M12 8v12M12 8c-1.5-3-5-3-5 0M12 8c1.5-3 5-3 5 0" },
+    { seg: "financials", label: "Financials", icon: "M4 20h16M6 16V10M10 16V10M14 16V10M18 16V10M3 8l9-5 9 5z" },
   ] },
   { name: "Guests", items: [
     { seg: "guests", label: "Guests", icon: "M16 19v-1a4 4 0 0 0-8 0v1M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 19v-1a3 3 0 0 0-2-2.8M17 5.2a3 3 0 0 1 0 5.6" },
