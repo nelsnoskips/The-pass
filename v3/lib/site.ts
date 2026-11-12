@@ -328,7 +328,7 @@ export const FOOTER = {
   ],
   /** Their LinkedIn, from the current site's footer. */
   linkedin: "https://www.linkedin.com/company/orravan-mechanical-inc.",
-  social: ["LinkedIn", "YouTube"],
+  social: ["LinkedIn"],
   copyright: "© 2026 Orravan.ai, Inc. All rights reserved.",
 } as const;
 
