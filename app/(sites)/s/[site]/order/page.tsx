@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { OrderBuilder, type ReadyOption } from "@/components/sites/OrderBuilder";
 import { db } from "@/lib/db";
+import { hasAutomaticPromotions } from "@/lib/marketing/promotions";
 import { getOrderingSettings, orderableItems, readyTimes, venuePeriods } from "@/lib/ordering";
 import { getPublishedSite } from "@/lib/sites/repo";
 
@@ -50,6 +51,7 @@ export default async function Order({ params, searchParams }: Params) {
           times={{ pickup: settings.pickupEnabled ? opts("pickup") : [], catering: settings.cateringEnabled ? opts("catering") : [] }}
           taxBps={settings.taxBps} cateringMinCents={settings.cateringMinCents}
           payOnline={Boolean(process.env.STRIPE_SECRET_KEY?.trim())}
+          hasAutoPromos={await hasAutomaticPromotions(sql, site.orgId, now)}
         />
       )}
     </div>
