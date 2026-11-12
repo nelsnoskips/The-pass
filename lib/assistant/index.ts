@@ -2,6 +2,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { Sql } from "postgres";
 import { DEFAULT_MODEL, type MessagesClient } from "../agent-runtime/runner";
 import { formatLever, LEVERS, lever, menuNames, parseLeverValue, PILLARS, rawOf, readLevers, setLever, type LeverValue, type Pillar } from "../levers";
+import { campaignResults, listCampaigns, saveDraft } from "../marketing/campaigns";
+import { describeRules, listSegments, segmentCounts } from "../marketing/segments";
 import { ordersBoard } from "../ordering";
 import { assertCan, can, type Tenant } from "../platform/tenant";
 import { localDate, zonedToUtc } from "../reservations/time";
@@ -131,6 +133,47 @@ const TOOLS: Tool[] = [
       return r;
     },
   })),
+  {
+    name: "list_segments",
+    description: "Saved guest segments (built-in and the restaurant's own): id, name, what the rules mean in plain English, and live counts of members and of those who said yes to texts and to emails.",
+    input_schema: obj({}, []),
+    async run({ sql, tenant, now }) {
+      const segments = await listSegments(sql, tenant);
+      return Promise.all(segments.map(async (s) => ({
+        id: s.id, name: s.name, builtIn: s.builtin, rules: describeRules(s.rules), ...(await segmentCounts(sql, tenant, s.rules, now)),
+      })));
+    },
+  },
+  {
+    name: "list_campaigns",
+    description: "Recent SMS and email campaigns: name, status (draft, scheduled, sending, sent, failed), channel, segment, who wrote it, when, and for sent ones the results: recipients, sent, dry-run (recorded, not sent), failed, opted out since, and recipients who booked or ordered within 7 days (not proof the campaign caused it). Money is integer cents.",
+    input_schema: obj({}, []),
+    async run({ sql, tenant }) {
+      const list = (await listCampaigns(sql, tenant)).slice(0, 20);
+      return Promise.all(list.map(async (c) => ({
+        id: c.id, name: c.name, status: c.status, channel: c.channel, segment: c.segment_name, createdBy: c.created_by,
+        createdAt: c.created_at, scheduledFor: c.scheduled_for, sentAt: c.sent_at, results: await campaignResults(sql, tenant, c),
+      })));
+    },
+  },
+  {
+    name: "draft_campaign",
+    description: "Write a DRAFT text or email campaign to one segment (segment id from list_segments). It is never sent by this tool: the owner opens the link, sees exactly who it goes to, and sends or schedules it. Texts: under 300 characters, no opt-out line (added automatically). Emails need a subject (use an empty string for texts). Only call this when the owner asked for a campaign.",
+    input_schema: obj({
+      name: { type: "string" }, channel: { type: "string", enum: ["sms", "email"] }, segment: { type: "string" },
+      subject: { type: "string" }, body: { type: "string" },
+    }, ["name", "channel", "segment", "subject", "body"]),
+    async run({ sql, tenant }, input) {
+      if (!can(tenant, "message_guests")) return { error: "The person you're helping can't write campaigns." };
+      const r = await saveDraft(sql, tenant, {
+        name: String(input.name ?? ""), channel: String(input.channel ?? ""), segment: String(input.segment ?? ""),
+        subject: String(input.subject ?? ""), body: String(input.body ?? ""),
+      }, { createdBy: "agent:assistant" });
+      if (!r.ok) return { error: r.error };
+      const [o] = await sql<{ slug: string }[]>`select slug from orgs where id = ${tenant.orgId}`;
+      return { id: r.id, status: "draft", link: `/r/${o.slug}/campaigns/${r.id}`, note: "Saved as a draft. Nothing was sent. The owner sends or schedules it from the link." };
+    },
+  },
 ];
 
 /**
@@ -210,7 +253,7 @@ export async function undoChange(sql: Sql, t: Tenant, changeId: string, now = ne
 
 const SYSTEM = `You are the assistant inside The Pass, the platform a restaurant uses to run its reservations, host stand, online ordering, website, guest list, loyalty and marketing. You are talking with a member of the restaurant's team.
 
-Answer questions from the restaurant's real data using your tools; never guess numbers. When asked to change something, find the setting with get_settings and change it with change_setting. Some settings apply at once (the person can undo them); others are shown to the person as a change to approve with one click — say which happened. Only change what was asked.
+Answer questions from the restaurant's real data using your tools; never guess numbers. When asked to change something, find the setting with get_settings and change it with change_setting. Some settings apply at once (the person can undo them); others are shown to the person as a change to approve with one click — say which happened. Only change what was asked. To write a text or email campaign, pick a segment with list_segments and save it with draft_campaign: it only saves a draft, so say that nothing was sent and give the link where the owner sends it.
 
 You can also take a booking (create_booking), cancel one (cancel_booking), move an online order along (update_order_status) and add someone to the team (add_team_member). Each of these only puts a card in front of the person with exactly what will happen; nothing happens until they press Apply, so say that it's waiting for them. Resolve dates like "Friday" with get_today first. If a tool says a time isn't free or a booking is ambiguous, tell the person the options; don't pick for them. If something can't be done with your tools, say so plainly and say where in The Pass it's done.
 

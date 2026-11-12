@@ -77,7 +77,7 @@ export async function emailable(sql: Sql, orgId: string, ids: string[], now = ne
 
 export async function sendEmailCampaign(
   sql: Sql,
-  input: { orgId: string; actor: string; guestIds: string[]; subject: string; body: string; baseUrl: string },
+  input: { orgId: string; actor: string; guestIds: string[]; subject: string; body: string; baseUrl: string; campaignId?: string | null },
   sender: EmailSender = sendEmail,
 ): Promise<{ sent: number; dry_run: number; failed: number; skipped: number }> {
   const [org] = await sql<{ name: string }[]>`select name from orgs where id = ${input.orgId}`;
@@ -85,18 +85,24 @@ export async function sendEmailCampaign(
   const from = `${org?.name ?? "The Pass"} <${fromAddress}>`;
   const recipients = await emailable(sql, input.orgId, input.guestIds);
   const tally = { sent: 0, dry_run: 0, failed: 0, skipped: input.guestIds.length - recipients.length };
+  // Without INTEGRATIONS_KEY there is no working unsubscribe link, so
+  // nothing may leave: every message is recorded as a dry run instead.
+  const signed = Boolean(process.env.INTEGRATIONS_KEY?.trim());
   for (const g of recipients) {
-    const token = unsubscribeToken(g.id);
-    const unsubscribeUrl = `${input.baseUrl}/api/unsubscribe/${token}`;
-    const pageUrl = `${input.baseUrl}/u/${token}`;
-    const first = g.name.split(" ")[0];
-    const text = `Hi ${first},\n\n${input.body.trim()}\n\n—\n${org?.name ?? ""}\nUnsubscribe: ${pageUrl}`;
-    const r = await sender({ from, to: g.email, subject: input.subject, text, unsubscribeUrl });
+    let r: Awaited<ReturnType<EmailSender>> = { status: "dry_run" };
+    if (signed) {
+      const token = unsubscribeToken(g.id);
+      const unsubscribeUrl = `${input.baseUrl}/api/unsubscribe/${token}`;
+      const pageUrl = `${input.baseUrl}/u/${token}`;
+      const first = g.name.split(" ")[0];
+      const text = `Hi ${first},\n\n${input.body.trim()}\n\n—\n${org?.name ?? ""}\nUnsubscribe: ${pageUrl}`;
+      r = await sender({ from, to: g.email, subject: input.subject, text, unsubscribeUrl });
+    }
     tally[r.status]++;
     await sql`
-      insert into guest_messages (org_id, guest_id, channel, kind, body, status, provider_id, error, sent_by)
+      insert into guest_messages (org_id, guest_id, channel, kind, body, status, provider_id, error, sent_by, campaign_id)
       values (${input.orgId}, ${g.id}, 'email', 'marketing', ${`${input.subject}\n\n${input.body.trim()}`}, ${r.status},
-              ${r.status === "sent" ? r.providerId : null}, ${r.status === "failed" ? r.error : null}, ${input.actor})`;
+              ${r.status === "sent" ? r.providerId : null}, ${r.status === "failed" ? r.error : null}, ${input.actor}, ${input.campaignId ?? null})`;
   }
   await log(sql, input.orgId, input.actor, "guests.email_marketing", "guest_messages", null, { ...tally, subject: input.subject });
   return tally;

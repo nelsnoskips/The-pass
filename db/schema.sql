@@ -906,3 +906,87 @@ alter table chat_changes add column if not exists result jsonb;
 do $$ begin
   alter table chat_changes add constraint chat_changes_kind_check check (kind in ('lever', 'action'));
 exception when duplicate_object then null; end $$;
+-- marketing: segments, campaigns, promotions
+-- ------------------------------------------------------------------
+-- Saved guest audiences. The rules are data (lib/marketing/segments.ts
+-- turns them into SQL and into a plain-English description); the
+-- members are worked out live, never stored, so a segment is always
+-- current. The built-in segments live in code, not here.
+create table if not exists segments (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null references orgs(id) on delete cascade,
+  name        text not null,
+  rules       jsonb not null default '{}'::jsonb,
+  created_by  text not null,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+create index if not exists segments_org_idx on segments(org_id, created_at desc);
+
+-- A text or email to a segment. Drafted by a person or an agent, sent
+-- (or scheduled) only by a person with message_guests. `segment` is a
+-- built-in key ('regulars') or a segments.id. Results are read from
+-- guest_messages by campaign_id, not copied here.
+create table if not exists campaigns (
+  id            uuid primary key default gen_random_uuid(),
+  org_id        uuid not null references orgs(id) on delete cascade,
+  name          text not null,
+  channel       text not null check (channel in ('sms', 'email')),
+  segment       text not null,
+  segment_name  text not null,
+  subject       text,
+  body          text not null,
+  status        text not null default 'draft'
+    check (status in ('draft', 'scheduled', 'sending', 'sent', 'failed')),
+  scheduled_for timestamptz,
+  scheduled_by  text,
+  sent_at       timestamptz,
+  sent_by       text,
+  skipped       integer not null default 0,
+  last_error    text,
+  -- A person's email, or agent:<id> for a draft an agent wrote.
+  created_by    text not null,
+  -- For agent drafts: the person who asked for it.
+  requested_by  text,
+  created_at    timestamptz not null default now(),
+  updated_at    timestamptz not null default now()
+);
+create index if not exists campaigns_org_idx on campaigns(org_id, created_at desc);
+create index if not exists campaigns_due_idx on campaigns(scheduled_for) where status = 'scheduled';
+
+alter table guest_messages add column if not exists campaign_id uuid references campaigns(id) on delete set null;
+create index if not exists guest_messages_campaign_idx on guest_messages(campaign_id) where campaign_id is not null;
+
+-- Promo codes and automatic discounts for online ordering. code null =
+-- automatic (applies without a code). Uses are counted from orders, so
+-- a cancelled order gives its use back.
+create table if not exists promotions (
+  id                  uuid primary key default gen_random_uuid(),
+  org_id              uuid not null references orgs(id) on delete cascade,
+  name                text not null,
+  code                text,
+  kind                text not null check (kind in ('percent_order', 'amount_order', 'amount_item')),
+  percent             integer check (percent between 1 and 100),
+  amount_cents        integer check (amount_cents > 0),
+  item_id             text,
+  min_subtotal_cents  integer not null default 0 check (min_subtotal_cents >= 0),
+  starts_at           timestamptz,
+  ends_at             timestamptz,
+  max_uses            integer check (max_uses > 0),
+  max_uses_per_phone  integer check (max_uses_per_phone > 0),
+  active              boolean not null default true,
+  created_by          text not null,
+  created_at          timestamptz not null default now(),
+  updated_at          timestamptz not null default now()
+);
+create unique index if not exists promotions_org_code_idx on promotions(org_id, upper(code)) where code is not null;
+
+-- An order's discount: total = subtotal - discount + tax on the
+-- discounted subtotal + tip. The discount never exceeds the subtotal.
+alter table orders add column if not exists discount_cents integer not null default 0;
+alter table orders add column if not exists promotion_id uuid references promotions(id) on delete set null;
+create index if not exists orders_promotion_idx on orders(promotion_id) where promotion_id is not null;
+
+-- Who scheduled a campaign and in what role, so the send can re-check
+-- their permission at the moment it goes out.
+alter table campaigns add column if not exists scheduled_role text;

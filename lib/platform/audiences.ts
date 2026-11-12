@@ -1,3 +1,4 @@
+import type { Sql } from "postgres";
 import { db } from "../db";
 
 /**
@@ -7,17 +8,25 @@ import { db } from "../db";
  */
 export type Audience = "lapsed" | "regulars" | "everyone";
 
+/**
+ * Marketing consent on a guest row aliased `g`: a recorded yes for that
+ * channel, not withdrawn, and somewhere to send it. The once-a-week cap
+ * is applied again at the moment of sending (lib/messaging).
+ */
+export function consentFilter(sql: Sql, channel: "sms" | "email") {
+  return channel === "sms"
+    ? sql`g.phone like '+%' and g.sms_consent_at is not null and g.sms_opted_out_at is null`
+    : sql`g.email is not null and g.email_consent_at is not null and g.email_opted_out_at is null`;
+}
+
 export async function audienceIds(orgId: string, audience: Audience, channel: "sms" | "email" = "sms"): Promise<string[]> {
   const sql = db()!;
   const rows = await sql<{ id: string }[]>`
-    select id from guests
-    where org_id = ${orgId}
-      ${channel === "sms"
-        ? sql`and phone like '+%' and sms_consent_at is not null and sms_opted_out_at is null`
-        : sql`and email is not null and email_consent_at is not null and email_opted_out_at is null`}
-      ${audience === "lapsed" ? sql`and visit_count >= 2 and last_visit_at < now() - interval '45 days'` : sql``}
-      ${audience === "regulars" ? sql`and visit_count >= 3` : sql``}
-    order by visit_count desc limit 200`;
+    select g.id from guests g
+    where g.org_id = ${orgId}
+      and ${consentFilter(sql, channel)}
+      ${audience === "lapsed" ? sql`and g.visit_count >= 2 and g.last_visit_at < now() - interval '45 days'` : sql``}
+      ${audience === "regulars" ? sql`and g.visit_count >= 3` : sql``}
+    order by g.visit_count desc limit 200`;
   return rows.map((r) => r.id);
 }
-

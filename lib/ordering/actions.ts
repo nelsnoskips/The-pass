@@ -9,8 +9,9 @@ import { requireTenant } from "../platform/context";
 import { allow, clientAddress } from "../platform/ratelimit";
 import { Forbidden } from "../platform/tenant";
 import { getPublishedSite } from "../sites/repo";
+import { promotionsForOrder } from "../marketing/promotions";
 import {
-  getOrderingSettings, placeOrder, saveOrderingSettings, setKitchenState, setOrderStatus,
+  getOrderingSettings, placeOrder, priceCart, saveOrderingSettings, setKitchenState, setOrderStatus,
   type CartLine, type OrderKind, type OrderStatus,
 } from "./index";
 
@@ -38,6 +39,7 @@ export async function placeOrderAction(_prev: { error: string | null }, form: Fo
     name: get("name"), phone: get("phone"), email: get("email") || undefined,
     headcount: kind === "catering" ? Number(get("headcount")) : null, notes: get("notes"),
     payOnline: Boolean(key),
+    promoCode: get("promo").slice(0, 40) || undefined,
   });
   if (!r.ok) return { error: r.error };
 
@@ -51,6 +53,26 @@ export async function placeOrderAction(_prev: { error: string | null }, form: Fo
     redirect(url);
   }
   redirect(status);
+}
+
+/**
+ * The order page's preview of a promo code (or an automatic promotion)
+ * against the cart. Only a preview: placing the order prices it again,
+ * with the guest's phone for per-guest limits.
+ */
+export async function previewPromoAction(
+  slug: string, kind: string, cart: CartLine[], code: string,
+): Promise<{ discountCents: number; label: string | null; error: string | null }> {
+  const sql = db();
+  const site = sql ? await getPublishedSite(sql, String(slug)) : null;
+  if (!sql || !site) return { discountCents: 0, label: null, error: null };
+  const now = new Date();
+  const settings = await getOrderingSettings(sql, site.orgId);
+  const promotions = await promotionsForOrder(sql, site.orgId, null, now);
+  const k: OrderKind = kind === "catering" ? "catering" : "pickup";
+  const priced = priceCart(site.content, settings, k, Array.isArray(cart) ? cart.slice(0, 40) : [], 0, { code: String(code ?? "").slice(0, 40), promotions, now });
+  if (!priced.ok) return { discountCents: 0, label: null, error: priced.error };
+  return { discountCents: priced.discountCents, label: priced.promotion ? (priced.promotion.code ?? priced.promotion.name) : null, error: null };
 }
 
 /* ------------------------------------------------------------- staff --- */

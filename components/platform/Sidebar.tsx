@@ -28,6 +28,9 @@ const GROUPS: { name: string | null; items: { seg: string; label: string; icon: 
     { seg: "reviews", label: "Reviews", icon: "M12 4l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 16.4 7.2 18.9l.9-5.4L4.2 9.7l5.4-.8z" },
   ] },
   { name: "Marketing", items: [
+    { seg: "campaigns", label: "Campaigns", icon: "M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1zM15 9a3 3 0 0 1 0 6M18 6a7 7 0 0 1 0 12" },
+    { seg: "segments", label: "Segments", icon: "M12 3a9 9 0 1 0 9 9h-9zM15 3.5A9 9 0 0 1 20.5 9H15z" },
+    { seg: "promotions", label: "Promotions", icon: "M3 12V4h8l10 10-8 8zM7.5 7.5h.01" },
     { seg: "messages", label: "Messages", icon: "M4 5h16v11H8l-4 4z" },
     { seg: "reporting", label: "Reporting", icon: "M4 20V10M10 20V4M16 20v-7M22 20H2" },
   ] },

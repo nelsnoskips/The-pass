@@ -115,7 +115,9 @@ const lapsedGuests = defineTool<{ min_visits: number; lapsed_days: number }>({
   },
 });
 
-export function sendGuestSms(sender: SmsSender = sendSms): ToolDef {
+/** campaignId: set when a Marketing campaign sends through this tool, so
+ *  its results can be read back from guest_messages. */
+export function sendGuestSms(sender: SmsSender = sendSms, campaignId: string | null = null): ToolDef {
   return defineTool<{ guest_ids: string[]; message: string; rationale: string }>({
     name: "send_guest_sms",
     description:
@@ -152,7 +154,7 @@ export function sendGuestSms(sender: SmsSender = sendSms): ToolDef {
           return { ok: false, reason: `The owner allows one text campaign every ${gap} day${gap === 1 ? "" : "s"}; the last was proposed ${last.created_at.toISOString().slice(0, 10)}.` };
         }
       }
-      if ((await textable(ctx, ids)).length === 0) {
+      if ((await textable(ctx, ids, Number((await agentGoals(ctx)).min_days_since_visit))).length === 0) {
         return { ok: false, reason: "None of these guests can be texted: no marketing consent on record, opted out, or already texted this week." };
       }
       if (phase === "execute") {
@@ -167,29 +169,34 @@ export function sendGuestSms(sender: SmsSender = sendSms): ToolDef {
       const { sql, tenant } = ctx;
       // Consent is read again at the moment of sending, not trusted from
       // when the list was drawn up.
-      const recipients = await textable(ctx, input.guest_ids);
+      const recipients = await textable(ctx, input.guest_ids, Number((await agentGoals(ctx)).min_days_since_visit));
       const body = withOptOut(input.message);
       const tally = { sent: 0, dry_run: 0, failed: 0, skipped: input.guest_ids.length - recipients.length };
       for (const g of recipients) {
         const r = await sender(g.phone, body);
         tally[r.status]++;
         await sql`
-          insert into guest_messages (org_id, guest_id, kind, body, status, provider_id, error, sent_by)
+          insert into guest_messages (org_id, guest_id, kind, body, status, provider_id, error, sent_by, campaign_id)
           values (${tenant.orgId}, ${g.id}, 'marketing', ${body}, ${r.status},
-                  ${r.status === "sent" ? r.providerId : null}, ${r.status === "failed" ? r.error : null}, ${tenant.actor})`;
+                  ${r.status === "sent" ? r.providerId : null}, ${r.status === "failed" ? r.error : null}, ${tenant.actor}, ${campaignId})`;
       }
-      await log(sql, tenant.orgId, tenant.actor, "guests.sms_marketing", "guest_messages", null, { ...tally, body });
+      await log(sql, tenant.orgId, tenant.actor, "guests.sms_marketing", "guest_messages", null, { ...tally, body, ...(campaignId ? { campaignId } : {}) });
       return tally;
     },
   });
 }
 
-/** Of these guests, the ones who may receive a marketing text right now. */
-async function textable(ctx: AgentContext, ids: string[]): Promise<{ id: string; phone: string }[]> {
+/**
+ * Of these guests, the ones who may receive a marketing text right now:
+ * consent, not opted out, a real mobile, nothing promotional this week.
+ * `minDaysSinceVisit` is the Reservations Agent's own goal (don't text
+ * someone who was just in); an owner's campaign doesn't apply it.
+ */
+export async function textable(ctx: AgentContext, ids: string[], minDaysSinceVisit = 0): Promise<{ id: string; phone: string }[]> {
   const uuids = ids.filter((id) => /^[0-9a-f-]{36}$/i.test(id));
   if (uuids.length === 0) return [];
   const recent = new Date(ctx.now.getTime() - MARKETING_GAP_DAYS * 86_400_000);
-  const minDays = Number((await agentGoals(ctx)).min_days_since_visit);
+  const minDays = Number.isFinite(minDaysSinceVisit) && minDaysSinceVisit > 0 ? minDaysSinceVisit : 0;
   const visitedBefore = new Date(ctx.now.getTime() - minDays * 86_400_000);
   return ctx.sql<{ id: string; phone: string }[]>`
     select g.id, g.phone from guests g

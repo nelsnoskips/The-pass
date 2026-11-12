@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import type { Sql } from "postgres";
 import { normalizePhone } from "../guests/phone";
+import { choosePromotion, promotionsForOrder, type PromoChoice } from "../marketing/promotions";
 import { sendSms, type SmsSender } from "../messaging/sms";
 import { assertCan, type Tenant } from "../platform/tenant";
 import { log } from "../reservations/repo";
@@ -82,7 +83,10 @@ export interface CartLine { itemId: string; qty: number; note?: string }
 export interface PricedLine { itemId: string; name: string; qty: number; unitCents: number; lineCents: number; note: string }
 
 export type Priced =
-  | { ok: true; lines: PricedLine[]; subtotalCents: number; taxCents: number; tipCents: number; totalCents: number }
+  | {
+      ok: true; lines: PricedLine[]; subtotalCents: number; discountCents: number; taxCents: number; tipCents: number; totalCents: number;
+      promotion: { id: string; name: string; code: string | null } | null;
+    }
   | { ok: false; error: string };
 
 /** Every item that can be ordered: on the menu, priced, not sold out. */
@@ -95,7 +99,14 @@ export function orderableItems(content: SiteContent, soldOut: string[] = []) {
   return out;
 }
 
-export function priceCart(content: SiteContent, settings: OrderingSettings, kind: OrderKind, cart: CartLine[], tipCents = 0): Priced {
+/**
+ * total = subtotal − discount + tax on (subtotal − discount) + tip.
+ * The discount (lib/marketing/promotions) never exceeds the subtotal;
+ * the tip limit is measured against the subtotal before discount.
+ */
+export function priceCart(
+  content: SiteContent, settings: OrderingSettings, kind: OrderKind, cart: CartLine[], tipCents = 0, promo: PromoChoice | null = null,
+): Priced {
   const items = orderableItems(content, settings.soldOut);
   if (!Array.isArray(cart) || cart.length === 0) return { ok: false, error: "Your order is empty." };
   if (cart.length > LIMITS.lines) return { ok: false, error: "That's a lot of lines — please call us for an order this size." };
@@ -113,11 +124,17 @@ export function priceCart(content: SiteContent, settings: OrderingSettings, kind
   if (kind === "catering" && subtotalCents < settings.cateringMinCents) {
     return { ok: false, error: `Catering orders start at $${(settings.cateringMinCents / 100).toFixed(0)}.` };
   }
+  const applied = promo ? choosePromotion(promo, lines, subtotalCents) : { ok: true as const, discountCents: 0, promotion: null };
+  if (!applied.ok) return applied;
+  const discountCents = Math.min(applied.discountCents, subtotalCents);
   // Round half up, per order: what a register does.
-  const taxCents = Math.round((subtotalCents * settings.taxBps) / 10_000);
+  const taxCents = Math.round(((subtotalCents - discountCents) * settings.taxBps) / 10_000);
   const tip = Math.max(0, Math.round(Number(tipCents) || 0));
   if (tip > subtotalCents * LIMITS.tipShare) return { ok: false, error: "That tip looks like a typo. Please check it." };
-  return { ok: true, lines, subtotalCents, taxCents, tipCents: tip, totalCents: subtotalCents + taxCents + tip };
+  return {
+    ok: true, lines, subtotalCents, discountCents, taxCents, tipCents: tip,
+    totalCents: subtotalCents - discountCents + taxCents + tip, promotion: applied.promotion,
+  };
 }
 
 /* -------------------------------------------------------------- times -- */
@@ -181,6 +198,8 @@ export interface PlaceInput {
   notes?: string;
   /** Online payment will follow; the order waits for it. */
   payOnline: boolean;
+  /** A promo code the guest typed. Automatic promotions apply without one. */
+  promoCode?: string;
   now?: Date;
 }
 
@@ -202,7 +221,9 @@ export async function placeOrder(sql: Sql, input: PlaceInput): Promise<PlaceResu
   const headcount = input.kind === "catering" ? Number(input.headcount) : null;
   if (input.kind === "catering" && (!Number.isInteger(headcount) || headcount! < 1 || headcount! > 2000)) return { ok: false, error: "How many people is it for?" };
 
-  const priced = priceCart(input.content, settings, input.kind, input.cart, input.tipCents);
+  const promotions = await promotionsForOrder(sql, input.orgId, phone, now);
+  const promo = { code: input.promoCode ?? null, promotions, now };
+  const priced = priceCart(input.content, settings, input.kind, input.cart, input.tipCents, promo);
   if (!priced.ok) return priced;
   const times = readyTimes(await venuePeriods(sql, input.orgId, input.venueId), input.timezone, now, settings, input.kind);
   const slot = times.find((t) => t.date === input.date && t.time === input.time);
@@ -218,17 +239,28 @@ export async function placeOrder(sql: Sql, input: PlaceInput): Promise<PlaceResu
     // Order numbers: per restaurant, readable, serialized by the lock.
     await tx`select pg_advisory_xact_lock(hashtext(${`orders:${input.orgId}`}))`;
     const [{ n }] = await tx<{ n: number }[]>`select coalesce(max(number), 1000)::int + 1 as n from orders where org_id = ${input.orgId}`;
+    // Under the same lock, count the promotion's uses again: two guests
+    // racing for the last use can't both have it.
+    if (priced.promotion) {
+      const fresh = await promotionsForOrder(tx as unknown as Sql, input.orgId, phone, now);
+      const again = priceCart(input.content, settings, input.kind, input.cart, input.tipCents, { ...promo, promotions: fresh });
+      if (!again.ok || again.promotion?.id !== priced.promotion.id || again.totalCents !== priced.totalCents) {
+        return { ok: false as const, error: "That promotion was just used up. Please review your order." };
+      }
+    }
     const [o] = await tx<{ id: string }[]>`
       insert into orders (org_id, venue_id, guest_id, number, kind, status, payment, name, phone, email, ready_at, headcount, notes,
-                          items, subtotal_cents, tax_cents, tip_cents, total_cents, manage_token)
+                          items, subtotal_cents, tax_cents, tip_cents, total_cents, manage_token, discount_cents, promotion_id)
       values (${input.orgId}, ${input.venueId}, ${g.id}, ${n}, ${input.kind},
               ${input.payOnline ? "awaiting_payment" : "placed"}, ${input.payOnline ? "pending" : "at_pickup"},
               ${name}, ${phone}, ${email}, ${slot.at}, ${headcount}, ${String(input.notes ?? "").trim().slice(0, LIMITS.notes)},
-              ${tx.json(priced.lines as never)}, ${priced.subtotalCents}, ${priced.taxCents}, ${priced.tipCents}, ${priced.totalCents}, ${token})
+              ${tx.json(priced.lines as never)}, ${priced.subtotalCents}, ${priced.taxCents}, ${priced.tipCents}, ${priced.totalCents}, ${token},
+              ${priced.discountCents}, ${priced.promotion?.id ?? null})
       returning id`;
     await tx`insert into change_log (org_id, actor, action, entity, entity_id, detail)
              values (${input.orgId}, 'guest', 'order.placed', 'order', ${o.id},
-                     ${tx.json({ number: n, kind: input.kind, total_cents: priced.totalCents, pay: input.payOnline ? "online" : "at_pickup" })})`;
+                     ${tx.json({ number: n, kind: input.kind, total_cents: priced.totalCents, pay: input.payOnline ? "online" : "at_pickup",
+                       ...(priced.promotion ? { promotion: priced.promotion.name, discount_cents: priced.discountCents } : {}) })})`;
     return { ok: true as const, id: o.id, number: n, token, totalCents: priced.totalCents, readyAt: slot.at };
   });
 }
@@ -277,6 +309,7 @@ export interface OrderRow {
   id: string; number: number; kind: OrderKind; status: OrderStatus; payment: string;
   name: string; phone: string; readyAt: Date; headcount: number | null; notes: string;
   items: PricedLine[]; totalCents: number; subtotalCents: number; taxCents: number; tipCents: number; createdAt: Date;
+  discountCents: number;
 }
 
 const toRow = (r: Record<string, unknown>): OrderRow => ({
@@ -284,7 +317,7 @@ const toRow = (r: Record<string, unknown>): OrderRow => ({
   payment: r.payment as string, name: r.name as string, phone: r.phone as string, readyAt: r.ready_at as Date,
   headcount: (r.headcount as number | null) ?? null, notes: r.notes as string, items: r.items as PricedLine[],
   totalCents: r.total_cents as number, subtotalCents: r.subtotal_cents as number, taxCents: r.tax_cents as number,
-  tipCents: r.tip_cents as number, createdAt: r.created_at as Date,
+  tipCents: r.tip_cents as number, createdAt: r.created_at as Date, discountCents: (r.discount_cents as number | undefined) ?? 0,
 });
 
 /** The kitchen's board: anything open, plus today's finished ones. */

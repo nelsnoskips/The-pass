@@ -1,7 +1,7 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
-import { placeOrderAction } from "@/lib/ordering/actions";
+import { useActionState, useEffect, useMemo, useState } from "react";
+import { placeOrderAction, previewPromoAction } from "@/lib/ordering/actions";
 
 export interface OrderMenuItem { id: string; name: string; description: string; priceCents: number; menu: string; section: string; tags: string[] }
 export interface ReadyOption { value: string; day: string; label: string }
@@ -15,7 +15,7 @@ const TIPS = [0, 0.1, 0.15, 0.2];
  * published menu, and that is what's charged.
  */
 export function OrderBuilder({
-  slug, items, kinds, times, taxBps, cateringMinCents, payOnline,
+  slug, items, kinds, times, taxBps, cateringMinCents, payOnline, hasAutoPromos = false,
 }: {
   slug: string;
   items: OrderMenuItem[];
@@ -24,6 +24,8 @@ export function OrderBuilder({
   taxBps: number;
   cateringMinCents: number;
   payOnline: boolean;
+  /** An automatic promotion is running: preview it as the cart changes. */
+  hasAutoPromos?: boolean;
 }) {
   const [kind, setKind] = useState<"pickup" | "catering">(kinds[0]);
   const [qty, setQty] = useState<Record<string, number>>({});
@@ -34,9 +36,21 @@ export function OrderBuilder({
   const byId = useMemo(() => new Map(items.map((i) => [i.id, i])), [items]);
   const cart = Object.entries(qty).filter(([, n]) => n > 0).map(([itemId, n]) => ({ itemId, qty: n }));
   const subtotal = cart.reduce((s, l) => s + (byId.get(l.itemId)?.priceCents ?? 0) * l.qty, 0);
-  const tax = Math.round((subtotal * taxBps) / 10_000);
+  // Promo: the typed code, the applied one, and the server's preview.
+  const [code, setCode] = useState("");
+  const [applied, setApplied] = useState("");
+  const [promo, setPromo] = useState<{ discountCents: number; label: string | null; error: string | null }>({ discountCents: 0, label: null, error: null });
+  const cartKey = JSON.stringify(cart);
+  useEffect(() => {
+    if (cartKey === "[]" || (!applied && !hasAutoPromos)) return;
+    let live = true;
+    const t = setTimeout(() => { previewPromoAction(slug, kind, JSON.parse(cartKey), applied).then((r) => { if (live) setPromo(r); }); }, 300);
+    return () => { live = false; clearTimeout(t); };
+  }, [cartKey, kind, applied, slug, hasAutoPromos]);
+  const discount = cart.length && !promo.error && (applied || hasAutoPromos) ? Math.min(promo.discountCents, subtotal) : 0;
+  const tax = Math.round(((subtotal - discount) * taxBps) / 10_000);
   const tip = kind === "pickup" ? Math.round(subtotal * tipShare) : 0;
-  const total = subtotal + tax + tip;
+  const total = subtotal - discount + tax + tip;
   const max = kind === "catering" ? 500 : 50;
   const change = (id: string, d: number) => setQty((q) => ({ ...q, [id]: Math.max(0, Math.min(max, (q[id] ?? 0) + d)) }));
   const short = kind === "catering" && subtotal < cateringMinCents;
@@ -52,6 +66,7 @@ export function OrderBuilder({
       <input type="hidden" name="kind" value={kind} />
       <input type="hidden" name="cart" value={JSON.stringify(cart)} />
       <input type="hidden" name="tip" value={(tip / 100).toFixed(2)} />
+      <input type="hidden" name="promo" value={applied} />
       <div className="site-hp" aria-hidden><label>Website<input name="website" tabIndex={-1} autoComplete="off" /></label></div>
 
       <div className="site-order-menu">
@@ -88,12 +103,23 @@ export function OrderBuilder({
           <dl className="site-summary" style={{ margin: 0 }}>
             {cart.map((l) => <div key={l.itemId}><dt>{l.qty} × {byId.get(l.itemId)?.name}</dt><dd>{money((byId.get(l.itemId)?.priceCents ?? 0) * l.qty)}</dd></div>)}
             <div><dt>Subtotal</dt><dd>{money(subtotal)}</dd></div>
+            {discount > 0 && <div><dt>Discount{promo.label ? ` (${promo.label})` : ""}</dt><dd>−{money(discount)}</dd></div>}
             {taxBps > 0 && <div><dt>Tax</dt><dd>{money(tax)}</dd></div>}
             {tip > 0 && <div><dt>Tip</dt><dd>{money(tip)}</dd></div>}
             <div><dt style={{ color: "var(--ink)", fontWeight: 600 }}>Total</dt><dd>{money(total)}</dd></div>
           </dl>
         )}
         {short && <p className="site-note" style={{ margin: 0 }}>Catering orders start at {money(cateringMinCents)}.</p>}
+
+        <div className="site-field">
+          <label htmlFor="o-promo">Promo code (optional)</label>
+          <div style={{ display: "flex", gap: 8 }}>
+            <input id="o-promo" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} autoComplete="off" maxLength={24}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); setApplied(code.trim()); } }} />
+            <button type="button" className="site-btn" onClick={() => setApplied(code.trim())} disabled={!code.trim() && !applied}>{applied && !code.trim() ? "Remove" : "Apply"}</button>
+          </div>
+          {applied && promo.error && <p className="site-error" role="alert" style={{ margin: 0 }}>{promo.error}</p>}
+        </div>
 
         {kind === "pickup" && payOnline && (
           <div>

@@ -49,6 +49,7 @@ export default async function OrderStatus({ params, searchParams }: { params: Pr
         <dl className="site-summary" style={{ margin: 0 }}>
           {o.items.map((l, i) => <div key={i}><dt>{l.qty} × {l.name}{l.note ? ` — ${l.note}` : ""}</dt><dd>{money(l.lineCents)}</dd></div>)}
           <div><dt>Subtotal</dt><dd>{money(o.subtotalCents)}</dd></div>
+          {o.discountCents > 0 && <div><dt>Discount</dt><dd>−{money(o.discountCents)}</dd></div>}
           {o.taxCents > 0 && <div><dt>Tax</dt><dd>{money(o.taxCents)}</dd></div>}
           {o.tipCents > 0 && <div><dt>Tip</dt><dd>{money(o.tipCents)}</dd></div>}
           <div><dt>Total</dt><dd>{money(o.totalCents)} · {o.payment === "paid" ? "paid" : o.payment === "refunded" ? "refunded" : o.payment === "at_pickup" ? "pay at pickup" : "unpaid"}</dd></div>

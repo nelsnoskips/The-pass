@@ -549,3 +549,13 @@
 .pf-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .pf-progress { height: 8px; border-radius: 999px; background: oklch(1 0 0 / 0.06); overflow: hidden; }
 .pf-progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--brand), var(--brand-2)); }
+/* ------------------------------------------- marketing: segments, campaigns, promotions --- */
+.pf-mk-reach { display: flex; gap: 12px; align-items: baseline; padding: 12px 14px; border-radius: var(--radius); background: var(--info-soft); border: 1px solid oklch(0.72 0.075 78 / 0.25); font-size: 13px; color: var(--muted); }
+.pf-mk-reach b { font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1; }
+.pf-mk-over { color: var(--stop); }
+.pf-mk-confirm { box-shadow: inset 2px 0 0 var(--brand); }
+.pf-mk-big { margin: 0; font-size: 17px; }
+.pf-mk-big b { font-size: 22px; color: var(--brand); }
+.pf-mk-list { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13.5px; color: var(--muted); }
+.pf-mk-preview { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.5; padding: 14px 16px; border-radius: var(--radius); background: var(--bg-2); border: 1px solid var(--rule); }
+.pf-mk-preview.sms { max-width: 360px; border-radius: 16px 16px 16px 4px; background: var(--panel-2); }
