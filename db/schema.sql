@@ -875,3 +875,34 @@ create table if not exists chat_changes (
   decided_at   timestamptz
 );
 create index if not exists chat_changes_thread_idx on chat_changes(thread_id, created_at);
+
+-- agents: settings; chat actions ------------------------------------------
+
+-- What a restaurant has told each agent: on or off, notes in its own
+-- words (voice, things never to say), and limits. Limits are read back
+-- through lib/agent-runtime/settings.ts, which clamps them to the code's
+-- hard limits: an owner can make an agent stricter, never looser.
+create table if not exists agent_settings (
+  org_id       uuid not null references orgs(id) on delete cascade,
+  agent_id     text not null,
+  enabled      boolean not null default true,
+  instructions text not null default '' check (char_length(instructions) <= 2000),
+  goals        jsonb not null default '{}'::jsonb,
+  updated_by   text,
+  updated_at   timestamptz not null default now(),
+  primary key (org_id, agent_id)
+);
+
+-- An agent's own entries in the change log, for its activity page.
+create index if not exists change_log_actor_idx on change_log(org_id, actor, created_at desc);
+
+-- Chat changes are either a lever (a setting, before → after) or an
+-- action (make a booking, cancel one, move an order, add to the team),
+-- stored with its exact input so Apply runs precisely what was shown.
+alter table chat_changes add column if not exists kind text not null default 'lever';
+alter table chat_changes add column if not exists action text;
+alter table chat_changes add column if not exists action_input jsonb;
+alter table chat_changes add column if not exists result jsonb;
+do $$ begin
+  alter table chat_changes add constraint chat_changes_kind_check check (kind in ('lever', 'action'));
+exception when duplicate_object then null; end $$;

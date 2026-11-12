@@ -488,3 +488,22 @@
   .pf-chat-list { display: none; }
 }
 .pf-chat-list > div { min-width: 0; }
+
+/* ------------------------------------- agents: settings; chat actions --- */
+.pf-agent-card h3 a.pf-agent-link { color: inherit; text-decoration: none; }
+.pf-agent-card h3 a.pf-agent-link:hover { color: var(--brand); }
+.pf-agent-card .state.off { color: var(--stop); }
+.pf-agent-card .state.off::before { background: var(--stop); }
+.pf-agent-card .more { margin: 10px 0 0; font-size: 12.5px; }
+.pf-agent-card .more a { color: var(--brand); text-decoration: none; }
+.pf-agent-card .more a:hover { text-decoration: underline; }
+.pf-agent-switch { display: flex; align-items: center; gap: 10px; }
+.pf-agent-log { list-style: none; margin: 0; padding: 4px 16px 14px; display: grid; gap: 12px; }
+.pf-agent-log li { display: grid; gap: 3px; padding: 8px 0 0 12px; border-left: 2px solid var(--rule-strong); }
+.pf-agent-log .t { font-size: 13.5px; }
+.pf-agent-log .b { font-size: 13px; color: var(--muted); white-space: pre-wrap; }
+.pf-agent-log .b.err { color: var(--stop); }
+.pf-agent-log .s { font-size: 11.5px; color: var(--faint); }
+.pf-change.action .before:empty { display: none; }
+.pf-change.action .before:empty + .arrow { display: none; }
+.pf-change .note { margin: 0; font-size: 12px; color: var(--faint); }

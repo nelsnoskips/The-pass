@@ -1,5 +1,6 @@
 import { replyToReview } from "../../integrations/google";
 import type { AgentSpec } from "../runner";
+import { agentGoals } from "../settings";
 import { defineTool } from "../tool";
 
 /**
@@ -21,15 +22,19 @@ const unanswered = defineTool<{ limit: number }>({
   requires: "view",
   async run(ctx, { limit }) {
     const [org] = await ctx.sql<{ name: string }[]>`select name from orgs where id = ${ctx.tenant.orgId}`;
+    const goals = await agentGoals(ctx);
+    const minStars = Number(goals.min_stars);
     // Reviews already waiting in the approval queue are left out, so the
-    // agent never drafts two replies to one review.
+    // agent never drafts two replies to one review. So are reviews below
+    // the owner's lowest rating: those are theirs to answer.
     const reviews = await ctx.sql<{ id: string; author: string | null; rating: number | null; body: string | null; reviewed_at: Date | null }[]>`
       select r.id, r.author, r.rating, r.body, r.reviewed_at from reviews r
       where r.org_id = ${ctx.tenant.orgId} and r.reply is null
+        and (${minStars} <= 1 or r.rating >= ${minStars})
         and not exists (select 1 from agent_proposals p where p.org_id = r.org_id and p.status = 'pending'
                         and p.tool = 'post_review_reply' and p.input->>'review_id' = r.id::text)
       order by r.reviewed_at desc nulls last limit ${limit}`;
-    return { restaurant: org?.name, reviews };
+    return { restaurant: org?.name, reviews, ...(goals.sign_off ? { signOff: goals.sign_off } : {}) };
   },
 });
 
@@ -50,14 +55,23 @@ const postReply = defineTool<{ review_id: string; reply: string; rationale: stri
   tier: "approve",
   requires: "manage_venue",
   title: (i) => `Reply to a review: “${i.reply.slice(0, 70)}${i.reply.length > 70 ? "…" : ""}”`,
-  async check(ctx, input) {
+  async check(ctx, input, phase) {
     const reply = String(input.reply ?? "").trim();
     if (reply.length < 10 || reply.length > 1500) return { ok: false, reason: "Keep the reply between 10 and 1,500 characters." };
     if (!/^[0-9a-f-]{36}$/i.test(String(input.review_id))) return { ok: false, reason: "Unknown review id." };
-    const [r] = await ctx.sql<{ reply: string | null }[]>`
-      select reply from reviews where id = ${String(input.review_id)} and org_id = ${ctx.tenant.orgId}`;
+    const [r] = await ctx.sql<{ reply: string | null; rating: number | null }[]>`
+      select reply, rating from reviews where id = ${String(input.review_id)} and org_id = ${ctx.tenant.orgId}`;
     if (!r) return { ok: false, reason: "Unknown review id." };
     if (r.reply) return { ok: false, reason: "That review already has a reply." };
+    const goals = await agentGoals(ctx);
+    const minStars = Number(goals.min_stars);
+    if (phase === "propose" && minStars > 1 && (r.rating === null || r.rating < minStars)) {
+      return { ok: false, reason: `The owner answers reviews under ${minStars} stars personally.` };
+    }
+    const signOff = String(goals.sign_off ?? "").trim();
+    if (phase === "propose" && signOff && !reply.endsWith(signOff)) {
+      return { ok: false, reason: `End the reply with the owner's sign-off, exactly: ${signOff}` };
+    }
     return { ok: true };
   },
   async run(ctx, input) {
