@@ -5,6 +5,7 @@ import { formatLever, LEVERS, lever, menuNames, parseLeverValue, PILLARS, rawOf,
 import { ordersBoard } from "../ordering";
 import { assertCan, can, type Tenant } from "../platform/tenant";
 import { localDate, zonedToUtc } from "../reservations/time";
+import { ACTIONS, applyAction, proposeAction, type ActionArea, type ApplyOptions } from "./chat-actions";
 
 /**
  * The assistant: a restaurant talks to it, it reads and changes the
@@ -20,11 +21,14 @@ import { localDate, zonedToUtc } from "../reservations/time";
  */
 
 export interface ChangeRow {
-  id: string; pillar: Pillar; lever: string; label: string; value: string;
+  id: string; pillar: Pillar | ActionArea; lever: string; label: string; value: string;
   before: LeverValue; after: LeverValue; risk: "auto" | "confirm";
   status: "applied" | "pending" | "undone" | "dismissed" | "failed";
   reason: string; error: string | null; requested_by: string; decided_by: string | null;
   created_at: Date; decided_at: Date | null; message_id: string | null;
+  /** 'lever': a setting, before → after. 'action': something done once
+   *  (lib/assistant/chat-actions.ts); before/after are descriptions. */
+  kind: "lever" | "action"; action: string | null; action_input: Record<string, unknown> | null; result: Record<string, unknown> | null;
 }
 
 type Ctx = { sql: Sql; tenant: Tenant; threadId: string; now: Date; changes: string[] };
@@ -116,6 +120,17 @@ const TOOLS: Tool[] = [
       return r;
     },
   },
+  // Actions: each only writes a card; a person presses Apply.
+  ...ACTIONS.map((a): Tool => ({
+    name: a.name,
+    description: `${a.description} Only call this when the person asked for it.`,
+    input_schema: a.input_schema,
+    async run(ctx, input) {
+      const r = await proposeAction(ctx.sql, ctx.tenant, ctx.threadId, a.name, input, "", ctx.now);
+      if ("id" in r && r.id) ctx.changes.push(r.id);
+      return r;
+    },
+  })),
 ];
 
 /**
@@ -153,12 +168,13 @@ export async function proposeChange(sql: Sql, t: Tenant, threadId: string, pilla
 }
 
 /** A person presses Apply on a pending change. Re-validated against now. */
-export async function applyChange(sql: Sql, t: Tenant, changeId: string, now = new Date()): Promise<{ ok: boolean; error?: string }> {
+export async function applyChange(sql: Sql, t: Tenant, changeId: string, now = new Date(), opts: ApplyOptions = {}): Promise<{ ok: boolean; error?: string }> {
   const [c] = await sql<ChangeRow[]>`select * from chat_changes where id = ${changeId} and org_id = ${t.orgId} and status = 'pending'`;
   if (!c) return { ok: false, error: "That change was already decided." };
+  if (c.kind === "action") return applyAction(sql, t, c.id, { now, ...opts });
   const def = lever(c.pillar, c.lever)!;
   // If the setting moved since the card was made, the card is stale.
-  const current = (await readLevers(sql, t, c.pillar)).find((l) => l.def.key === c.lever);
+  const current = (await readLevers(sql, t, c.pillar as Pillar)).find((l) => l.def.key === c.lever);
   if (current && def.kind !== "minutes_from_now" && JSON.stringify(current.value) !== JSON.stringify(c.before)) {
     await sql`update chat_changes set status = 'failed', error = 'The setting changed since this was proposed.', decided_by = ${t.actor}, decided_at = now() where id = ${c.id}`;
     return { ok: false, error: `${def.label} changed since this was proposed. Ask again.` };
@@ -184,6 +200,7 @@ export async function dismissChange(sql: Sql, t: Tenant, changeId: string): Prom
 export async function undoChange(sql: Sql, t: Tenant, changeId: string, now = new Date()): Promise<{ ok: boolean; error?: string }> {
   const [c] = await sql<ChangeRow[]>`select * from chat_changes where id = ${changeId} and org_id = ${t.orgId} and status = 'applied'`;
   if (!c) return { ok: false, error: "Only an applied change can be undone." };
+  if (c.kind === "action") return { ok: false, error: "This can't be undone here. To reverse it, ask in the chat (for example, cancel the booking)." };
   const def = lever(c.pillar, c.lever)!;
   const r = await setLever(sql, t, c.pillar, c.lever, rawOf(def, c.before), "assistant (undo)", now);
   if (!r.ok && !/already/.test(r.error)) return { ok: false, error: r.error };
@@ -193,7 +210,9 @@ export async function undoChange(sql: Sql, t: Tenant, changeId: string, now = ne
 
 const SYSTEM = `You are the assistant inside The Pass, the platform a restaurant uses to run its reservations, host stand, online ordering, website, guest list, loyalty and marketing. You are talking with a member of the restaurant's team.
 
-Answer questions from the restaurant's real data using your tools; never guess numbers. When asked to change something, find the setting with get_settings and change it with change_setting. Some settings apply at once (the person can undo them); others are shown to the person as a change to approve with one click — say which happened. Only change what was asked. If something can't be done with your tools, say so plainly and say where in The Pass it's done.
+Answer questions from the restaurant's real data using your tools; never guess numbers. When asked to change something, find the setting with get_settings and change it with change_setting. Some settings apply at once (the person can undo them); others are shown to the person as a change to approve with one click — say which happened. Only change what was asked.
+
+You can also take a booking (create_booking), cancel one (cancel_booking), move an online order along (update_order_status) and add someone to the team (add_team_member). Each of these only puts a card in front of the person with exactly what will happen; nothing happens until they press Apply, so say that it's waiting for them. Resolve dates like "Friday" with get_today first. If a tool says a time isn't free or a booking is ambiguous, tell the person the options; don't pick for them. If something can't be done with your tools, say so plainly and say where in The Pass it's done.
 
 Money in tool results is integer cents; write it in dollars. Keep replies short and specific: a sentence or two, or a short list. No filler.`;
 

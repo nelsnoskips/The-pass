@@ -236,7 +236,7 @@ export async function placeOrder(sql: Sql, input: PlaceInput): Promise<PlaceResu
 /* ------------------------------------------------------------- status -- */
 
 /** Where an order can go from each state. Anything else is refused. */
-const NEXT: Record<OrderStatus, OrderStatus[]> = {
+export const NEXT: Record<OrderStatus, OrderStatus[]> = {
   awaiting_payment: ["cancelled"],
   placed: ["accepted", "cancelled"],
   accepted: ["ready", "cancelled"],
