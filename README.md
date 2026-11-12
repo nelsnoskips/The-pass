@@ -47,6 +47,17 @@ npm run build      # production build
 | `/settings` | Brand settings, demo role switching, notification preferences |
 | `/api/reports/campaign-performance` | Scoped reporting endpoint |
 
+The restaurant platform (one agent, The Pass, with stations):
+
+| Route | Purpose |
+| --- | --- |
+| `/platform` | Platform homepage: "One agent runs your front of house." |
+| `/r/[org]` | Home: the morning pass, today vs last week, approvals, stations |
+| `/r/[org]/chat` | Ask The Pass: one conversation across every station |
+| `/r/[org]/agents`, `/r/[org]/agents/[id]` | Stations: the approval queue, each station's on/off, instructions, limits and activity (`/stations` redirects here) |
+| `/r/[org]/settings/morning-pass` | When and to whom the morning pass is sent |
+| `/api/jobs/brief` | Hourly job: sends due morning passes (bearer `AGENT_CRON_SECRET`) |
+
 Concept rooms (the Test Kitchen — demo restaurant sites, not part of the app):
 
 | Route | Concept |

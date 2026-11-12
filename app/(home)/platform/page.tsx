@@ -2,16 +2,17 @@ import Link from "next/link";
 import { PassMark } from "@/components/marketing/PassMark";
 
 /**
- * The platform's homepage. Every product and agent named here exists in
- * the codebase, or is marked as coming; the screens in the hero are the
- * real interface, drawn in HTML, not a mock-up of something else.
+ * The platform's homepage. The Pass is one agent; its stations and the
+ * products it runs are named here only if they exist in the codebase, or
+ * are marked as coming. The screens in the hero are the real interface,
+ * drawn in HTML. Positioning: docs/company/08-positioning-the-one-agent.md.
  */
 
 const GROUPS: { name: string; items: { n: string; title: string; does: string; live: boolean }[] }[] = [
   {
     name: "Storefront",
     items: [
-      { n: "01", title: "Website", does: "A fast, beautiful site on your own design: menus, hours, story. Edit it yourself, or just tell the Website Agent.", live: true },
+      { n: "01", title: "Website", does: "A fast, beautiful site on your own design: menus, hours, story. Edit it yourself, or just tell The Pass.", live: true },
       { n: "02", title: "Reservations", does: "Booking built into your site. No account, no app, no per-cover fee. Guests move or cancel from one link.", live: true },
       { n: "03", title: "Host stand", does: "Tonight's book on a tablet: seat, no-show, walk-ins, phone bookings, guest history at a glance.", live: true },
       { n: "04", title: "Deposits", does: "Hold the tables that matter. Refunds follow your policy automatically.", live: true },
@@ -28,7 +29,7 @@ const GROUPS: { name: string; items: { n: string; title: string; does: string; l
       { n: "10", title: "Ads reporting", does: "Google and Meta spend, results and cost per result, refreshed nightly, beside your real bookings.", live: true },
       { n: "11", title: "Loyalty", does: "Every few visits earns a reward, counted automatically from bookings and your point of sale.", live: true },
       { n: "12", title: "Email", does: "Campaigns to guests who asked for them, with one-click unsubscribe built in.", live: true },
-      { n: "13", title: "Mobile app & push", does: "Your own app on your guests' home screens: order, book, rewards. App-store versions and push notifications coming next.", live: true },
+      { n: "13", title: "Mobile app", does: "Your own app on your guests' home screens: order, book, rewards. App-store versions and push notifications coming next.", live: true },
     ],
   },
   {
@@ -41,20 +42,33 @@ const GROUPS: { name: string; items: { n: string; title: string; does: string; l
   },
 ];
 
-const AGENTS = [
-  { name: "Website Agent", does: "“The lamb chops are $52 now.” It drafts the change, lists exactly what changed, and waits for your Publish.", live: true },
-  { name: "Reservations Agent", does: "Spots the quiet nights ahead and drafts a text to regulars who haven’t been in. You approve before anyone hears from you.", live: true },
-  { name: "Paid Ads Agent", does: "Every week, finds spend that isn’t bringing guests and budget that should move, with the numbers behind each call. Changes go to Google only after your yes.", live: true },
-  { name: "Search Terms Agent", does: "Reads what people actually searched to find you, and blocks the searches that waste money. Never your own name, never a search that brought a guest.", live: true },
-  { name: "Reviews Agent", does: "Drafts a reply to every new Google review in your voice. You approve it, it posts.", live: true },
-  { name: "Guest Support Agent", does: "Answers questions about hours, parking and allergens by text, day and night.", live: false },
+/** The stations of the one agent, each with its approval rule. */
+const STATIONS = [
+  { name: "Reservations", does: "Spots the quiet nights ahead and drafts a text to regulars who haven’t been in, with every name and their consent.", rule: "Every text waits for your approval.", live: true },
+  { name: "Host stand", does: "Seats a walk-in at the table that won’t collide with the next booking, and puts late parties at the top.", rule: "Your host has the final say on every table.", live: true },
+  { name: "Ordering", does: "Pickup and catering from your own site, priced on the server, texted when ready. The kitchen pauses or 86s a dish in one tap.", rule: "Prices, tax and pauses are yours.", live: true },
+  { name: "Guest marketing", does: "Texts and emails to the right guests — only the ones who said yes, never more than once a week.", rule: "Nothing sends until you press Send.", live: true },
+  { name: "Reviews", does: "Drafts a reply to every new Google review in your voice.", rule: "Replies post only after you approve them.", live: true },
+  { name: "Website", does: "“The lamb chops are $52 now.” It drafts the change and lists exactly what changed.", rule: "Nothing goes live until you publish.", live: true },
+  { name: "Paid ads", does: "Every week, finds spend that isn’t bringing guests and searches that waste money, with the numbers behind each call.", rule: "Changes go to Google only after your yes.", live: true },
+  { name: "Guest support", does: "Answers questions about hours, parking and allergens by text, day and night.", rule: "", live: false },
+];
+
+/** "A Tuesday with The Pass": only the parts that are built. */
+const TUESDAY = [
+  { t: "9:00 am", d: "The morning pass arrives: last night’s covers and no-shows, today’s book against your usual Tuesday, and what’s waiting for you." },
+  { t: "9:02", d: "“Tuesday’s quiet. Text 18 regulars who haven’t been in?” The text is there word for word, with every name and when each said yes to texts. She approves." },
+  { t: "9:03", d: "“Lamb kleftiko is back tonight — put it on the website.” A draft shows exactly what changed. She publishes." },
+  { t: "6:40 pm", d: "A walk-in for four. The host stand seats them at the one table that won’t collide with the 7:30. A party twenty minutes late is flagged at the top." },
+  { t: "7:15", d: "Online orders spike. The kitchen pauses pickup for 15 minutes, and the order page tells guests why." },
+  { t: "Next morning", d: "Two reviews came in overnight; replies are drafted in her voice, waiting for her yes. The morning pass has how Tuesday finished, and everything The Pass did is in one log." },
 ];
 
 const PROMISES = [
   { t: "No per-cover fees", d: "One flat monthly price per location. A busy Saturday costs you nothing extra." },
   { t: "Month to month", d: "No annual contract. Stay because it works." },
   { t: "Your guests are yours", d: "We never market another restaurant to them. Export the whole list in one click." },
-  { t: "Nothing goes out without you", d: "Agents propose; you approve anything that spends money or messages a guest." },
+  { t: "Nothing leaves the pass without you", d: "The Pass proposes; you approve anything that spends money, goes public or messages a guest." },
   { t: "No account for your guests", d: "A name and a mobile number. No app, no password, no code that never arrives." },
   { t: "Fair to the people who show up", d: "A seated party can never be charged as a no-show. Deposits come back on time, by policy." },
 ];
@@ -66,8 +80,9 @@ export default function PlatformHome() {
         <div className="hm-wrap">
           <Link href="/platform" className="hm-logo"><PassMark size={22} />The Pass</Link>
           <nav className="hm-links" aria-label="Main">
-            <a href="#products">Products</a>
-            <a href="#agents">Agents</a>
+            <a href="#the-pass">The pass</a>
+            <a href="#stations">Stations</a>
+            <a href="#products">What it runs</a>
             <a href="#promises">Why us</a>
             <Link href="/s/santorini">Live demo</Link>
           </nav>
@@ -81,11 +96,11 @@ export default function PlatformHome() {
       <main>
         <section className="hm-hero">
           <div className="hm-wrap">
-            <span className="hm-eyebrow"><b aria-hidden />The restaurant platform, run by agents</span>
-            <h1>Your restaurant, run by agents <em>you can see.</em></h1>
+            <span className="hm-eyebrow"><b aria-hidden />One agent for the front of house</span>
+            <h1 className="hm-h1-long">One agent runs your front of house. <em>Nothing leaves the pass without you.</em></h1>
             <p className="lead">
-              Website, reservations, guest list, texts, reviews and ads — one platform, with AI agents that do the work
-              and show you every move before it happens. No per-cover fees. Your guests stay yours.
+              Bookings, the floor, online orders, texts, reviews, your website and your ads — The Pass does the work and
+              shows you every move before it reaches a guest. No per-cover fees. Your guests stay yours.
             </p>
             <div className="ctas">
               <Link href="/book" className="hm-btn primary lg">Book a demo</Link>
@@ -97,7 +112,7 @@ export default function PlatformHome() {
               <div className="hm-shot-in">
                 <div className="hm-shot-bar">
                   <span className="dots" aria-hidden><i /><i /><i /></span>
-                  <span className="tabs"><span>Overview</span><span className="on">Host stand</span><span>Guests</span><span>Website</span><span>Agents</span><span>Reviews</span></span>
+                  <span className="tabs"><span>Home</span><span className="on">Host stand</span><span>Ask The Pass</span><span>Stations</span><span>Guests</span><span>Website</span></span>
                 </div>
                 <div className="hm-shot-grid">
                   <div className="hm-card">
@@ -118,8 +133,8 @@ export default function PlatformHome() {
                   </div>
                   <div className="hm-card">
                     <h4>Waiting for you</h4>
-                    <span className="hm-pill info">Reservations Agent</span>
-                    <p style={{ margin: "10px 0 0", fontSize: 14, fontWeight: 600 }}>Tuesday is quiet. Text 18 regulars?</p>
+                    <span className="hm-pill info">The Pass · Reservations</span>
+                    <p style={{ margin: "10px 0 0", fontSize: 14, fontWeight: 600 }}>The Pass wants to text 18 regulars about Tuesday.</p>
                     <p style={{ margin: "6px 0 0", fontSize: 12.5, color: "var(--muted)", lineHeight: 1.5 }}>6 of 58 seats booked, against 41 on recent Tuesdays. These regulars haven&rsquo;t been in for 45+ days.</p>
                     <div className="hm-quote">Tuesday at Santorini: the lamb kleftiko is back and the terrace is open. We&rsquo;d love to see you. <span style={{ color: "var(--faint)" }}>Reply STOP to opt out.</span></div>
                     <div style={{ display: "flex", gap: 8 }}>
@@ -133,10 +148,65 @@ export default function PlatformHome() {
           </div>
         </section>
 
+        <section className="hm-sec" id="the-pass">
+          <div className="hm-wrap hm-pass">
+            <div>
+              <p className="hm-kicker">The pass</p>
+              <h2>Every plate stops at the pass. Now every move does too.</h2>
+            </div>
+            <div className="hm-pass-copy">
+              <p>In a kitchen, the pass is the counter between the line and the dining room. The expo calls the tickets, keeps every station in time and checks each plate before it goes out. The chef has the final word.</p>
+              <p>The Pass works the same way: one agent across every station of your front of house, and every text, change and dollar stops with you before it reaches a guest.</p>
+              <ul className="hm-station-chips" aria-label="Stations">
+                {["Reservations", "Host stand", "Ordering", "Guest marketing", "Reviews", "Website", "Ads"].map((x) => <li key={x}>{x}</li>)}
+              </ul>
+              <p className="hm-honest">The Pass doesn&rsquo;t touch your kitchen, payroll or point of sale.</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="hm-sec" id="stations">
+          <div className="hm-wrap">
+            <p className="hm-kicker">One agent, every station</p>
+            <h2>One agent does the work, and shows its work.</h2>
+            <p className="sub">Not a roster of bots to supervise. One agent with one memory of every guest, working every station — and anything that spends money, goes public or reaches a guest waits for your yes.</p>
+            <div className="hm-grid c3">
+              {STATIONS.map((a) => (
+                <div key={a.name} className={`hm-tile hm-agent hm-reveal${a.live ? "" : " hm-soon"}`}>
+                  <span className="tag">{a.live ? "✦ Working" : "Coming"}</span>
+                  <h3>{a.name}</h3>
+                  <p>{a.does}</p>
+                  {a.rule && <p className="hm-rule">{a.rule}</p>}
+                </div>
+              ))}
+            </div>
+            <div className="hm-steps">
+              {[
+                ["It watches", "Your book, your guests, your orders, your reviews and your ads, every day."],
+                ["It proposes", "One clear change, with why and the numbers."],
+                ["You approve", "Or dismiss. Money and guest messages always wait for you."],
+                ["It's recorded", "Who did what and when, for every change — a person or The Pass."],
+              ].map(([b, s]) => <div key={b} className="hm-step hm-reveal"><b>{b}</b><span>{s}</span></div>)}
+            </div>
+          </div>
+        </section>
+
+        <section className="hm-sec" id="tuesday">
+          <div className="hm-wrap">
+            <p className="hm-kicker">A Tuesday with The Pass</p>
+            <h2>A day with one agent on the front of house.</h2>
+            <ol className="hm-day">
+              {TUESDAY.map((x) => (
+                <li key={x.t} className="hm-reveal"><span className="mono">{x.t}</span><p>{x.d}</p></li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
         <section className="hm-sec" id="products">
           <div className="hm-wrap">
-            <p className="hm-kicker">One platform</p>
-            <h2>Everything a restaurant runs on, working together.</h2>
+            <p className="hm-kicker">What The Pass runs</p>
+            <h2>Everything on the guest side, from one memory of every guest.</h2>
             <p className="sub">Reservations feed the guest list. The guest list feeds your texts and loyalty. Your site, Google and your ads all read the same hours and the same menu. Change it once.</p>
             {GROUPS.map((g) => (
               <div key={g.name} className="hm-group">
@@ -154,31 +224,6 @@ export default function PlatformHome() {
           </div>
         </section>
 
-        <section className="hm-sec" id="agents">
-          <div className="hm-wrap">
-            <p className="hm-kicker">Agents</p>
-            <h2>Agents that do the work, and show their work.</h2>
-            <p className="sub">Each agent watches one part of the business and proposes what to do, with the numbers behind it. Anything that spends money or reaches a guest waits for your yes — and every action is in the log.</p>
-            <div className="hm-grid c3">
-              {AGENTS.map((a) => (
-                <div key={a.name} className={`hm-tile hm-agent hm-reveal${a.live ? "" : " hm-soon"}`}>
-                  <span className="tag">{a.live ? "✦ Working" : "Coming"}</span>
-                  <h3>{a.name}</h3>
-                  <p>{a.does}</p>
-                </div>
-              ))}
-            </div>
-            <div className="hm-steps">
-              {[
-                ["It watches", "Your book, your guests, your reviews and your ads, every day."],
-                ["It proposes", "One clear change, with why and the numbers."],
-                ["You approve", "Or dismiss. Money and guest messages always wait for you."],
-                ["It's recorded", "Who did what and when, for every change — person or agent."],
-              ].map(([b, s]) => <div key={b} className="hm-step hm-reveal"><b>{b}</b><span>{s}</span></div>)}
-            </div>
-          </div>
-        </section>
-
         <section className="hm-sec" id="promises">
           <div className="hm-wrap">
             <p className="hm-kicker">Built against what restaurants put up with</p>
@@ -193,7 +238,7 @@ export default function PlatformHome() {
 
         <section className="hm-final">
           <div className="hm-wrap">
-            <h2>Run the room. Let the agents run the rest.</h2>
+            <h2>Run the room. The Pass runs the rest, and checks with you first.</h2>
             <div className="ctas">
               <Link href="/book" className="hm-btn primary lg">Book a demo</Link>
               <Link href="/s/santorini" className="hm-btn lg">See a live site</Link>
