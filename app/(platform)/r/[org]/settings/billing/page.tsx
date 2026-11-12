@@ -109,6 +109,36 @@ export default async function Billing({ params, searchParams }: { params: Promis
             </div>
           </section>
 
+          <section className="pf-panel" aria-labelledby="bill-use-h">
+            <h2 id="bill-use-h">{usage.month.label} so far</h2>
+            <div className="pf-body">
+              <div className="pf-meter" role="group" aria-label="Texts this month">
+                <div className="pf-meter-top"><b>Texts</b><span className="mono">{n(used)} of {n(included)} included</span></div>
+                <div className="pf-meter-bar" role="progressbar" aria-valuemin={0} aria-valuemax={included} aria-valuenow={Math.min(used, included)} aria-label={`${n(used)} of ${n(included)} texts used`}>
+                  <i style={{ width: `${fill}%` }} className={used > included ? "over" : ""} />
+                </div>
+                <p className="pf-sub" style={{ margin: 0 }}>
+                  {n(usage.texts.transactional)} about guests&rsquo; own bookings and orders · {n(usage.texts.marketing)} marketing
+                  {usage.texts.failed ? ` · ${n(usage.texts.failed)} failed (not counted)` : ""}
+                </p>
+                {usage.texts.dryRun > 0 && <p className="pf-sub" style={{ margin: 0 }}>{n(usage.texts.dryRun)} not sent (texting not connected). They don&rsquo;t count.</p>}
+                <p className="pf-sub" style={{ margin: 0 }}>
+                  {used === 0
+                    ? "No texts sent yet this month."
+                    : projectedOver.over > 0
+                      ? <>At this pace, about {n(projected)} by the end of the month: ~{n(projectedOver.over)} over, about <b>{dollars(projectedOver.cents)}</b> at cost.</>
+                      : <>At this pace, about {n(projected)} by the end of the month — inside your allowance.</>}
+                </p>
+                <p className="pf-sub" style={{ margin: 0 }}>Confirmations, reminders, cancellations, ready texts and the waitlist always go out, whatever the count. Campaigns warn you before going over.</p>
+              </div>
+              <div className="pf-meter">
+                <div className="pf-meter-top"><b>Emails</b><span className="mono">{n(usage.emails.sent)} sent</span></div>
+                {usage.emails.dryRun > 0 && <p className="pf-sub" style={{ margin: 0 }}>{n(usage.emails.dryRun)} not sent (email not connected).</p>}
+                <p className="pf-sub" style={{ margin: 0 }}>Emails are included on every plan.</p>
+              </div>
+            </div>
+          </section>
+
           <section className="pf-panel" aria-labelledby="bill-inc-h">
             <h2 id="bill-inc-h">What The Pass runs for you</h2>
             <div className="pf-body">
@@ -140,36 +170,6 @@ export default async function Billing({ params, searchParams }: { params: Promis
                 })}
               </ul>
               <p className="pf-sub" style={{ margin: 0 }}>Changing plan never deletes anything. What a plan doesn&rsquo;t include is hidden and stopped, and comes back as it was.</p>
-            </div>
-          </section>
-
-          <section className="pf-panel" aria-labelledby="bill-use-h">
-            <h2 id="bill-use-h">{usage.month.label} so far</h2>
-            <div className="pf-body">
-              <div className="pf-meter" role="group" aria-label="Texts this month">
-                <div className="pf-meter-top"><b>Texts</b><span className="mono">{n(used)} of {n(included)} included</span></div>
-                <div className="pf-meter-bar" role="progressbar" aria-valuemin={0} aria-valuemax={included} aria-valuenow={Math.min(used, included)} aria-label={`${n(used)} of ${n(included)} texts used`}>
-                  <i style={{ width: `${fill}%` }} className={used > included ? "over" : ""} />
-                </div>
-                <p className="pf-sub" style={{ margin: 0 }}>
-                  {n(usage.texts.transactional)} about guests&rsquo; own bookings and orders · {n(usage.texts.marketing)} marketing
-                  {usage.texts.failed ? ` · ${n(usage.texts.failed)} failed (not counted)` : ""}
-                </p>
-                {usage.texts.dryRun > 0 && <p className="pf-sub" style={{ margin: 0 }}>{n(usage.texts.dryRun)} not sent (texting not connected). They don&rsquo;t count.</p>}
-                <p className="pf-sub" style={{ margin: 0 }}>
-                  {used === 0
-                    ? "No texts sent yet this month."
-                    : projectedOver.over > 0
-                      ? <>At this pace, about {n(projected)} by the end of the month: ~{n(projectedOver.over)} over, about <b>{dollars(projectedOver.cents)}</b> at cost.</>
-                      : <>At this pace, about {n(projected)} by the end of the month — inside your allowance.</>}
-                </p>
-                <p className="pf-sub" style={{ margin: 0 }}>Confirmations, reminders, cancellations, ready texts and the waitlist always go out, whatever the count. Campaigns warn you before going over.</p>
-              </div>
-              <div className="pf-meter">
-                <div className="pf-meter-top"><b>Emails</b><span className="mono">{n(usage.emails.sent)} sent</span></div>
-                {usage.emails.dryRun > 0 && <p className="pf-sub" style={{ margin: 0 }}>{n(usage.emails.dryRun)} not sent (email not connected).</p>}
-                <p className="pf-sub" style={{ margin: 0 }}>Emails are included on every plan.</p>
-              </div>
             </div>
           </section>
 

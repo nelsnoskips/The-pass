@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requestPlanAction } from "@/lib/billing/actions";
-import { FEATURE_INFO, includes, planFor, planIncluding, type Feature, type OrgPlan } from "@/lib/billing/entitlements";
+import { comes, FEATURE_INFO, includes, planFor, planIncluding, type Feature, type OrgPlan } from "@/lib/billing/entitlements";
 import { dollars, FEATURES, PLANS } from "@/lib/billing/plans";
 import { db } from "@/lib/db";
 import { can, type Tenant } from "@/lib/platform/tenant";
@@ -36,7 +36,7 @@ export function NotInPlan({ org, tenant, plan, feature, asked, back, inline }: {
       <section className="pf-panel pf-plan-lock" aria-labelledby="pf-lock-h">
         <div className="pf-body">
           <span className="pf-pill info">Included in {target.name} plan</span>
-          <h2 id="pf-lock-h" className="pf-plan-lock-h">{info.label} comes with {target.name}.</h2>
+          <h2 id="pf-lock-h" className="pf-plan-lock-h">{info.label} {comes(feature)} with {target.name}.</h2>
           <p className="pf-plan-lock-does">{info.does}</p>
           <p className="pf-sub" style={{ margin: 0 }}>
             You&rsquo;re on <b>{current.name}</b> ({dollars(current.listCents)} a location a month).{" "}

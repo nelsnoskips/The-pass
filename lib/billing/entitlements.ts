@@ -33,14 +33,14 @@ export interface OrgPlan {
 }
 
 /** The parts of the business, in plain words, for the "not in your plan" page and the billing page. */
-export const FEATURE_INFO: Record<Feature, { label: string; does: string; area: "Dining room" | "Online" | "Marketing" | "Guests" | "Money" | "Station" }> = {
+export const FEATURE_INFO: Record<Feature, { label: string; does: string; plural?: true; area: "Dining room" | "Online" | "Marketing" | "Guests" | "Money" | "Station" }> = {
   ordering: { label: "Online ordering", area: "Online", does: "Pickup orders from your own website, paid online, with a kitchen board, pause, 86 and a text when it's ready. No marketplace commission." },
   catering: { label: "Catering orders", area: "Online", does: "Catering orders with notice, headcount and a minimum, on your own site." },
-  promotions: { label: "Promotions", area: "Marketing", does: "Promo codes and automatic discounts on online orders, with what each one brought in." },
-  campaigns: { label: "Text and email campaigns", area: "Marketing", does: "Campaigns to the guests who said yes, with consent, quiet hours and unsubscribe handled for you." },
-  segments: { label: "Guest segments", area: "Marketing", does: "Saved groups of guests — lapsed regulars, big spenders, birthdays this month — to send to or export." },
+  promotions: { label: "Promotions", plural: true, area: "Marketing", does: "Promo codes and automatic discounts on online orders, with what each one brought in." },
+  campaigns: { label: "Text and email campaigns", plural: true, area: "Marketing", does: "Campaigns to the guests who said yes, with consent, quiet hours and unsubscribe handled for you." },
+  segments: { label: "Guest segments", plural: true, area: "Marketing", does: "Saved groups of guests — lapsed regulars, big spenders, birthdays this month — to send to or export." },
   loyalty: { label: "Loyalty", area: "Guests", does: "Every few visits earns a reward, counted from bookings and your point of sale." },
-  gift_cards: { label: "Gift cards", area: "Money", does: "Sold on your website, emailed as a code, spent across as many visits as it takes. No expiry, no fees." },
+  gift_cards: { label: "Gift cards", plural: true, area: "Money", does: "Sold on your website, emailed as a code, spent across as many visits as it takes. No expiry, no fees." },
   reviews: { label: "Reviews", area: "Guests", does: "Your Google reviews in one place, with replies drafted in your voice." },
   ads: { label: "Ads reporting", area: "Marketing", does: "Google and Meta spend, results and cost per result beside your real bookings." },
   app: { label: "Your guest app", area: "Online", does: "Your own installable app on guests' home screens: book, order, rewards and gift cards." },
@@ -71,8 +71,11 @@ export function planIncluding(feature: Feature): PlanId {
 }
 
 export function notIncludedReason(feature: Feature, plan: PlanId = "host"): string {
-  return `${FEATURE_INFO[feature].label} comes with The Pass plan. This restaurant is on ${PLANS[plan].name}, so it's switched off — nothing has been deleted.`;
+  return `${FEATURE_INFO[feature].label} ${comes(feature)} with The Pass plan. This restaurant is on ${PLANS[plan].name}, so it's switched off — nothing has been deleted.`;
 }
+
+/** "comes" or "come", for the feature's label. */
+export const comes = (feature: Feature) => (FEATURE_INFO[feature].plural ? "come" : "comes");
 
 export class NotIncluded extends Error {
   constructor(public feature: Feature, plan: PlanId = "host") {
@@ -144,7 +147,7 @@ export async function setPlan(sql: Sql, t: Tenant, input: PlanInput, now = new D
 
   const before = await planFor(sql, t.orgId);
   const after = { plan: input.plan, founding: Boolean(input.founding), foundingLockedUntil: lock, locations };
-  const changed = (["plan", "founding", "foundingLockedUntil", "locations"] as const).filter((k) => before.isDefault || before[k] !== after[k]);
+  const changed = (["plan", "founding", "foundingLockedUntil", "locations"] as const).filter((k) => before[k] !== after[k] || (k === "plan" && before.isDefault));
   if (!changed.length) return { ok: true, changed: [] };
 
   await sql.begin(async (tx) => {

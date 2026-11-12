@@ -3,7 +3,7 @@ import { DEFAULT_TZ } from "../platform/when";
 import { localDate, zonedToUtc } from "../reservations/time";
 import { foundingApplies, planFor, type OrgPlan } from "./entitlements";
 import {
-  AI_CENTS_PER_MTOK, ADDITIONAL_LOCATION_DISCOUNT_PCT, EMAIL_COST_CENTS_PER_1000, PLANS,
+  AI_CENTS_PER_MTOK, ADDITIONAL_LOCATION_DISCOUNT_PCT, dollars, EMAIL_COST_CENTS_PER_1000, PLANS,
   planPriceCents, smsCostCents, textsIncluded, unitPriceCents,
 } from "./plans";
 
@@ -172,7 +172,7 @@ export function invoicePreview(plan: Pick<OrgPlan, "plan" | "founding" | "foundi
   const o = overage(texts, included);
   const n = plan.locations;
   const lines: InvoiceLine[] = [
-    { label: `${PLANS[plan.plan].name} plan × ${n} location${n === 1 ? "" : "s"}`, detail: `${founding ? "founding price " : ""}$${unit / 100} a location`, cents: price.grossCents },
+    { label: `${PLANS[plan.plan].name} plan × ${n} location${n === 1 ? "" : "s"}`, detail: `${founding ? "founding price " : ""}${dollars(unit)} a location`, cents: price.grossCents },
   ];
   if (n > 1) lines.push({ label: "Additional-location discount", detail: `${ADDITIONAL_LOCATION_DISCOUNT_PCT}% off ${n - 1} location${n - 1 === 1 ? "" : "s"}`, cents: -price.discountCents });
   lines.push({ label: "Texts over the allowance, at cost", detail: `${o.over.toLocaleString("en-US")} of ${texts.toLocaleString("en-US")} (${included.toLocaleString("en-US")} included)`, cents: o.cents });

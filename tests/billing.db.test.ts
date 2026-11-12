@@ -156,7 +156,7 @@ d("plans, entitlements and usage against Postgres", () => {
     expect(order).toMatchObject({ ok: false, error: expect.stringMatching(/isn't available here/) });
 
     // A campaign send, a new draft, a schedule, a segment, a promotion.
-    expect(await sendNow(sql, owner, draft.id, { baseUrl: "https://x.example" })).toMatchObject({ ok: false, error: expect.stringMatching(/campaigns comes with The Pass plan/i) });
+    expect(await sendNow(sql, owner, draft.id, { baseUrl: "https://x.example" })).toMatchObject({ ok: false, error: expect.stringMatching(/campaigns come with The Pass plan/i) });
     expect(await saveDraft(sql, owner, { name: "x", channel: "sms", segment: "regulars", body: "y" })).toMatchObject({ ok: false });
     expect(await schedule(sql, owner, draft.id, "2030-01-15T12:00")).toMatchObject({ ok: false });
     expect(await createSegment(sql, owner, "Nope", {})).toMatchObject({ ok: false });
