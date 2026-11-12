@@ -67,7 +67,7 @@ export function AppFrame({ base, q, features, tab, preview, children }: {
   return (
     <div className="papp" style={vars}>
       <a href="#papp-main" className="papp-skip">Skip to content</a>
-      {preview && <p className="papp-preview">Preview of your draft · guests don&rsquo;t see this yet</p>}
+      {preview && <p className="papp-preview">Draft preview · not live yet</p>}
       <header className="papp-bar">
         <Link href={`${base}/app${q}`} className="papp-brand">
           <AppIcon config={c} size={30} />

@@ -64,7 +64,7 @@ export default async function AppPage({ params }: { params: Promise<{ org: strin
       <div className="pf-appb-extra">
         <section className="pf-panel" aria-labelledby="install-h">
           <h2 id="install-h">Install link</h2>
-          <div className="pf-body pf-appb-install">
+          <div className="pf-body pf-appb-install" style={{ display: "flex" }}>
             {state.published ? (
               <>
                 <QrCode value={appUrl} label={`QR code for ${appUrl}`} />
@@ -86,7 +86,10 @@ export default async function AppPage({ params }: { params: Promise<{ org: strin
         <section className="pf-panel" aria-labelledby="updates-h">
           <h2 id="updates-h">Updates</h2>
           <div className="pf-body">
-            <p style={{ margin: 0 }}><b className="pf-appb-stat">{pushReady ? subscribers : "—"}</b> {pushReady ? (subscribers === 1 ? "guest has turned on updates" : "guests have turned on updates") : "guests with updates on (switches on with push)"}</p>
+            <p style={{ margin: 0, display: "grid", gap: 4 }}>
+              <span className="pf-flabel">Guests with updates on</span>
+              <b className="pf-appb-stat">{pushReady ? subscribers : "—"}</b>
+            </p>
             <label className="pf-field">
               <span className="pf-flabel">Send a notification</span>
               <textarea className="pf-input" rows={2} disabled placeholder="Tonight only: lamb kleftiko is back." aria-describedby="push-off" />

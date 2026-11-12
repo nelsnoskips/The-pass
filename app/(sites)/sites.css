@@ -321,3 +321,5 @@ html:has(.site) { scroll-padding-top: 96px; }
 
 /* Back from a website page to the app, when opened from the home screen. */
 .site-backtoapp { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; background: var(--ink); color: var(--paper) !important; font-weight: 600; font-size: 14.5px; text-decoration: none; }
+.papp-inline-icon { display: inline-block; vertical-align: -3px; }
+.papp-install { margin: 18px 0 0; }

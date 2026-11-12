@@ -9,7 +9,7 @@ export default async function Offline({ params }: Props) {
   const { site } = await params;
   const app = await loadAppPage(site);
   return (
-    <AppScreen app={app} tab="page" title="You're offline">
+    <AppScreen app={app} tab="page" title="You’re offline">
       <p>That page needs a connection. Booking and ordering work again as soon as you&rsquo;re back online.</p>
       <p>These still work without one:</p>
       <ul className="papp-list">

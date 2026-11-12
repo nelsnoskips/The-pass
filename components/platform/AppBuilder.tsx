@@ -125,7 +125,7 @@ export function AppBuilder({ org, slug, initial, published, tiles, siteAnnouncem
           <Field label="App name" f="name" error={errorFor("name")} extra={counter(c.name, LIMITS.name)}>
             <input id="app-name" className="pf-input" value={c.name} onChange={(e) => set("name", e.target.value)} {...field("name")} />
           </Field>
-          <Field label="Name under the icon" hint="Phones cut long names short on the home screen." f="shortName" error={errorFor("shortName")} extra={counter(c.shortName, LIMITS.shortName)}>
+          <Field label="Home screen name" hint="Shown under the icon. Phones cut longer names short." f="shortName" error={errorFor("shortName")} extra={counter(c.shortName, LIMITS.shortName)}>
             <input id="app-shortName" className="pf-input" value={c.shortName} onChange={(e) => set("shortName", e.target.value)} {...field("shortName")} />
           </Field>
           <Field label="Welcome line" f="welcome" error={errorFor("welcome")} extra={counter(c.welcome, LIMITS.welcome)}>

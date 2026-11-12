@@ -29,7 +29,6 @@ export function AppHome({ base, q, features, preview }: { base: string; q: strin
         <h1>{c.name}</h1>
         {c.welcome && <p>{c.welcome}</p>}
       </section>
-      {!preview && <InstallPrompt name={c.name} />}
       {tiles.length > 0 ? (
         <ul className="papp-tiles" aria-label="What you can do">
           {tiles.map((t) => {
@@ -51,6 +50,7 @@ export function AppHome({ base, q, features, preview }: { base: string; q: strin
       ) : (
         <p className="papp-note">Nothing to show here yet.</p>
       )}
+      {!preview && <InstallPrompt name={c.name} />}
     </>
   );
 }

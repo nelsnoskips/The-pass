@@ -94,7 +94,7 @@ export function InstallPrompt({ name }: { name: string }) {
 
 export function ShareIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: "-3px" }} aria-label="the Share icon" role="img">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="papp-inline-icon" aria-label="the Share icon" role="img">
       <path d="M12 3v12M8 7l4-4 4 4M6 11H5v10h14V11h-1" />
     </svg>
   );

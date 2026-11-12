@@ -835,3 +835,5 @@
 .pf-appb-stat { font-size: 26px; font-variant-numeric: tabular-nums; margin-right: 4px; }
 .pf-copy { display: flex; gap: 8px; align-items: center; }
 .pf-copy .pf-input { flex: 1; min-width: 0; font-size: 13px; }
+.pf-appb .pf-btn { min-height: 40px; }
+@media (pointer: coarse) { .pf-appb .pf-btn { min-height: 44px; } }
