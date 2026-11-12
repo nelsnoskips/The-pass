@@ -106,10 +106,10 @@ export async function buildMorningPass(sql: Sql, tenant: Tenant, now = new Date(
     .filter((p) => p.start >= bornDay);
 
   const [night, nightOrders, todays, history, proposals, changes, agentLog, executed, ordering, integrations] = await Promise.all([
-    sql<{ covers: number; bookings: number; no_shows: number; walk_ins: number }[]>`
+    sql<{ covers: number; bookings: number; no_shows: number; walk_ins: number; total: number }[]>`
       select coalesce(sum(party_size) filter (where status = any(${LIVE})), 0)::int as covers,
              count(*) filter (where source <> 'walk_in' and status <> 'cancelled')::int as bookings,
-             count(*) filter (where status = 'no_show')::int as no_shows,
+             count(*) filter (where status = 'no_show')::int as no_shows, count(*)::int as total,
              count(*) filter (where source = 'walk_in' and status = any(${LIVE}))::int as walk_ins
       from reservations where org_id = ${tenant.orgId} and venue_id = ${venue.id} and starts_at >= ${yStart} and starts_at < ${tStart}`,
     sql<{ n: number; cents: number }[]>`
@@ -148,9 +148,10 @@ export async function buildMorningPass(sql: Sql, tenant: Tenant, now = new Date(
     sql<{ provider: string; status: string }[]>`select provider, status from org_integrations where org_id = ${tenant.orgId}`,
   ]);
 
-  // Last night: unknown before the restaurant was on The Pass.
-  const known = o.created_at < tStart && bornDay <= yStart;
+  // Last night: unknown before the restaurant was on The Pass — unless it
+  // joined during the day and its book already has last night in it.
   const n = night[0];
+  const known = o.created_at <= yStart || (o.created_at < tStart && n.total + nightOrders[0].n > 0);
   const sellsOnline = ordering.pickupEnabled || ordering.cateringEnabled || nightOrders[0].n > 0;
   const lastNight = {
     date: yesterday,
@@ -161,7 +162,6 @@ export async function buildMorningPass(sql: Sql, tenant: Tenant, now = new Date(
   };
 
   const time = (d: Date) => formatIn(d, tz, "time");
-  const booked = todays.filter((r) => r.source !== "walk_in");
   const covers = todays.reduce((s, r) => s + r.party_size, 0);
   const byDay = new Map(history.map((h) => [h.day, h]));
   const usualDays = pastDays.filter((p) => byDay.has(p.d));
@@ -226,7 +226,7 @@ export async function buildMorningPass(sql: Sql, tenant: Tenant, now = new Date(
   return {
     org: { slug: o.slug, name: o.name }, venue: venue.name, tz, date: today, lastNight,
     today: {
-      bookings: booked.length, covers, vsUsual,
+      bookings: todays.length, covers, vsUsual,
       largeParties: todays.filter((r) => r.party_size >= LARGE_PARTY).map((r) => ({ time: time(r.starts_at), name: r.name, size: r.party_size })),
       firstBooking: todays.length ? formatIn(todays[0].starts_at, tz, "time") : null,
       notes: notes.slice(0, 5),

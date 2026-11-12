@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { saveMorningPassAction } from "@/lib/brief/actions";
 
 interface Member { email: string; role: string; phone: string | null }
@@ -22,6 +22,11 @@ export function MorningPassForm({ org, initial, members, tzLabel }: {
   const [phones, setPhones] = useState<Record<string, string>>(Object.fromEntries(members.map((m) => [m.email.toLowerCase(), m.phone ?? ""])));
   const [result, setResult] = useState<{ ok: boolean; text: string; field?: string } | null>(null);
   const [pending, start] = useTransition();
+  const form = useRef<HTMLFormElement>(null);
+  // Take the person to what needs fixing.
+  useEffect(() => {
+    if (result && !result.ok) form.current?.querySelector<HTMLElement>('input[aria-invalid="true"], [aria-invalid="true"] input')?.focus();
+  }, [result]);
 
   const touch = () => setResult(null);
   const bad = (f: string) => (result && !result.ok && result.field === f ? { "aria-invalid": true as const, "aria-describedby": "mp-err" } : {});
@@ -38,7 +43,7 @@ export function MorningPassForm({ org, initial, members, tzLabel }: {
   };
 
   return (
-    <form onSubmit={save} className="pf-body pf-mp-form" noValidate>
+    <form ref={form} onSubmit={save} className="pf-body pf-mp-form" noValidate>
       <label className="pf-mp-toggle">
         <input type="checkbox" checked={enabled} onChange={(e) => { setEnabled(e.target.checked); touch(); }} />
         <span><b>Send the morning pass every day</b><span className="pf-sub" style={{ display: "block", margin: "2px 0 0" }}>It&rsquo;s always on Home. Turn this on to get it by email or text too.</span></span>
@@ -49,7 +54,7 @@ export function MorningPassForm({ org, initial, members, tzLabel }: {
         <input id="mp-time" type="time" value={sendAt} step={900} onChange={(e) => { setSendAt(e.target.value); touch(); }} {...bad("sendAt")} />
       </div>
 
-      <fieldset className="pf-field pf-mp-fieldset">
+      <fieldset className="pf-mp-fieldset">
         <legend>Send by</legend>
         <div className="pf-mp-radios" {...bad("channel")}>
           <label><input type="radio" name="mp-channel" value="email" checked={channel === "email"} onChange={() => { setChannel("email"); touch(); }} /> Email</label>
@@ -57,7 +62,7 @@ export function MorningPassForm({ org, initial, members, tzLabel }: {
         </div>
       </fieldset>
 
-      <fieldset className="pf-field pf-mp-fieldset">
+      <fieldset className="pf-mp-fieldset">
         <legend>Send to (people on your team)</legend>
         {members.length === 0 && <p className="pf-sub" style={{ margin: 0 }}>Nobody on the team yet. Add people in Team first.</p>}
         <ul className="pf-mp-people" {...bad("recipients")}>

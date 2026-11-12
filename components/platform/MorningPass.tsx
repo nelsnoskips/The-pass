@@ -39,8 +39,8 @@ export function MorningPass({ b, hide = [] }: { b: Brief; hide?: string[] }) {
           <p className="pf-mp-line">First booking: {t.firstBooking ?? "—"}</p>
           {(t.largeParties.length > 0 || t.notes.length > 0) && (
             <ul className="pf-mp-list">
-              {t.largeParties.map((p) => <li key={`l${p.time}${p.name}`}><span className="mono">{p.time}</span> Party of {p.size} · {p.name}</li>)}
-              {t.notes.map((p) => <li key={`n${p.time}${p.name}`}><span className="mono">{p.time}</span> {p.name}: {p.note}</li>)}
+              {t.largeParties.map((p, i) => <li key={`l${i}`}><span className="mono">{p.time}</span> Party of {p.size} · {p.name}</li>)}
+              {t.notes.map((p, i) => <li key={`n${i}`}><span className="mono">{p.time}</span> {p.name}: {p.note}</li>)}
             </ul>
           )}
         </Link>
