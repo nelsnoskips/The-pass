@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "../db";
 import { requireTenant } from "../platform/context";
@@ -41,7 +42,12 @@ async function decide(form: FormData, fn: "apply" | "undo" | "dismiss") {
   const sql = db()!;
   let err: string | undefined;
   try {
-    if (fn === "apply") err = (await applyChange(sql, tenant, id)).error;
+    if (fn === "apply") {
+      // For links in texts an action may send (the waitlist, on a cancellation).
+      const h = await headers();
+      const baseUrl = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host") ?? ""}`;
+      err = (await applyChange(sql, tenant, id, new Date(), { baseUrl })).error;
+    }
     else if (fn === "undo") err = (await undoChange(sql, tenant, id)).error;
     else await dismissChange(sql, tenant, id);
   } catch (e) {

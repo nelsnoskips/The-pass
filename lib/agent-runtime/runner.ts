@@ -3,6 +3,7 @@ import type { Sql } from "postgres";
 import { log } from "../reservations/repo";
 import type { Tenant } from "../platform/tenant";
 import { evaluate } from "./policy";
+import { ownerBlock, readAgentSettings } from "./settings";
 import type { AgentContext, ToolDef } from "./tool";
 
 /**
@@ -64,6 +65,14 @@ export async function runAgent(input: RunInput): Promise<RunOutcome> {
   const client = input.client ?? new Anthropic();
   const tenant: Tenant = { ...input.tenant, actor: `agent:${agent.id}` };
 
+  // The restaurant's switch and notes. A switched-off agent doesn't run,
+  // whoever wakes it; the notes are appended after the agent's own rules.
+  const settings = await readAgentSettings(sql, tenant.orgId, agent.id);
+  if (!settings.enabled) {
+    return { runId: "", status: "stopped", summary: `${agent.name} is switched off for this restaurant.`, actions: [] };
+  }
+  const system = agent.system + ownerBlock(agent.id, settings);
+
   const [run] = await sql<{ id: string }[]>`
     insert into agent_runs (org_id, agent_id, trigger)
     values (${tenant.orgId}, ${agent.id}, ${input.trigger})
@@ -100,7 +109,7 @@ export async function runAgent(input: RunInput): Promise<RunOutcome> {
         fallbacks: "default",
         output_config: { effort: agent.effort ?? "medium" },
         cache_control: { type: "ephemeral" },
-        system: agent.system,
+        system,
         tools,
         messages,
       });

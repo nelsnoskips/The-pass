@@ -3,6 +3,8 @@ import { AGENT_CARDS } from "@/lib/agent-runtime/catalog";
 import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
 import { can } from "@/lib/platform/tenant";
+import { readAllAgentSettings } from "@/lib/agent-runtime/settings";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +41,7 @@ export default async function Agents({ params }: { params: Promise<{ org: string
       select agent_id, count(*)::int as proposed, count(*) filter (where status = 'executed')::int as approved
       from agent_proposals where org_id = ${tenant.orgId} and created_at > now() - interval '28 days' group by agent_id`,
   ]);
+  const settings = await readAllAgentSettings(sql, tenant.orgId);
   const stats = new Map(counts.map((c) => [c.agent_id, c]));
   const lastRun = new Map(runs.map((r) => [r.agent_id, r]));
   const canMessage = can(tenant, "message_guests");
@@ -58,14 +61,15 @@ export default async function Agents({ params }: { params: Promise<{ org: string
         {AGENT_CARDS.map((a) => {
           const run = lastRun.get(a.id);
           const st = stats.get(a.id);
-          const on = Boolean(run && Date.now() - run.started_at.getTime() < 14 * 86_400_000);
+          const off = settings.get(a.id)?.enabled === false;
+          const on = !off && Boolean(run && Date.now() - run.started_at.getTime() < 14 * 86_400_000);
           return (
             <article key={a.id} className="pf-agent-card">
               <div className="top">
                 <span className="ic" aria-hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={a.icon} /></svg></span>
-                <span className={`state${on ? " on" : ""}`}>{on ? "Working" : run ? "Idle" : "Not run yet"}</span>
+                <span className={`state${on ? " on" : ""}${off ? " off" : ""}`}>{off ? "Off" : on ? "Working" : run ? "Idle" : "Not run yet"}</span>
               </div>
-              <h3>{a.name}</h3>
+              <h3><Link href={`/r/${org.slug}/agents/${a.id}`} className="pf-agent-link">{a.name}</Link></h3>
               <p className="tags">{a.tags.join(" · ")}</p>
               <p className="does">{a.does}</p>
               <p className="rule">{a.approval}</p>
@@ -75,6 +79,7 @@ export default async function Agents({ params }: { params: Promise<{ org: string
                 <div><span>Last run</span><b className="mono">{run ? ago(run.started_at) : "—"}</b></div>
               </div>
               {run?.summary && <p className="sum">{run.summary}</p>}
+              <p className="more"><Link href={`/r/${org.slug}/agents/${a.id}`}>Settings and activity →</Link></p>
             </article>
           );
         })}

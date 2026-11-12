@@ -54,5 +54,7 @@ const ACTIONS: Record<string, string> = {
   "review.replied": "Replied to a review",
   "site.version_saved": "Saved a website draft",
   "site.published": "Published the website",
+  "agent.settings_changed": "Settings changed",
+  "guests.sms_marketing": "Texted guests",
 };
 export const actionWords = (a: string) => ACTIONS[a] ?? a.replace(/[._]/g, " ");

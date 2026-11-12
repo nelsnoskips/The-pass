@@ -2,6 +2,7 @@ import { sendSms, SEND_WINDOW, withOptOut, type SmsSender } from "../../messagin
 import { log } from "../../reservations/repo";
 import { localDate, localTime, weekday, zonedToUtc } from "../../reservations/time";
 import type { AgentSpec } from "../runner";
+import { agentGoals } from "../settings";
 import { defineTool, type AgentContext, type ToolDef } from "../tool";
 
 /**
@@ -87,7 +88,10 @@ const lapsedGuests = defineTool<{ min_visits: number; lapsed_days: number }>({
   requires: "view",
   async run(ctx, { min_visits, lapsed_days }) {
     const { sql, tenant } = ctx;
-    const cutoff = new Date(ctx.now.getTime() - lapsed_days * 86_400_000);
+    // The owner's minimum time since a visit can only raise the bar.
+    const goals = await agentGoals(ctx);
+    const days = Math.max(lapsed_days, Number(goals.min_days_since_visit));
+    const cutoff = new Date(ctx.now.getTime() - days * 86_400_000);
     const recent = new Date(ctx.now.getTime() - MARKETING_GAP_DAYS * 86_400_000);
     const rows = await sql<{ id: string; name: string; visit_count: number; last_visit_at: Date; textable: boolean }[]>`
       select g.id, g.name, g.visit_count, g.last_visit_at,
@@ -136,6 +140,18 @@ export function sendGuestSms(sender: SmsSender = sendSms): ToolDef {
       if (ids.length > MAX_RECIPIENTS) return { ok: false, reason: `At most ${MAX_RECIPIENTS} recipients per message.` };
       if (!message) return { ok: false, reason: "The message is empty." };
       if (message.length > MAX_SMS_CHARS) return { ok: false, reason: `Keep the message under ${MAX_SMS_CHARS} characters.` };
+      const gap = Number((await agentGoals(ctx)).campaign_gap_days);
+      if (phase === "propose" && gap > 0) {
+        // The owner's cap on how often a campaign may be proposed at all.
+        const [last] = await ctx.sql<{ created_at: Date }[]>`
+          select created_at from agent_proposals
+          where org_id = ${ctx.tenant.orgId} and tool = 'send_guest_sms' and status in ('pending', 'executed')
+            and created_at > ${new Date(ctx.now.getTime() - gap * 86_400_000)}
+          order by created_at desc limit 1`;
+        if (last) {
+          return { ok: false, reason: `The owner allows one text campaign every ${gap} day${gap === 1 ? "" : "s"}; the last was proposed ${last.created_at.toISOString().slice(0, 10)}.` };
+        }
+      }
       if ((await textable(ctx, ids)).length === 0) {
         return { ok: false, reason: "None of these guests can be texted: no marketing consent on record, opted out, or already texted this week." };
       }
@@ -173,11 +189,14 @@ async function textable(ctx: AgentContext, ids: string[]): Promise<{ id: string;
   const uuids = ids.filter((id) => /^[0-9a-f-]{36}$/i.test(id));
   if (uuids.length === 0) return [];
   const recent = new Date(ctx.now.getTime() - MARKETING_GAP_DAYS * 86_400_000);
+  const minDays = Number((await agentGoals(ctx)).min_days_since_visit);
+  const visitedBefore = new Date(ctx.now.getTime() - minDays * 86_400_000);
   return ctx.sql<{ id: string; phone: string }[]>`
     select g.id, g.phone from guests g
     where g.org_id = ${ctx.tenant.orgId} and g.id = any(${uuids}::uuid[])
       and g.phone like '+%'
       and g.sms_consent_at is not null and g.sms_opted_out_at is null
+      and (g.last_visit_at is null or g.last_visit_at < ${visitedBefore})
       and not exists (select 1 from guest_messages m
                       where m.guest_id = g.id and m.kind = 'marketing' and m.created_at > ${recent})`;
 }

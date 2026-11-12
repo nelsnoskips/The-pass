@@ -4,6 +4,7 @@ import { googleAdsMutate } from "../../ads/google-ads";
 import { windowDates } from "../../ads/store";
 import { log } from "../../reservations/repo";
 import type { AgentSpec } from "../runner";
+import { agentGoals } from "../settings";
 import { defineTool, type CheckResult } from "../tool";
 
 /**
@@ -202,6 +203,11 @@ const setBudget = defineTool<{ campaign_id: string; campaign_name: string; from_
     if (i.to_cents === current) return { ok: false, reason: "That's the current budget." };
     if (i.to_cents > current && (i.to_cents > current * (1 + MAX_RAISE_SHARE) || i.to_cents - current > MAX_RAISE_CENTS)) {
       return { ok: false, reason: "A raise can be at most 50% and $100 a day in one change." };
+    }
+    // The owner's own cap: only ever tighter than the one above.
+    const ownerCap = Math.min(MAX_RAISE_CENTS, Number((await agentGoals(ctx)).max_raise_cents));
+    if (i.to_cents > current && i.to_cents - current > ownerCap) {
+      return { ok: false, reason: `The owner allows a raise of at most $${(ownerCap / 100).toFixed(2)} a day in one change.` };
     }
     return { ok: true };
   },
