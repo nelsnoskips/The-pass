@@ -278,7 +278,7 @@ export const NEXT: Record<OrderStatus, OrderStatus[]> = {
 };
 
 export async function setOrderStatus(
-  sql: Sql, t: Tenant, orderId: string, to: OrderStatus, opts: { restaurant: string; sender?: SmsSender } ,
+  sql: Sql, t: Tenant, orderId: string, to: OrderStatus, opts: { restaurant: string; sender?: SmsSender; reason?: string } ,
 ): Promise<"ok" | "not_found" | "invalid"> {
   assertCan(t, "book");
   if (!/^[0-9a-f-]{36}$/i.test(orderId)) return "not_found";
@@ -289,7 +289,7 @@ export async function setOrderStatus(
   const done = await sql`update orders set status = ${to}, updated_at = now()
                          where id = ${o.id} and org_id = ${t.orgId} and status = ${o.status} returning id`;
   if (!done.length) return "invalid";
-  await log(sql, t.orgId, t.actor, `order.${to}`, "order", o.id, { number: o.number });
+  await log(sql, t.orgId, t.actor, `order.${to}`, "order", o.id, { number: o.number, ...(opts.reason ? { reason: opts.reason } : {}) });
 
   // The guest hears about the two moments that matter to them.
   const body = to === "ready" && o.kind === "pickup"
@@ -303,6 +303,20 @@ export async function setOrderStatus(
               ${r.status === "sent" ? r.providerId : null}, ${r.status === "failed" ? r.error : null}, ${t.actor})`;
   }
   return "ok";
+}
+
+export const CANCEL_REASONS = ["Out of an ingredient", "Kitchen too busy", "Guest asked to cancel", "Closing early"] as const;
+
+/**
+ * The kitchen cancelling an order: always with a reason, which goes in
+ * the change log (the guest's text stays the same apology).
+ */
+export async function cancelOrder(
+  sql: Sql, t: Tenant, orderId: string, reason: string, opts: { restaurant: string; sender?: SmsSender },
+): Promise<"ok" | "not_found" | "invalid" | "reason_required"> {
+  const why = reason.trim().slice(0, 200);
+  if (why.length < 3) return "reason_required";
+  return setOrderStatus(sql, t, orderId, "cancelled", { ...opts, reason: why });
 }
 
 export interface OrderRow {

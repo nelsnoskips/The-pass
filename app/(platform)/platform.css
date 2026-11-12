@@ -559,3 +559,126 @@
 .pf-mk-list { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13.5px; color: var(--muted); }
 .pf-mk-preview { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.5; padding: 14px 16px; border-radius: var(--radius); background: var(--bg-2); border: 1px solid var(--rule); }
 .pf-mk-preview.sms { max-width: 360px; border-radius: 16px 16px 16px 4px; background: var(--panel-2); }
+
+/* host stand + kitchen fixes */
+
+/* offline bar: pinned to the bottom so it never shifts the layout */
+.pf-offline {
+  position: fixed; left: 50%; bottom: 16px; z-index: 60; translate: -50% 0;
+  display: flex; align-items: center; gap: 10px; max-width: calc(100vw - 32px);
+  padding: 10px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 550;
+  background: var(--warn); color: oklch(0.18 0.02 75);
+  box-shadow: 0 12px 30px -10px oklch(0 0 0 / 0.7);
+}
+.pf-offline-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: none; }
+
+/* error boundary inside the frame */
+.pf-error { padding: 24px; display: grid; gap: 12px; justify-items: start; max-width: 560px; }
+.pf-error h1 { margin: 0; font-size: 20px; }
+
+/* toasts: "Seated Ana at T5 · Undo" */
+.pf-toast-wrap { position: fixed; left: 50%; bottom: 72px; translate: -50% 0; z-index: 55; pointer-events: none; }
+.pf-toast {
+  pointer-events: auto; display: flex; align-items: center; gap: 10px;
+  padding: 8px 8px 8px 16px; border-radius: 14px; font-size: 14px; font-weight: 550;
+  background: var(--ink); color: var(--bg); box-shadow: 0 16px 40px -12px oklch(0 0 0 / 0.8);
+}
+.pf-toast .pf-btn { --b-bg: transparent; color: var(--bg); border-color: oklch(0 0 0 / 0.25); }
+.pf-toast .pf-btn.quiet { color: oklch(0.35 0.01 60); }
+
+/* row actions: Seat on its own, everything else behind More */
+.pf-res-side { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.pf-res-actions .pf-more { margin-left: 18px; }
+.pf-more-menu, .pf-picker {
+  flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; align-items: center;
+  padding: 8px; border-radius: 12px; background: oklch(1 0 0 / 0.04); border: 1px solid var(--rule);
+}
+.pf-picker-label { font-size: 12.5px; color: var(--muted); margin-right: 4px; }
+.pf-picker-size { font: 400 11px var(--font-pf-mono), monospace; color: var(--muted); margin-left: 6px; }
+.pf-btn.danger { color: var(--stop); }
+.pf-btn.danger:not(.quiet) { border-color: oklch(0.62 0.13 25 / 0.45); background: var(--stop-soft); }
+
+/* late parties */
+.pf-slot-late { background: linear-gradient(90deg, var(--stop-soft), transparent 60%); }
+.pf-slot-late .pf-slot-time { color: var(--stop); font-weight: 600; }
+.pf-res-time { margin-left: 10px; font-size: 12.5px; color: var(--muted); font-weight: 400; }
+.pf-pill.stop.dot { font-weight: 600; }
+
+/* phone links: a 44px-tall touch area without moving the text */
+.pf-res-meta a.pf-tel { display: inline-flex; align-items: center; min-height: 44px; margin: -13px 0; padding: 0 4px; }
+
+/* the floor and the waitlist */
+.pf-floor { list-style: none; margin: 0; padding: 0 16px 16px; display: grid; gap: 6px; font-size: 13.5px; }
+.pf-floor li.busy { padding: 8px 10px; border-radius: 10px; background: var(--go-soft); }
+.pf-floor li.free { color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pf-free-chip { padding: 3px 8px; border-radius: 8px; border: 1px solid var(--rule-strong); color: var(--ink); }
+.pf-free-chip small { color: var(--muted); margin-left: 4px; }
+.pf-wait { padding-left: 16px; }
+.pf-panel > h2 + .pf-wait { border-top: 0; }
+.pf-form-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.pf-waitadd { display: grid; grid-template-columns: minmax(0, 120px) 1fr; gap: 8px; align-items: end; }
+.pf-field [aria-invalid="true"] { border-color: var(--stop); box-shadow: 0 0 0 1px var(--stop); }
+.pf-host-aside { position: static; }
+.pf-chime { white-space: nowrap; }
+
+/* phone width: the stat tiles collapse into one compact row */
+@media (max-width: 640px) {
+  .pf-host-stats { display: flex; gap: 0; overflow-x: auto; padding: 0; border: 1px solid var(--rule); border-radius: 12px; background: var(--panel); margin-bottom: 14px; }
+  .pf-host-stats .pf-stat { flex: 1 0 auto; border: 0; border-radius: 0; background: none; box-shadow: none; padding: 8px 10px; display: flex; align-items: baseline; gap: 5px; }
+  .pf-host-stats .pf-stat + .pf-stat { border-left: 1px solid var(--rule); }
+  .pf-host-stats .pf-stat b { display: inline; font-size: 16px; }
+  .pf-host-stats .pf-stat span { font-size: 11.5px; white-space: nowrap; }
+  .pf-host-stats .pf-stat.live::after { top: 6px; right: 4px; width: 5px; height: 5px; }
+  .pf-res-side { justify-content: flex-start; }
+  .pf-more-menu, .pf-picker { justify-content: flex-start; }
+}
+
+/* kitchen board: tickets first, the pause/86 bar stays in reach */
+.pf-kbar {
+  position: sticky; top: 66px; z-index: 20; margin-bottom: 14px;
+  display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center;
+  padding: 10px 14px; border-radius: 14px; border: 1px solid var(--rule-strong);
+  background: oklch(0.205 0.008 60 / 0.92); backdrop-filter: blur(12px);
+}
+.pf-kbar-group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pf-kbar-label { font-size: 13px; color: var(--muted); }
+.pf-86 { flex: 1 1 320px; }
+.pf-86-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.pf-86-chip {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 12px; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: 13px; font-weight: 550; color: var(--stop); background: var(--stop-soft); border: 1px solid oklch(0.62 0.13 25 / 0.45);
+}
+.pf-86-chip s { text-decoration-thickness: 2px; }
+.pf-86-chip:hover { background: oklch(0.62 0.13 25 / 0.2); }
+.pf-86-add { display: flex; gap: 6px; align-items: center; }
+.pf-86-add select, .pf-cancel-confirm select, .pf-cancel-confirm input {
+  min-height: 34px; border-radius: 8px; padding: 0 8px; font: inherit; font-size: 13px;
+  color: var(--ink); background: var(--bg-2); border: 1px solid oklch(1 0 0 / 0.38);
+}
+.pf-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; align-items: start; }
+.pf-ticket { display: grid; gap: 8px; padding: 14px 16px; border-top: 1px solid var(--rule); }
+.pf-ticket.late { box-shadow: inset 3px 0 0 var(--stop); background: linear-gradient(90deg, var(--stop-soft), transparent 70%); }
+.pf-ticket-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.pf-ticket-items { margin: 0; padding-left: 18px; font-size: 14px; }
+.pf-ticket-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.pf-ticket-actions .pf-push { margin-left: auto; }
+.pf-cancel-confirm { flex-basis: 100%; display: grid; gap: 8px; padding: 10px; border-radius: 12px; border: 1px solid oklch(0.62 0.13 25 / 0.35); background: var(--stop-soft); }
+.pf-cancel-confirm label { font-size: 13px; font-weight: 550; }
+.pf-drawer { margin-top: 18px; }
+.pf-drawer > summary { cursor: pointer; padding: 16px; font-weight: 550; list-style: none; display: flex; gap: 10px; align-items: baseline; min-height: 44px; }
+.pf-drawer > summary::before { content: "▸"; color: var(--muted); transition: rotate .2s var(--ease); }
+.pf-drawer[open] > summary::before { rotate: 90deg; }
+.pf-drawer > summary::-webkit-details-marker { display: none; }
+.pf-drawer-body { padding: 0 16px 16px; display: grid; gap: 18px; }
+.pf-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* touch screens: 44px targets for every host and kitchen button */
+@media (pointer: coarse) {
+  .pf-res-actions .pf-btn, .pf-res-side .pf-btn, .pf-picker .pf-btn, .pf-more-menu .pf-btn,
+  .pf-ticket-actions .pf-btn, .pf-kbar .pf-btn, .pf-86-chip, .pf-86-add select,
+  .pf-cancel-confirm select, .pf-cancel-confirm input, .pf-toast .pf-btn, .pf-chime, .pf-daynav .pf-btn {
+    min-height: 44px; min-width: 44px;
+  }
+  .pf-res-actions, .pf-ticket-actions { gap: 10px; }
+  .pf-res-actions .pf-more { margin-left: 28px; }
+}

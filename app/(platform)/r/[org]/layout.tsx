@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PassMark } from "@/components/marketing/PassMark";
 import { CommandBar } from "@/components/platform/CommandBar";
+import { OfflineBar } from "@/components/platform/OfflineBar";
 import { Sidebar } from "@/components/platform/Sidebar";
 import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
@@ -41,7 +42,7 @@ export default async function OrgLayout({ children, params }: { children: React.
         </div>
       </header>
       <aside className="pf-app-side"><Sidebar org={org.slug} /></aside>
-      <main className="pf-main">{children}</main>
+      <main className="pf-main"><OfflineBar />{children}</main>
     </div>
   );
 }

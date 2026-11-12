@@ -118,9 +118,9 @@ d("reservations against Postgres", () => {
     const r = await bookAt("20:30", 31);
     if (!r.ok) throw new Error("setup");
     await expect(setStatus(sql, viewerA, r.reservation.id, "seated")).rejects.toBeInstanceOf(Forbidden);
-    expect(await setStatus(sql, hostA, r.reservation.id, "seated")).toBe("ok");
+    expect(await setStatus(sql, hostA, r.reservation.id, "seated", { now: zonedToUtc(FRI, "20:35", TZ) })).toBe("ok");
     // Sat down: can never become a no-show.
-    expect(await setStatus(sql, hostA, r.reservation.id, "no_show")).toBe("invalid");
+    expect(await setStatus(sql, hostA, r.reservation.id, "no_show", { now: zonedToUtc(FRI, "20:50", TZ) })).toBe("invalid");
     expect(can(hostA, "approve_spend")).toBe(false);
     expect(can(hostA, "book", ids.venueB)).toBe(false);
   });
@@ -151,7 +151,7 @@ d("reservations against Postgres", () => {
   it("counts visits and no-shows on the guest, and logs every change", async () => {
     const r = await bookAt("18:30", 61);
     if (!r.ok) throw new Error("setup");
-    await setStatus(sql, hostA, r.reservation.id, "seated");
+    expect(await setStatus(sql, hostA, r.reservation.id, "seated", { now: zonedToUtc(FRI, "18:35", TZ) })).toBe("ok");
     await setStatus(sql, hostA, r.reservation.id, "completed");
     const [g] = await sql<{ visit_count: number }[]>`select visit_count from guests where id = ${r.reservation.guestId}`;
     expect(g.visit_count).toBe(1);

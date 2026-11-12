@@ -990,3 +990,28 @@ create index if not exists orders_promotion_idx on orders(promotion_id) where pr
 -- Who scheduled a campaign and in what role, so the send can re-check
 -- their permission at the moment it goes out.
 alter table campaigns add column if not exists scheduled_role text;
+
+-- host stand: walk-in waitlist
+-- Parties waiting at the door for a table, with the wait the host quoted.
+-- Separate from waitlist_requests (online "text me if a table opens" for
+-- a future date): these people are standing in the room now.
+create table if not exists walkin_waitlist (
+  id             uuid primary key default gen_random_uuid(),
+  org_id         uuid not null references orgs(id) on delete cascade,
+  venue_id       uuid not null references venues(id) on delete cascade,
+  name           text not null,
+  -- E.164, or null when they didn't leave a number.
+  phone          text,
+  party_size     integer not null check (party_size between 1 and 30),
+  quoted_minutes integer not null check (quoted_minutes between 0 and 240),
+  status         text not null default 'waiting' check (status in ('waiting', 'seated', 'removed')),
+  texted_at      timestamptz,
+  reservation_id uuid references reservations(id) on delete set null,
+  created_by     text not null,
+  created_at     timestamptz not null default now(),
+  updated_at     timestamptz not null default now()
+);
+create index if not exists walkin_waitlist_venue_idx on walkin_waitlist(venue_id, status, created_at);
+
+-- The host stand looks up a reservation's own history (undo, seated-at).
+create index if not exists change_log_entity_idx on change_log(org_id, entity, entity_id, id desc);
