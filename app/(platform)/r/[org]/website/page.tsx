@@ -1,3 +1,4 @@
+import { actorLabel } from "@/lib/agent-runtime/catalog";
 import { PillarLevers } from "@/components/platform/PillarLevers";
 import { SiteEditor } from "@/components/platform/SiteEditor";
 import { PublishVersionButton } from "@/components/platform/VersionActions";
@@ -62,7 +63,7 @@ export default async function Website({ params }: { params: Promise<{ org: strin
                     {v.live && <span className="pf-pill dot go">Live</span>}
                   </div>
                   <span className="pf-res-meta" style={{ marginTop: 0 }}>
-                    <span className="mono">{when(v.created_at)}</span><span>{v.created_by}</span>
+                    <span className="mono">{when(v.created_at)}</span><span>{actorLabel(v.created_by)}</span>
                   </span>
                   <div style={{ display: "flex", gap: 6 }}>
                     <a className="pf-btn small" href={`/r/${slug}/website/preview/${v.id}`} target="_blank" rel="noreferrer">Preview</a>

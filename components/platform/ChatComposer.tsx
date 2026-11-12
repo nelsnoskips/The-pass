@@ -5,8 +5,8 @@ import { useRef, useState, useTransition } from "react";
 import { sendMessage } from "@/lib/assistant/actions";
 
 /**
- * The box you talk to the restaurant through. Sends, waits while the
- * assistant works, then shows the thread with any changes it made.
+ * The box you talk to The Pass through. Sends, waits while it works,
+ * then shows the conversation with any changes it made.
  */
 export function ChatComposer({ org, thread, suggestions = [], autoFocus = false, big = false }: {
   org: string; thread: string | null; suggestions?: string[]; autoFocus?: boolean; big?: boolean;
@@ -44,7 +44,7 @@ export function ChatComposer({ org, thread, suggestions = [], autoFocus = false,
       <form onSubmit={(e) => { e.preventDefault(); send(text); }} className="pf-compose-box">
         <textarea
           ref={box} value={text} autoFocus={autoFocus} rows={big ? 3 : 2} maxLength={2000}
-          placeholder="Ask anything, or tell The Pass what to change…" aria-label="Message"
+          placeholder="Ask The Pass anything, or tell it what to change…" aria-label="Ask The Pass"
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(text); } }}
         />

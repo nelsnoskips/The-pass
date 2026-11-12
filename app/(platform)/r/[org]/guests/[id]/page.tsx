@@ -1,3 +1,4 @@
+import { actorLabel } from "@/lib/agent-runtime/catalog";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
@@ -15,7 +16,7 @@ const STATUS: Record<string, { label: string; tone: string }> = {
   booked: { label: "Booked", tone: "info" }, confirmed: { label: "Confirmed", tone: "go" }, seated: { label: "Seated", tone: "go" },
   completed: { label: "Visited", tone: "go" }, cancelled: { label: "Cancelled", tone: "" }, no_show: { label: "No-show", tone: "stop" },
 };
-const SOURCE: Record<string, string> = { website: "Website", phone: "Phone", walk_in: "Walk-in", google: "Google", instagram: "Instagram", import: "Imported", agent: "Agent", host: "Host stand" };
+const SOURCE: Record<string, string> = { website: "Website", phone: "Phone", walk_in: "Walk-in", google: "Google", instagram: "Instagram", import: "Imported", agent: "The Pass", host: "Host stand" };
 
 /**
  * One guest: who they are, what they've agreed to hear from you, and
@@ -114,7 +115,7 @@ export default async function GuestProfilePage({ params, searchParams }: {
                   {p.messages.map((m) => (
                     <tr key={m.id}>
                       <td className="num">{day(m.createdAt)}</td>
-                      <td><div style={{ maxWidth: 420, overflowWrap: "anywhere" }}>{m.body}</div><div className="pf-sub" style={{ margin: "2px 0 0", fontSize: 11.5 }}>{m.channel === "email" ? "Email" : "Text"} · by {m.sentBy}</div></td>
+                      <td><div style={{ maxWidth: 420, overflowWrap: "anywhere" }}>{m.body}</div><div className="pf-sub" style={{ margin: "2px 0 0", fontSize: 11.5 }}>{m.channel === "email" ? "Email" : "Text"} · by {actorLabel(m.sentBy)}</div></td>
                       <td>{m.kind === "marketing" ? "Marketing" : "Booking / order"}</td>
                       <td><span className={`pf-pill dot ${m.status === "sent" ? "go" : m.status === "failed" ? "stop" : ""}`}>{m.status === "dry_run" ? "not sent" : m.status}</span></td>
                     </tr>

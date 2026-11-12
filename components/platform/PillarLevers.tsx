@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { actorLabel } from "@/lib/agent-runtime/catalog";
 import { db } from "@/lib/db";
 import { formatLever, leverHistory, menuNames, orgTimezone, PILLARS, readLevers, type Pillar } from "@/lib/levers";
 import { ago, formatIn } from "@/lib/platform/when";
@@ -9,7 +10,7 @@ const withinDay = (d: Date) => Date.now() - d.getTime() < 86_400_000;
 /**
  * A part of the business at a glance: the settings it runs on, their
  * current values, and every recent change — who made it, whether through
- * the assistant, and before → after. What the chat changes shows up here.
+ * Ask The Pass, and before → after. What the chat changes shows up here.
  */
 export async function PillarLevers({ pillar, org, tenant }: { pillar: Pillar; org: string; tenant: Tenant }) {
   const sql = db()!;
@@ -22,7 +23,7 @@ export async function PillarLevers({ pillar, org, tenant }: { pillar: Pillar; or
 
   return (
     <section className="pf-panel pf-levers" id="levers" style={{ marginBottom: 18 }}>
-      <h2>{PILLARS[pillar].label} settings <span className="pf-h2-note">change any of these by asking in <Link href={`/r/${org}/chat`}>Chat</Link></span></h2>
+      <h2>{PILLARS[pillar].label} settings <span className="pf-h2-note">change any of these by asking in <Link href={`/r/${org}/chat`}>Ask The Pass</Link></span></h2>
       <div className="pf-lever-grid">
         {levers.map(({ def, value }) => {
           const r = recent(def.key);
@@ -45,7 +46,7 @@ export async function PillarLevers({ pillar, org, tenant }: { pillar: Pillar; or
               return (
                 <li key={i}>
                   <span className="t"><b>{h.label}</b> {f(h.before)} <span aria-hidden>→</span> {f(h.after)}</span>
-                  <span className="mono s">{h.actor}{h.via.startsWith("assistant") ? ` via the assistant${h.via.includes("undo") ? " (undo)" : ""}` : ""} · <time dateTime={h.at.toISOString()} title={formatIn(h.at, tz, "long")}>{ago(h.at)}</time></span>
+                  <span className="mono s">{actorLabel(h.actor)}{h.via.startsWith("assistant") ? ` via Ask The Pass${h.via.includes("undo") ? " (undo)" : ""}` : ""} · <time dateTime={h.at.toISOString()} title={formatIn(h.at, tz, "long")}>{ago(h.at)}</time></span>
                 </li>
               );
             })}

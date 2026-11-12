@@ -14,7 +14,7 @@ import { formatIn } from "@/lib/platform/when";
  * lib/reports and lays it out; no numbers are worked out here.
  */
 
-const SOURCE: Record<string, string> = { website: "Your website", phone: "Phone", walk_in: "Walk-in", google: "Google", instagram: "Instagram", import: "Imported", agent: "Agent", host: "Host stand" };
+const SOURCE: Record<string, string> = { website: "Your website", phone: "Phone", walk_in: "Walk-in", google: "Google", instagram: "Instagram", import: "Imported", agent: "The Pass", host: "Host stand" };
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const hourLabel = (h: number) => `${((h + 11) % 12) + 1}${h < 12 ? "a" : "p"}`;
 

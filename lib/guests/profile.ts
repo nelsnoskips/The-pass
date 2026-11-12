@@ -1,3 +1,4 @@
+import { actorLabel } from "../agent-runtime/catalog";
 import type { Sql } from "postgres";
 import { log } from "../reservations/repo";
 import { assertCan, type Tenant } from "../platform/tenant";
@@ -117,7 +118,7 @@ export async function guestProfile(sql: Sql, t: Tenant, guestId: string, now = n
   return { ...profile, timeline: buildTimeline(profile, edits, now) };
 }
 
-const SOURCE: Record<string, string> = { website: "website", phone: "phone", walk_in: "walk-in", google: "Google", instagram: "Instagram", import: "import", agent: "an agent", host: "host stand" };
+const SOURCE: Record<string, string> = { website: "website", phone: "phone", walk_in: "walk-in", google: "Google", instagram: "Instagram", import: "import", agent: "The Pass", host: "host stand" };
 const STATUS: Record<string, string> = { booked: "Booked", confirmed: "Confirmed", seated: "Seated", completed: "Visited", cancelled: "Cancelled", no_show: "No-show" };
 
 /** Everything, newest first. Pure: built from what guestProfile loaded. */
@@ -150,7 +151,7 @@ export function buildTimeline(
   }
   for (const e of edits) {
     const fields = Array.isArray(e.detail?.fields) ? (e.detail.fields as string[]).join(", ") : null;
-    ev.push({ at: e.created_at, kind: "edit", title: e.action === "guest.updated" ? `Profile edited${fields ? `: ${fields}` : ""}` : e.action, detail: `by ${e.actor}` });
+    ev.push({ at: e.created_at, kind: "edit", title: e.action === "guest.updated" ? `Profile edited${fields ? `: ${fields}` : ""}` : e.action, detail: `by ${actorLabel(e.actor)}` });
   }
   return ev.sort((a, b) => b.at.getTime() - a.at.getTime());
 }

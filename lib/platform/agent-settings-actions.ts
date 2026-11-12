@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { AGENT_GOALS, saveAgentSettings, type SettingsPatch } from "../agent-runtime/settings";
-import { agentName } from "../agent-runtime/catalog";
+import { stationName } from "../agent-runtime/catalog";
 import { db } from "../db";
 import { requireTenant } from "./context";
 import { Forbidden } from "./tenant";
@@ -26,7 +26,7 @@ async function save(form: FormData, patch: SettingsPatch, ok: string) {
     if (!r.ok) error = r.error;
     else if (!r.changed.length) ok = "Nothing changed.";
   } catch (err) {
-    if (err instanceof Forbidden) error = "Your role can't change agents.";
+    if (err instanceof Forbidden) error = "Your role can't change stations.";
     else throw err;
   }
   revalidatePath(`/r/${org}/agents`, "layout");
@@ -37,11 +37,11 @@ async function save(form: FormData, patch: SettingsPatch, ok: string) {
 /** One form per choice: the wanted state rides in a hidden field. */
 export async function setAgentEnabledAction(form: FormData) {
   const on = s(form, "enabled") === "on";
-  await save(form, { enabled: on }, `${agentName(s(form, "agent"))} is ${on ? "on" : "off"}.`);
+  await save(form, { enabled: on }, `The ${stationName(s(form, "agent"))} station is ${on ? "on" : "off"}.`);
 }
 
 export async function saveAgentInstructionsAction(form: FormData) {
-  await save(form, { instructions: String(form.get("instructions") ?? "") }, "Instructions saved. The agent uses them from its next run.");
+  await save(form, { instructions: String(form.get("instructions") ?? "") }, "Instructions saved. The Pass uses them from this station's next run.");
 }
 
 export async function saveAgentGoalsAction(form: FormData) {

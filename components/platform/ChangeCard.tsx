@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FormButton } from "@/components/platform/FormButton";
+import { actorLabel } from "@/lib/agent-runtime/catalog";
 import { applyChangeAction, dismissChangeAction, undoChangeAction } from "@/lib/assistant/actions";
 import type { ChangeRow } from "@/lib/assistant";
 import { ACTION_AREAS, type ActionArea } from "@/lib/assistant/chat-actions";
@@ -17,7 +18,7 @@ const STATUS = {
 const ACTION_STATUS = { ...STATUS, applied: { text: "Done", tone: "go" } } as const;
 
 /** Who did it, always by name: the person who pressed the button, or who asked. */
-const by = (c: ChangeRow) => c.decided_by || c.requested_by || "someone";
+const by = (c: ChangeRow) => actorLabel(c.decided_by || c.requested_by || "someone");
 
 /** A pause that has already run out can't usefully be undone. */
 function expired(c: ChangeRow, now = Date.now()): boolean {
@@ -56,7 +57,7 @@ export function ChangeCard({ c, org, thread, names, canDecide, tz = DEFAULT_TZ }
       {c.error && <p className="pf-msg err" style={{ margin: 0, fontSize: 12.5 }}>{c.error}</p>}
       <div className="f">
         <span className="who mono">
-          {c.status === "pending" ? `Asked by ${c.requested_by} · proposed ${ago(c.created_at)} · needs your Apply` :
+          {c.status === "pending" ? `Asked by ${actorLabel(c.requested_by)} · proposed ${ago(c.created_at)} · needs your Apply` :
             `${c.status === "applied" ? (c.risk === "auto" ? `Applied at once for ${by(c)}` : `Applied by ${by(c)}`) : c.status === "undone" ? `Undone by ${by(c)}` : c.status === "dismissed" ? `Dismissed by ${by(c)}` : `Failed for ${by(c)}`} · ${ago(c.decided_at ?? c.created_at)}${ran ? " · the pause has ended" : ""}`}
         </span>
         <span className="acts">
@@ -95,8 +96,8 @@ function ActionCard({ c, org, thread, canDecide }: { c: ChangeRow; org: string; 
       {c.error && <p className="pf-msg err" style={{ margin: 0, fontSize: 12.5 }}>{c.error}</p>}
       <div className="f">
         <span className="who mono">
-          {c.status === "pending" ? `Asked by ${c.requested_by} · proposed ${ago(c.created_at)} · nothing happens until you press Apply` :
-            `${c.status === "applied" ? `Done by ${by(c)} · can't be undone here, ask to reverse it` : c.status === "dismissed" ? `Dismissed by ${by(c)}` : `Not done (asked by ${c.requested_by})`} · ${ago(c.decided_at ?? c.created_at)}`}
+          {c.status === "pending" ? `Asked by ${actorLabel(c.requested_by)} · proposed ${ago(c.created_at)} · nothing happens until you press Apply` :
+            `${c.status === "applied" ? `Done by ${by(c)} · can't be undone here, ask to reverse it` : c.status === "dismissed" ? `Dismissed by ${by(c)}` : `Not done (asked by ${actorLabel(c.requested_by)})`} · ${ago(c.decided_at ?? c.created_at)}`}
         </span>
         <span className="acts">
           {c.status === "pending" && canDecide && (

@@ -22,7 +22,7 @@ export async function decideProposal(org: string, proposalId: string, decision: 
       return ok ? { error: null, result: "Dismissed." } : { error: "Already decided." };
     }
     const make = RUNNABLE_AGENTS[p.agent_id];
-    if (!make) return { error: "That agent no longer exists." };
+    if (!make) return { error: "That station no longer exists." };
     // No revalidate here: the card shows its own result, then the page
     // refreshes from the client so the message can be read first.
     const r = await approveProposal(sql, tenant, proposalId, make().tools);
@@ -51,7 +51,7 @@ function summarize(result: unknown): string {
   return "Done.";
 }
 
-/** "Dismiss all from this agent" on the approvals queue. */
+/** "Dismiss all from this station" on the approvals queue. */
 export async function dismissAllAction(org: string, agentId: string): Promise<{ error: string | null; result?: string }> {
   const sql = db();
   if (!sql) return { error: "Unavailable." };

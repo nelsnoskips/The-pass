@@ -1,3 +1,4 @@
+import { actorLabel } from "@/lib/agent-runtime/catalog";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FormButton } from "@/components/platform/FormButton";
@@ -48,10 +49,10 @@ export default async function CampaignPage({ params, searchParams }: {
           <p className="pf-sub" style={{ margin: "0 0 6px" }}><Link href={`/r/${org}/campaigns`}>Campaigns</Link></p>
           <h1>{c.name} <span className={`pf-pill dot ${CAMPAIGN_STATUS[c.status].tone}`} style={{ verticalAlign: "middle", marginLeft: 6 }}>{CAMPAIGN_STATUS[c.status].text}</span></h1>
           <p className="pf-sub">
-            {c.channel === "sms" ? "Text" : "Email"} to <Link href={`/r/${org}/segments/${c.segment}`}>{c.segment_name}</Link> · written by <span className="mono">{c.created_by}</span>
-            {c.requested_by ? ` for ${c.requested_by}` : ""} · {fmt(c.created_at)}
-            {c.status === "scheduled" && c.scheduled_for ? ` · sends ${fmt(c.scheduled_for)} (${c.scheduled_by})` : ""}
-            {c.sent_at ? ` · sent ${fmt(c.sent_at)} by ${c.sent_by}` : ""}
+            {c.channel === "sms" ? "Text" : "Email"} to <Link href={`/r/${org}/segments/${c.segment}`}>{c.segment_name}</Link> · written by <span className="mono">{actorLabel(c.created_by)}</span>
+            {c.requested_by ? ` for ${actorLabel(c.requested_by)}` : ""} · {fmt(c.created_at)}
+            {c.status === "scheduled" && c.scheduled_for ? ` · sends ${fmt(c.scheduled_for)} (${actorLabel(c.scheduled_by)})` : ""}
+            {c.sent_at ? ` · sent ${fmt(c.sent_at)} by ${actorLabel(c.sent_by)}` : ""}
           </p>
         </div>
         {open && mayMessage && !confirming && (

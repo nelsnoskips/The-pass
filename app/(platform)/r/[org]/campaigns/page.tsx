@@ -1,3 +1,4 @@
+import { actorLabel } from "@/lib/agent-runtime/catalog";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { CAMPAIGN_STATUS, listCampaigns } from "@/lib/marketing/campaigns";
@@ -55,8 +56,8 @@ export default async function Campaigns({ params, searchParams }: { params: Prom
                   <td>{c.channel === "sms" ? "Text" : "Email"}</td>
                   <td>{c.segment_name}</td>
                   <td className="mono" style={{ fontSize: 12 }}>
-                    {c.created_by}
-                    {c.requested_by && <div className="pf-sub" style={{ margin: 0, fontSize: 11 }}>for {c.requested_by}</div>}
+                    {actorLabel(c.created_by)}
+                    {c.requested_by && <div className="pf-sub" style={{ margin: 0, fontSize: 11 }}>for {actorLabel(c.requested_by)}</div>}
                   </td>
                   <td className="num">{c.status === "sent" || c.status === "failed" || c.status === "sending" ? c.messages.toLocaleString("en-US") : "—"}</td>
                   <td className="num">{when(c.created_at)}</td>

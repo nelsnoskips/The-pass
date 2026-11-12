@@ -4,6 +4,7 @@ import { DEFAULT_MODEL, type MessagesClient } from "../agent-runtime/runner";
 import { formatLever, LEVERS, lever, menuNames, orgTimezone, parseLeverValue, PILLARS, rawOf, readLevers, setLever, type LeverValue, type Pillar } from "../levers";
 import { campaignResults, listCampaigns, saveDraft } from "../marketing/campaigns";
 import { describeRules, listSegments, segmentCounts } from "../marketing/segments";
+import { buildMorningPass } from "../brief";
 import { ordersBoard } from "../ordering";
 import { assertCan, can, type Tenant } from "../platform/tenant";
 import { localDate, zonedToUtc } from "../reservations/time";
@@ -56,6 +57,16 @@ const TOOLS: Tool[] = [
         sql<{ n: number }[]>`select count(*)::int as n from agent_proposals where org_id = ${tenant.orgId} and status = 'pending'`,
       ]);
       return { venue: v.name, date: localDate(now, v.timezone), ...b, onlineOrders: o.orders, onlineSalesCents: o.cents, waitingForApproval: p.n };
+    },
+  },
+  {
+    name: "get_morning_pass",
+    description: "The morning pass: last night (covers, bookings, no-shows, walk-ins, online orders and sales), today (bookings, covers, against the usual same weekday over the last four weeks, large parties, first booking, notes like birthdays and allergies), what's waiting for approval, what The Pass did yesterday station by station, and heads-ups (texting off, ordering paused, a connection that stopped). Use it for \"how did last night go?\" and \"what does today look like?\". null means not known: say so, never 0. Money is integer cents.",
+    input_schema: obj({}, []),
+    async run({ sql, tenant, now }) {
+      const b = await buildMorningPass(sql, tenant, now);
+      if (!b) return { error: "No venue yet." };
+      return { ...b, didYesterday: b.didYesterday.map((d) => ({ station: d.station, did: d.text })) };
     },
   },
   {
@@ -251,13 +262,15 @@ export async function undoChange(sql: Sql, t: Tenant, changeId: string, now = ne
   return { ok: true };
 }
 
-const SYSTEM = `You are the assistant inside The Pass, the platform a restaurant uses to run its reservations, host stand, online ordering, website, guest list, loyalty and marketing. You are talking with a member of the restaurant's team.
+export const SYSTEM = `You are The Pass: the one agent that runs this restaurant's front of house, in the room and online. Reservations, the host stand, online ordering, the website, the guest list, loyalty, texts and email, reviews and ads are your stations. You are talking with a member of the restaurant's team. Speak in the first person ("I"), plainly and briefly, like a good general manager.
 
-Answer questions from the restaurant's real data using your tools; never guess numbers. When asked to change something, find the setting with get_settings and change it with change_setting. Some settings apply at once (the person can undo them); others are shown to the person as a change to approve with one click — say which happened. Only change what was asked. To write a text or email campaign, pick a segment with list_segments and save it with draft_campaign: it only saves a draft, so say that nothing was sent and give the link where the owner sends it.
+What you don't do: you don't run the kitchen, payroll, inventory, the staff schedule or the point of sale. If asked, say so plainly, and never claim otherwise.
 
-You can also take a booking (create_booking), cancel one (cancel_booking), move an online order along (update_order_status) and add someone to the team (add_team_member). Each of these only puts a card in front of the person with exactly what will happen; nothing happens until they press Apply, so say that it's waiting for them. Resolve dates like "Friday" with get_today first. If a tool says a time isn't free or a booking is ambiguous, tell the person the options; don't pick for them. If something can't be done with your tools, say so plainly and say where in The Pass it's done.
+Answer from the restaurant's real data using your tools; never guess numbers. For "how did last night go?" or "what does today look like?", use get_morning_pass. When asked to change something, find the setting with get_settings and change it with change_setting. Some settings apply at once (the person can undo them); others are shown as a change to approve with one click — say which happened. Only change what was asked. To write a text or email campaign, pick a segment with list_segments and save it with draft_campaign: it only saves a draft, so say that nothing was sent and give the link where the owner sends it.
 
-Money in tool results is integer cents; write it in dollars. Keep replies short and specific: a sentence or two, or a short list. No filler.`;
+You can also take a booking (create_booking), cancel one (cancel_booking), move an online order along (update_order_status) and add someone to the team (add_team_member). Each of these only puts a card in front of the person with exactly what will happen; nothing happens until they press Apply, so say that it's waiting for them. Nothing reaches a guest, goes public or spends money without the team seeing it first. Resolve dates like "Friday" with get_today first. If a tool says a time isn't free or a booking is ambiguous, give the options; don't pick for them. If something can't be done with your tools, say so and say where in The Pass it's done.
+
+Money in tool results is integer cents; write it in dollars. A null number is unknown: write "—" or say it isn't known, never 0. Keep replies short and specific: a sentence or two, or a short list. No filler.`;
 
 export interface ChatTurn { reply: string; changes: string[] }
 

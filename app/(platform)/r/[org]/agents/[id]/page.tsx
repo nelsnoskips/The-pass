@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FormButton } from "@/components/platform/FormButton";
 import { agentActivity, agentMetrics, type ActivityItem } from "@/lib/agent-runtime/activity";
-import { actionWords, AGENT_CARDS } from "@/lib/agent-runtime/catalog";
+import { actionWords, actorLabel, AGENT_CARDS } from "@/lib/agent-runtime/catalog";
 import { AGENT_GOALS, formatGoal, MAX_INSTRUCTIONS, readAgentSettings } from "@/lib/agent-runtime/settings";
 import { db } from "@/lib/db";
 import { requireTenant } from "@/lib/platform/context";
@@ -11,6 +11,12 @@ import { can } from "@/lib/platform/tenant";
 import { formatIn, venueTz } from "@/lib/platform/when";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const card = AGENT_CARDS.find((a) => a.id === id);
+  return { title: card ? `${card.name} station · The Pass` : "Stations · The Pass" };
+}
 
 const PER_PAGE = 20;
 
@@ -42,8 +48,8 @@ function logLine(agentId: string, item: Extract<ActivityItem, { kind: "log" }>):
 }
 
 /**
- * One agent: whether it's on, what the restaurant has told it, its
- * limits, how it's doing, and everything it has done.
+ * One station of The Pass: whether it's on, what the restaurant has told
+ * it, its limits, how it's doing, and everything it has done.
  */
 export default async function AgentPage({ params, searchParams }: {
   params: Promise<{ org: string; id: string }>;
@@ -70,9 +76,10 @@ export default async function AgentPage({ params, searchParams }: {
 
   return (
     <>
-      <p style={{ margin: "0 0 10px" }}><Link href={`/r/${org.slug}/agents`} className="pf-btn small quiet">← Agents</Link></p>
+      <p style={{ margin: "0 0 10px" }}><Link href={`/r/${org.slug}/agents`} className="pf-btn small quiet">← Stations</Link></p>
       <div className="pf-head">
         <div>
+          <p className="pf-station-of" style={{ margin: "0 0 4px" }}>The Pass · station</p>
           <h1>{card.name}</h1>
           <p className="pf-sub">{card.does} {card.approval}</p>
         </div>
@@ -90,7 +97,7 @@ export default async function AgentPage({ params, searchParams }: {
       {q.err && <p className="pf-msg err" role="alert" style={{ marginBottom: 14 }}>{q.err}</p>}
       {!settings.enabled && (
         <p className="pf-msg err" style={{ marginBottom: 14 }}>
-          Switched off. It won&rsquo;t run on schedule or when asked. Anything it already proposed is still waiting on the Agents page.
+          Switched off. The Pass won&rsquo;t work this station on schedule or when asked. Anything it already proposed is still waiting on the Stations page.
         </p>
       )}
 
@@ -122,7 +129,7 @@ export default async function AgentPage({ params, searchParams }: {
                       {it.error && <span className="b err">{it.error}</span>}
                     </>
                   ) : (
-                    <span className="t">{logLine(id, it)}{!it.actor.startsWith("agent:") && <span className="s"> · {it.actor}</span>}</span>
+                    <span className="t">{logLine(id, it)}{!it.actor.startsWith("agent:") && <span className="s"> · {actorLabel(it.actor)}</span>}</span>
                   )}
                   <span className="s mono">{when(it.at)}</span>
                 </li>
@@ -145,7 +152,7 @@ export default async function AgentPage({ params, searchParams }: {
                 <input type="hidden" name="org" value={org.slug} />
                 <input type="hidden" name="agent" value={id} />
                 <div className="pf-field">
-                  <label htmlFor="ag-ins">How it should sound, and what never to say</label>
+                  <label htmlFor="ag-ins">How The Pass should sound here, and what never to say</label>
                   <textarea id="ag-ins" name="instructions" rows={7} maxLength={MAX_INSTRUCTIONS} defaultValue={settings.instructions}
                     placeholder={id === "reviews" ? "e.g. Warm, never stiff. Never mention parking. Call it the patio, not the terrace." : "e.g. Warm and brief. Never offer discounts. We're closed for private events on the first Monday."} />
                 </div>

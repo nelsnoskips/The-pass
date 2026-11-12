@@ -66,7 +66,7 @@ const saveDraft = defineTool<{ content_json: string; note: string }>({
     if (!parsed.ok) throw new Error(parsed.errors.join("; "));
     const changes = describeChanges(l.content, parsed.content);
     if (changes.length === 0) return { saved: false, reason: "Nothing changed." };
-    const saved = await saveVersion(ctx.sql, ctx.tenant, l.site.id, parsed.content, `${input.note.slice(0, 180)} (Website Agent)`);
+    const saved = await saveVersion(ctx.sql, ctx.tenant, l.site.id, parsed.content, `${input.note.slice(0, 180)} (The Pass · Website)`);
     if (!saved.ok) throw new Error(saved.errors.join("; "));
     return { saved: true, versionId: saved.versionId, changes };
   },
@@ -75,10 +75,10 @@ const saveDraft = defineTool<{ content_json: string; note: string }>({
 export function websiteAgent(): AgentSpec {
   return {
     id: "website",
-    name: "Website Agent",
+    name: "The Website station",
     effort: "low",
     maxTurns: 6,
-    system: `You are the Website Agent for a restaurant, inside The Pass. The owner describes a change to their website in plain words and you make exactly that change as a draft.
+    system: `You are The Pass, the one agent that runs this restaurant's front of house, working its Website station. The owner describes a change to their website in plain words and you make exactly that change as a draft.
 
 Work like this: call get_site, make only the change that was asked for, then call save_site_draft once with the whole updated document. Leave everything else exactly as it is: same ids, same wording, same order. Never invent dishes, prices, hours, events or offers the owner didn't give you. If a request is ambiguous in a way that matters (which menu, what price), make the most literal reasonable change and say what you assumed. If the request isn't about the website, or you can't do it with these tools, don't save anything and say so.
 

@@ -1,3 +1,4 @@
+import { actorLabel } from "@/lib/agent-runtime/catalog";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FormButton } from "@/components/platform/FormButton";
@@ -39,7 +40,7 @@ export default async function SegmentPage({ params, searchParams }: {
         <div>
           <p className="pf-sub" style={{ margin: "0 0 6px" }}><Link href={`/r/${org}/segments`}>Segments</Link></p>
           <h1>{seg.name}</h1>
-          <p className="pf-sub">{describeRules(seg.rules)}{seg.createdBy ? ` Saved by ${seg.createdBy}.` : ""}</p>
+          <p className="pf-sub">{describeRules(seg.rules)}{seg.createdBy ? ` Saved by ${actorLabel(seg.createdBy)}.` : ""}</p>
         </div>
         <div className="pf-daynav" style={{ flexWrap: "wrap" }}>
           {can(tenant, "manage_venue") && <a className="pf-btn" href={`/r/${org}/segments/${id}/members.csv`} download>Export CSV</a>}

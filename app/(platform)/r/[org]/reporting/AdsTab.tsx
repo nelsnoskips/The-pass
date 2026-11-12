@@ -11,7 +11,7 @@ const money = (c: number | null) => (c === null ? "—" : `$${(c / 100).toLocale
 const count = (n: number) => n.toLocaleString("en-US", { maximumFractionDigits: 1 });
 const pct = (n: number | null) => (n === null ? "—" : `${n.toFixed(2)}%`);
 const PLATFORM = { google: "Google Ads", meta: "Meta" } as const;
-const SOURCE: Record<string, string> = { website: "Your website", phone: "Phone", walk_in: "Walk-in", google: "Google", instagram: "Instagram", import: "Imported", agent: "Agent" };
+const SOURCE: Record<string, string> = { website: "Your website", phone: "Phone", walk_in: "Walk-in", google: "Google", instagram: "Instagram", import: "Imported", agent: "The Pass" };
 const label = (d: string) => new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
 
 /** The range the Ads tab reads: it ends yesterday, because the platforms report a day late. */

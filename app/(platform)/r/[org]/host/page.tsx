@@ -21,7 +21,7 @@ const PILL: Record<string, { label: string; tone: string }> = {
   cancelled: { label: "Cancelled", tone: "" },
   no_show: { label: "No-show", tone: "stop" },
 };
-const SOURCE: Record<string, string> = { website: "Website", phone: "Phone", walk_in: "Walk-in", google: "Google", instagram: "Instagram", import: "Imported", agent: "Agent" };
+const SOURCE: Record<string, string> = { website: "Website", phone: "Phone", walk_in: "Walk-in", google: "Google", instagram: "Instagram", import: "Imported", agent: "The Pass" };
 const UNDO_LABEL: Record<string, string> = { seated: "Seat", completed: "Done", no_show: "No-show" };
 
 /** The guest's record, not counting this booking if it is itself the no-show. */

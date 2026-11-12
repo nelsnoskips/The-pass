@@ -18,6 +18,9 @@ export function Onboarding({ org, name }: { org: string; name?: string }) {
         <p className="pf-sub" style={{ margin: 0, maxWidth: "62ch" }}>
           The Pass team is adding your dining room: tables, service hours and booking rules. When that&rsquo;s done, your host stand, bookings and this page fill in. Meanwhile:
         </p>
+        <p className="pf-sub" style={{ margin: 0, maxWidth: "62ch" }}>
+          Once it&rsquo;s set up, The Pass runs your front of house — bookings, the floor, online orders, texts, reviews, your website and ads — and shows you every move before it reaches a guest. The Pass doesn&rsquo;t touch your kitchen, payroll or point of sale.
+        </p>
         <ol className="pf-steps">
           {steps.map((s, i) => (
             <li key={s.href}>
