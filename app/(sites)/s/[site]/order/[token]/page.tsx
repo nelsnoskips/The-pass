@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { orderByToken } from "@/lib/ordering";
+import { mapHref, telHref } from "@/lib/sites/format";
+import { getPublishedSite } from "@/lib/sites/repo";
 
 export const metadata: Metadata = { title: "Your order", robots: { index: false } };
 
@@ -18,8 +20,9 @@ export default async function OrderStatus({ params, searchParams }: { params: Pr
   const { site, token } = await params;
   const { paid } = await searchParams;
   const sql = db();
-  const o = sql ? await orderByToken(sql, token) : null;
+  const [o, published] = sql ? await Promise.all([orderByToken(sql, token), getPublishedSite(sql, site)]) : [null, null];
   if (!o || (o.slug && o.slug !== site)) notFound();
+  const contact = published?.content.contact;
   const money = (c: number) => `$${(c / 100).toFixed(2)}`;
   const when = new Intl.DateTimeFormat("en-US", { weekday: "long", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: o.timezone }).format(o.readyAt);
   const step = STEPS.findIndex((s) => s.key === o.status);
@@ -55,7 +58,23 @@ export default async function OrderStatus({ params, searchParams }: { params: Pr
           <div><dt>Total</dt><dd>{money(o.totalCents)} · {o.payment === "paid" ? "paid" : o.payment === "refunded" ? "refunded" : o.payment === "at_pickup" ? "pay at pickup" : "unpaid"}</dd></div>
         </dl>
         {o.notes && <p className="site-note" style={{ margin: 0 }}>Your note: {o.notes}</p>}
-        <p className="site-note" style={{ margin: 0 }}>Questions? Call the restaurant and mention order {o.number}.</p>
+        {contact?.address && (
+          <p style={{ margin: 0 }}>
+            {o.kind === "pickup" ? "Pick up at " : "From "}
+            <a href={mapHref(contact.address, contact.mapUrl)} target="_blank" rel="noopener noreferrer">{contact.address}</a>
+          </p>
+        )}
+        <p className="site-note" style={{ margin: 0 }}>
+          Questions? {contact?.phone
+            ? <>Call us at <a href={telHref(contact.phone)}>{contact.phone}</a> and mention order {o.number}.</>
+            : <>Call the restaurant and mention order {o.number}.</>}
+        </p>
+        {(contact?.address || contact?.phone) && (
+          <div className="site-actions">
+            {contact?.address && <a href={mapHref(contact.address, contact.mapUrl)} target="_blank" rel="noopener noreferrer" className="site-btn ghost">Directions</a>}
+            {contact?.phone && <a href={telHref(contact.phone)} className="site-btn ghost">Call</a>}
+          </div>
+        )}
         <Link href={`/s/${site}`} className="site-note">Back to the restaurant</Link>
       </div>
     </div>

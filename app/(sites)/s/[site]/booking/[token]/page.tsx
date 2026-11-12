@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import { CancelBooking } from "@/components/sites/CancelBooking";
 import { ChangeBooking } from "@/components/sites/ChangeBooking";
+import {
+  cancelOutcome, cancelledDepositText, depositState, formatDeposit, policySentence, refundDeadline,
+} from "@/lib/reservations/policy";
 import { bookingByToken } from "@/lib/reservations/repo";
 import { localDate } from "@/lib/reservations/time";
-import { cancelBooking } from "@/lib/sites/actions";
-import { formatWhen } from "@/lib/sites/format";
+import { formatPhone, formatWhen, formatWhenZoned, mapHref, telHref } from "@/lib/sites/format";
 import { getPublishedSite } from "@/lib/sites/repo";
 
 // A private page reached by an unguessable link: never indexed.
@@ -39,6 +42,18 @@ export default async function BookingPage({ params, searchParams }: { params: Pr
   const status = STATUS[booking.status];
   const canCancel = booking.status === "booked" || booking.status === "confirmed";
   const first = booking.guestName.split(" ")[0];
+  const tz = booking.timezone;
+  const when = formatWhen(booking.startsAt, tz);
+  const phone = c.contact.phone || (booking.venuePhone ? formatPhone(booking.venuePhone) : "");
+  const address = c.contact.address || booking.venueAddress || "";
+  const deposit = depositState(booking.depositCents, booking.depositStatus);
+  const amount = formatDeposit(booking.depositCents);
+  const now = new Date();
+  const deadline = refundDeadline(booking.startsAt, booking.cancelCutoffHours);
+  const beforeDeadline = deadline > now;
+  const outcome = cancelOutcome({ ...booking, cutoffHours: booking.cancelCutoffHours, now });
+  const guests = `${booking.partySize} ${booking.partySize === 1 ? "guest" : "guests"}`;
+  const rebook = `/s/${site.slug}/reserve?party=${booking.partySize}`;
 
   return (
     <div className="site-wrap" style={{ maxWidth: 640, padding: "64px 24px 96px" }}>
@@ -52,33 +67,64 @@ export default async function BookingPage({ params, searchParams }: { params: Pr
       </h1>
 
       {paid && canCancel && <p className="site-note" role="status" style={{ marginTop: 14 }}>Deposit received — thank you. It comes off your bill.</p>}
+      {booking.status === "cancelled" && (
+        <p style={{ marginTop: 14 }}>
+          {cancelledDepositText(booking.depositCents, booking.depositStatus) ?? "Nothing more to do — the table has gone back to the restaurant."}
+        </p>
+      )}
       <dl className="site-summary">
         <div><dt>Where</dt><dd>{c.brand.name}</dd></div>
-        <div><dt>When</dt><dd>{formatWhen(booking.startsAt, booking.timezone)}</dd></div>
+        <div><dt>When</dt><dd>{when}</dd></div>
         <div><dt>Guests</dt><dd>{booking.partySize}</dd></div>
+        {deposit !== "none" && (
+          <div>
+            <dt>Deposit</dt>
+            <dd>
+              {amount} · {deposit === "paid" ? (booking.status === "cancelled" ? "kept" : "paid, comes off your bill")
+                : deposit === "refunded" ? "refunded"
+                : booking.status === "cancelled" ? "not taken" : "not paid yet"}
+            </dd>
+          </div>
+        )}
         {booking.notes && <div><dt>Your note</dt><dd>{booking.notes}</dd></div>}
-        {c.contact.address && <div><dt>Address</dt><dd>{c.contact.address}</dd></div>}
+        {address && (
+          <div><dt>Address</dt><dd><a href={mapHref(address, c.contact.mapUrl)} target="_blank" rel="noopener noreferrer">{address}</a></dd></div>
+        )}
+        {phone && <div><dt>Phone</dt><dd><a href={telHref(phone)}>{phone}</a></dd></div>}
       </dl>
 
       {canCancel ? (
         <div className="site-stack">
+          <div className="site-actions">
+            <a href={`/s/${site.slug}/booking/${token}/calendar.ics`} className="site-btn ghost" download="reservation.ics">Add to calendar</a>
+            {address && <a href={mapHref(address, c.contact.mapUrl)} target="_blank" rel="noopener noreferrer" className="site-btn ghost">Directions</a>}
+            {phone && <a href={telHref(phone)} className="site-btn ghost">Call {c.brand.name}</a>}
+          </div>
+          <div className="site-note site-policy">
+            <p style={{ color: "var(--ink)" }}>{policySentence(booking.cancelCutoffHours, booking.depositCents)}</p>
+            {deposit === "paid" || deposit === "due" ? (
+              <p>
+                {beforeDeadline
+                  ? <>Cancel by <b>{formatWhenZoned(deadline, tz)}</b> for a full refund.</>
+                  : <>The refund cut-off was {formatWhenZoned(deadline, tz)}.</>}
+              </p>
+            ) : null}
+            {site.cancellationPolicy && <p>{site.cancellationPolicy}</p>}
+          </div>
           <ChangeBooking
             token={token} slug={site.slug}
-            date={localDate(booking.startsAt, booking.timezone)} party={booking.partySize}
-            today={localDate(new Date(), booking.timezone)} maxDate={maxDate(booking.timezone, site.bookingHorizonDays)}
+            date={localDate(booking.startsAt, tz)} party={booking.partySize}
+            today={localDate(new Date(), tz)} maxDate={maxDate(tz, site.bookingHorizonDays)}
             maxParty={site.maxPartyOnline}
           />
           <p className="site-note" style={{ margin: "8px 0 0" }}>
             Can&rsquo;t make it? Cancel and the table goes to someone on the waiting list.
           </p>
-          <form action={cancelBooking}>
-            <input type="hidden" name="token" value={token} />
-            <input type="hidden" name="site" value={site.slug} />
-            <button type="submit" className="site-btn ghost">Cancel this reservation</button>
-          </form>
+          <CancelBooking token={token} slug={site.slug} summary={`your table for ${guests} on ${when}`}
+            outcome={outcome.text} refund={outcome.refund} />
         </div>
       ) : (
-        <Link href={`/s/${site.slug}/reserve`} className="site-btn">Book another table</Link>
+        <Link href={rebook} className="site-btn">{booking.status === "cancelled" ? "Book another time" : "Book another table"}</Link>
       )}
     </div>
   );

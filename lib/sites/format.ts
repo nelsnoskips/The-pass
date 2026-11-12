@@ -28,3 +28,20 @@ export function formatPhone(e164: string): string {
   const m = /^\+1(\d{3})(\d{3})(\d{4})$/.exec(e164);
   return m ? `(${m[1]}) ${m[2]}-${m[3]}` : e164;
 }
+
+/** "Thu, Nov 12 at 7:30 PM EST": a deadline, with the restaurant's zone named. */
+export function formatWhenZoned(instant: Date, timezone: string): string {
+  const zone = new Intl.DateTimeFormat("en-US", { timeZone: timezone, timeZoneName: "short" })
+    .formatToParts(instant).find((p) => p.type === "timeZoneName")?.value;
+  return zone ? `${formatWhen(instant, timezone)} ${zone}` : formatWhen(instant, timezone);
+}
+
+/** A dialable tel: link for a phone as the restaurant typed it. */
+export function telHref(phone: string): string {
+  return `tel:${phone.replace(/[^\d+]/g, "")}`;
+}
+
+/** The restaurant's own map link, or a map search for the address. */
+export function mapHref(address: string, mapUrl?: string | null): string {
+  return mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+}

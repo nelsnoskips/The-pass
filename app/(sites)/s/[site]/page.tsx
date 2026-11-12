@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { SiteHome } from "@/components/sites/SiteHome";
+import { getOrderingSettings } from "@/lib/ordering";
 import { getPublishedSite } from "@/lib/sites/repo";
 
 type Params = { params: Promise<{ site: string }> };
@@ -28,5 +29,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function SitePage({ params }: Params) {
   const site = await load(params);
   if (!site) notFound();
-  return <SiteHome content={site.content} base={`/s/${site.slug}`} />;
+  const sql = db();
+  const o = sql ? await getOrderingSettings(sql, site.orgId) : null;
+  const ordering = o?.pickupEnabled ? "pickup" : o?.cateringEnabled ? "catering" : false;
+  return <SiteHome content={site.content} base={`/s/${site.slug}`} ordering={ordering} />;
 }

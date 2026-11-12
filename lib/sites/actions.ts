@@ -8,6 +8,7 @@ import { allow, clientAddress } from "../platform/ratelimit";
 import { sendBookingConfirmation } from "../reservations/notify";
 import { joinWaitlist, notifyWaitlist } from "../reservations/followups";
 import { availableSlots, book, bookingByToken, cancelByToken, modifyByToken } from "../reservations/repo";
+import { cancelOutcome, cancelledInTime } from "../reservations/policy";
 import { localDate } from "../reservations/time";
 import { formatClock, formatWhen } from "./format";
 import { getPublishedSite } from "./repo";
@@ -27,6 +28,8 @@ export interface TimeOption {
   /** The service it falls in, e.g. "Dinner", for grouping. */
   period: string;
   depositCents: number;
+  /** Already inside the cancellation cut-off: a deposit on it is not refundable. */
+  pastCutoff?: boolean;
 }
 
 export interface DayTimes {
@@ -54,12 +57,44 @@ export async function findTimes(slug: string, date: string, partySize: number): 
     open: closed.length === 0 && periods.some((p) => p.days_of_week.map(Number).includes(day)),
     times: slots.map((s) => ({
       time: s.time, label: formatClock(s.time), period: names.get(s.periodId) ?? "", depositCents: s.depositCents,
+      pastCutoff: !cancelledInTime(s.startsAt, site.cancelCutoffHours, new Date()),
     })),
   };
 }
 
+export type ReserveField = "name" | "phone" | "email" | "time";
+
 export interface ReserveState {
   error: string | null;
+  /** The field to fix, so the page can focus it and mark it invalid. */
+  field?: ReserveField;
+}
+
+/**
+ * When a day is full: the next day with a table for this party, within
+ * two weeks and the booking window. The first few times, so the guest can
+ * jump straight there.
+ */
+export async function findNextAvailable(
+  slug: string, date: string, partySize: number,
+): Promise<{ date: string; times: TimeOption[] } | null> {
+  const sql = db();
+  if (!sql || !DATE.test(date) || !Number.isInteger(partySize)) return null;
+  const site = await getPublishedSite(sql, slug);
+  if (!site) return null;
+  const today = localDate(new Date(), site.timezone);
+  const [y, m, d] = date.split("-").map(Number);
+  const days = Math.min(14, site.bookingHorizonDays);
+  for (let i = 1; i <= days; i++) {
+    const next = new Date(Date.UTC(y, m - 1, d + i)).toISOString().slice(0, 10);
+    const [ty, tm, td] = today.split("-").map(Number);
+    if (next > new Date(Date.UTC(ty, tm - 1, td + site.bookingHorizonDays)).toISOString().slice(0, 10)) break;
+    const slots = await availableSlots(sql, { orgId: site.orgId, venueId: site.venueId, date: next, partySize, channel: "online" });
+    if (slots.length) {
+      return { date: next, times: slots.slice(0, 3).map((t) => ({ time: t.time, label: formatClock(t.time), period: "", depositCents: t.depositCents })) };
+    }
+  }
+  return null;
 }
 
 export async function reserve(_prev: ReserveState, form: FormData): Promise<ReserveState> {
@@ -76,7 +111,7 @@ export async function reserve(_prev: ReserveState, form: FormData): Promise<Rese
   const partySize = Number(get("party"));
   const site = await getPublishedSite(sql, slug);
   if (!site || !DATE.test(date) || !TIME.test(time) || !Number.isInteger(partySize)) {
-    return { error: "Something was missing from that booking. Please pick a time again." };
+    return { error: "Something was missing from that booking. Please pick a time again.", field: "time" };
   }
   const h = await headers();
   if (!(await allow(sql, "book", clientAddress(h), 10, 10))) {
@@ -84,7 +119,7 @@ export async function reserve(_prev: ReserveState, form: FormData): Promise<Rese
   }
   const name = get("name").slice(0, 120);
   const email = get("email").slice(0, 200);
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "That email doesn't look right." };
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "That email doesn't look quite right. Please check it, or leave it blank.", field: "email" };
 
   const result = await book(sql, {
     orgId: site.orgId, venueId: site.venueId, date, time, partySize,
@@ -102,7 +137,8 @@ export async function reserve(_prev: ReserveState, form: FormData): Promise<Rese
       already_booked: "You already have a table that day. Use the link in your confirmation text to change it, or call us.",
       too_many: "That's a lot of bookings in a short time. Please call us and we'll sort it out.",
     };
-    return { error: messages[result.reason] };
+    const fields: Partial<Record<typeof result.reason, ReserveField>> = { invalid_phone: "phone", invalid_name: "name", unavailable: "time" };
+    return { error: messages[result.reason], field: fields[result.reason] };
   }
 
   const origin = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host") ?? ""}`;
@@ -126,6 +162,7 @@ export async function reserve(_prev: ReserveState, form: FormData): Promise<Rese
       restaurant: site.content.brand.name,
       when: formatWhen(result.reservation.startsAt, site.timezone),
       manageUrl: `${origin}${path}`,
+      policy: { cutoffHours: site.cancelCutoffHours, note: site.cancellationPolicy },
     });
   } catch (err) {
     console.error("Booking confirmation failed", err);
@@ -149,13 +186,25 @@ async function afterRelease(orgId: string, venueId: string, startsAt: Date, time
   }
 }
 
-export async function cancelBooking(form: FormData): Promise<void> {
+export interface CancelState {
+  error: string | null;
+  /** The refund outcome changed while the page was open (the cut-off
+   *  passed): say so and ask again rather than cancel on a stale promise. */
+  outcome?: string;
+}
+
+export async function cancelBooking(_prev: CancelState, form: FormData): Promise<CancelState> {
   const sql = db();
   const token = String(form.get("token") ?? "");
   const slug = String(form.get("site") ?? "");
-  if (!sql || !token) return;
+  if (!sql || !token) return { error: "We couldn't cancel online just now. Please call us." };
   const booking = await bookingByToken(sql, token);
-  if (!booking) return;
+  if (!booking) return { error: "We couldn't find that booking." };
+  const expected = String(form.get("expectRefund") ?? "");
+  const now = cancelOutcome({ ...booking, cutoffHours: booking.cancelCutoffHours, now: new Date() });
+  if (expected === "1" && !now.refund) {
+    return { error: null, outcome: now.text };
+  }
   if (await cancelByToken(sql, token)) {
     try {
       await refundDepositIfDue(sql, booking.orgId, booking.id, "guest");
@@ -187,12 +236,14 @@ export async function changeBooking(_prev: ReserveState, form: FormData): Promis
   const date = String(form.get("date") ?? "");
   const time = String(form.get("time") ?? "");
   const partySize = Number(form.get("party"));
-  if (!DATE.test(date) || !TIME.test(time) || !Number.isInteger(partySize)) return { error: "Pick a new time first." };
+  if (!DATE.test(date) || !TIME.test(time) || !Number.isInteger(partySize)) return { error: "Pick a new time first.", field: "time" };
   const before = await bookingByToken(sql, token);
   if (!before) return { error: "We couldn't find that booking." };
   const r = await modifyByToken(sql, token, { date, time, partySize });
   if (!r.ok) {
-    return { error: r.reason === "unavailable" ? "That time was just taken. Please choose another." : "This booking can't be changed online. Please call us." };
+    return r.reason === "unavailable"
+      ? { error: "That time was just taken. Please choose another.", field: "time" }
+      : { error: "This booking can't be changed online. Please call us." };
   }
   if (before.startsAt.getTime() !== r.startsAt.getTime() || before.partySize > partySize) {
     await afterRelease(before.orgId, before.venueId, before.startsAt, before.timezone);

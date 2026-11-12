@@ -2,7 +2,11 @@ import Link from "next/link";
 import { formatPrice, type SiteContent } from "@/lib/sites/content";
 
 /** The Classic theme's home page. Pure: content in, page out. */
-export function SiteHome({ content, base, preview = false }: { content: SiteContent; base: string; preview?: boolean }) {
+export function SiteHome({ content, base, preview = false, ordering = false }: {
+  content: SiteContent; base: string; preview?: boolean;
+  /** What's taken online, if anything: offered from the hero. */
+  ordering?: false | "pickup" | "catering";
+}) {
   const c = content;
 
   // What a search engine or an AI answer needs to say "open till 10,
@@ -49,6 +53,7 @@ export function SiteHome({ content, base, preview = false }: { content: SiteCont
           {c.hero.sub && <p className="sub">{c.hero.sub}</p>}
           <div className="site-hero-actions">
             <Link href={`${base}/reserve`} className="site-btn large">Reserve a table</Link>
+            {ordering && <Link href={`${base}/order`} className="site-btn large ghost">{ordering === "pickup" ? "Order pickup" : "Order catering"}</Link>}
             {c.menus.length > 0 && <a href="#menu" className="site-btn large ghost">See the menu</a>}
           </div>
         </div>

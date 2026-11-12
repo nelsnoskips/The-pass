@@ -213,7 +213,10 @@ export async function book(sql: Sql, input: BookInput): Promise<BookResult> {
                   ${consent ? new Date() : null}, ${consent ? `booking:${input.source}` : null},
                   ${emailConsent ? new Date() : null}, ${emailConsent ? `booking:${input.source}` : null})
           on conflict (org_id, phone) do update set
-            name = excluded.name,
+            -- The name on file stays: a phone already known to the
+            -- restaurant keeps the name they know it by. A different name
+            -- is kept as a note for the host, once.
+            ${aliasNoteSql(tx)}
             email = coalesce(excluded.email, guests.email),
             sms_consent_at = coalesce(guests.sms_consent_at, excluded.sms_consent_at),
             sms_consent_source = coalesce(guests.sms_consent_source, excluded.sms_consent_source),
@@ -260,6 +263,22 @@ export async function book(sql: Sql, input: BookInput): Promise<BookResult> {
     }
   }
   return { ok: false, reason: "unavailable" };
+}
+
+/**
+ * For `insert into guests … on conflict (org_id, phone) do update set`:
+ * keep the stored name (fill it only if blank) and note a different one
+ * as "Also booked as …", once. Shared with ordering's guest upsert.
+ */
+export function aliasNoteSql(q: Q) {
+  return q`
+    name = case when btrim(guests.name) = '' then excluded.name else guests.name end,
+    notes = case
+      when btrim(guests.name) = '' or lower(btrim(guests.name)) = lower(btrim(excluded.name))
+        or position(lower('Also booked as ' || btrim(excluded.name)) in lower(coalesce(guests.notes, ''))) > 0
+        then guests.notes
+      else concat_ws(E'\n', nullif(guests.notes, ''), 'Also booked as ' || btrim(excluded.name))
+    end,`;
 }
 
 const MAX_BOOKINGS_PER_PHONE_PER_HOUR = 4;
@@ -712,6 +731,15 @@ export interface GuestBooking {
   startsAt: Date;
   status: ReservationStatus;
   notes: string | null;
+  endsAt: Date;
+  /** Integer cents; 0 when the booking has no deposit. */
+  depositCents: number;
+  /** reservations.deposit_status: none, pending, held, captured, refunded. */
+  depositStatus: string;
+  /** venues.cancel_cutoff_hours — the rule refundDepositIfDue applies. */
+  cancelCutoffHours: number;
+  venuePhone: string | null;
+  venueAddress: string | null;
 }
 
 export async function bookingByToken(sql: Sql, token: string): Promise<GuestBooking | null> {
@@ -719,9 +747,12 @@ export async function bookingByToken(sql: Sql, token: string): Promise<GuestBook
   const [r] = await sql<{
     id: string; org_id: string; venue_id: string; venue_name: string; timezone: string;
     name: string; party_size: number; starts_at: Date; status: ReservationStatus; notes: string | null;
+    ends_at: Date; deposit_cents: number; deposit_status: string; cancel_cutoff_hours: number;
+    phone: string | null; address: string | null;
   }[]>`
     select r.id, r.org_id, r.venue_id, v.name as venue_name, v.timezone, g.name,
-           r.party_size, r.starts_at, r.status, r.notes
+           r.party_size, r.starts_at, r.status, r.notes, r.ends_at, r.deposit_cents, r.deposit_status,
+           v.cancel_cutoff_hours, v.phone, v.address
     from reservations r
     join venues v on v.id = r.venue_id
     join guests g on g.id = r.guest_id
@@ -730,6 +761,8 @@ export async function bookingByToken(sql: Sql, token: string): Promise<GuestBook
   return {
     id: r.id, orgId: r.org_id, venueId: r.venue_id, venueName: r.venue_name, timezone: r.timezone,
     guestName: r.name, partySize: r.party_size, startsAt: r.starts_at, status: r.status, notes: r.notes,
+    endsAt: r.ends_at, depositCents: r.deposit_cents, depositStatus: r.deposit_status,
+    cancelCutoffHours: r.cancel_cutoff_hours, venuePhone: r.phone, venueAddress: r.address,
   };
 }
 
@@ -810,11 +843,21 @@ export async function seatWalkIn(
           });
         }
 
-        // A walk-in who gives a known number keeps the name we know them by.
+        // A walk-in who gives a known number keeps the name we know them
+        // by; a different name they give is noted once, as for bookings.
+        // No name given ("Walk-in") changes nothing; a guest only known as
+        // "Walk-in" takes the real name.
         const [g] = await tx<{ id: string }[]>`
           insert into guests (org_id, phone, name) values (${tenant.orgId}, ${phone}, ${name})
-          on conflict (org_id, phone) do update
-            set name = case when guests.name = 'Walk-in' then excluded.name else guests.name end
+          on conflict (org_id, phone) do update set
+            name = case when btrim(guests.name) in ('', 'Walk-in') then excluded.name else guests.name end,
+            notes = case
+              when btrim(guests.name) in ('', 'Walk-in') or excluded.name = 'Walk-in'
+                or lower(btrim(guests.name)) = lower(btrim(excluded.name))
+                or position(lower('Also booked as ' || btrim(excluded.name)) in lower(coalesce(guests.notes, ''))) > 0
+                then guests.notes
+              else concat_ws(E'\n', nullif(guests.notes, ''), 'Also booked as ' || btrim(excluded.name))
+            end
           returning id`;
         const [r] = await tx<{ id: string }[]>`
           insert into reservations (org_id, venue_id, guest_id, party_size, starts_at, ends_at, status, source, manage_token)

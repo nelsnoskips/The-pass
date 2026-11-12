@@ -3,6 +3,8 @@ import postgres from "postgres";
 import { createHmac, randomUUID } from "node:crypto";
 import { applyStripeEvent, stripePayments, verifyStripeSignature } from "@/lib/payments/stripe";
 import { manualPayments, refundDepositIfDue } from "@/lib/payments";
+import { cancelOutcome, cancelledDepositText } from "@/lib/reservations/policy";
+import { bookingByToken } from "@/lib/reservations/repo";
 
 describe("verifyStripeSignature", () => {
   const secret = "whsec_test";
@@ -131,5 +133,23 @@ d("Stripe deposits against Postgres", () => {
     expect(await refundDepositIfDue(sql, orgId, rid, "guest")).toBe(true);
     const [p] = await sql<{ status: string }[]>`select status from payments where id = ${paymentId}`;
     expect(p.status).toBe("refunded");
+  });
+
+  it("what the guest is told before cancelling is what the refund does", async () => {
+    for (const [hours, refunds] of [[30, true], [20, false]] as const) {
+      const rid = await reservation(hours);
+      const { paymentId } = await manualPayments.createDeposit(sql, { orgId, reservationId: rid, amountCents: 2000, returnUrl: "/", description: "d" });
+      await sql`update payments set status = 'held' where id = ${paymentId}`;
+      await sql`update reservations set deposit_status = 'held' where id = ${rid}`;
+      const [{ manage_token: token }] = await sql<{ manage_token: string }[]>`select manage_token from reservations where id = ${rid}`;
+      const b = (await bookingByToken(sql, token))!;
+      expect(b).toMatchObject({ depositCents: 2000, depositStatus: "held", cancelCutoffHours: 24 });
+      const told = cancelOutcome({ ...b, cutoffHours: b.cancelCutoffHours, now: new Date() });
+      expect(told.refund).toBe(refunds);
+      expect(told.text).toBe(refunds ? "Your $20 deposit will be refunded in full." : "It’s past the 24-hour cut-off, so your $20 deposit won’t be refunded.");
+      expect(await refundDepositIfDue(sql, orgId, rid, "guest")).toBe(refunds);
+      const after = (await bookingByToken(sql, token))!;
+      expect(cancelledDepositText(after.depositCents, after.depositStatus)).toMatch(refunds ? /has been refunded/ : /wasn’t refunded/);
+    }
   });
 });

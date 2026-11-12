@@ -4,9 +4,9 @@ import { normalizePhone } from "../guests/phone";
 import { choosePromotion, promotionsForOrder, type PromoChoice } from "../marketing/promotions";
 import { sendSms, type SmsSender } from "../messaging/sms";
 import { assertCan, type Tenant } from "../platform/tenant";
-import { log } from "../reservations/repo";
+import { aliasNoteSql, log } from "../reservations/repo";
 import { localDate, localTime, minutesOf, weekday, zonedToUtc } from "../reservations/time";
-import type { SiteContent } from "../sites/content";
+import { menuServedAt, type MenuAvailability, type SiteContent } from "../sites/content";
 
 /**
  * Online ordering: pickup and catering from the restaurant's own site,
@@ -87,16 +87,60 @@ export type Priced =
       ok: true; lines: PricedLine[]; subtotalCents: number; discountCents: number; taxCents: number; tipCents: number; totalCents: number;
       promotion: { id: string; name: string; code: string | null } | null;
     }
-  | { ok: false; error: string };
+  | {
+      ok: false; error: string;
+      /** Cart item ids that can't be had (sold out, off the menu, or not
+       *  served at the chosen time), so the page can name and remove them. */
+      unavailable?: string[];
+    };
 
-/** Every item that can be ordered: on the menu, priced, not sold out. */
-export function orderableItems(content: SiteContent, soldOut: string[] = []) {
-  const out = new Map<string, { id: string; name: string; description: string; priceCents: number; menu: string; section: string; tags: string[] }>();
-  for (const m of content.menus) for (const s of m.sections) for (const i of s.items) {
-    if (i.priceCents === null || soldOut.includes(i.id) || out.has(i.id)) continue;
-    out.set(i.id, { id: i.id, name: i.name, description: i.description, priceCents: i.priceCents, menu: m.name, section: s.name, tags: i.tags });
+/** A venue-local moment: "yyyy-mm-dd" and "HH:MM". */
+export interface LocalWhen { date: string; time: string }
+
+export interface OrderableItem {
+  id: string; name: string; description: string; priceCents: number; menu: string; section: string; tags: string[];
+  /** When it's served: one window per menu it appears on; null = whenever the kitchen is open. */
+  availability: MenuAvailability[] | null;
+}
+
+/**
+ * Every item that can be ordered: on the menu, priced, not sold out —
+ * and, given a time, on a menu served then (a brunch dish isn't
+ * orderable for Wednesday dinner).
+ */
+export function orderableItems(content: SiteContent, soldOut: string[] = [], at?: LocalWhen | null) {
+  const out = new Map<string, OrderableItem>();
+  for (const m of content.menus) {
+    if (at && !menuServedAt(m, at.date, at.time)) continue;
+    for (const s of m.sections) for (const i of s.items) {
+      if (i.priceCents === null || soldOut.includes(i.id)) continue;
+      const seen = out.get(i.id);
+      if (seen) {
+        // On more than one menu: served whenever any of them is.
+        if (seen.availability) seen.availability = m.availability ? [...seen.availability, m.availability] : null;
+        continue;
+      }
+      out.set(i.id, {
+        id: i.id, name: i.name, description: i.description, priceCents: i.priceCents, menu: m.name, section: s.name, tags: i.tags,
+        availability: m.availability ? [m.availability] : null,
+      });
+    }
   }
   return out;
+}
+
+/** Any item on the site by id, orderable or not, for naming what's gone. */
+function itemName(content: SiteContent, id: string): string | null {
+  for (const m of content.menus) for (const s of m.sections) for (const i of s.items) if (i.id === id) return i.name;
+  return null;
+}
+
+/** "Baklava", "Baklava and Gyro", "Baklava, Gyro and 2 more". */
+function nameList(names: string[]): string {
+  if (names.length <= 1) return names[0] ?? "";
+  if (names.length === 2) return `${names[0]} and ${names[1]}`;
+  if (names.length === 3) return `${names[0]}, ${names[1]} and ${names[2]}`;
+  return `${names[0]}, ${names[1]} and ${names.length - 2} more`;
 }
 
 /**
@@ -106,15 +150,31 @@ export function orderableItems(content: SiteContent, soldOut: string[] = []) {
  */
 export function priceCart(
   content: SiteContent, settings: OrderingSettings, kind: OrderKind, cart: CartLine[], tipCents = 0, promo: PromoChoice | null = null,
+  /** The ready time, venue-local: every item must be on a menu served then. */
+  at: LocalWhen | null = null,
 ): Priced {
-  const items = orderableItems(content, settings.soldOut);
+  const items = orderableItems(content, settings.soldOut, at);
   if (!Array.isArray(cart) || cart.length === 0) return { ok: false, error: "Your order is empty." };
   if (cart.length > LIMITS.lines) return { ok: false, error: "That's a lot of lines — please call us for an order this size." };
+  // Name every dish that can't be had, not just the first, so the guest
+  // can fix the order in one go.
+  const missing = [...new Set(cart.map((c) => String(c?.itemId)).filter((id) => !items.has(id)))];
+  if (missing.length) {
+    const anyTime = orderableItems(content, settings.soldOut);
+    const names = missing.map((id) => itemName(content, id)).filter((n): n is string => Boolean(n));
+    const what = names.length ? nameList(names) : "Something in your order";
+    const plural = names.length > 1;
+    // Only "not served then" when that's the whole story.
+    const offHours = Boolean(at) && missing.every((id) => anyTime.has(id));
+    const error = offHours
+      ? `${what} ${plural ? "aren't" : "isn't"} served at that time. Please pick another time, or remove ${plural ? "them" : "it"}.`
+      : `${what} ${plural ? "are" : "is"} no longer available. Please review your order.`;
+    return { ok: false, error, unavailable: missing };
+  }
   const maxQty = kind === "catering" ? LIMITS.cateringQty : LIMITS.qty;
   const lines: PricedLine[] = [];
   for (const c of cart) {
-    const item = items.get(String(c?.itemId));
-    if (!item) return { ok: false, error: "Something in your order is no longer available. Please review it." };
+    const item = items.get(String(c?.itemId))!;
     const qty = Number(c.qty);
     if (!Number.isInteger(qty) || qty < 1 || qty > maxQty) return { ok: false, error: `Quantities are 1 to ${maxQty}.` };
     const note = String(c.note ?? "").trim().slice(0, LIMITS.note);
@@ -205,7 +265,15 @@ export interface PlaceInput {
 
 export type PlaceResult =
   | { ok: true; id: string; number: number; token: string; totalCents: number; readyAt: Date }
-  | { ok: false; error: string };
+  | {
+      ok: false; error: string;
+      /** Cart item ids that can't be had; see Priced. */
+      unavailable?: string[];
+      /** The form field to fix, when one is to blame. */
+      field?: OrderField;
+    };
+
+export type OrderField = "name" | "phone" | "email" | "headcount" | "when" | "cart" | "promo" | "tip";
 
 export async function placeOrder(sql: Sql, input: PlaceInput): Promise<PlaceResult> {
   const now = input.now ?? new Date();
@@ -213,28 +281,31 @@ export async function placeOrder(sql: Sql, input: PlaceInput): Promise<PlaceResu
   if (input.kind === "pickup" && !settings.pickupEnabled) return { ok: false, error: "Online ordering is off right now." };
   if (input.kind === "catering" && !settings.cateringEnabled) return { ok: false, error: "Catering orders aren't taken online right now." };
   const name = input.name.trim().slice(0, 80);
-  if (!name) return { ok: false, error: "Please add your name." };
+  if (!name) return { ok: false, error: "Please add your name.", field: "name" };
   const phone = normalizePhone(input.phone);
-  if (!phone) return { ok: false, error: "Please add a mobile number we can text when it's ready." };
+  if (!phone) return { ok: false, error: "Please add a mobile number we can text when it's ready.", field: "phone" };
   const email = input.email?.trim() || null;
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: "That email doesn't look right." };
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: "That email doesn't look right.", field: "email" };
   const headcount = input.kind === "catering" ? Number(input.headcount) : null;
-  if (input.kind === "catering" && (!Number.isInteger(headcount) || headcount! < 1 || headcount! > 2000)) return { ok: false, error: "How many people is it for?" };
+  if (input.kind === "catering" && (!Number.isInteger(headcount) || headcount! < 1 || headcount! > 2000)) return { ok: false, error: "How many people is it for?", field: "headcount" };
 
   const promotions = await promotionsForOrder(sql, input.orgId, phone, now);
   const promo = { code: input.promoCode ?? null, promotions, now };
-  const priced = priceCart(input.content, settings, input.kind, input.cart, input.tipCents, promo);
-  if (!priced.ok) return priced;
+  const at = { date: input.date, time: input.time };
+  const priced = priceCart(input.content, settings, input.kind, input.cart, input.tipCents, promo, at);
+  // Only dishes that are gone get a field; other refusals (a promo code,
+  // a tip) read exactly as they always have.
+  if (!priced.ok) return priced.unavailable ? { ...priced, field: "cart" } : priced;
   const times = readyTimes(await venuePeriods(sql, input.orgId, input.venueId), input.timezone, now, settings, input.kind);
   const slot = times.find((t) => t.date === input.date && t.time === input.time);
-  if (!slot) return { ok: false, error: input.kind === "pickup" && settings.pausedUntil && settings.pausedUntil > now
+  if (!slot) return { ok: false, field: "when", error: input.kind === "pickup" && settings.pausedUntil && settings.pausedUntil > now
     ? "The kitchen is catching up — please pick a later time." : "That time isn't available any more. Please pick another." };
 
   const token = randomBytes(18).toString("base64url");
   return sql.begin(async (tx) => {
     const [g] = await tx<{ id: string }[]>`
       insert into guests (org_id, phone, name, email) values (${input.orgId}, ${phone}, ${name}, ${email})
-      on conflict (org_id, phone) do update set email = coalesce(excluded.email, guests.email)
+      on conflict (org_id, phone) do update set ${aliasNoteSql(tx)} email = coalesce(excluded.email, guests.email)
       returning id`;
     // Order numbers: per restaurant, readable, serialized by the lock.
     await tx`select pg_advisory_xact_lock(hashtext(${`orders:${input.orgId}`}))`;
@@ -243,7 +314,7 @@ export async function placeOrder(sql: Sql, input: PlaceInput): Promise<PlaceResu
     // racing for the last use can't both have it.
     if (priced.promotion) {
       const fresh = await promotionsForOrder(tx as unknown as Sql, input.orgId, phone, now);
-      const again = priceCart(input.content, settings, input.kind, input.cart, input.tipCents, { ...promo, promotions: fresh });
+      const again = priceCart(input.content, settings, input.kind, input.cart, input.tipCents, { ...promo, promotions: fresh }, at);
       if (!again.ok || again.promotion?.id !== priced.promotion.id || again.totalCents !== priced.totalCents) {
         return { ok: false as const, error: "That promotion was just used up. Please review your order." };
       }

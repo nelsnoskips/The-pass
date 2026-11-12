@@ -20,5 +20,10 @@ export default async function SiteLayout({
   const site = sql ? await getPublishedSite(sql, slug) : null;
   if (!site || !sql) notFound();
   const ordering = await getOrderingSettings(sql, site.orgId);
-  return <SiteShell content={site.content} base={`/s/${site.slug}`} ordering={ordering.pickupEnabled || ordering.cateringEnabled}>{children}</SiteShell>;
+  return (
+    <SiteShell content={site.content} base={`/s/${site.slug}`} ordering={ordering.pickupEnabled || ordering.cateringEnabled}
+      giftCardsOnline={Boolean(process.env.STRIPE_SECRET_KEY?.trim())}>
+      {children}
+    </SiteShell>
+  );
 }

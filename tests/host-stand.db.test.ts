@@ -318,6 +318,27 @@ d("host stand against Postgres", () => {
     });
   });
 
+  describe("walk-in with a known number", () => {
+    it("keeps the stored name and notes a different one once", async () => {
+      const o = await seedOrg(NY, [["N1", 1, 4], ["N2", 1, 4], ["N3", 1, 4], ["N4", 1, 4]]);
+      await sql`insert into guests (org_id, phone, name) values (${o.orgId}, '+19545556600', 'Ana Perez')`;
+      const walk = (name: string, time: string) =>
+        seatWalkIn(sql, o.host, { venueId: o.venueId, partySize: 2, name, phone: "954-555-6600", now: at(time) });
+      expect((await walk("Annie", "12:00")).ok).toBe(true);
+      expect((await walk("annie", "12:01")).ok).toBe(true);
+      expect((await walk("", "12:02")).ok).toBe(true);
+      const [g] = await sql<{ name: string; notes: string | null }[]>`
+        select name, notes from guests where org_id = ${o.orgId} and phone = '+19545556600'`;
+      expect(g).toEqual({ name: "Ana Perez", notes: "Also booked as Annie" });
+      // Someone only known as "Walk-in" takes the real name.
+      await sql`insert into guests (org_id, phone, name) values (${o.orgId}, '+19545556601', 'Walk-in')`;
+      expect((await seatWalkIn(sql, o.host, { venueId: o.venueId, partySize: 2, name: "Nik", phone: "954-555-6601", now: at("12:03") })).ok).toBe(true);
+      const [h] = await sql<{ name: string; notes: string | null }[]>`
+        select name, notes from guests where org_id = ${o.orgId} and phone = '+19545556601'`;
+      expect(h).toEqual({ name: "Nik", notes: null });
+    });
+  });
+
   describe("kitchen cancel", () => {
     it("needs a reason, which goes in the log", async () => {
       const o = await seedOrg(NY, [["K1", 1, 2]]);

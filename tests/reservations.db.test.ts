@@ -141,11 +141,19 @@ d("reservations against Postgres", () => {
     await bookAt("17:30", 51, { guest: { name: "Ana", phone: "954-555-9999", smsMarketingConsent: true } });
     // A different day: one online booking per phone per day.
     await bookAt("18:00", 52, { date: "2026-11-12", guest: { name: "Ana P.", phone: "+1 (954) 555 9999", smsMarketingConsent: false } });
-    const rows = await sql<{ name: string; sms_consent_at: Date | null }[]>`
-      select name, sms_consent_at from guests where org_id = ${ids.orgA} and phone = '+19545559999'`;
+    const rows = await sql<{ name: string; notes: string | null; sms_consent_at: Date | null }[]>`
+      select name, notes, sms_consent_at from guests where org_id = ${ids.orgA} and phone = '+19545559999'`;
     expect(rows).toHaveLength(1);
-    expect(rows[0].name).toBe("Ana P.");
+    // The name the restaurant knows stays; the new one is a note, once.
+    expect(rows[0].name).toBe("Ana");
+    expect(rows[0].notes).toBe("Also booked as Ana P.");
     expect(rows[0].sms_consent_at).not.toBeNull();
+    // Staff bookings take the same path, without the online per-phone limits.
+    expect((await bookAt("18:30", 53, { date: "2026-11-11", channel: "staff", actor: "host@a", guest: { name: "ana p.", phone: "954-555-9999" } })).ok).toBe(true);
+    expect((await bookAt("18:30", 54, { date: "2026-11-14", channel: "staff", actor: "host@a", guest: { name: "ANA", phone: "954-555-9999" } })).ok).toBe(true);
+    const [again] = await sql<{ name: string; notes: string | null }[]>`
+      select name, notes from guests where org_id = ${ids.orgA} and phone = '+19545559999'`;
+    expect(again).toEqual({ name: "Ana", notes: "Also booked as Ana P." });
   });
 
   it("counts visits and no-shows on the guest, and logs every change", async () => {
