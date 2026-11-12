@@ -13,48 +13,77 @@ marks a company fact we don't have yet.
 
 ## 1. The plans
 
-| | **Reservations** | **The Pass** (full suite) |
-|---|---|---|
-| List price | **$199** / location / month | **$599** / location / month |
-| Founding offer (first 50 restaurants) | **$149**, locked 24 months | **$449**, locked 24 months |
-| Additional locations | 20% off | 20% off |
-| Contract | Month to month | Month to month |
-| SMS included | 2,000 / location / month, then at cost | 2,000 / location / month, then at cost |
-| Per-cover, per-order or guest fees | None | None |
-| Cut of deposits, gift cards or orders | None. Stripe processing passed through at cost | None. Stripe processing passed through at cost |
+The Pass is one agent (see [08](08-positioning-the-one-agent.md)). Plans
+differ only by **which stations it runs** and which parts of the guest side
+it covers. We never sell agents or stations one at a time.
+
+| | **Host** | **The Pass** | **Group** |
+|---|---|---|---|
+| What it is | The dining room | Everything on the guest side | The Pass for 5+ locations |
+| List price | **$199** / location / month | **$599** / location / month | **$599** / location / month |
+| Founding offer (first 50 restaurants) | **$149**, locked 24 months | **$449**, locked 24 months | **$449**, locked 24 months |
+| Additional locations | 20% off | 20% off | 20% off |
+| Contract | Month to month | Month to month | Month to month |
+| Texts included | 500 / location / month, then at cost | 2,000 / location / month, then at cost | 2,000 / location / month, then at cost |
+| Per-cover, per-order or guest fees | None | None | None |
+| Cut of deposits, gift cards, orders or ad spend | None. Card processing passed through at Stripe's cost | None. Card processing passed through at Stripe's cost | None |
+
+Texts beyond the allowance are billed at cost (estimate ~$0.013 a text,
+§3) and are never capped: transactional texts (confirmations, reminders,
+cancellations, ready texts, the waitlist) always go out; a marketing send
+that would go over shows the overage at cost before it's confirmed. Group
+is a label and a price today; group-level reporting is **to build**.
+
+Every number above lives in one file, `lib/billing/plans.ts`, which the
+pricing page (`/platform/pricing`), the billing page and the invoice
+preview all read. Change it there.
 
 ### What's in each
 
-| Capability | Reservations | The Pass |
+| Capability | Host | The Pass / Group |
 |---|:-:|:-:|
+| **Stations The Pass runs** | Reservations, Website | Reservations, Website, Reviews, Paid ads |
 | Booking page on the restaurant's own site (no widget, no per-cover fee) | ✓ | ✓ |
-| Host stand: today's book, seat, no-show, walk-ins | ✓ | ✓ |
+| Host stand: today's book, seat, no-show, walk-ins, waitlist | ✓ | ✓ |
 | Targeted deposits (prime slots, large parties) at Stripe cost | ✓ | ✓ |
-| Waitlist / "tell me if a table opens" notify list | ✓ | ✓ |
 | Confirmations, reminders, one-tap change or cancel (SMS) | ✓ | ✓ |
-| Guest list with consent records; import with dry run; one-click export | ✓ | ✓ |
-| Reservations Agent: quiet-shift fill from the restaurant's own regulars, on approval | ✓ | ✓ |
-| Square visit sync (Toast when partner access is granted) | ✓ | ✓ |
-| Free leak audit and switch support (a person does the move) | ✓ | ✓ |
-| Website on the site engine + Website Agent (describe a change → preview → publish) | basic booking site | ✓ |
-| Google Business Profile: hours sync, reviews in; Reviews Agent replies on approval | — | ✓ |
-| Email and SMS campaigns with consent, unsubscribe, quiet hours | — | ✓ |
+| Guest list and guest profiles with consent records; import with dry run; one-click export | ✓ | ✓ |
+| Website builder + Website station (describe a change → draft → publish) | ✓ | ✓ |
+| Ask The Pass (for the areas in the plan) and the morning pass | ✓ | ✓ |
+| Reservations station: quiet-shift fill from the restaurant's own regulars, on approval | ✓ | ✓ |
+| Square / Toast visit sync | ✓ | ✓ |
+| Pickup ordering and catering orders (commission-free) | — | ✓ |
+| Promotions; email and SMS campaigns and segments with consent, unsubscribe, quiet hours | — | ✓ |
 | Visit-based loyalty | — | ✓ |
 | Gift cards (no expiry, no fees) | — | ✓ |
-| Pickup ordering and catering orders (commission-free) | — | ✓ |
-| Google Ads and Meta reporting; Paid Ads and Search Terms agents (spend changes on approval) | — | ✓ |
-| AI phone answering for bookings | — | planned (see roadmap); pricing **[TO DECIDE]** |
+| Google reviews + Reviews station (replies on approval) | — | ✓ |
+| Google Ads and Meta reporting + Paid ads station (spend changes on approval) | — | ✓ |
+| The restaurant's own guest app | — | ✓ |
+| Financials and full reporting (orders, ads) | — | ✓ |
+| AI phone answering for bookings | planned; pricing **[TO DECIDE]** | planned |
 
-Why the split falls here: Reservations is the wedge and is priced against
-the POS-native band. Everything that needs ongoing agent work, more
-messaging and more support (marketing, reviews, ads, ordering, gift cards)
-sits in the suite, where the margin is.
+Why the split falls here: Host is the wedge and is priced against the
+POS-native reservations band. Everything that needs ongoing agent work,
+more messaging and more support (marketing, reviews, ads, ordering, gift
+cards) sits in The Pass, where the margin is.
+
+**How the product enforces it** (built 2026-11-12): restaurants set up
+before plans existed have no plan row and are on The Pass. Moving a
+restaurant down never deletes anything: pages for what the plan leaves out
+say "Included in The Pass plan" with a "Talk to us about upgrading" request
+(recorded, emailed to the founder; no payment), actions and jobs refuse on
+the server, guest pages and links for them disappear, the scheduler skips
+stations the plan doesn't include, and the chat isn't offered their tools.
+Moving up turns everything back on as it was. Only The Pass's own staff
+change a plan (logged as `plan.changed`). Billing itself isn't switched on:
+the billing page shows the plan, usage and an invoice preview until Stripe
+Billing exists.
 
 ---
 
 ## 2. Why these prices
 
-### Reservations at $199: priced at the POS-native band, below the incumbents' real bill
+### Host at $199: priced at the POS-native band, below the incumbents' real bill
 
 | Competitor | Reported price | Fees on top | Source |
 |---|---|---|---|
@@ -109,7 +138,7 @@ Why $599 and not $499 or $799:
 - **Below $799.** The suite does not yet match Owner or Popmenu on ordering
   (no modifiers, no POS hand-off, no delivery) or include AI phone
   answering. $599 leaves room to raise prices, or add a tier, once those ship.
-- **Upgrade step.** Reservations → suite is +$400. That is roughly what one
+- **Upgrade step.** Host → The Pass is +$400. That is roughly what one
   restaurant pays an agency, or OpenTable in cover fees.
 
 ### Fee rules, and why they are a product feature
@@ -124,7 +153,7 @@ Why $599 and not $499 or $799:
   total ([Toast 8-K](https://www.sec.gov/Archives/edgar/data/0001650164/000165016426000214/tost-20260930xexhibit991.htm)).
   We trade it for a cleaner pitch against OpenTable's 2%.
 - **SMS allowance, then at cost.** 2,000 segments is about $25 of carrier
-  cost (below). A cap with pass-through keeps a heavy campaign month from
+  cost and Host's 500 about $6 (below). A cap with pass-through keeps a heavy campaign month from
   wiping out the margin, as Square does ([Square pricing](https://squareup.com/us/en/pricing)).
 - **Month to month.** No early-termination fees. Export everything at any time.
 

@@ -24,13 +24,21 @@ and its notes in `research_notes/`.
 - **Position:** the neutral platform. No marketplace, delivery or card
   business behind it; the restaurant owns its guests; agents propose and
   owners approve anything that spends money or messages a guest.
-- **Prices (hypotheses to test in discovery):** Reservations $199 and the
-  full suite $599 per location per month; additional locations 20% off;
-  no per-cover, per-order or guest fees and no cut of deposits; 2,000 texts
-  a month included; month to month. First 50 restaurants: $149 / $449,
+- **Prices (hypotheses to test in discovery):** Host $199 and The Pass
+  $599 per location per month; additional locations 20% off;
+  no per-cover, per-order or guest fees and no cut of deposits; 500 (Host)
+  or 2,000 (The Pass) texts a location a month included, then at cost;
+  month to month. First 50 restaurants: $149 / $449,
   locked for 24 months.
 - **Plan of record for numbers:** the three-year model in 04. Other
   documents quote it.
+- **Plan names and structure (2026-11-12):** **Host** ($199; the dining
+  room, Reservations and Website stations, 500 texts), **The Pass** ($599;
+  everything, all four stations, 2,000 texts) and **Group** (The Pass for 5+
+  locations). Plans differ by which stations the one agent runs, never by
+  selling stations one at a time. Prices live in `lib/billing/plans.ts`;
+  restaurants without a plan are on The Pass; downgrading hides and stops,
+  never deletes. Details in 04 §1.
 
 ## Before the first paying restaurant
 
