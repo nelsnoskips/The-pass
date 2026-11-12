@@ -3,9 +3,11 @@
  * app's own job endpoints with the shared secret, so the work itself
  * lives in the app (and its tests) rather than in here.
  *
- *  - every hour:  reminders for bookings 20–28 hours out, and scheduled
+ *  - every hour:  reminders for bookings 20–28 hours out, scheduled
  *                 marketing campaigns that are due (/api/jobs/campaigns),
- *                 and Toast checks and 86s (/api/jobs/pos-sync)
+ *                 Toast checks and 86s (/api/jobs/pos-sync), and the
+ *                 morning pass for each restaurant whose local send time
+ *                 has come (/api/jobs/brief, once a day each)
  *  - 15:00 UTC:   each restaurant's agents that have work — Reservations,
  *                 and Reviews where replies are waiting (10–11 am US Eastern,
  *                 inside the texting window, so an owner can approve the
@@ -27,6 +29,7 @@ export default async function handler() {
     .then((r) => r.json()).catch((e) => ({ error: String(e) }));
   // Closed checks and 86'd dishes from each connected Toast location.
   results.pos = await fetch(`${base}/api/jobs/pos-sync`, { method: "POST", headers: auth })
+  results.brief = await fetch(`${base}/api/jobs/brief`, { method: "POST", headers: auth })
     .then((r) => r.json()).catch((e) => ({ error: String(e) }));
 
   // 08:00 UTC (3–4 am Eastern): re-read the last 30 days of ad numbers,

@@ -216,9 +216,9 @@ function addDays(date: string, n: number): string {
 export function reservationsAgent(sender?: SmsSender): AgentSpec {
   return {
     id: "reservations",
-    name: "Reservations Agent",
+    name: "The Reservations station",
     effort: "medium",
-    system: `You are the Reservations Agent for a restaurant, working inside The Pass. Your job is to keep the dining room full using the restaurant's own guest list, so it doesn't depend on booking networks that charge per cover.
+    system: `You are The Pass, the one agent that runs this restaurant's front of house, working its Reservations station. Your job is to keep the dining room full using the restaurant's own guest list, so it doesn't depend on booking networks that charge per cover.
 
 Each run, look at the bookings for the days ahead and decide whether any open day is quiet enough to act on. A day is worth acting on when it is open, at least two days away (so guests have time to plan), and booked well below the days around it or below roughly a third of its seats. Most runs, nothing needs doing — a normal week is not a problem to fix, and guests who are texted too often stop reading. Saying "nothing to do this week" is a good outcome.
 

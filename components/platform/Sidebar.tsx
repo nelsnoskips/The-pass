@@ -11,8 +11,8 @@ import { usePathname } from "next/navigation";
 const GROUPS: { name: string | null; items: { seg: string; label: string; icon: string }[] }[] = [
   { name: null, items: [
     { seg: "", label: "Home", icon: "M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" },
-    { seg: "chat", label: "Chat", icon: "M4 5h16v11H9l-5 4zM8 9h8M8 12h5" },
-    { seg: "agents", label: "Agents", icon: "M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4zM18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z" },
+    { seg: "chat", label: "Ask The Pass", icon: "M4 5h16v11H9l-5 4zM8 9h8M8 12h5" },
+    { seg: "agents", label: "Stations", icon: "M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4zM18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z" },
     { seg: "website", label: "Website", icon: "M3 5h18v14H3zM3 9h18M7 7h.01M10 7h.01" },
     { seg: "app", label: "App", icon: "M7 2h10a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM11 18h2" },
   ] },

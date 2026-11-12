@@ -47,13 +47,13 @@ export function ProposalActions({ org, id, canApprove, recipients, sendsNow, lab
   );
 }
 
-/** Clear every pending proposal from one agent, after a confirm. */
+/** Clear every pending proposal from one station, after a confirm. */
 export function DismissAll({ org, agentId, agentName, count }: { org: string; agentId: string; agentName: string; count: number }) {
   const [pending, start] = useTransition();
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const router = useRouter();
   const go = () => {
-    if (!window.confirm(`Dismiss all ${count} waiting from the ${agentName}? Nothing is sent or changed.`)) return;
+    if (!window.confirm(`Dismiss all ${count} waiting from ${agentName}? Nothing is sent or changed.`)) return;
     start(async () => {
       const r = await dismissAllAction(org, agentId);
       setMsg(r.error ? { ok: false, text: r.error } : { ok: true, text: r.result ?? "Done." });
@@ -63,7 +63,7 @@ export function DismissAll({ org, agentId, agentName, count }: { org: string; ag
   return (
     <span style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
       <button type="button" className="pf-btn small quiet" disabled={pending || count === 0} onClick={go}>
-        {pending ? "Dismissing…" : `Dismiss all from this agent (${count})`}
+        {pending ? "Dismissing…" : `Dismiss all from this station (${count})`}
       </button>
       {msg && <span className={`pf-msg ${msg.ok ? "ok" : "err"}`} role={msg.ok ? "status" : "alert"}>{msg.text}</span>}
     </span>

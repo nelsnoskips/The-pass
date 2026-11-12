@@ -18,7 +18,7 @@ export interface AgentEditResult {
 }
 
 /**
- * Run the Website Agent on an owner's request. It acts with the owner's
+ * Run The Pass's Website station on an owner's request. It acts with the owner's
  * own permissions and can only save a draft; the result comes back with
  * a plain list of what changed and a link to preview it.
  */
@@ -30,7 +30,7 @@ export async function askWebsiteAgent(org: string, request: string): Promise<Age
   const ask = request.trim().slice(0, 1000);
   if (ask.length < 4) return { error: "Describe the change you want." };
   if (!process.env.ANTHROPIC_API_KEY) {
-    return { error: "The assistant isn't switched on for your restaurant yet. Everything here still works by hand: make the change in the editor below." };
+    return { error: "The Pass isn't switched on for your restaurant yet. Everything here still works by hand: make the change in the editor below." };
   }
   if (!(await allow(sql, "website-agent", tenant.orgId, 30, 60))) {
     return { error: "That's a lot of requests this hour. Try again shortly, or use the editor." };
@@ -47,7 +47,7 @@ export async function askWebsiteAgent(org: string, request: string): Promise<Age
   const [after] = await listVersions(sql, tenant, site.id);
   const made = after && after.id !== before?.id && after.created_by === "agent:website" ? after : null;
   revalidatePath(`/r/${org}/website`);
-  if (outcome.status === "failed") return { error: "The agent couldn't finish. Nothing was changed." };
+  if (outcome.status === "failed") return { error: "The Pass couldn't finish that. Nothing was changed." };
   if (!made) return { error: null, summary: outcome.summary };
 
   const [was, now] = await Promise.all([before ? getVersion(sql, tenant, before.id) : null, getVersion(sql, tenant, made.id)]);

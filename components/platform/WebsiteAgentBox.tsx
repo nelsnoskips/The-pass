@@ -24,7 +24,7 @@ export function WebsiteAgentBox({ org }: { org: string }) {
 
   return (
     <section className="pf-panel" style={{ marginBottom: 14 }}>
-      <h2>Website Agent</h2>
+      <h2>The Pass · Website</h2>
       <div className="pf-body">
         <p className="pf-sub" style={{ margin: 0 }}>Say what to change. You get a draft to preview — nothing goes live until you publish it.</p>
         <textarea className="pf-input" rows={2} value={text} maxLength={1000} placeholder={EXAMPLES[0]}

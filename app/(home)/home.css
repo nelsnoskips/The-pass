@@ -222,3 +222,24 @@
   -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
   mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
 }
+
+/* ------------------------------------------------ one agent, the pass -- */
+/* The headline is two sentences; give it the width to sit in four lines. */
+.hm-hero h1.hm-h1-long { max-width: 17ch; font-size: clamp(40px, 6.6vw, 88px); line-height: 1; }
+.hm-hero h1.hm-h1-long em { display: block; margin-top: .12em; }
+
+.hm-pass { display: grid; gap: 28px; }
+@media (min-width: 900px) { .hm-pass { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: start; } }
+.hm-pass-copy p { margin: 0 0 16px; color: var(--muted); font-size: 18px; line-height: 1.6; max-width: 56ch; }
+.hm-pass-copy p:first-child { color: var(--ink); }
+.hm-station-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 22px; padding: 0; }
+.hm-station-chips li { padding: 8px 12px; border-radius: 999px; border: 1px solid var(--rule-2); background: oklch(1 0 0 / 0.03); font-size: 13.5px; color: var(--ink); }
+.hm-pass-copy p.hm-honest { font-size: 14.5px; color: var(--muted); padding-top: 14px; border-top: 1px solid var(--rule); }
+
+.hm-rule { margin: 0 !important; padding-top: 12px; border-top: 1px solid var(--rule); color: var(--ink) !important; font-size: 13.5px !important; }
+
+.hm-day { list-style: none; margin: 44px 0 0; padding: 0; display: grid; border-top: 1px solid var(--rule); }
+.hm-day li { display: grid; grid-template-columns: 1fr; gap: 6px; padding: 20px 0; border-bottom: 1px solid var(--rule); }
+@media (min-width: 720px) { .hm-day li { grid-template-columns: 150px minmax(0, 1fr); gap: 24px; } }
+.hm-day .mono { color: var(--brand); font-size: 14px; padding-top: 3px; }
+.hm-day p { margin: 0; font-size: 17px; line-height: 1.55; color: var(--muted); max-width: 70ch; }

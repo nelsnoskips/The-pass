@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { ChatComposer } from "@/components/platform/ChatComposer";
+import { MorningPass } from "@/components/platform/MorningPass";
 import { Onboarding } from "@/components/platform/Onboarding";
 import { db } from "@/lib/db";
-import { actionWords, AGENT_CARDS, agentName } from "@/lib/agent-runtime/catalog";
+import { actionWords, actorLabel, AGENT_CARDS, agentName, wantsTo } from "@/lib/agent-runtime/catalog";
+import { buildMorningPass } from "@/lib/brief";
 import { smsConfigured } from "@/lib/messaging/sms";
 import { getOrderingSettings } from "@/lib/ordering";
 import { requireTenant } from "@/lib/platform/context";
@@ -16,9 +18,10 @@ export const dynamic = "force-dynamic";
 const LIVE = ['booked', 'confirmed', 'seated', 'completed'];
 
 /**
- * The restaurant's cockpit: today against the same day last week, the
- * shape of the day by hour, what the agents want approved, and what
- * they've been doing.
+ * The restaurant's cockpit: the morning pass first (last night, today,
+ * what's waiting, what The Pass did), then today against the same day
+ * last week, the shape of the day by hour, what The Pass wants approved,
+ * and what each station has been doing.
  */
 export default async function Home({ params }: { params: Promise<{ org: string }> }) {
   const { org } = await params;
@@ -35,7 +38,8 @@ export default async function Home({ params }: { params: Promise<{ org: string }
   const lwEnd = new Date(end.getTime() - 7 * 86_400_000);
   const week = new Date(start.getTime() + 7 * 86_400_000);
 
-  const [day, hours, sales, fresh, pending, runs, activity, days, seats, ordering, site, ints, [born], proposedCounts] = await Promise.all([
+  const [brief, day, hours, sales, fresh, pending, runs, activity, days, seats, ordering, site, ints, [born], proposedCounts] = await Promise.all([
+    buildMorningPass(sql, tenant, now),
     sql<{ lw: boolean; covers: number; bookings: number }[]>`
       select starts_at < ${start} as lw, coalesce(sum(party_size), 0)::int as covers, count(*)::int as bookings
       from reservations where org_id = ${tenant.orgId} and venue_id = ${venue.id} and status = any(${LIVE})
@@ -96,7 +100,7 @@ export default async function Home({ params }: { params: Promise<{ org: string }
     { label: "New guests", now: pick(fresh, false)?.n ?? 0, then: then(pick(fresh, true)?.n ?? 0), fmt: (n: number) => String(n) },
   ];
   const texting = smsConfigured();
-  // An agent with proposals has run, whether or not its run rows say so.
+  // A station with proposals has run, whether or not its run rows say so.
   const proposedBy = new Map(proposedCounts.map((p) => [p.agent_id, p.n]));
 
   const byHour = (lw: boolean) => new Map(hours.filter((h) => h.lw === lw).map((h) => [h.h, h.covers]));
@@ -143,8 +147,10 @@ export default async function Home({ params }: { params: Promise<{ org: string }
         </p>
       )}
 
+      {brief && <MorningPass b={brief} hide={texting ? [] : ["Texting is off"]} />}
+
       <div style={{ marginBottom: 18 }}>
-        <ChatComposer org={org} thread={null} suggestions={["How does tonight look?", "Pause pickup orders for 20 minutes", "What are my reservation settings?"]} />
+        <ChatComposer org={org} thread={null} suggestions={["How did last night go?", "How does tonight look?", "Pause pickup orders for 20 minutes"]} />
       </div>
 
       <section className="pf-panel">
@@ -181,13 +187,13 @@ export default async function Home({ params }: { params: Promise<{ org: string }
         <div style={{ display: "grid", gap: 18 }}>
           <section className="pf-panel">
             <h2>Needs your approval · {pending.length}</h2>
-            {pending.length === 0 ? <p className="pf-empty" style={{ padding: "22px 16px" }}>Nothing waiting. When an agent wants to act, it shows up here first.</p> : pending.map((p) => (
+            {pending.length === 0 ? <p className="pf-empty" style={{ padding: "22px 16px" }}>Nothing waiting. When The Pass wants to act, it shows up here first.</p> : pending.map((p) => (
               <article key={p.id} className="pf-approve">
                 <div className="pf-res-meta" style={{ marginTop: 0 }}>
-                  <span className="pf-pill info">✦ Created by {agentName(p.agent_id)}</span>
+                  <span className="pf-pill info">✦ Proposed by {actorLabel(`agent:${p.agent_id}`)}</span>
                   <span className="mono">{ago(p.created_at)}</span>
                 </div>
-                <div className="pf-res-name">{p.title}</div>
+                <div className="pf-res-name">{wantsTo(p.title)}</div>
                 {p.rationale && <p className="r">{p.rationale}</p>}
                 <Link className="pf-btn small ai" href={`/r/${org}/agents#p-${p.id}`}>Review</Link>
               </article>
@@ -210,12 +216,12 @@ export default async function Home({ params }: { params: Promise<{ org: string }
 
         <aside className="pf-sticky">
           <section className="pf-panel">
-            <h2>Your agents <span className="pf-h2-note">{live} of {AGENT_CARDS.length} working</span></h2>
+            <h2>Stations <span className="pf-h2-note">{live} of {AGENT_CARDS.length} working</span></h2>
             <div className="pf-body">
               {AGENT_CARDS.map((a) => {
                 const r = runBy.get(a.id);
                 return (
-                  <Link key={a.id} href={`/r/${org}/agents`} className="pf-agentrow">
+                  <Link key={a.id} href={`/r/${org}/agents/${a.id}`} className="pf-agentrow">
                     <span className={`pf-dot${r?.last && r.last > new Date(now.getTime() - 14 * 86_400_000) ? " on" : ""}`} aria-hidden />
                     <span className="n">{a.name}</span>
                     <span className="mono s">{r ? `${r.runs} run${r.runs === 1 ? "" : "s"} · ${r.proposed} proposed` : proposedBy.get(a.id) ? `${proposedBy.get(a.id)} proposed` : "Not run yet"}</span>
@@ -228,7 +234,7 @@ export default async function Home({ params }: { params: Promise<{ org: string }
           <section className="pf-panel">
             <h2>Recent activity</h2>
             <div className="pf-body" style={{ gap: 10 }}>
-              {activity.length === 0 ? <p className="pf-sub" style={{ margin: 0 }}>No agent activity yet.</p> : activity.map((a, i) => (
+              {activity.length === 0 ? <p className="pf-sub" style={{ margin: 0 }}>Nothing from The Pass yet.</p> : activity.map((a, i) => (
                 <div key={i} className="pf-feed">
                   <span className="t">{actionWords(a.action)}</span>
                   <span className="mono s">{agentName(a.actor.replace(/^agent:/, ""))} · {ago(a.created_at)}</span>

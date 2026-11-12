@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { DismissAll, ProposalActions } from "@/components/platform/ProposalActions";
-import { AGENT_CARDS } from "@/lib/agent-runtime/catalog";
+import { actorLabel, AGENT_CARDS, agentName, wantsTo } from "@/lib/agent-runtime/catalog";
 import { readAllAgentSettings } from "@/lib/agent-runtime/settings";
 import { db } from "@/lib/db";
 import { approvalPermission, canDismissAll, isStale, proposalRecipients, sendTiming, type Recipient } from "@/lib/platform/approvals";
@@ -10,16 +10,18 @@ import { ago, formatIn, venueTz } from "@/lib/platform/when";
 import { formatPhone } from "@/lib/sites/format";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Stations · The Pass" };
 
 const AGENTS = Object.fromEntries(AGENT_CARDS.map((a) => [a.id, a]));
 const quote = { margin: 0, padding: "12px 14px", borderRadius: 12, background: "oklch(0 0 0 / 0.25)", border: "1px solid var(--rule)" } as const;
 
 /**
- * The approvals queue first — what the agents want to do, who it
- * reaches, when it would happen — then the agents themselves and what
- * was decided. Approving runs exactly the stored action and nothing else.
+ * What The Pass is doing, station by station. The approvals queue first
+ * — what it wants to do, who it reaches, when it would happen — then the
+ * stations themselves and what was decided. Approving runs exactly the
+ * stored action and nothing else. (The URL stays /agents.)
  */
-export default async function Agents({ params, searchParams }: { params: Promise<{ org: string }>; searchParams: Promise<{ agent?: string }> }) {
+export default async function Stations({ params, searchParams }: { params: Promise<{ org: string }>; searchParams: Promise<{ agent?: string }> }) {
   const { org: slug } = await params;
   const q = await searchParams;
   const { tenant, org, venues } = await requireTenant(slug);
@@ -66,30 +68,30 @@ export default async function Agents({ params, searchParams }: { params: Promise
     <>
       <div className="pf-head">
         <div>
-          <h1>Agents</h1>
-          <p className="pf-sub">They read your book, your guest list and your ads, and propose. Nothing reaches a guest or spends money until you approve it.</p>
+          <h1>Stations</h1>
+          <p className="pf-sub">What The Pass is doing, station by station. Nothing reaches a guest or spends money until you approve it.</p>
         </div>
       </div>
 
       <section className="pf-panel pf-queue" id="queue" aria-label="Waiting for your approval" style={{ marginBottom: 22 }}>
         <h2>Waiting for you · {totalWaiting}</h2>
         {totalWaiting > 0 && (
-          <nav className="pf-filters" aria-label="Filter by agent">
+          <nav className="pf-filters" aria-label="Filter by station">
             <Link href={`${base}#queue`} className="pf-chip" aria-current={!filter ? "page" : undefined}>All · {totalWaiting}</Link>
             {AGENT_CARDS.filter((a) => waiting.get(a.id)).map((a) => (
               <Link key={a.id} href={`${base}?agent=${a.id}#queue`} className="pf-chip" aria-current={filter === a.id ? "page" : undefined}>{a.name} · {waiting.get(a.id)}</Link>
             ))}
             {filter && canDismissAll(tenant, filter) && (
-              <span style={{ marginLeft: "auto" }}><DismissAll org={org.slug} agentId={filter} agentName={AGENTS[filter].name} count={waiting.get(filter) ?? 0} /></span>
+              <span style={{ marginLeft: "auto" }}><DismissAll org={org.slug} agentId={filter} agentName={agentName(filter)} count={waiting.get(filter) ?? 0} /></span>
             )}
           </nav>
         )}
         {pending.length === 0 ? (
-          <p className="pf-empty">Nothing waiting. When an agent wants to act, it shows up here first.</p>
+          <p className="pf-empty">Nothing waiting. When The Pass wants to act, it shows up here first.</p>
         ) : (
           <>
             {!filter && totalWaiting > 1 && (
-              <p className="pf-sub" style={{ margin: 0, padding: "10px 16px 0" }}>Pick an agent above to see only its proposals, or to dismiss them all at once.</p>
+              <p className="pf-sub" style={{ margin: 0, padding: "10px 16px 0" }}>Pick a station above to see only its proposals, or to dismiss them all at once.</p>
             )}
             {pending.map((p) => {
               const stale = isStale(p.created_at, now);
@@ -99,11 +101,11 @@ export default async function Agents({ params, searchParams }: { params: Promise
               return (
                 <article key={p.id} id={`p-${p.id}`} className="pf-proposal">
                   <div className="pf-res-meta" style={{ marginTop: 0 }}>
-                    <span className="pf-pill dot info">{AGENTS[p.agent_id]?.name ?? p.agent_id}</span>
+                    <span className="pf-pill dot info">Proposed by {actorLabel(`agent:${p.agent_id}`)}</span>
                     <span className="mono"><time dateTime={p.created_at.toISOString()} title={formatIn(p.created_at, tz, "long")}>{ago(p.created_at)}</time></span>
                     {stale && <span className="pf-pill warn">Stale — numbers from {formatIn(p.created_at, tz, "datetime")}</span>}
                   </div>
-                  <div className="pf-res-name">{p.title}</div>
+                  <div className="pf-res-name">{wantsTo(p.title)}</div>
                   {p.rationale && <p style={{ margin: 0, color: "var(--muted)" }}>{p.rationale}</p>}
                   {stale && <p className="pf-sub" style={{ margin: 0 }}>This was drawn up more than a day ago. Consent and opt-outs are checked again when you approve; the reasoning may be out of date.</p>}
                   {p.input.reply && (
@@ -163,7 +165,7 @@ export default async function Agents({ params, searchParams }: { params: Promise
           const run = lastRun.get(a.id);
           const st = stats.get(a.id);
           const off = settings.get(a.id)?.enabled === false;
-          // Proposals are activity too: an agent with work in the queue has run.
+          // Proposals are activity too: a station with work in the queue has run.
           const last = [run?.started_at, lastProp.get(a.id)].filter((d): d is Date => Boolean(d)).sort((x, y) => y.getTime() - x.getTime())[0] ?? null;
           const on = !off && Boolean(last && now.getTime() - last.getTime() < 14 * 86_400_000);
           return (
@@ -173,6 +175,7 @@ export default async function Agents({ params, searchParams }: { params: Promise
                 <span className={`state${on ? " on" : ""}${off ? " off" : ""}`}>{off ? "Off" : on ? "Working" : last ? "Idle" : "Not run yet"}</span>
               </div>
               <h3><Link href={`/r/${org.slug}/agents/${a.id}`} className="pf-agent-link">{a.name}</Link></h3>
+              <p className="pf-station-of">Station of The Pass</p>
               <p className="tags">{a.tags.join(" · ")}</p>
               <p className="does">{a.does}</p>
               <p className="rule">{a.approval}</p>
@@ -203,7 +206,7 @@ export default async function Agents({ params, searchParams }: { params: Promise
                   <span className={`pf-pill ${h.status === "executed" ? "go" : h.status === "rejected" ? "" : "stop"}`}>
                     {{ executed: "Approved", rejected: "Dismissed", blocked: "Blocked", failed: "Failed" }[h.status] ?? h.status}
                   </span>
-                  {h.decided_by && <span>{h.decided_by}</span>}
+                  {h.decided_by && <span>{actorLabel(h.decided_by)}</span>}
                   {h.decided_at && <span className="mono">{formatIn(h.decided_at, tz, "datetime")}</span>}
                 </span>
               </div>

@@ -1,9 +1,40 @@
 # The Pass, agentic: the architecture every agent is built on
 
 The Pass is becoming an all-in-one restaurant platform — website,
-reservations, guest list, SMS and email, loyalty, and ads — run by
-agents. This document is the contract for how those agents are built.
-New agents, and changes to existing ones, follow it.
+reservations, guest list, SMS and email, loyalty, and ads — run by one
+agent. This document is the contract for how it is built. New stations,
+and changes to existing ones, follow it.
+
+## One agent, many stations
+
+To a restaurant, **The Pass is one agent** with one name, one memory and
+one conversation (positioning: `docs/company/08-positioning-the-one-agent.md`).
+What the runtime calls agents — Reservations, Reviews, Website, Paid
+ads — are presented as that agent's **stations**, the way a kitchen has
+stations under one expo. The runtime below is unchanged: each station is
+still an `AgentSpec` with its own tools, tiers, settings and runs.
+
+- **Names people read.** "Ask The Pass" (the chat, `/r/<org>/chat`),
+  "Stations" (`/r/<org>/agents`, also reachable at `/stations`), station
+  names without "Agent". Activity is signed "The Pass · Reservations";
+  approval cards say "The Pass wants to …" and "Proposed by The Pass
+  (Reservations)". Never use "pass" as a button verb: buttons say what
+  happens (Send, Publish, Apply, Undo).
+- **Stored identifiers don't change.** Agent ids, URLs and the
+  `change_log` actor `agent:<id>` stay as they are; display goes through
+  `actorLabel` / `agentName` / `stationName` in
+  `lib/agent-runtime/catalog.ts` (`agent:reservations` → "The Pass
+  (Reservations)", `agent:assistant` → "The Pass").
+- **Say what it doesn't do.** The Pass doesn't touch the kitchen,
+  payroll or the point of sale; the chat's system prompt says so and
+  the product says so in onboarding and empty states.
+- **The morning pass** (`lib/brief`) is the daily brief from the one
+  agent: last night, today against the usual same weekday, what's
+  waiting, what each station did yesterday, and heads-ups. It is on
+  Home, behind the chat's `get_morning_pass` tool, and sent by email or
+  text at each restaurant's local time when an owner turns it on
+  (Settings → Morning pass; `/api/jobs/brief`, hourly, once a day per
+  restaurant, recorded in `brief_sends`; dry run without a provider).
 
 ## What an agent is here
 
@@ -27,7 +58,9 @@ model. It is five pieces, and the value lives in pieces 3–5:
 
 1. **Triggers** — `netlify/functions/scheduled-jobs.mts` runs hourly:
    booking reminders every hour, and at 15:00 UTC each restaurant's
-   Reservations Agent via `/api/agents/run` (bearer `AGENT_CRON_SECRET`).
+   Reservations station via `/api/agents/run` (bearer `AGENT_CRON_SECRET`),
+   and the morning pass via `/api/jobs/brief` when a restaurant's local
+   send time comes.
    Inngest replaces it when we need retries, fan-out and event triggers. Agents never run inside a page
    request a guest or owner is waiting on.
 2. **Model + instructions** — Claude through the Messages API with a
@@ -80,18 +113,19 @@ Approve-tier actions need a role that `can(tenant, ...)` grants:
 | Tenant scoping and roles | Built | `lib/platform/tenant.ts` |
 | Change log, agent decisions tables | Built | `db/schema.sql` |
 | Reservations engine (the guest data source) | Built | `lib/reservations/` |
-| Paid Ads + Search Terms agents (rules, approval queue) | Built on real Google Ads and Meta data; Google writes (budget, pause, negative keyword) on approval; Meta read-only | `lib/agent-runtime/agents/paid-ads.ts` |
+| Paid ads station, with search terms (rules, approval queue) | Built on real Google Ads and Meta data; Google writes (budget, pause, negative keyword) on approval; Meta read-only | `lib/agent-runtime/agents/paid-ads.ts` |
 | Agent runtime: tools with tiers, policy, loop, proposals | Built | `lib/agent-runtime/` |
 | Triggers | Built: hourly Netlify schedule, agent and reminder endpoints (need `AGENT_CRON_SECRET`, `ANTHROPIC_API_KEY`) | `netlify/functions`, `app/api/agents/run`, `app/api/jobs` |
-| Reservations agent (fill quiet shifts by SMS) | Built on the runtime | `lib/agent-runtime/agents/reservations.ts` |
-| Website agent (describe a change → draft → preview → publish) | Built on the runtime; saves drafts only | `lib/agent-runtime/agents/website.ts` |
-| Reviews agent (draft replies → approve → posted to Google) | Built on the runtime | `lib/agent-runtime/agents/reviews.ts` |
+| Reservations station (fill quiet shifts by SMS) | Built on the runtime | `lib/agent-runtime/agents/reservations.ts` |
+| Website station (describe a change → draft → preview → publish) | Built on the runtime; saves drafts only | `lib/agent-runtime/agents/website.ts` |
+| Reviews station (draft replies → approve → posted to Google) | Built on the runtime | `lib/agent-runtime/agents/reviews.ts` |
 | Connections: Stripe deposits, Google Business Profile, Square | Built (OAuth, sealed tokens, signed webhooks) | `lib/payments`, `lib/integrations` |
 | Loyalty and visits from the point of sale | Built | `lib/guests` |
 | Toast (read-only, Standard API access) | Built: owner pastes credentials (sealed); hourly sync of closed checks → guests, visits, spend, loyalty; 86 list → sold-out lever (`via "Toast"`); menu import as a website draft on request. Toast only shares guest details on takeout/delivery, so dine-in checks count in sales but match no guest. Open: confirm with Toast that a vendor may use a restaurant's standard credentials on its behalf; order injection, webhooks and two-way menus need the Integration Partner program | `lib/integrations/toast.ts`, `/api/jobs/pos-sync` |
 | SMS sending | Built; dry run until Twilio keys are set | `lib/messaging/sms.ts` |
-| Proposal queue UI for runtime agents | Built | `/r/<org>/agents` |
-| Per-restaurant agent settings: on/off, owner's instructions (appended to the system prompt in a fenced block that can't override policy), tighter-only limits enforced in tool checks, activity log | Built | `lib/agent-runtime/settings.ts`, `/r/<org>/agents/<id>` |
+| Proposal queue UI ("Stations") | Built | `/r/<org>/agents` |
+| Ask The Pass (chat across every station) and the morning pass | Built | `lib/assistant`, `lib/brief`, `/r/<org>/chat`, Home |
+| Per-restaurant station settings: on/off, owner's instructions (appended to the system prompt in a fenced block that can't override policy), tighter-only limits enforced in tool checks, activity log | Built | `lib/agent-runtime/settings.ts`, `/r/<org>/agents/<id>` |
 | STOP / START by text | Built: signed Twilio webhook sets `guests.sms_opted_out_at` for the phone at every restaurant (one shared sending number) | `app/api/webhooks/twilio`, `lib/messaging/inbound.ts` |
 | Live Google/Meta/GBP tools | Google Business Profile (hours, reviews, replies) and Google Ads (reporting, approved budget/pause/negative-keyword changes) live; Meta read-only | `lib/integrations/`, `lib/ads/` |
 
@@ -113,7 +147,7 @@ Approve-tier actions need a role that `can(tenant, ...)` grants:
    the guarantees are about what policy does with whatever the model
    asks for, so they don't need a live model to prove.
 
-## Agent roster
+## Stations
 
 Live: **Reservations** (fill quiet shifts from lapsed regulars),
 **Website** (describe the change → draft → owner publishes), **Reviews**
@@ -122,10 +156,10 @@ with search terms (real Google Ads and Meta numbers; Google budget,
 pause and negative-keyword changes on approval). Planned: **Local SEO**
 (listing drift guard, holiday hours), **Guest Marketing** (SMS/email to
 the right regulars), **Guest Support** (questions on site and by text),
-**Loyalty**.
+**Loyalty**. Each is a station of The Pass, not a separate agent.
 
 The edge over platforms built on ordering data is reservations data:
-covers, visit frequency, occasions and no-shows. Agents should use it.
+covers, visit frequency, occasions and no-shows. Every station should use it.
 
 ## Product build order
 

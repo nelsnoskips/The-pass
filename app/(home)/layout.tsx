@@ -5,9 +5,9 @@ import "./home.css";
 const mono = Geist_Mono({ variable: "--font-hm-mono", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "The Pass — the restaurant platform run by agents you can see",
+  title: "The Pass — one agent runs your front of house",
   description:
-    "Website, reservations, guest list, texts, reviews and ads in one platform, with AI agents that do the work and show you every move before it happens. No per-cover fees.",
+    "Bookings, the floor, online orders, texts, reviews, your website and your ads. The Pass does the work and shows you every move before it reaches a guest. No per-cover fees.",
   // Not indexed until it replaces the studio homepage at /.
   robots: { index: false, follow: false },
 };

@@ -102,7 +102,7 @@ d("Website Agent", () => {
 
     const [newest] = await listVersions(sql, owner, siteId);
     expect(newest.created_by).toBe("agent:website");
-    expect(newest.note).toBe("Thanksgiving notice (Website Agent)");
+    expect(newest.note).toBe("Thanksgiving notice (The Pass · Website)");
     expect(newest.live).toBe(false);
     expect((await getPublishedSite(sql, slug))?.content.announcement).toBe("");
   });

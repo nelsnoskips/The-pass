@@ -9,8 +9,10 @@ import { requireTenant } from "@/lib/platform/context";
 import { can } from "@/lib/platform/tenant";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Ask The Pass" };
 
 const SUGGESTIONS = [
+  "How did last night go?",
   "How does tonight look?",
   "Pause pickup orders for 20 minutes",
   "Let guests book up to 60 days ahead",
@@ -18,8 +20,9 @@ const SUGGESTIONS = [
 ];
 
 /**
- * Chat: ask about the restaurant, or tell it what to change. Every change
- * shows as a card with before → after, applied or waiting for you.
+ * Ask The Pass: ask about the restaurant, or tell it what to change. One
+ * conversation reaches every station. Every change shows as a card with
+ * before → after, applied or waiting for you.
  */
 export default async function Chat({ params, searchParams }: { params: Promise<{ org: string }>; searchParams: Promise<{ t?: string; err?: string }> }) {
   const { org } = await params;
@@ -50,7 +53,7 @@ export default async function Chat({ params, searchParams }: { params: Promise<{
   return (
     <div className="pf-chat">
       <aside className="pf-chat-list" aria-label="Conversations">
-        <Link href={`/r/${org}/chat`} className="pf-btn small" style={{ justifyContent: "center" }}>New chat</Link>
+        <Link href={`/r/${org}/chat`} className="pf-btn small" style={{ justifyContent: "center" }}>New conversation</Link>
         {[...groups.entries()].map(([g, list]) => (
           <div key={g}>
             <p className="pf-side-h" style={{ padding: "0 8px", marginTop: 14 }}>{g}</p>
@@ -64,8 +67,9 @@ export default async function Chat({ params, searchParams }: { params: Promise<{
       <section className="pf-chat-main">
         {!threadId ? (
           <div className="pf-chat-welcome">
-            <h1>What do you need?</h1>
-            <p className="pf-sub">Ask about {o.name}, or tell it what to change. You&rsquo;ll see every change it makes, before and after — and nothing public, paid or guest-facing changes until you press Apply.</p>
+            <h1>Ask The Pass</h1>
+            <p className="pf-sub">I run the front of house at {o.name} — bookings, the floor, online orders, texts, reviews, the website and ads. Ask me anything, or tell me what to change. You&rsquo;ll see every change before and after, and nothing public, paid or guest-facing happens until you press Apply.</p>
+            <p className="pf-sub" style={{ fontSize: 12.5 }}>The Pass doesn&rsquo;t touch your kitchen, payroll or point of sale.</p>
             <ChatComposer org={org} thread={null} suggestions={SUGGESTIONS} autoFocus big />
           </div>
         ) : (

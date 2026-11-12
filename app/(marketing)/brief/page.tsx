@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { BriefForm } from "@/components/marketing/BriefForm";
-import { ALL_FIELDS, CHAPTERS } from "@/lib/brief";
+import { ALL_FIELDS, CHAPTERS } from "@/lib/studio/brief";
 
 export const metadata: Metadata = {
   title: "Start a brief | The Pass by Madison Four",

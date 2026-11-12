@@ -1061,3 +1061,36 @@ create table if not exists toast_syncs (
   finished_at timestamptz
 );
 create index if not exists toast_syncs_org_idx on toast_syncs(org_id, id desc);
+-- morning pass
+-- ------------------------------------------------------------------
+-- The daily brief: last night, today, what's waiting for a decision.
+-- Always shown on Home; sent by email or text only when an owner turns
+-- it on. Recipients are team members' emails (checked against
+-- org_members when saved and again when sent); a text goes to the
+-- member's own mobile, kept on org_members.phone.
+create table if not exists brief_settings (
+  org_id      uuid primary key references orgs(id) on delete cascade,
+  enabled     boolean not null default false,
+  send_at     time not null default '09:00',
+  channel     text not null default 'email' check (channel in ('email', 'sms')),
+  recipients  text[] not null default '{}',
+  updated_by  text,
+  updated_at  timestamptz not null default now()
+);
+
+alter table org_members add column if not exists phone text;
+
+-- One row per restaurant per local day, claimed before anything is
+-- sent: the unique key is the "never twice in a day" guarantee, however
+-- the hourly runs overlap. dry_run: no email/SMS provider configured.
+create table if not exists brief_sends (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null references orgs(id) on delete cascade,
+  local_date  date not null,
+  channel     text not null check (channel in ('email', 'sms')),
+  status      text not null default 'sending' check (status in ('sending', 'sent', 'dry_run', 'failed', 'partial')),
+  recipients  jsonb not null default '[]'::jsonb,
+  body        text not null default '',
+  created_at  timestamptz not null default now(),
+  unique (org_id, local_date)
+);

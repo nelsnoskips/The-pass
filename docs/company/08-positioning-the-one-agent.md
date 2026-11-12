@@ -203,8 +203,8 @@ per-cover fees on your own guests, and the 1am admin shift.
 Everything in that story is **built** except: the "eleven came back"
 attribution for agent texts (campaigns have it; the Reservations
 Agent's proposals need it — **to build**), review replies naming what
-the guest ordered (**to build**: join reviews to visits), and the
-morning brief (**to build**, §9). Until those exist, the demo runs the
+the guest ordered (**to build**: join reviews to visits). The morning
+brief is **built** (§9.3). Until the rest exist, the demo runs the
 built parts and the website shows only what's true.
 
 ## 8. Messaging pillars, re-framed
@@ -226,7 +226,8 @@ follow directly from "one agent":
    **Ask The Pass**; activity reads "The Pass texted 18 guests (you
    approved 9:02)". The separate agents become **stations** of one agent
    on a "What The Pass is doing" page — same controls, one identity.
-   (**to build** — mostly naming and layout; the runtime already supports
+   (**built** 2026-11-12: Ask The Pass, Stations, "The Pass · Reservations"
+   in activity and approvals; the runtime already supports
    it.)
 2. **One memory in the conversation.** Asking The Pass about anything
    should reach every station: proposals waiting, what each station did,
@@ -235,7 +236,8 @@ follow directly from "one agent":
 3. **The morning pass.** A daily brief at a set time — last night, today,
    what needs a decision — in the app and by text/email. This is the
    product's heartbeat and the single best retention and word-of-mouth
-   asset. (**to build**)
+   asset. (**built** 2026-11-12: on Home, in Ask The Pass, and by email or
+   text at the owner's chosen local time — Settings → Morning pass.)
 4. **Cross-station moves.** At least two visible ones for launch: quiet
    night → text regulars → website special; full night → hold ads.
    (**first half built**; website special and ad hold **to build**)

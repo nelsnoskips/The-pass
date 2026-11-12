@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { sendGAEvent } from "@next/third-parties/google";
-import { ALL_FIELDS, CHAPTERS, type Field } from "@/lib/brief";
+import { ALL_FIELDS, CHAPTERS, type Field } from "@/lib/studio/brief";
 
 const STORE = "m4-brief-v1";
 
