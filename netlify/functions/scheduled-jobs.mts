@@ -29,6 +29,7 @@ export default async function handler() {
     .then((r) => r.json()).catch((e) => ({ error: String(e) }));
   // Closed checks and 86'd dishes from each connected Toast location.
   results.pos = await fetch(`${base}/api/jobs/pos-sync`, { method: "POST", headers: auth })
+    .then((r) => r.json()).catch((e) => ({ error: String(e) }));
   results.brief = await fetch(`${base}/api/jobs/brief`, { method: "POST", headers: auth })
     .then((r) => r.json()).catch((e) => ({ error: String(e) }));
 
