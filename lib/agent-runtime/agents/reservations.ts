@@ -111,7 +111,9 @@ const lapsedGuests = defineTool<{ min_visits: number; lapsed_days: number }>({
   },
 });
 
-export function sendGuestSms(sender: SmsSender = sendSms): ToolDef {
+/** campaignId: set when a Marketing campaign sends through this tool, so
+ *  its results can be read back from guest_messages. */
+export function sendGuestSms(sender: SmsSender = sendSms, campaignId: string | null = null): ToolDef {
   return defineTool<{ guest_ids: string[]; message: string; rationale: string }>({
     name: "send_guest_sms",
     description:
@@ -158,18 +160,18 @@ export function sendGuestSms(sender: SmsSender = sendSms): ToolDef {
         const r = await sender(g.phone, body);
         tally[r.status]++;
         await sql`
-          insert into guest_messages (org_id, guest_id, kind, body, status, provider_id, error, sent_by)
+          insert into guest_messages (org_id, guest_id, kind, body, status, provider_id, error, sent_by, campaign_id)
           values (${tenant.orgId}, ${g.id}, 'marketing', ${body}, ${r.status},
-                  ${r.status === "sent" ? r.providerId : null}, ${r.status === "failed" ? r.error : null}, ${tenant.actor})`;
+                  ${r.status === "sent" ? r.providerId : null}, ${r.status === "failed" ? r.error : null}, ${tenant.actor}, ${campaignId})`;
       }
-      await log(sql, tenant.orgId, tenant.actor, "guests.sms_marketing", "guest_messages", null, { ...tally, body });
+      await log(sql, tenant.orgId, tenant.actor, "guests.sms_marketing", "guest_messages", null, { ...tally, body, ...(campaignId ? { campaignId } : {}) });
       return tally;
     },
   });
 }
 
 /** Of these guests, the ones who may receive a marketing text right now. */
-async function textable(ctx: AgentContext, ids: string[]): Promise<{ id: string; phone: string }[]> {
+export async function textable(ctx: AgentContext, ids: string[]): Promise<{ id: string; phone: string }[]> {
   const uuids = ids.filter((id) => /^[0-9a-f-]{36}$/i.test(id));
   if (uuids.length === 0) return [];
   const recent = new Date(ctx.now.getTime() - MARKETING_GAP_DAYS * 86_400_000);

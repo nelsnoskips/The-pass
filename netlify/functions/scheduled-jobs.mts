@@ -3,7 +3,8 @@
  * app's own job endpoints with the shared secret, so the work itself
  * lives in the app (and its tests) rather than in here.
  *
- *  - every hour:  reminders for bookings 20–28 hours out
+ *  - every hour:  reminders for bookings 20–28 hours out, and scheduled
+ *                 marketing campaigns that are due (/api/jobs/campaigns)
  *  - 15:00 UTC:   each restaurant's agents that have work — Reservations,
  *                 and Reviews where replies are waiting (10–11 am US Eastern,
  *                 inside the texting window, so an owner can approve the
@@ -20,6 +21,8 @@ export default async function handler() {
 
   const results: Record<string, unknown> = {};
   results.reminders = await fetch(`${base}/api/jobs/reminders`, { method: "POST", headers: auth })
+    .then((r) => r.json()).catch((e) => ({ error: String(e) }));
+  results.campaigns = await fetch(`${base}/api/jobs/campaigns`, { method: "POST", headers: auth })
     .then((r) => r.json()).catch((e) => ({ error: String(e) }));
 
   // 08:00 UTC (3–4 am Eastern): re-read the last 30 days of ad numbers,
