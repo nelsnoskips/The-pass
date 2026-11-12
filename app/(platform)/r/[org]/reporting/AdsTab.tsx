@@ -4,6 +4,8 @@ import { windowDates } from "@/lib/ads/store";
 import { db } from "@/lib/db";
 import type { Tenant } from "@/lib/platform/tenant";
 import { listOrgIntegrations } from "@/lib/platform/settings";
+import { formatIn } from "@/lib/platform/when";
+import { orgTimezone } from "@/lib/levers";
 
 const money = (c: number | null) => (c === null ? "—" : `$${(c / 100).toLocaleString("en-US", { minimumFractionDigits: c % 100 && c < 100000 ? 2 : 0, maximumFractionDigits: 2 })}`);
 const count = (n: number) => n.toLocaleString("en-US", { maximumFractionDigits: 1 });
@@ -29,9 +31,11 @@ export async function AdsTab({ org, tenant, days }: { org: string; tenant: Tenan
   const [r, ints] = await Promise.all([adReport(sql, tenant, since, until), listOrgIntegrations(sql, tenant)]);
   const connected = new Set(ints.filter((i) => i.status === "connected").map((i) => i.provider));
   const none = !connected.has("google_ads") && !connected.has("meta_ads");
+  const blank = none && r.days.length === 0 && r.total.spendCents === 0;
   const maxSpend = Math.max(1, ...r.days.map((d) => d.spendCents));
   const maxResults = Math.max(1, ...r.days.map((d) => d.conversions));
-  const when = (d: Date | null) => (d ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(d) : "never");
+  const tz = await orgTimezone(sql, tenant);
+  const when = (d: Date | null) => (d ? formatIn(d, tz, "datetime") : "never");
 
   return (
     <>
@@ -45,11 +49,12 @@ export async function AdsTab({ org, tenant, days }: { org: string; tenant: Tenan
       )}
 
       <div className="pf-stats">
-        <div className="pf-stat"><b>{money(r.total.spendCents)}</b><span>spent on ads</span></div>
-        <div className="pf-stat"><b>{count(r.total.conversions)}</b><span>results the platforms reported</span></div>
-        <div className="pf-stat"><b>{money(r.totalDerived.costPerResultCents)}</b><span>cost per result</span></div>
+        {/* Nothing connected and nothing on record: there is no ad number to show, so "—", never $0. */}
+        <div className="pf-stat"><b>{blank ? "—" : money(r.total.spendCents)}</b><span>spent on ads{blank ? " · no ad account connected" : ""}</span></div>
+        <div className="pf-stat"><b>{blank ? "—" : count(r.total.conversions)}</b><span>results the platforms reported</span></div>
+        <div className="pf-stat"><b>{blank ? "—" : money(r.totalDerived.costPerResultCents)}</b><span>cost per result</span></div>
         <div className="pf-stat"><b>{count(r.bookingsTotal)}</b><span>bookings in The Pass · {count(r.coversTotal)} covers</span></div>
-        <div className="pf-stat"><b>{pct(r.totalDerived.ctr)}</b><span>click-through rate</span></div>
+        <div className="pf-stat"><b>{blank ? "—" : pct(r.totalDerived.ctr)}</b><span>click-through rate</span></div>
       </div>
 
       <div className="pf-layout">

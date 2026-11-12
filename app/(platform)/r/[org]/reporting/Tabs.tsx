@@ -7,6 +7,7 @@ import { overviewReport } from "@/lib/reports/overview";
 import type { Periods } from "@/lib/reports/period";
 import { share } from "@/lib/reports/period";
 import { bookingsReport, guestsReport, ordersReport } from "@/lib/reports/sections";
+import { formatIn } from "@/lib/platform/when";
 
 /**
  * The reporting tabs other than Ads. Each loads its own report from
@@ -16,7 +17,7 @@ import { bookingsReport, guestsReport, ordersReport } from "@/lib/reports/sectio
 const SOURCE: Record<string, string> = { website: "Your website", phone: "Phone", walk_in: "Walk-in", google: "Google", instagram: "Instagram", import: "Imported", agent: "Agent", host: "Host stand" };
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const hourLabel = (h: number) => `${((h + 11) % 12) + 1}${h < 12 ? "a" : "p"}`;
-const date = (d: Date | null) => (d ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(d) : "—");
+
 
 interface TabProps { org: string; tenant: Tenant; p: Periods; compare: boolean }
 
@@ -231,7 +232,7 @@ export async function GuestsTab({ org, tenant, p, compare }: TabProps) {
                     </td>
                     <td className="num">{g.visits}</td>
                     <td className="num">{money(g.spendCents)}</td>
-                    <td className="num">{date(g.lastVisitAt)}</td>
+                    <td className="num">{formatIn(g.lastVisitAt, p.tz, "date")}</td>
                   </tr>
                 ))}
               </tbody>

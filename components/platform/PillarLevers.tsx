@@ -1,13 +1,10 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { formatLever, leverHistory, menuNames, PILLARS, readLevers, type Pillar } from "@/lib/levers";
+import { formatLever, leverHistory, menuNames, orgTimezone, PILLARS, readLevers, type Pillar } from "@/lib/levers";
+import { ago, formatIn } from "@/lib/platform/when";
 import type { Tenant } from "@/lib/platform/tenant";
 
 const withinDay = (d: Date) => Date.now() - d.getTime() < 86_400_000;
-const ago = (d: Date) => {
-  const m = Math.max(1, Math.round((Date.now() - d.getTime()) / 60_000));
-  return m < 60 ? `${m}m ago` : m < 48 * 60 ? `${Math.round(m / 60)}h ago` : `${Math.round(m / 1440)}d ago`;
-};
 
 /**
  * A part of the business at a glance: the settings it runs on, their
@@ -16,7 +13,7 @@ const ago = (d: Date) => {
  */
 export async function PillarLevers({ pillar, org, tenant }: { pillar: Pillar; org: string; tenant: Tenant }) {
   const sql = db()!;
-  const [levers, history, names] = await Promise.all([readLevers(sql, tenant, pillar), leverHistory(sql, tenant, pillar), menuNames(sql, tenant)]);
+  const [levers, history, names, tz] = await Promise.all([readLevers(sql, tenant, pillar), leverHistory(sql, tenant, pillar), menuNames(sql, tenant), orgTimezone(sql, tenant)]);
   if (!levers.length) return null;
   const last = new Map<string, Date>();
   for (const h of history) if (!last.has(h.key)) last.set(h.key, h.at);
@@ -32,7 +29,7 @@ export async function PillarLevers({ pillar, org, tenant }: { pillar: Pillar; or
           return (
             <div key={def.key} className={`pf-lever${r ? " fresh" : ""}`} title={def.help}>
               <span className="l">{def.label}</span>
-              <b>{formatLever(def, value, names)}</b>
+              <b>{formatLever(def, value, names, tz)}</b>
               {r ? <span className="c">Changed {ago(r)}</span> : <span className="h">{def.help}</span>}
             </div>
           );
@@ -44,11 +41,11 @@ export async function PillarLevers({ pillar, org, tenant }: { pillar: Pillar; or
           <ol>
             {history.map((h, i) => {
               const def = byKey.get(h.key);
-              const f = (v: unknown) => (def ? formatLever(def, v as never, names) : String(v));
+              const f = (v: unknown) => (def ? formatLever(def, v as never, names, tz) : String(v));
               return (
                 <li key={i}>
                   <span className="t"><b>{h.label}</b> {f(h.before)} <span aria-hidden>→</span> {f(h.after)}</span>
-                  <span className="mono s">{h.actor}{h.via.startsWith("assistant") ? ` via the assistant${h.via.includes("undo") ? " (undo)" : ""}` : ""} · {ago(h.at)}</span>
+                  <span className="mono s">{h.actor}{h.via.startsWith("assistant") ? ` via the assistant${h.via.includes("undo") ? " (undo)" : ""}` : ""} · <time dateTime={h.at.toISOString()} title={formatIn(h.at, tz, "long")}>{ago(h.at)}</time></span>
                 </li>
               );
             })}

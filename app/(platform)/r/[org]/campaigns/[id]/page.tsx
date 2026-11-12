@@ -155,7 +155,7 @@ export default async function CampaignPage({ params, searchParams }: {
                     <input id="cm-when" name="when" type="datetime-local" required
                       defaultValue={c.scheduled_for ? `${localDate(c.scheduled_for, tz)}T${localTime(c.scheduled_for, tz).slice(0, 5)}` : `${tomorrow}T12:00`} />
                   </div>
-                  <label style={{ display: "flex", gap: 8, fontSize: 13 }}>
+                  <label className="pf-choice">
                     <input type="checkbox" name="confirm" required />
                     <span>Send it then to the guests in &ldquo;{c.segment_name}&rdquo; who can get {channelWord} — {n(recipients)} today, counted again at send time.</span>
                   </label>

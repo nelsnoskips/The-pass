@@ -4,6 +4,7 @@ import { applyChangeAction, dismissChangeAction, undoChangeAction } from "@/lib/
 import type { ChangeRow } from "@/lib/assistant";
 import { ACTION_AREAS, type ActionArea } from "@/lib/assistant/chat-actions";
 import { formatLever, lever, PILLARS, type Pillar } from "@/lib/levers";
+import { ago, DEFAULT_TZ } from "@/lib/platform/when";
 
 const STATUS = {
   applied: { text: "Applied", tone: "go" },
@@ -15,10 +16,16 @@ const STATUS = {
 
 const ACTION_STATUS = { ...STATUS, applied: { text: "Done", tone: "go" } } as const;
 
-const ago = (d: Date) => {
-  const m = Math.max(1, Math.round((Date.now() - d.getTime()) / 60_000));
-  return m < 60 ? `${m}m ago` : m < 48 * 60 ? `${Math.round(m / 60)}h ago` : `${Math.round(m / 1440)}d ago`;
-};
+/** Who did it, always by name: the person who pressed the button, or who asked. */
+const by = (c: ChangeRow) => c.decided_by || c.requested_by || "someone";
+
+/** A pause that has already run out can't usefully be undone. */
+function expired(c: ChangeRow, now = Date.now()): boolean {
+  const def = lever(c.pillar, c.lever);
+  if (def?.kind !== "minutes_from_now") return false;
+  const until = typeof c.after === "string" ? new Date(c.after).getTime() : NaN;
+  return c.after === null || !Number.isFinite(until) || until <= now;
+}
 
 /**
  * One change the assistant made or wants to make, exactly: which setting,
@@ -26,11 +33,12 @@ const ago = (d: Date) => {
  * action (a booking, a cancellation, an order, the team) shows what it
  * will do the same way; it has Apply but no Undo.
  */
-export function ChangeCard({ c, org, thread, names, canDecide }: { c: ChangeRow; org: string; thread: string; names: Map<string, string>; canDecide: boolean }) {
+export function ChangeCard({ c, org, thread, names, canDecide, tz = DEFAULT_TZ }: { c: ChangeRow; org: string; thread: string; names: Map<string, string>; canDecide: boolean; tz?: string }) {
   if (c.kind === "action") return <ActionCard c={c} org={org} thread={thread} canDecide={canDecide} />;
   const pillar = c.pillar as Pillar;
   const def = lever(c.pillar, c.lever);
-  const fmt = (v: unknown) => (def ? formatLever(def, v as never, names) : JSON.stringify(v));
+  const fmt = (v: unknown) => (def ? formatLever(def, v as never, names, tz) : JSON.stringify(v));
+  const ran = c.status === "applied" && expired(c);
   const s = STATUS[c.status];
   const fields = { org, id: c.id, thread };
   return (
@@ -48,8 +56,8 @@ export function ChangeCard({ c, org, thread, names, canDecide }: { c: ChangeRow;
       {c.error && <p className="pf-msg err" style={{ margin: 0, fontSize: 12.5 }}>{c.error}</p>}
       <div className="f">
         <span className="who mono">
-          {c.status === "pending" ? `Proposed ${ago(c.created_at)} · needs your Apply` :
-            `${c.status === "applied" ? (c.risk === "auto" ? "Applied" : "Applied by " + (c.decided_by ?? "")) : c.status === "undone" ? "Undone by " + (c.decided_by ?? "") : c.status === "dismissed" ? "Dismissed" : "Failed"} · ${ago(c.decided_at ?? c.created_at)}`}
+          {c.status === "pending" ? `Asked by ${c.requested_by} · proposed ${ago(c.created_at)} · needs your Apply` :
+            `${c.status === "applied" ? (c.risk === "auto" ? `Applied at once for ${by(c)}` : `Applied by ${by(c)}`) : c.status === "undone" ? `Undone by ${by(c)}` : c.status === "dismissed" ? `Dismissed by ${by(c)}` : `Failed for ${by(c)}`} · ${ago(c.decided_at ?? c.created_at)}${ran ? " · the pause has ended" : ""}`}
         </span>
         <span className="acts">
           {c.status === "pending" && canDecide && (
@@ -58,7 +66,7 @@ export function ChangeCard({ c, org, thread, names, canDecide }: { c: ChangeRow;
               <FormButton action={dismissChangeAction} fields={fields} className="pf-btn small quiet">Dismiss</FormButton>
             </>
           )}
-          {c.status === "applied" && canDecide && <FormButton action={undoChangeAction} fields={fields} className="pf-btn small">Undo</FormButton>}
+          {c.status === "applied" && canDecide && !ran && <FormButton action={undoChangeAction} fields={fields} className="pf-btn small">Undo</FormButton>}
           {PILLARS[pillar] && <Link href={`/r/${org}/${PILLARS[pillar].page}#levers`} className="pf-btn small quiet">See it in {PILLARS[pillar].label} →</Link>}
         </span>
       </div>
@@ -87,8 +95,8 @@ function ActionCard({ c, org, thread, canDecide }: { c: ChangeRow; org: string; 
       {c.error && <p className="pf-msg err" style={{ margin: 0, fontSize: 12.5 }}>{c.error}</p>}
       <div className="f">
         <span className="who mono">
-          {c.status === "pending" ? `Proposed ${ago(c.created_at)} · nothing happens until you press Apply` :
-            `${c.status === "applied" ? "Done by " + (c.decided_by ?? "") + " · can't be undone here, ask to reverse it" : c.status === "dismissed" ? "Dismissed" : "Not done"} · ${ago(c.decided_at ?? c.created_at)}`}
+          {c.status === "pending" ? `Asked by ${c.requested_by} · proposed ${ago(c.created_at)} · nothing happens until you press Apply` :
+            `${c.status === "applied" ? `Done by ${by(c)} · can't be undone here, ask to reverse it` : c.status === "dismissed" ? `Dismissed by ${by(c)}` : `Not done (asked by ${c.requested_by})`} · ${ago(c.decided_at ?? c.created_at)}`}
         </span>
         <span className="acts">
           {c.status === "pending" && canDecide && (

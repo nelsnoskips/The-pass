@@ -4,13 +4,15 @@ import { requireTenant } from "@/lib/platform/context";
 import { postReply, syncGoogle } from "@/lib/platform/review-actions";
 import { listOrgIntegrations } from "@/lib/platform/settings";
 import { can } from "@/lib/platform/tenant";
+import { formatIn, venueTz } from "@/lib/platform/when";
 
 export const dynamic = "force-dynamic";
 
 export default async function Reviews({ params, searchParams }: { params: Promise<{ org: string }>; searchParams: Promise<{ ok?: string; err?: string }> }) {
   const { org } = await params;
   const q = await searchParams;
-  const { tenant } = await requireTenant(org);
+  const { tenant, venues } = await requireTenant(org);
+  const tz = venueTz(venues);
   const sql = db()!;
   const google = (await listOrgIntegrations(sql, tenant)).find((i) => i.provider === "google_business");
   const connected = google?.status === "connected";
@@ -20,7 +22,7 @@ export default async function Reviews({ params, searchParams }: { params: Promis
   const avg = reviews.filter((r) => r.rating).reduce((s, r, _, a) => s + (r.rating ?? 0) / a.length, 0);
   const waiting = reviews.filter((r) => !r.reply).length;
   const edit = can(tenant, "manage_venue");
-  const when = (d: Date | null) => (d ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(d) : "");
+  const when = (d: Date | null) => (d ? formatIn(d, tz, "date") : "");
 
   return (
     <>
@@ -38,11 +40,12 @@ export default async function Reviews({ params, searchParams }: { params: Promis
       {q.err && <p className="pf-msg err" role="alert" style={{ marginBottom: 14 }}>{q.err}</p>}
       <div className="pf-stats">
         <div className="pf-stat"><b>{reviews.length ? avg.toFixed(1) : "—"}</b><span>average rating</span></div>
-        <div className="pf-stat"><b>{reviews.length}</b><span>reviews</span></div>
-        <div className={`pf-stat${waiting ? " live" : ""}`}><b>{waiting}</b><span>waiting for a reply</span></div>
+        {/* Without Google there's nothing to count: "—", not a false zero. */}
+        <div className="pf-stat"><b>{reviews.length || connected ? reviews.length : "—"}</b><span>{reviews.length || connected ? "reviews" : "reviews · Google not connected"}</span></div>
+        <div className={`pf-stat${waiting ? " live" : ""}`}><b>{reviews.length || connected ? waiting : "—"}</b><span>waiting for a reply</span></div>
       </div>
       <section className="pf-panel">
-        {reviews.length === 0 ? <p className="pf-empty">No reviews yet.</p> : reviews.map((r) => (
+        {reviews.length === 0 ? <p className="pf-empty">{connected ? "No reviews yet." : "Not connected. Connect Google Business Profile in Settings and your reviews arrive here, ready to answer."}</p> : reviews.map((r) => (
           <article key={r.id} style={{ padding: 16, borderTop: "1px solid var(--rule)", display: "grid", gap: 8 }}>
             <div className="pf-res-meta" style={{ marginTop: 0 }}>
               <span style={{ color: "var(--warn)", letterSpacing: 2 }} aria-label={`${r.rating ?? 0} stars`}>{"★".repeat(r.rating ?? 0)}<span style={{ color: "var(--faint)" }}>{"★".repeat(5 - (r.rating ?? 0))}</span></span>

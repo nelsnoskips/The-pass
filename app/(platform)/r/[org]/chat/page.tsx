@@ -4,6 +4,7 @@ import { ChatComposer } from "@/components/platform/ChatComposer";
 import type { ChangeRow } from "@/lib/assistant";
 import { db } from "@/lib/db";
 import { menuNames } from "@/lib/levers";
+import { venueTz } from "@/lib/platform/when";
 import { requireTenant } from "@/lib/platform/context";
 import { can } from "@/lib/platform/tenant";
 
@@ -23,7 +24,8 @@ const SUGGESTIONS = [
 export default async function Chat({ params, searchParams }: { params: Promise<{ org: string }>; searchParams: Promise<{ t?: string; err?: string }> }) {
   const { org } = await params;
   const q = await searchParams;
-  const { tenant, org: o } = await requireTenant(org);
+  const { tenant, org: o, venues } = await requireTenant(org);
+  const tz = venueTz(venues);
   const sql = db()!;
   const threadId = q.t && /^[0-9a-f-]{36}$/i.test(q.t) ? q.t : null;
   const [threads, messages, changes, names] = await Promise.all([
@@ -72,10 +74,10 @@ export default async function Chat({ params, searchParams }: { params: Promise<{
               {messages.map((m) => (
                 <div key={m.id} className={`pf-turn ${m.role}`}>
                   <div className={`pf-bubble ${m.role === "user" ? "you" : "it"}`}>{m.body}</div>
-                  {(byMessage.get(m.id) ?? []).map((c) => <ChangeCard key={c.id} c={c} org={org} thread={threadId} names={names} canDecide={decide} />)}
+                  {(byMessage.get(m.id) ?? []).map((c) => <ChangeCard key={c.id} c={c} org={org} thread={threadId} names={names} canDecide={decide} tz={tz} />)}
                 </div>
               ))}
-              {loose.map((c) => <ChangeCard key={c.id} c={c} org={org} thread={threadId} names={names} canDecide={decide} />)}
+              {loose.map((c) => <ChangeCard key={c.id} c={c} org={org} thread={threadId} names={names} canDecide={decide} tz={tz} />)}
               {q.err && <p className="pf-msg err" role="alert">{q.err}</p>}
             </div>
             <div className="pf-chat-foot"><ChatComposer org={org} thread={threadId} /></div>

@@ -30,7 +30,7 @@ export async function askWebsiteAgent(org: string, request: string): Promise<Age
   const ask = request.trim().slice(0, 1000);
   if (ask.length < 4) return { error: "Describe the change you want." };
   if (!process.env.ANTHROPIC_API_KEY) {
-    return { error: "The AI model isn't connected yet (ANTHROPIC_API_KEY). You can still make the change in the editor below." };
+    return { error: "The assistant isn't switched on for your restaurant yet. Everything here still works by hand: make the change in the editor below." };
   }
   if (!(await allow(sql, "website-agent", tenant.orgId, 30, 60))) {
     return { error: "That's a lot of requests this hour. Try again shortly, or use the editor." };

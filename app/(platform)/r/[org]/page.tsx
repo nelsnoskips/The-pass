@@ -1,20 +1,19 @@
 import Link from "next/link";
 import { ChatComposer } from "@/components/platform/ChatComposer";
+import { Onboarding } from "@/components/platform/Onboarding";
 import { db } from "@/lib/db";
 import { actionWords, AGENT_CARDS, agentName } from "@/lib/agent-runtime/catalog";
+import { smsConfigured } from "@/lib/messaging/sms";
 import { getOrderingSettings } from "@/lib/ordering";
 import { requireTenant } from "@/lib/platform/context";
 import { listOrgIntegrations } from "@/lib/platform/settings";
+import { ago } from "@/lib/platform/when";
 import { localDate, localTime, zonedToUtc } from "@/lib/reservations/time";
 import { listVersions, siteForOrg } from "@/lib/sites/repo";
 
 export const dynamic = "force-dynamic";
 
 const LIVE = ['booked', 'confirmed', 'seated', 'completed'];
-const ago = (d: Date) => {
-  const m = Math.max(1, Math.round((Date.now() - d.getTime()) / 60_000));
-  return m < 60 ? `${m}m ago` : m < 48 * 60 ? `${Math.round(m / 60)}h ago` : `${Math.round(m / 1440)}d ago`;
-};
 
 /**
  * The restaurant's cockpit: today against the same day last week, the
@@ -23,10 +22,10 @@ const ago = (d: Date) => {
  */
 export default async function Home({ params }: { params: Promise<{ org: string }> }) {
   const { org } = await params;
-  const { tenant, venues } = await requireTenant(org);
+  const { tenant, venues, org: o } = await requireTenant(org);
   const sql = db()!;
   const venue = venues[0];
-  if (!venue) return <p className="pf-empty">No venues yet.</p>;
+  if (!venue) return <Onboarding org={org} name={o.name} />;
   const tz = venue.timezone;
   const now = new Date();
   const today = localDate(now, tz);
@@ -36,7 +35,7 @@ export default async function Home({ params }: { params: Promise<{ org: string }
   const lwEnd = new Date(end.getTime() - 7 * 86_400_000);
   const week = new Date(start.getTime() + 7 * 86_400_000);
 
-  const [day, hours, sales, fresh, pending, runs, activity, days, seats, ordering, site, ints] = await Promise.all([
+  const [day, hours, sales, fresh, pending, runs, activity, days, seats, ordering, site, ints, [born], proposedCounts] = await Promise.all([
     sql<{ lw: boolean; covers: number; bookings: number }[]>`
       select starts_at < ${start} as lw, coalesce(sum(party_size), 0)::int as covers, count(*)::int as bookings
       from reservations where org_id = ${tenant.orgId} and venue_id = ${venue.id} and status = any(${LIVE})
@@ -76,18 +75,29 @@ export default async function Home({ params }: { params: Promise<{ org: string }
     getOrderingSettings(sql, tenant.orgId),
     siteForOrg(sql, tenant),
     listOrgIntegrations(sql, tenant),
+    sql<{ created_at: Date }[]>`select created_at from orgs where id = ${tenant.orgId}`,
+    sql<{ agent_id: string; n: number }[]>`
+      select agent_id, count(*)::int as n from agent_proposals
+      where org_id = ${tenant.orgId} and created_at > now() - interval '7 days' group by agent_id`,
   ]);
 
   const pick = <T extends { lw: boolean }>(rows: T[], lw: boolean) => rows.find((r) => r.lw === lw);
   const sellsOnline = ordering.pickupEnabled || ordering.cateringEnabled || sales.length > 0;
-  const kpis = [
-    { label: "Covers", now: pick(day, false)?.covers ?? 0, then: pick(day, true)?.covers ?? 0, fmt: (n: number) => String(n) },
-    { label: "Bookings", now: pick(day, false)?.bookings ?? 0, then: pick(day, true)?.bookings ?? 0, fmt: (n: number) => String(n) },
+  // No comparison with a day the restaurant wasn't on The Pass yet: its
+  // zeros would read as a jump (green arrows) that never happened.
+  const noLastWeek = born ? born.created_at > lwStart : false;
+  const then = (n: number) => (noLastWeek ? null : n);
+  const kpis: { label: string; now: number | null; then: number | null; fmt: (n: number) => string; off?: string }[] = [
+    { label: "Covers", now: pick(day, false)?.covers ?? 0, then: then(pick(day, true)?.covers ?? 0), fmt: (n: number) => String(n) },
+    { label: "Bookings", now: pick(day, false)?.bookings ?? 0, then: then(pick(day, true)?.bookings ?? 0), fmt: (n: number) => String(n) },
     sellsOnline
-      ? { label: "Online sales", now: pick(sales, false)?.cents ?? 0, then: pick(sales, true)?.cents ?? 0, fmt: (c: number) => `$${Math.round(c / 100).toLocaleString("en-US")}` }
-      : { label: "Online sales", now: null, then: null, fmt: () => "—" },
-    { label: "New guests", now: pick(fresh, false)?.n ?? 0, then: pick(fresh, true)?.n ?? 0, fmt: (n: number) => String(n) },
+      ? { label: "Online sales", now: pick(sales, false)?.cents ?? 0, then: then(pick(sales, true)?.cents ?? 0), fmt: (c: number) => `$${Math.round(c / 100).toLocaleString("en-US")}` }
+      : { label: "Online sales", now: null, then: null, fmt: () => "—", off: "Not taking online orders" },
+    { label: "New guests", now: pick(fresh, false)?.n ?? 0, then: then(pick(fresh, true)?.n ?? 0), fmt: (n: number) => String(n) },
   ];
+  const texting = smsConfigured();
+  // An agent with proposals has run, whether or not its run rows say so.
+  const proposedBy = new Map(proposedCounts.map((p) => [p.agent_id, p.n]));
 
   const byHour = (lw: boolean) => new Map(hours.filter((h) => h.lw === lw).map((h) => [h.h, h.covers]));
   const nowH = byHour(false), thenH = byHour(true);
@@ -126,12 +136,19 @@ export default async function Home({ params }: { params: Promise<{ org: string }
         <Link className="pf-btn primary" href={`/r/${org}/host`}>Open the host stand</Link>
       </div>
 
+      {!texting && (
+        <p className="pf-banner" role="status">
+          <b>Texting is off.</b> Booking confirmations and reminders aren&rsquo;t being sent to guests, though your booking page says they will be.{" "}
+          <Link href={`/r/${org}/settings`}>See connections</Link>
+        </p>
+      )}
+
       <div style={{ marginBottom: 18 }}>
         <ChatComposer org={org} thread={null} suggestions={["How does tonight look?", "Pause pickup orders for 20 minutes", "What are my reservation settings?"]} />
       </div>
 
       <section className="pf-panel">
-        <h2>Today <span className="pf-h2-note">vs last {lastWeekday}</span></h2>
+        <h2>Today <span className="pf-h2-note">{noLastWeek ? "· compared with last week once you've been here a week" : `vs last ${lastWeekday}`}</span></h2>
         <div className="pf-kpis">
           {kpis.map((k) => {
             const delta = k.now === null || k.then === null ? null : k.now - k.then;
@@ -140,7 +157,7 @@ export default async function Home({ params }: { params: Promise<{ org: string }
                 <span className="l">{k.label}</span>
                 <b className="mono">{k.now === null ? "—" : k.fmt(k.now)}</b>
                 <span className={`d ${delta === null || delta === 0 ? "" : delta > 0 ? "up" : "down"}`}>
-                  {delta === null ? "Not taking online orders" : delta === 0 ? `Same as last ${lastWeekday}` : `${delta > 0 ? "↑" : "↓"} ${k.fmt(Math.abs(delta))} · ${k.then === null ? "—" : k.fmt(k.then)} last week`}
+                  {k.off ?? (delta === null ? `— last ${lastWeekday}` : delta === 0 ? `Same as last ${lastWeekday}` : `${delta > 0 ? "↑" : "↓"} ${k.fmt(Math.abs(delta))} · ${k.then === null ? "—" : k.fmt(k.then)} last week`)}
                 </span>
               </div>
             );
@@ -149,14 +166,14 @@ export default async function Home({ params }: { params: Promise<{ org: string }
         <div className="pf-body" style={{ paddingTop: 4 }}>
           <div className="pf-hours" role="img" aria-label="Covers by hour today, against the same day last week">
             {hourList.map((h) => (
-              <div key={h} className={`pf-hour${h === currentHour ? " now" : ""}`} title={`${hourLabel(h)}: ${nowH.get(h) ?? 0} covers today, ${thenH.get(h) ?? 0} last ${lastWeekday}`}>
-                <span className="then" style={{ height: `${((thenH.get(h) ?? 0) / maxH) * 100}%` }} />
+              <div key={h} className={`pf-hour${h === currentHour ? " now" : ""}`} title={`${hourLabel(h)}: ${nowH.get(h) ?? 0} covers today${noLastWeek ? "" : `, ${thenH.get(h) ?? 0} last ${lastWeekday}`}`}>
+                {!noLastWeek && <span className="then" style={{ height: `${((thenH.get(h) ?? 0) / maxH) * 100}%` }} />}
                 <span className="today" style={{ height: `${Math.max((nowH.get(h) ?? 0) ? 3 : 0, ((nowH.get(h) ?? 0) / maxH) * 100)}%` }} />
                 <i className="mono">{hourLabel(h)}</i>
               </div>
             ))}
           </div>
-          <p className="pf-legend mono"><span className="sw today" /> covers today <span className="sw then" /> last {lastWeekday}</p>
+          <p className="pf-legend mono"><span className="sw today" /> covers today {!noLastWeek && <><span className="sw then" /> last {lastWeekday}</>}</p>
         </div>
       </section>
 
@@ -201,7 +218,7 @@ export default async function Home({ params }: { params: Promise<{ org: string }
                   <Link key={a.id} href={`/r/${org}/agents`} className="pf-agentrow">
                     <span className={`pf-dot${r?.last && r.last > new Date(now.getTime() - 14 * 86_400_000) ? " on" : ""}`} aria-hidden />
                     <span className="n">{a.name}</span>
-                    <span className="mono s">{r ? `${r.runs} run${r.runs === 1 ? "" : "s"} · ${r.proposed} proposed` : "Not run yet"}</span>
+                    <span className="mono s">{r ? `${r.runs} run${r.runs === 1 ? "" : "s"} · ${r.proposed} proposed` : proposedBy.get(a.id) ? `${proposedBy.get(a.id)} proposed` : "Not run yet"}</span>
                   </Link>
                 );
               })}

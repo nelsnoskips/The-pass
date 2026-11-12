@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import type { MenuItem, SiteContent } from "@/lib/sites/content";
 import { saveSite } from "@/lib/platform/site-actions";
 
@@ -21,7 +21,37 @@ const toCents = (v: string): number | null => {
   return Number.isFinite(n) && n >= 0 ? Math.round(n * 100) : NaN;
 };
 
-export function SiteEditor({ org, initial, liveUrl }: { org: string; initial: SiteContent; liveUrl: string }) {
+/** Unsaved work is kept on this device until it's saved or discarded. */
+const draftKey = (org: string) => `pf-site-draft:${org}`;
+interface LocalDraft { base: string; at: number; content: SiteContent }
+function readDraft(org: string): LocalDraft | null {
+  try {
+    const raw = window.localStorage.getItem(draftKey(org));
+    const d = raw ? (JSON.parse(raw) as LocalDraft) : null;
+    return d && typeof d.base === "string" && d.content && typeof d.at === "number" ? d : null;
+  } catch {
+    return null;
+  }
+}
+function writeDraft(org: string, d: LocalDraft | null) {
+  try {
+    if (d) window.localStorage.setItem(draftKey(org), JSON.stringify(d));
+    else window.localStorage.removeItem(draftKey(org));
+  } catch {
+    // Private mode or storage full: the beforeunload and link guards still protect the work.
+  }
+}
+const LEAVE = "You have unsaved changes to your website. Leave this page? (A copy stays on this device and comes back when you return.)";
+
+export function SiteEditor({ org, initial, liveUrl, versionId, serviceHours, tz }: {
+  org: string; initial: SiteContent; liveUrl: string;
+  /** The version the editor opened, so a local draft knows what it was based on. */
+  versionId: string;
+  /** The restaurant's timezone, for the draft's time. */
+  tz: string;
+  /** Opening hours written from the service periods, for "Use my service hours". */
+  serviceHours: { days: string; hours: string }[];
+}) {
   const [c, setC] = useState<SiteContent>(initial);
   const [saved, setSaved] = useState<string>(JSON.stringify(initial));
   const [note, setNote] = useState("");
@@ -31,11 +61,51 @@ export function SiteEditor({ org, initial, liveUrl }: { org: string; initial: Si
   const router = useRouter();
   const dirty = useMemo(() => JSON.stringify(c) !== saved, [c, saved]);
 
+  const [restored, setRestored] = useState<{ at: number; older: LocalDraft | null } | null>(null);
+  const loaded = useRef(false);
+
   useEffect(() => {
     const warn = (e: BeforeUnloadEvent) => { if (dirty) e.preventDefault(); };
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
+
+  // In-app navigation (the sidebar, any link) doesn't fire beforeunload:
+  // catch the click before Next's router sees it, and ask.
+  useEffect(() => {
+    if (!dirty) return;
+    const guard = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!a || a.target === "_blank" || a.hasAttribute("download")) return;
+      const url = new URL(a.href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+      if (url.pathname === window.location.pathname && url.hash) return;
+      if (!window.confirm(LEAVE)) { e.preventDefault(); e.stopPropagation(); }
+    };
+    document.addEventListener("click", guard, true);
+    return () => document.removeEventListener("click", guard, true);
+  }, [dirty]);
+
+  // Bring back unsaved work from this device, once, after the first render.
+  useEffect(() => {
+    if (loaded.current) return;
+    loaded.current = true;
+    const d = readDraft(org);
+    if (!d || JSON.stringify(d.content) === JSON.stringify(initial)) { if (d) writeDraft(org, null); return; }
+    // Restoring local state after mount is the point here (localStorage isn't readable during SSR).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (d.base === versionId) { setC(d.content); setRestored({ at: d.at, older: null }); }
+    else setRestored({ at: d.at, older: d });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Autosave to this device while there are unsaved changes.
+  useEffect(() => {
+    if (!loaded.current || restored?.older) return;
+    const t = setTimeout(() => writeDraft(org, dirty ? { base: versionId, at: Date.now(), content: c } : null), 500);
+    return () => clearTimeout(t);
+  }, [c, dirty, org, versionId, restored]);
 
   const set = <K extends keyof SiteContent>(k: K, v: SiteContent[K]) => { setC((p) => ({ ...p, [k]: v })); setDone(null); };
   const setItem = (mi: number, si: number, ii: number, patch: Partial<MenuItem>) =>
@@ -56,22 +126,48 @@ export function SiteEditor({ org, initial, liveUrl }: { org: string; initial: Si
       const r = await saveSite(org, clean, note, publish);
       setErrors(r.errors.map((e) => humanize(e, clean)));
       if (!r.errors.length) {
-        setC(clean); setSaved(JSON.stringify(clean)); setNote("");
+        setC(clean); setSaved(JSON.stringify(clean)); setNote(""); writeDraft(org, null); setRestored(null);
         setDone(publish ? "Published. It's live now." : "Draft saved. Preview it from the history, or publish when ready.");
         router.refresh();
       }
     });
 
+  const when = (at: number) => new Date(at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: tz });
+  const discard = () => { writeDraft(org, null); setRestored(null); setC(JSON.parse(saved) as SiteContent); };
+
   return (
-    <div className="pf-body" style={{ padding: 0, gap: 14 }}>
+    <div className="pf-body pf-site-editor" style={{ padding: 0, gap: 14 }}>
+      {restored && !restored.older && (
+        <div className="pf-msg ok" role="status" style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+          <span>Brought back your unsaved changes from {when(restored.at)} on this device.</span>
+          <button type="button" className="pf-btn small quiet" onClick={discard}>Discard them</button>
+        </div>
+      )}
+      {restored?.older && (
+        <div className="pf-msg" role="status" style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", background: "var(--warn-soft)", color: "var(--warn)" }}>
+          <span>You have unsaved changes from {when(restored.at)} on this device, made before the website last changed.</span>
+          <button type="button" className="pf-btn small" onClick={() => { setC(restored.older!.content); setRestored({ at: restored.at, older: null }); }}>Bring them back</button>
+          <button type="button" className="pf-btn small quiet" onClick={discard}>Discard</button>
+        </div>
+      )}
       <Panel title="Notice bar" hint="A line across the top of every page: holiday hours, a new menu, an event. Leave empty to hide it.">
         <input className="pf-input" value={c.announcement} maxLength={240} placeholder="Closed Thanksgiving Day — open again Friday at 5"
           onChange={(e) => set("announcement", e.target.value)} />
       </Panel>
 
-      <Panel title="Hours">
+      <Panel title="Hours" hint="What the website says about when you're open. Write it yourself, or fill it from the service hours guests book against.">
+        {serviceHours.length > 0 && (
+          <button type="button" className="pf-btn small" style={{ justifySelf: "start" }}
+            onClick={() => {
+              const any = c.hours.some((h) => h.days.trim() || h.hours.trim());
+              if (any && !window.confirm("Replace the hours rows with your service hours? You can still edit them after.")) return;
+              set("hours", serviceHours.map((h) => ({ ...h })));
+            }}>
+            Use my service hours
+          </button>
+        )}
         {c.hours.map((h, i) => (
-          <div key={i} className="pf-row2" style={{ gridTemplateColumns: "1fr 1.4fr auto" }}>
+          <div key={i} className="pf-row2 pf-hoursrow">
             <input className="pf-input" value={h.days} aria-label="Days" onChange={(e) => set("hours", c.hours.map((x, j) => j === i ? { ...x, days: e.target.value } : x))} />
             <input className="pf-input" value={h.hours} aria-label="Hours" onChange={(e) => set("hours", c.hours.map((x, j) => j === i ? { ...x, hours: e.target.value } : x))} />
             <button type="button" className="pf-btn quiet small" aria-label={`Remove ${h.days}`} onClick={() => set("hours", c.hours.filter((_, j) => j !== i))}>Remove</button>
@@ -93,13 +189,13 @@ export function SiteEditor({ org, initial, liveUrl }: { org: string; initial: Si
                     <Field label="Note"><input className="pf-input" value={s.note} onChange={(e) => set("menus", c.menus.map((x, a) => a !== mi ? x : { ...x, sections: x.sections.map((y, b) => b === si ? { ...y, note: e.target.value } : y) }))} /></Field>
                   </div>
                   {s.items.map((it, ii) => (
-                    <div key={it.id} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.2fr) 90px minmax(0, 2fr) auto", gap: 8, alignItems: "start" }}>
+                    <div key={it.id} className="pf-dish">
                       <input className="pf-input" value={it.name} placeholder="Dish" aria-label="Dish" onChange={(e) => setItem(mi, si, ii, { name: e.target.value })} />
                       <PriceInput cents={it.priceCents} onChange={(v) => setItem(mi, si, ii, { priceCents: v })} />
                       <input className="pf-input" value={it.description} placeholder="Description" aria-label="Description" onChange={(e) => setItem(mi, si, ii, { description: e.target.value })} />
                       <button type="button" className="pf-btn quiet small" aria-label={`Remove ${it.name}`}
                         onClick={() => set("menus", c.menus.map((x, a) => a !== mi ? x : { ...x, sections: x.sections.map((y, b) => b !== si ? y : { ...y, items: y.items.filter((_, d) => d !== ii) }) }))}>Remove</button>
-                      <input className="pf-input" style={{ gridColumn: "3 / 4", minHeight: 34, fontSize: 13 }} value={it.tags.join(", ")} placeholder="Tags, comma separated" aria-label="Tags"
+                      <input className="pf-input pf-dish-tags" value={it.tags.join(", ")} placeholder="Tags, comma separated" aria-label="Tags"
                         onChange={(e) => setItem(mi, si, ii, { tags: e.target.value.split(",").map((t) => t.trim()).filter(Boolean).slice(0, 8) })} />
                     </div>
                   ))}
@@ -133,7 +229,7 @@ export function SiteEditor({ org, initial, liveUrl }: { org: string; initial: Si
         <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
           {(["paper", "ink", "accent"] as const).map((k) => (
             <label key={k} className="pf-field" style={{ minWidth: 120 }}>
-              <span style={{ font: "500 11px/1 var(--font-pf-mono)", textTransform: "uppercase", letterSpacing: ".1em", color: "var(--faint)" }}>{{ paper: "Page", ink: "Text", accent: "Buttons" }[k]}</span>
+              <span className="pf-flabel">{{ paper: "Page", ink: "Text", accent: "Buttons" }[k]}</span>
               <span style={{ display: "flex", gap: 8, alignItems: "center" }}>
                 <input type="color" value={c.theme[k]} onChange={(e) => set("theme", { ...c.theme, [k]: e.target.value })}
                   style={{ width: 42, height: 42, border: "1px solid var(--rule-strong)", borderRadius: 10, background: "none", padding: 2 }} />
@@ -211,5 +307,5 @@ function Panel({ title, hint, children }: { title: string; hint?: string; childr
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <label className="pf-field"><span style={{ font: "500 11px/1 var(--font-pf-mono)", textTransform: "uppercase", letterSpacing: ".1em", color: "var(--faint)" }}>{label}</span>{children}</label>;
+  return <label className="pf-field"><span className="pf-flabel">{label}</span>{children}</label>;
 }
