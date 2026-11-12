@@ -168,3 +168,56 @@
 .site .site-order-bar span, .site .site-order-bar b { color: var(--paper); }
 @media (min-width: 900px) { .site .site-order-bar { display: none; } }
 .site-order-cart { scroll-margin-top: 84px; }
+
+/* Skip link: first thing a keyboard reaches, out of sight until then. */
+.site-skip { position: absolute; left: 12px; top: -60px; z-index: 50; background: var(--ink); color: var(--paper) !important; padding: 10px 16px; border-radius: 2px; font-weight: 600; text-decoration: none; }
+.site-skip:focus { top: 12px; }
+.site main:focus { outline: none; }
+
+/* Fields and errors land below the sticky header, including the
+   browser's own "please fill in this field" bubble. */
+html:has(.site) { scroll-padding-top: 96px; }
+.site input, .site select, .site textarea, .site-error, .site [role="group"], .site-order-cart { scroll-margin-top: 96px; }
+.site-field [aria-invalid="true"] { border-color: #b3261e; box-shadow: 0 0 0 1px #b3261e; }
+
+/* Phone menu */
+.site-menu-mobile { position: static; }
+.site-menu-button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; background: transparent; color: var(--ink); border: 1px solid var(--rule); border-radius: 2px; font: 600 14.5px/1 var(--body); cursor: pointer; }
+.site-menu-button .bars { width: 16px; height: 10px; border-top: 2px solid currentColor; border-bottom: 2px solid currentColor; position: relative; }
+.site-menu-button .bars::after { content: ""; position: absolute; left: 0; right: 0; top: 2px; border-top: 2px solid currentColor; }
+.site-menu-panel { position: absolute; left: 0; right: 0; top: 100%; background: var(--paper); border-bottom: 1px solid var(--rule); box-shadow: 0 18px 30px -24px var(--ink); }
+.site-menu-panel ul { list-style: none; margin: 0; padding: 8px 24px 16px; }
+.site-menu-panel a { display: flex; align-items: center; min-height: 52px; font-size: 17px; border-bottom: 1px solid var(--rule); text-decoration: none; }
+.site-menu-panel li:last-child a { border-bottom: 0; }
+@media (min-width: 760px) { .site-menu-mobile { display: none; } }
+@media (max-width: 759px) {
+  .site-nav { gap: 10px; }
+  .site-brand { font-size: 19px; }
+  .site-header .site-wrap { padding: 0 16px; gap: 10px; }
+}
+
+.site-offline { background: color-mix(in srgb, #b3261e 12%, var(--paper)); border-bottom: 1px solid color-mix(in srgb, #b3261e 35%, transparent); text-align: center; font-size: 14px; padding: 9px 16px; margin: 0; }
+
+/* Booking extras */
+.site-quick { display: flex; gap: 8px; flex-wrap: wrap; margin-top: -8px; }
+.site-chip { min-height: 44px; padding: 0 16px; border: 1px solid var(--rule); border-radius: 999px; background: var(--paper); color: var(--ink); font: 500 14.5px/1 var(--body); cursor: pointer; }
+.site-chip:hover { border-color: var(--ink); }
+.site-chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.site-next { margin-top: 14px; padding: 14px 16px; border: 1px solid var(--rule); background: var(--wash); border-radius: 2px; }
+.site-next .site-times { margin-top: 10px; }
+.site-link { margin-top: 10px; background: none; border: 0; padding: 8px 0; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; font: inherit; font-size: 14.5px; cursor: pointer; min-height: 44px; }
+.site-busy { opacity: 0.5; }
+.site-time[disabled] { cursor: progress; }
+.site-time[disabled]:hover { border-color: var(--rule); }
+.site-policy { border-left: 2px solid var(--accent); padding-left: 12px; }
+.site-policy p { margin: 0 0 6px; }
+.site-policy p:last-child { margin-bottom: 0; }
+.site-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.site-summary dd a { text-underline-offset: 4px; }
+.site-confirm h2 { line-height: 1.15; }
+
+/* Ordering extras: 44px targets, and dishes that can't be had. */
+.site .site-qty button { width: 44px; height: 44px; }
+.site-qty button[disabled] { opacity: 0.4; cursor: not-allowed; }
+.site-tag { display: inline-block; margin-left: 10px; font-size: 12px; letter-spacing: 0.04em; color: var(--muted); }
+.site-order-item.off .name, .site-order-item.off .price { color: var(--muted); }

@@ -46,6 +46,7 @@
     {
       "id": "brunch",
       "name": "Brunch",
+      "availability": { "days": [0, 6], "from": "11:00", "to": "14:30" },
       "sections": [
         {
           "id": "brunch-plates", "name": "Plates", "note": "Saturday and Sunday, 11 to 2.",

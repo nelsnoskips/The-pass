@@ -22,10 +22,25 @@ export interface MenuSection {
   items: MenuItem[];
 }
 
+/**
+ * When a menu is served, for online ordering: a brunch menu shouldn't be
+ * orderable for Wednesday dinner. Optional; a menu without it is served
+ * whenever the kitchen takes orders.
+ */
+export interface MenuAvailability {
+  /** 0 = Sunday … 6 = Saturday. */
+  days: number[];
+  /** "HH:MM", venue-local, inclusive. */
+  from: string;
+  /** "HH:MM", venue-local, inclusive; after `from`. */
+  to: string;
+}
+
 export interface Menu {
   id: string;
   name: string;
   sections: MenuSection[];
+  availability?: MenuAvailability;
 }
 
 export interface HoursRow {
@@ -64,6 +79,7 @@ export type ParseResult =
   | { ok: false; errors: string[] };
 
 const HEX = /^#[0-9a-fA-F]{6}$/;
+const CLOCK = /^([01]\d|2[0-3]):[0-5]\d$/;
 const LIMITS = { short: 120, long: 2000, menus: 8, sections: 20, items: 80, hours: 14 };
 
 /**
@@ -119,9 +135,12 @@ export function parseSiteContent(input: unknown): ParseResult {
   const menus: Menu[] = list(root.menus, "menus", LIMITS.menus).map((m, mi) => {
     const menu = obj(m);
     const sectionIds = new Set<string>();
+    const availability = menu.availability === undefined || menu.availability === null
+      ? undefined : parseAvailability(menu.availability, `menus[${mi}].availability`, errors);
     return {
       id: id(menu.id, `menus[${mi}].id`, menuIds),
       name: text(menu.name, `menus[${mi}].name`, LIMITS.short, true),
+      ...(availability ? { availability } : {}),
       sections: list(menu.sections, `menus[${mi}].sections`, LIMITS.sections).map((s, si) => {
         const section = obj(s);
         const sp = `menus[${mi}].sections[${si}]`;
@@ -191,6 +210,52 @@ export function parseSiteContent(input: unknown): ParseResult {
   }
 
   return errors.length ? { ok: false, errors } : { ok: true, content };
+}
+
+function parseAvailability(v: unknown, path: string, errors: string[]): MenuAvailability | undefined {
+  if (!v || typeof v !== "object" || Array.isArray(v)) { errors.push(`${path} must be { days, from, to }`); return undefined; }
+  const a = v as Record<string, unknown>;
+  const days = Array.isArray(a.days) ? a.days : null;
+  if (!days || days.length === 0 || !days.every((d) => Number.isInteger(d) && (d as number) >= 0 && (d as number) <= 6)) {
+    errors.push(`${path}.days must list days 0 (Sunday) to 6 (Saturday)`);
+    return undefined;
+  }
+  const from = typeof a.from === "string" ? a.from.trim() : "";
+  const to = typeof a.to === "string" ? a.to.trim() : "";
+  if (!CLOCK.test(from)) { errors.push(`${path}.from must be a time like 11:00`); return undefined; }
+  if (!CLOCK.test(to)) { errors.push(`${path}.to must be a time like 14:30`); return undefined; }
+  if (to <= from) { errors.push(`${path}.to must be after ${path}.from`); return undefined; }
+  return { days: [...new Set(days as number[])].sort((x, y) => x - y), from, to };
+}
+
+/** Day of week (0 = Sunday) of a "yyyy-mm-dd" date. */
+function dayOf(date: string): number {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
+
+/** Whether a window covers a venue-local date and "HH:MM" time. */
+export function availabilityCovers(a: MenuAvailability, date: string, time: string): boolean {
+  return a.days.includes(dayOf(date)) && time >= a.from && time <= a.to;
+}
+
+/** Whether a menu is served at a venue-local date and time. */
+export function menuServedAt(menu: Pick<Menu, "availability">, date: string, time: string): boolean {
+  return !menu.availability || availabilityCovers(menu.availability, date, time);
+}
+
+const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/** "Sat & Sun, 11 AM–2:30 PM", for a guest-facing note. */
+export function describeAvailability(a: MenuAvailability): string {
+  const clock = (t: string) => {
+    const [h, m] = t.split(":").map(Number);
+    return `${h % 12 === 0 ? 12 : h % 12}${m ? `:${String(m).padStart(2, "0")}` : ""} ${h >= 12 ? "PM" : "AM"}`;
+  };
+  // Weeks read Monday first, so a weekend is "Sat & Sun".
+  const order = [1, 2, 3, 4, 5, 6, 0].filter((d) => a.days.includes(d));
+  const days = order.length === 7 ? "Every day" : order.map((d) => DAY_NAMES[d]).join(order.length === 2 ? " & " : ", ");
+  return `${days}, ${clock(a.from)}–${clock(a.to)}`;
 }
 
 export function formatPrice(cents: number | null): string {

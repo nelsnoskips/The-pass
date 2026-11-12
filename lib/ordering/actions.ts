@@ -12,12 +12,14 @@ import { getPublishedSite } from "../sites/repo";
 import { promotionsForOrder } from "../marketing/promotions";
 import {
   getOrderingSettings, placeOrder, priceCart, saveOrderingSettings, setKitchenState, setOrderStatus,
-  type CartLine, type OrderKind, type OrderStatus,
+  type CartLine, type OrderField, type OrderKind, type OrderStatus,
 } from "./index";
 
 /* ------------------------------------------------------------- guests -- */
 
-export async function placeOrderAction(_prev: { error: string | null }, form: FormData): Promise<{ error: string | null }> {
+export interface OrderState { error: string | null; unavailable?: string[]; field?: OrderField }
+
+export async function placeOrderAction(_prev: OrderState, form: FormData): Promise<OrderState> {
   const sql = db();
   if (!sql) return { error: "Ordering is unavailable right now." };
   const get = (k: string) => String(form.get(k) ?? "").trim();
@@ -41,7 +43,7 @@ export async function placeOrderAction(_prev: { error: string | null }, form: Fo
     payOnline: Boolean(key),
     promoCode: get("promo").slice(0, 40) || undefined,
   });
-  if (!r.ok) return { error: r.error };
+  if (!r.ok) return { error: r.error, unavailable: r.unavailable, field: r.field };
 
   const origin = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host") ?? ""}`;
   const status = `${origin}/s/${site.slug}/order/${r.token}`;

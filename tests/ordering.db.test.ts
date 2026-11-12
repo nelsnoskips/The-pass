@@ -100,6 +100,23 @@ d("online ordering against Postgres", () => {
     expect(await placeOrder(sql, { ...base(), time: "17:15" })).toMatchObject({ ok: false }); // inside prep time
   });
 
+  it("keeps a known guest's name; a different name is noted once", async () => {
+    expect((await placeOrder(sql, { ...base(), name: "Ana P." })).ok).toBe(true);
+    expect((await placeOrder(sql, { ...base(), name: "ana p." })).ok).toBe(true);
+    const [g] = await sql<{ name: string; notes: string | null }[]>`
+      select name, notes from guests where org_id = ${orgId} and phone = '+13055550199'`;
+    expect(g).toEqual({ name: "Ana Perez", notes: "Also booked as Ana P." });
+  });
+
+  it("names the field to fix and the dishes that can't be had", async () => {
+    expect(await placeOrder(sql, { ...base(), phone: "12" })).toMatchObject({ ok: false, field: "phone" });
+    expect(await placeOrder(sql, { ...base(), time: "17:15" })).toMatchObject({ ok: false, field: "when" });
+    await setKitchenState(sql, host, { pausedUntil: null, soldOut: ["lamb"] });
+    const r = await placeOrder(sql, { ...base(), cart: [{ itemId: "gyro", qty: 1 }, { itemId: "lamb", qty: 1 }] });
+    expect(r).toEqual({ ok: false, field: "cart", unavailable: ["lamb"], error: "Lamb chops is no longer available. Please review your order." });
+    await setKitchenState(sql, host, { pausedUntil: null, soldOut: [] });
+  });
+
   it("moves through the kitchen in order, texts the guest when ready, and refuses skips", async () => {
     const r = await placeOrder(sql, { ...base(), phone: "305-555-0177" });
     if (!r.ok) throw new Error("expected order");

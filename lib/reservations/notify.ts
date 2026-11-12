@@ -1,6 +1,22 @@
 import type { Sql } from "postgres";
 import { sendSms, type SmsSender } from "../messaging/sms";
+import { policySentence } from "./policy";
 import type { Reservation } from "./repo";
+
+/** The booking confirmation's words. */
+export function confirmationText(input: {
+  reservation: Pick<Reservation, "partySize" | "depositCents">;
+  restaurant: string; when: string; manageUrl: string;
+  policy?: { cutoffHours: number; note?: string | null };
+}): string {
+  const r = input.reservation;
+  const rule = input.policy ? ` ${policySentence(input.policy.cutoffHours, r.depositCents)}` : "";
+  // A long note would split the text into many parts; the booking page
+  // behind the link always shows it in full.
+  const n = input.policy?.note?.trim() ?? "";
+  const note = n && n.length <= 160 ? ` ${n}` : "";
+  return `${input.restaurant}: you're booked for ${r.partySize} on ${input.when}.${rule}${note} Change or cancel: ${input.manageUrl}`;
+}
 
 /**
  * The text a guest gets when they book. Transactional: it is about their
@@ -16,13 +32,16 @@ export async function sendBookingConfirmation(
     /** Already formatted in the venue's timezone, e.g. "Fri, Nov 13 at 7:30 PM". */
     when: string;
     manageUrl: string;
+    /** The venue's cut-off and the owner's note: the rule is written from
+     *  the same numbers the refund uses (see ./policy). */
+    policy?: { cutoffHours: number; note?: string | null };
   },
   sender: SmsSender = sendSms,
 ): Promise<void> {
   const { reservation: r } = input;
   // Walk-ins without a phone have nothing to text.
   if (!r.guestPhone.startsWith("+")) return;
-  const body = `${input.restaurant}: you're booked for ${r.partySize} on ${input.when}. Change or cancel: ${input.manageUrl}`;
+  const body = confirmationText(input);
   const result = await sender(r.guestPhone, body);
   await sql`
     insert into guest_messages (org_id, guest_id, kind, body, status, provider_id, error, sent_by)

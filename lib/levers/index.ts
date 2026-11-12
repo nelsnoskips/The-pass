@@ -48,7 +48,7 @@ export const LEVERS: LeverDef[] = [
   { pillar: "reservations", key: "min_notice_minutes", label: "Minimum notice", help: "How close to the time a guest can still book online.", kind: "int", min: 0, max: 2880, unit: "minutes", risk: "auto", requires: "manage_venue" },
   { pillar: "reservations", key: "max_party_online", label: "Largest online party", help: "Bigger parties are asked to call.", kind: "int", min: 1, max: 30, unit: "guests", risk: "auto", requires: "manage_venue" },
   { pillar: "reservations", key: "cancel_cutoff_hours", label: "Cancellation cut-off", help: "Guests can change or cancel from their link until this many hours before.", kind: "int", min: 0, max: 168, unit: "hours", risk: "auto", requires: "manage_venue" },
-  { pillar: "reservations", key: "cancellation_policy", label: "Cancellation policy", help: "Shown to every guest before they book.", kind: "text", max: 600, risk: "confirm", requires: "manage_venue" },
+  { pillar: "reservations", key: "cancellation_policy", label: "Cancellation policy", help: "An extra note shown under the cancellation rule. The rule itself (the refund deadline and deposit) is written for guests from the cancellation cut-off and deposit, so it always matches what's refunded.", kind: "text", max: 600, risk: "confirm", requires: "manage_venue" },
   { pillar: "reservations", key: "phone", label: "Restaurant phone", help: "Shown on bookings and texts.", kind: "text", max: 40, risk: "confirm", requires: "manage_venue" },
   // Online ordering
   { pillar: "ordering", key: "pickup_enabled", label: "Pickup orders", help: "Take pickup orders on the website.", kind: "bool", risk: "confirm", requires: "manage_venue" },
