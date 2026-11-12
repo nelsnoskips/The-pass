@@ -1,0 +1,11 @@
+# The live orravan.ai site: a separate Netlify site pointed at this
+# folder (base directory "v3"). It deploys the static export at the
+# root of the domain; the studio's madisonfour.com project keeps
+# serving the review mock under /orravan-v3 from the repo root.
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  # Plain static export: skip the Next.js runtime Netlify would add.
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
