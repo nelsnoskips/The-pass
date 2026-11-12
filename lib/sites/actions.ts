@@ -8,7 +8,7 @@ import { allow, clientAddress } from "../platform/ratelimit";
 import { sendBookingConfirmation } from "../reservations/notify";
 import { joinWaitlist, notifyWaitlist } from "../reservations/followups";
 import { availableSlots, book, bookingByToken, cancelByToken, modifyByToken } from "../reservations/repo";
-import { cancelOutcome } from "../reservations/policy";
+import { cancelOutcome, cancelledInTime } from "../reservations/policy";
 import { localDate } from "../reservations/time";
 import { formatClock, formatWhen } from "./format";
 import { getPublishedSite } from "./repo";
@@ -28,6 +28,8 @@ export interface TimeOption {
   /** The service it falls in, e.g. "Dinner", for grouping. */
   period: string;
   depositCents: number;
+  /** Already inside the cancellation cut-off: a deposit on it is not refundable. */
+  pastCutoff?: boolean;
 }
 
 export interface DayTimes {
@@ -55,6 +57,7 @@ export async function findTimes(slug: string, date: string, partySize: number): 
     open: closed.length === 0 && periods.some((p) => p.days_of_week.map(Number).includes(day)),
     times: slots.map((s) => ({
       time: s.time, label: formatClock(s.time), period: names.get(s.periodId) ?? "", depositCents: s.depositCents,
+      pastCutoff: !cancelledInTime(s.startsAt, site.cancelCutoffHours, new Date()),
     })),
   };
 }

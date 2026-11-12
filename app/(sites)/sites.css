@@ -199,8 +199,8 @@ html:has(.site) { scroll-padding-top: 96px; }
 .site-offline { background: color-mix(in srgb, #b3261e 12%, var(--paper)); border-bottom: 1px solid color-mix(in srgb, #b3261e 35%, transparent); text-align: center; font-size: 14px; padding: 9px 16px; margin: 0; }
 
 /* Booking extras */
-.site-quick { display: flex; gap: 8px; flex-wrap: wrap; margin-top: -8px; }
-.site-chip { min-height: 44px; padding: 0 16px; border: 1px solid var(--rule); border-radius: 999px; background: var(--paper); color: var(--ink); font: 500 14.5px/1 var(--body); cursor: pointer; }
+.site-quick { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: -8px; }
+.site .site-chip { height: 44px; min-height: 44px; padding: 0 18px; line-height: 1; display: inline-flex; align-items: center; border: 1px solid var(--rule); border-radius: 999px; background: var(--paper); color: var(--ink); font: 500 14.5px/1 var(--body); cursor: pointer; }
 .site-chip:hover { border-color: var(--ink); }
 .site-chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .site-next { margin-top: 14px; padding: 14px 16px; border: 1px solid var(--rule); background: var(--wash); border-radius: 2px; }

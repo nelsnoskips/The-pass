@@ -271,6 +271,11 @@ export function BookingWidget({
               <p style={{ color: "var(--ink)" }}>A {formatDeposit(chosen.depositCents)} deposit holds this table. It comes off your bill.</p>
             )}
             <p>{policySentence(cutoffHours, chosen.depositCents)}</p>
+            {chosen.pastCutoff && chosen.depositCents > 0 && (
+              <p style={{ color: "var(--ink)" }}>
+                This time is already inside the cut-off, so if you book it the deposit can&rsquo;t be refunded.
+              </p>
+            )}
             {policyNote && <p>{policyNote}</p>}
           </div>
 
