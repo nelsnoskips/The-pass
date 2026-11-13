@@ -7,7 +7,7 @@
 # every deploy that does not change it, and it skips cleanly when no
 # database is configured.
 [build]
-  command = "npm run db:migrate && npm run build"
+  command = "npm run db:migrate && node scripts/preview-setup.mjs && npm run build"
   publish = ".next"
 
 [[plugins]]
