@@ -77,19 +77,19 @@ export const IMAGES: Record<string, Slot> = {
 
   /* --- from signal to decision ---------------------------------------- */
   "decision-remote": {
-    src: img("06-response-remote-specialist.webp"),
-    alt: "A remote specialist reviewing the signal",
-    brief: "Response sequence, stage one. 4:5.",
+    src: img("47-decision-remote-real.webp"),
+    alt: "An Orravan Controls technician working on a laptop beside a controls panel",
+    brief: "Real job photo (Aug 2023), 4:5.",
   },
   "decision-field": {
-    src: img("07-response-field-technician.webp"),
-    alt: "A field technician on site",
-    brief: "Response sequence, stage two. 4:5.",
+    src: img("48-decision-field-real.webp"),
+    alt: "A technician rigging a pump with a chain hoist on site",
+    brief: "Real job photo, 4:5.",
   },
   "decision-client": {
-    src: img("08-response-facility-leader.webp"),
-    alt: "The client receiving confirmation",
-    brief: "Response sequence, stage three. 4:5.",
+    src: img("49-decision-client-real.webp"),
+    alt: "The Orravan team with a client in the client's operations office",
+    brief: "Real job photo (Feb 2022), 4:5.",
   },
 
   /* --- resolution you can see ----------------------------------------- */
@@ -101,24 +101,24 @@ export const IMAGES: Record<string, Slot> = {
 
   /* --- intelligence, applied ------------------------------------------ */
   "service-automation": {
-    src: img("10-service-building-automation.webp"),
-    alt: "Building automation controls",
-    brief: "Service card. 4:5.",
+    src: img("50-service-automation-real.webp"),
+    alt: "An Orravan-built controls panel with Metasys building controllers",
+    brief: "Real job photo (Nov 2025).",
   },
   "service-hvac": {
-    src: img("11-service-hvac-systems.webp"),
-    alt: "HVAC plant",
-    brief: "Service card. 4:5.",
+    src: img("51-service-hvac-real.webp"),
+    alt: "A rooftop air handler with new copper piping and valve actuators",
+    brief: "Real job photo (Mar 2025).",
   },
   "service-monitoring": {
-    src: img("12-service-remote-monitoring.webp"),
-    alt: "Remote monitoring",
-    brief: "Service card. 4:5.",
+    src: img("52-service-monitoring-real.webp"),
+    alt: "A weather station mounted on a rooftop unit for remote monitoring",
+    brief: "Real job photo (Jun 2026).",
   },
   "service-inventory": {
-    src: img("13-service-inventory-fabrication.webp"),
-    alt: "Inventory and fabrication",
-    brief: "Service card. 4:5.",
+    src: img("53-service-inventory-real.webp"),
+    alt: "A building controller from Orravan's parts inventory",
+    brief: "Real job photo (Mar 2025).",
   },
 
   /* --- software sees. experience decides. ------------------------------ */

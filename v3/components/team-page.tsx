@@ -5,6 +5,7 @@ import {
   DEPARTMENTS,
   LEADERSHIP,
   TEAM_PAGE,
+  TIERS,
   type Person,
 } from "@/lib/company";
 import { Band, Head } from "./sections-a";
@@ -20,8 +21,8 @@ import { asset } from "@/lib/images";
  * opens the profile rather than a separate page, so the quote and bio
  * are one click away without losing the reader's place in the grid.
  *
- * Order carries the hierarchy: leadership first, then everyone else in
- * the order of Alex's spreadsheet.
+ * Since 17 Nov the grid is split into Orravan's four tiers, each under
+ * a small label: ownership, leadership, managers, leads.
  */
 
 export function TeamIntro() {
@@ -47,8 +48,15 @@ export function TeamIntro() {
   );
 }
 
-/** One list, no headings: leadership, then the groups in roster order. */
-const TEAM: Person[] = [...LEADERSHIP, ...DEPARTMENTS.flatMap((d) => d.people)];
+const PEOPLE = new Map(
+  [...LEADERSHIP, ...DEPARTMENTS.flatMap((d) => d.people)].map((p) => [p.id, p]),
+);
+
+/** The tiers with their people resolved, in Orravan's order. */
+const GROUPS = TIERS.map((t) => ({
+  name: t.name,
+  people: t.ids.map((id) => PEOPLE.get(id)).filter((p): p is Person => Boolean(p)),
+}));
 
 const firstName = (name: string) => name.split(" ")[0];
 
@@ -59,22 +67,29 @@ export function Org() {
     <Band id="org">
       <Head lines={TEAM_PAGE.orgHead} copy={TEAM_PAGE.orgCopy} />
 
-      <ul className="o-team-grid">
-        {TEAM.map((p, i) => (
-          <li key={p.id}>
-            <Reveal delay={(i % 4) * 60}>
-              <button type="button" className="o-team-card" onClick={() => setOpen(p)}>
-                <Portrait p={p} />
-                <span className="o-display o-team-card-name">{p.name}</span>
-                <span className="o-label o-team-role">{p.role}</span>
-                <span className="o-team-meet">
-                  Meet {firstName(p.name)} <span aria-hidden>&rarr;</span>
-                </span>
-              </button>
-            </Reveal>
-          </li>
+      <div className="o-team-tiers">
+        {GROUPS.map((g) => (
+          <section key={g.name} className="o-team-tier" aria-label={g.name}>
+            <h3 className="o-label o-team-tier-name">{g.name}</h3>
+            <ul className="o-team-grid">
+              {g.people.map((p, i) => (
+                <li key={p.id}>
+                  <Reveal delay={(i % 4) * 60}>
+                    <button type="button" className="o-team-card" onClick={() => setOpen(p)}>
+                      <Portrait p={p} />
+                      <span className="o-display o-team-card-name">{p.name}</span>
+                      <span className="o-label o-team-role">{p.role}</span>
+                      <span className="o-team-meet">
+                        Meet {firstName(p.name)} <span aria-hidden>&rarr;</span>
+                      </span>
+                    </button>
+                  </Reveal>
+                </li>
+              ))}
+            </ul>
+          </section>
         ))}
-      </ul>
+      </div>
 
       {open && <Profile p={open} onClose={() => setOpen(null)} />}
     </Band>
