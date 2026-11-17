@@ -332,6 +332,17 @@ export const DEPARTMENTS: Department[] = [
   },
 ];
 
+/**
+ * The order the team page shows people in, by tier (Alex, 17 Nov).
+ * Each id refers to someone in LEADERSHIP or DEPARTMENTS above.
+ */
+export const TIERS: { name: string; ids: string[] }[] = [
+  { name: "Ownership", ids: ["rigo-sr", "danny", "rigo-jr"] },
+  { name: "Leadership", ids: ["ray", "jessica", "kendall", "don"] },
+  { name: "Managers", ids: ["simon", "lupe", "juan", "victor"] },
+  { name: "Leads", ids: ["alex", "alfred", "christine"] },
+];
+
 export const TEAM_PAGE = {
   eyebrow: "Who we are",
   head: ["The people", "behind the work."],
@@ -339,7 +350,7 @@ export const TEAM_PAGE = {
     "Mechanical, retrofit, automation and the office. Fifty people, one standard, and a name on every job.",
   orgHead: ["Meet", "the team."],
   orgCopy:
-    "The people who run the work, leadership first. Open anyone to read more.",
+    "Ownership, leadership, managers and leads. Open anyone to read more.",
   careersHead: ["Build what", "buildings become."],
   careersCopy:
     "We hire trained trades and keep them. If that is the kind of shop you want to work in, we would like to hear from you.",

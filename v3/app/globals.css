@@ -1089,6 +1089,18 @@ main > section { scroll-margin-top: 72px; }
 @media (min-width: 760px) { .o-team-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (min-width: 1280px) { .o-team-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (min-width: 1024px) { .o-team-grid { margin-right: 5vw; } }
+.o-team-tier + .o-team-tier { margin-top: clamp(36px, 4.5vw, 64px); }
+.o-team-tier-name {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 1120px;
+  margin: 0 0 clamp(14px, 1.6vw, 22px);
+  font-size: 11px;
+  color: var(--orravan-blue);
+}
+.o-team-tier-name::after { content: ""; flex: 1; height: 1px; background: var(--color-rule, rgba(17, 20, 23, 0.12)); }
+@media (min-width: 1024px) { .o-team-tier-name { margin-right: 5vw; } }
 /* Height chains through the Reveal wrapper so every card in a row
    ends on the same line, however long the title. */
 .o-team-grid > li,

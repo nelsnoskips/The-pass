@@ -97,8 +97,9 @@ export function Story() {
       id="story"
       className="o-st"
       data-still={still || undefined}
-      /* One screen to read the head, then one per chapter to travel. */
-      style={{ "--travel": `${100 + CHAPTERS.length * 62}vh` } as React.CSSProperties}
+      /* Most of a screen to read the head, then about a third of one per
+         chapter: Don found the full screen per chapter too long (17 Nov). */
+      style={{ "--travel": `${70 + CHAPTERS.length * 32}vh` } as React.CSSProperties}
       aria-labelledby="st-head"
     >
       <div className="o-st-stick">
