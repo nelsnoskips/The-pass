@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Orravan Assist forms</title><meta name="robots" content="noindex"></head>
+<body>
+<!-- Declares the assistant's two forms so Netlify registers them at
+     deploy. The assistant posts here with fetch; nobody visits it. -->
+<form name="assist-request" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input name="bot-field"><input name="details"><input name="phone">
+  <textarea name="message"></textarea><input name="contact">
+  <textarea name="conversation"></textarea><input name="page">
+</form>
+<form name="assist-emergency" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input name="bot-field"><input name="details"><input name="phone">
+  <textarea name="message"></textarea><input name="contact">
+  <textarea name="conversation"></textarea><input name="page">
+</form>
+<form name="request-quote" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input name="bot-field"><input name="first_name"><input name="last_name">
+  <input name="phone"><input name="email"><input name="street_address">
+  <input name="city"><input name="postal"><textarea name="message"></textarea>
+  <input name="page">
+</form>
+<form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input name="bot-field"><input name="name"><input name="company"><input name="email">
+  <input name="phone"><textarea name="message"></textarea><input name="page">
+</form>
+<form name="parts-request" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input name="bot-field"><input name="name"><input name="company"><input name="email">
+  <input name="phone"><textarea name="notes"></textarea><textarea name="parts"></textarea><input name="page">
+</form>
+</body>
+</html>

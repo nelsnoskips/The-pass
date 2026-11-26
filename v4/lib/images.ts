@@ -1,0 +1,186 @@
+/**
+ * Every plate on the page, addressed by slot.
+ *
+ * These are the delivered direction-2 assets. Photographic plates use
+ * the web set (.webp — 33-166KB each); the two official logos ship as
+ * PNG with alpha, and are never redrawn, recoloured or cropped. The
+ * hero's leader and building are real cut-outs with alpha, which is
+ * what lets them run as independent parallax layers.
+ *
+ * Until a file exists at a slot's path the slot renders a composed
+ * placeholder, so the page is reviewable before the library lands and
+ * dropping the files in is the whole deployment step.
+ */
+
+/** Every asset URL goes through here so a based build stays whole. */
+export const asset = (path: string) =>
+  `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${path}`;
+
+export type Slot = { src: string; alt: string; brief: string };
+
+const img = (file: string) => `/images/${file}`;
+
+/**
+ * The landing screen's slideshow: Orravan's own photographs, each
+ * widened to 16:9 with the untouched original composited at the
+ * centre. They sit under a steel wash, so they read as texture behind
+ * the wordmark rather than as pictures to look at.
+ */
+export const ENTRY_SLIDES: { src: string; alt: string; focus: string }[] = [
+  { src: img("35-hero-slide-1-team.webp"), alt: "The Orravan team and fleet outside the shop", focus: "50% 40%" },
+  { src: img("36-hero-slide-2-chiller.webp"), alt: "A technician at a chiller in a central plant", focus: "60% 50%" },
+  { src: img("38-hero-slide-4-crew.webp"), alt: "Orravan technicians in a mechanical room", focus: "50% 35%" },
+  { src: img("39-hero-slide-5-fleet.webp"), alt: "Orravan vehicles on a job site", focus: "60% 50%" },
+  { src: img("40-hero-slide-6-rooftop.webp"), alt: "Rooftop air handlers", focus: "50% 60%" },
+];
+
+export const IMAGES: Record<string, Slot> = {
+  /* --- the identity. Never substitute a generated mark. -------------- */
+  "logo-light": {
+    src: img("24-official-logo-on-light.png"),
+    alt: "Orravan",
+    brief: "Official dark wordmark. Ivory and white surfaces only. Min height 32px.",
+  },
+  "logo-reverse": {
+    src: img("23-official-logo-reverse.png"),
+    alt: "Orravan",
+    brief: "Official reverse wordmark. Blue and charcoal surfaces only. Min height 32px.",
+  },
+
+  /* --- the hero, three independent layers ---------------------------- */
+  "hero-blueprint": {
+    src: img("01-hero-blueprint-background.webp"),
+    alt: "",
+    brief: "Blueprint field. Hero base layer, full bleed, moves slowest.",
+  },
+  /* The O-check from the official mark, redrawn clean at hero size.
+     Replaces the facility leader and the building cut-away (2 Oct call). */
+  "hero-mark": {
+    src: img("33-hero-mark.webp"),
+    alt: "",
+    brief: "Alpha. The O-check emblem, hero right layer, contained.",
+  },
+
+  /* --- one view. every system. --------------------------------------- */
+  "view-building": {
+    src: img("04-one-view-building-section.webp"),
+    alt: "A building in section: occupied space, controls and mechanical",
+    brief: "Connected systems section. 16:9.",
+  },
+
+  /* --- less dashboard. more direction. -------------------------------- */
+  "signal-people": {
+    src: img("05-software-people-plate.webp"),
+    alt: "A facility leader and an Orravan specialist reading a signal together",
+    brief: "Software introduction. 3:2.",
+  },
+
+  /* --- from signal to decision ---------------------------------------- */
+  "decision-remote": {
+    src: img("47-decision-remote-real.webp"),
+    alt: "An Orravan Controls technician working on a laptop beside a controls panel",
+    brief: "Real job photo (Aug 2023), 4:5.",
+  },
+  "decision-field": {
+    src: img("48-decision-field-real.webp"),
+    alt: "A technician rigging a pump with a chain hoist on site",
+    brief: "Real job photo, 4:5.",
+  },
+  "decision-client": {
+    src: img("49-decision-client-real.webp"),
+    alt: "The Orravan team with a client in the client's operations office",
+    brief: "Real job photo (Feb 2022), 4:5.",
+  },
+
+  /* --- resolution you can see ----------------------------------------- */
+  "resolution-people": {
+    src: img("09-verified-outcome-lobby.webp"),
+    alt: "A comfortable lobby, the work verified",
+    brief: "Resolution section. 16:9.",
+  },
+
+  /* --- intelligence, applied ------------------------------------------ */
+  "service-automation": {
+    src: img("50-service-automation-real.webp"),
+    alt: "An Orravan-built controls panel with Metasys building controllers",
+    brief: "Real job photo (Nov 2025).",
+  },
+  "service-hvac": {
+    src: img("51-service-hvac-real.webp"),
+    alt: "A rooftop air handler with new copper piping and valve actuators",
+    brief: "Real job photo (Mar 2025).",
+  },
+  "service-monitoring": {
+    src: img("52-service-monitoring-real.webp"),
+    alt: "A weather station mounted on a rooftop unit for remote monitoring",
+    brief: "Real job photo (Jun 2026).",
+  },
+  "service-inventory": {
+    src: img("53-service-inventory-real.webp"),
+    alt: "A building controller from Orravan's parts inventory",
+    brief: "Real job photo (Mar 2025).",
+  },
+
+  /* --- software sees. experience decides. ------------------------------ */
+  /* Both are Orravan's own job photos (20 Oct). The generated
+     operations centre and field-specialist stock read as AI. */
+  "difference-software": {
+    src: img("45-difference-controls-panel.webp"),
+    alt: "An Orravan-built controls panel with two building controllers",
+    brief: "Software Sees. Supplied 2016-controls-panel-dual.jpg, portrait.",
+  },
+  "difference-experience": {
+    src: img("46-difference-tech-chiller.webp"),
+    alt: "An Orravan technician working at the base of a chiller",
+    brief: "Experience Decides. Supplied 2015-chiller-room.jpg, 4:3.",
+  },
+
+  /* --- build what buildings become ------------------------------------- */
+  team: {
+    src: img("32-team-lunch.webp"),
+    alt: "The Orravan team at lunch inside the shop",
+    brief: "Careers and team. Supplied; portrait, so frame for the table.",
+  },
+
+  /* --- ten years in the building: the supplied photographs --------------
+     Picked from Orravan's Drive on 2026-09-10; see supplied/
+     README.md for the originals and what each one is standing in for. */
+  "story-2014": {
+    src: img("25-story-2014-founder.webp"),
+    alt: "Danny Navarro at a rooftop pump in Orravan's first years",
+    brief: "Danny Navarro, early days, upscaled from a scan. Confirmed by Alex 14 Sep 2026. Former employer's sleeve patch retouched out 3 Oct 2026.",
+  },
+  "story-2015": {
+    src: img("26-story-2015-chiller.webp"),
+    alt: "A technician working at the base of a chiller in a plant room",
+    brief: "Chiller room, Nov 2022. 4:3.",
+  },
+  "story-2016": {
+    src: img("27-story-2016-controls.webp"),
+    alt: "An Orravan-built controls panel, wired and labelled",
+    brief: "Controls panel, Sep 2026. Portrait.",
+  },
+  "story-2020": {
+    src: img("29-story-2020-shop.webp"),
+    alt: "Two of the Orravan leadership outside the shop at 3323",
+    brief: "The shop, Feb 2021. Portrait.",
+  },
+  "story-2023": {
+    src: img("30-story-2023-crew.webp"),
+    alt: "Nine Orravan technicians on a rooftop beside the equipment",
+    brief: "Rooftop crew, upscaled. Keep below full bleed; patch text is synthesised.",
+  },
+  "story-2024": {
+    src: img("31-story-2024-team.webp"),
+    alt: "The whole Orravan team and fleet outside the shop",
+    brief: "Team and fleet, supplied. 7:5.",
+  },
+
+  /* --- built for every industry ----------------------------------------- */
+  "industry-healthcare": { src: img("17-industry-healthcare.webp"), alt: "Healthcare", brief: "Industry. 3:2." },
+  "industry-commercial": { src: img("18-industry-commercial.webp"), alt: "Commercial", brief: "Industry. 3:2." },
+  "industry-education": { src: img("19-industry-education.webp"), alt: "Education", brief: "Industry. 3:2." },
+  "industry-hospitality": { src: img("20-industry-hospitality.webp"), alt: "Hospitality", brief: "Industry. 3:2." },
+  "industry-data-centers": { src: img("21-industry-data-centers.webp"), alt: "Data center cooling and server aisle", brief: "Industry. 3:2." },
+  "industry-government": { src: img("34-industry-government.webp"), alt: "Government", brief: "Industry. 3:2. Stand-in until Orravan supplies a real job photo." },
+};

@@ -1,0 +1,276 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { ENTRANCE, NAV } from "@/lib/site";
+import { ENTRY_SLIDES, IMAGES, asset } from "@/lib/images";
+
+/**
+ * The blue entry and the hero it hands over to.
+ *
+ * Entry: a slow slideshow of Orravan's own photographs under a steel
+ * bluish-gray wash, the official mark centred, and
+ * exactly two actions. Between 0 and 25vh of scroll the entry layer
+ * fades and rises 24px and the blueprint field appears underneath.
+ * The hero copy then reveals line by line behind a clip mask, and the
+ * navigation takes the page.
+ *
+ * The hero is two independent layers moving at different rates — the
+ * blueprint slowest, Orravan's O-check emblem faster — with the whole
+ * budget kept under 48px of travel, plus a few pixels of pointer
+ * depth. Restraint is the point: this is
+ * depth, not a ride.
+ *
+ * The two actions never fade out and never leave the pointer's reach;
+ * they are the same two doors in the entry and in the hero, so they
+ * rise with the entry layer but hold full opacity throughout.
+ *
+ * Everything is written straight to the DOM on animation frames, so the
+ * scrub costs no React renders. Reduced motion gets the finished hero
+ * immediately, with no scrubbing and no parallax.
+ */
+
+const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+const clamp = (t: number) => Math.min(1, Math.max(0, t));
+
+/** How long each landing photograph holds before the next fades in. */
+const SLIDE_MS = 6500;
+
+/** Travel budget for the whole hero, in pixels. Stays under 48. */
+const TRAVEL = 44;
+
+export function Entrance() {
+  const section = useRef<HTMLElement>(null);
+  const entry = useRef<HTMLDivElement>(null);
+  const doors = useRef<HTMLDivElement>(null);
+  const blueprint = useRef<HTMLDivElement>(null);
+  const mark = useRef<HTMLDivElement>(null);
+  const copy = useRef<HTMLDivElement>(null);
+  const cue = useRef<HTMLDivElement>(null);
+  const slides = useRef<HTMLDivElement>(null);
+  const [slide, setSlide] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+
+  /* The landing slideshow's clock. Off under reduced motion, and paused
+     while the tab is hidden or once the visitor has scrolled in, so the
+     photographs never cycle behind a page nobody is looking at. A
+     manual pick restarts the clock from that slide. */
+  useEffect(() => {
+    setLoaded(true);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = window.setInterval(() => {
+      const away = document.hidden || document.documentElement.dataset.entered === "true";
+      if (!away) setSlide((n) => (n + 1) % ENTRY_SLIDES.length);
+    }, SLIDE_MS);
+    return () => window.clearInterval(t);
+  }, [slide]);
+
+  useEffect(() => {
+    const node = section.current;
+    if (!node) return;
+
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /** The finished hero: what reduced motion sees on arrival. */
+    const settle = () => {
+      entry.current?.style.setProperty("opacity", "0");
+      entry.current?.style.setProperty("pointer-events", "none");
+      entry.current?.style.setProperty("transform", "translate3d(0,-24px,0)");
+      doors.current?.style.setProperty("transform", "translate3d(0,-24px,0)");
+      cue.current?.style.setProperty("opacity", "0");
+      slides.current?.style.setProperty("opacity", "0");
+      for (const layer of [blueprint, mark]) {
+        layer.current?.style.setProperty("opacity", "1");
+        layer.current?.style.setProperty("transform", "none");
+      }
+      if (copy.current) {
+        copy.current.style.setProperty("opacity", "1");
+        copy.current.dataset.in = "true";
+      }
+      document.documentElement.dataset.entered = "true";
+    };
+
+    if (still) {
+      settle();
+      return;
+    }
+
+    let frame = 0;
+    let queued = false;
+    let px = 0;
+    let py = 0;
+
+    const read = () => {
+      queued = false;
+      const vh = window.innerHeight;
+      const y = window.scrollY;
+
+      // 2 — the handoff: 0 to 25vh, fade and rise 24px.
+      const handoff = ease(clamp(y / (vh * 0.25)));
+      entry.current?.style.setProperty("opacity", `${1 - handoff}`);
+      // The landing photographs leave with the entry, so the hero
+      // arrives on its own blueprint.
+      slides.current?.style.setProperty("opacity", `${1 - handoff}`);
+      entry.current?.style.setProperty("pointer-events", handoff > 0.75 ? "none" : "auto");
+      entry.current?.style.setProperty(
+        "transform",
+        `translate3d(0, ${(-24 * handoff).toFixed(1)}px, 0)`,
+      );
+      // The doors rise with the entry but keep their opacity and their
+      // hit area — they are the hero's actions too.
+      doors.current?.style.setProperty(
+        "transform",
+        `translate3d(0, ${(-24 * handoff).toFixed(1)}px, 0)`,
+      );
+
+      cue.current?.style.setProperty("opacity", `${1 - ease(clamp(y / (vh * 0.12)))}`);
+
+      // The hero does not leave. It drifts a little against the section
+      // rising over it, which is what reads as depth.
+      const drift = Math.min(vh * 0.16, y * 0.14);
+
+      // 3 — the hero's two layers, each at its own rate.
+      const q = clamp(y / (vh * 0.6));
+      const depth = ease(clamp(y / (vh * 0.3)));
+      blueprint.current?.style.setProperty("opacity", `${depth}`);
+      blueprint.current?.style.setProperty(
+        "transform",
+        `translate3d(${(px * 0.4).toFixed(1)}px, ${(q * -TRAVEL * 0.18 + py * 0.4 - drift * 0.35).toFixed(1)}px, 0)`,
+      );
+      mark.current?.style.setProperty("opacity", `${depth}`);
+      mark.current?.style.setProperty(
+        "transform",
+        `translate3d(${(px * 1.4).toFixed(1)}px, ${(q * TRAVEL * 0.3 + py * 1.4 - drift * 0.8).toFixed(1)}px, 0)`,
+      );
+
+      // 4 — the copy reveals by line once the entry has cleared.
+      if (copy.current) {
+        const shown = ease(clamp((y - vh * 0.1) / (vh * 0.18)));
+        copy.current.style.setProperty("opacity", `${shown}`);
+        copy.current.style.setProperty("transform", `translate3d(0, ${(-drift * 0.5).toFixed(1)}px, 0)`);
+        copy.current.style.setProperty("pointer-events", shown > 0.3 ? "auto" : "none");
+        copy.current.dataset.in = handoff > 0.6 ? "true" : "false";
+      }
+
+      document.documentElement.dataset.entered = handoff > 0.72 ? "true" : "false";
+    };
+
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      frame = requestAnimationFrame(read);
+    };
+
+    /* A few pixels of pointer depth, fine pointers only. */
+    const onPointer = (event: PointerEvent) => {
+      px = (event.clientX / window.innerWidth - 0.5) * -8;
+      py = (event.clientY / window.innerHeight - 0.5) * -5;
+      onScroll();
+    };
+    const fine = window.matchMedia("(pointer: fine)").matches;
+
+    read();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    if (fine) node.addEventListener("pointermove", onPointer);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      node.removeEventListener("pointermove", onPointer);
+      delete document.documentElement.dataset.entered;
+    };
+  }, []);
+
+  return (
+    <section ref={section} id="top" className="o-entrance">
+      <div className="o-entrance-stage">
+        {/* The hero, two independent layers. */}
+        <div ref={blueprint} className="o-layer o-layer-blueprint">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={asset(IMAGES["hero-blueprint"].src)} alt="" aria-hidden />
+        </div>
+        <div ref={mark} className="o-layer o-layer-mark">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={asset(IMAGES["hero-mark"].src)} alt="" aria-hidden />
+        </div>
+
+        {/* The landing screen's slideshow, under the entry only. */}
+        <div ref={slides} className="o-entry-slides">
+          <div className="o-slides" aria-hidden>
+            {ENTRY_SLIDES.map((s, k) =>
+              // Only the first photograph loads with the page; the rest
+              // follow once it has painted.
+              k === 0 || loaded ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={s.src}
+                  src={asset(s.src)}
+                  alt=""
+                  data-on={k === slide || undefined}
+                  style={{ objectPosition: s.focus }}
+                  decoding="async"
+                  fetchPriority={k === 0 ? "high" : "low"}
+                />
+              ) : null,
+            )}
+          </div>
+          <span className="o-wash" aria-hidden />
+          <div className="o-slide-dots" role="group" aria-label="Landing photographs">
+            {ENTRY_SLIDES.map((s, k) => (
+              <button
+                key={s.src}
+                type="button"
+                aria-label={`Show photograph ${k + 1}: ${s.alt}`}
+                aria-current={k === slide ? "true" : undefined}
+                onClick={() => setSlide(k)}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* The entry: the mark, two doors, the cue. Centred. */}
+        <div ref={entry} className="o-entry">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="o-entry-mark"
+            src={asset(IMAGES["logo-reverse"].src)}
+            alt={IMAGES["logo-reverse"].alt}
+          />
+          <div ref={doors} className="o-doors">
+            <a href={NAV.portalHref} className="o-btn-line">{NAV.portal}</a>
+            <a href={asset("/request-quote")} className="o-btn-solid">{NAV.request}</a>
+          </div>
+          <div ref={cue} className="o-cue" aria-hidden>
+            <span>{ENTRANCE.cue}</span>
+            <svg viewBox="0 0 16 9" width="16" height="9" fill="none">
+              <path d="M1 1 L8 8 L15 1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+          </div>
+        </div>
+
+        {/* The hero the entry hands over to. Left column. */}
+        <div ref={copy} className="o-hero" data-in="false">
+          <h1>
+            <span className="o-mask"><span>{ENTRANCE.headA}</span></span>
+            <span className="o-mask o-mask-2"><span>{ENTRANCE.headB}</span></span>
+          </h1>
+          <p className="o-hero-cred">
+            <a href={ENTRANCE.phoneHref}>{ENTRANCE.phone}</a>
+            <span aria-hidden>·</span>
+            <span>{ENTRANCE.license}</span>
+          </p>
+          <p>{ENTRANCE.body}</p>
+          <div className="o-hero-doors">
+            <a href={asset("/request-quote")} className="o-btn-solid">{ENTRANCE.primary}</a>
+            <a href={asset("/request-quote")} className="o-btn-line">{ENTRANCE.secondary}</a>
+            {/* Straight to the history for anyone who wants to know who
+                they would be hiring before they read what it costs. */}
+            <a href="#story" className="o-hero-anchor o-label">
+              {ENTRANCE.anchor} &darr;
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
