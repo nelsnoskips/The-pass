@@ -67,11 +67,15 @@ d("importer against Postgres", () => {
   });
 
   it("places future bookings on real tables and lists what can't fit", async () => {
-    const csv = ["Guest Name,Date,Time,Party Size,Phone", "Ana Perez,11/20/2026,7:00 PM,4,954-555-2001", "Ben Cole,2026-11-20,7:00 pm,4,", "Cy,2026-11-20,25:00,2,"].join("\n");
+    // A date safely in the future, in both formats the importer reads.
+    const ahead = new Date(Date.now() + 30 * 86_400_000);
+    const iso = ahead.toISOString().slice(0, 10);
+    const [y, m, d] = iso.split("-");
+    const csv = ["Guest Name,Date,Time,Party Size,Phone", `Ana Perez,${m}/${d}/${y},7:00 PM,4,954-555-2001`, `Ben Cole,${iso},7:00 pm,4,`, `Cy,${iso},25:00,2,`].join("\n");
     const r = await importBookings(sql, manager, venueId, csv, { dryRun: false, source: "resy.csv" });
     expect(r.created).toBe(1);
     expect(r.skipped).toEqual([
-      { line: 3, reason: "no free table at 19:00 on 2026-11-20 — seat it by hand" },
+      { line: 3, reason: `no free table at 19:00 on ${iso} — seat it by hand` },
       { line: 4, reason: "date or time not recognised" },
     ]);
     const [b] = await sql<{ source: string }[]>`select source from reservations where org_id = ${orgId}`;
