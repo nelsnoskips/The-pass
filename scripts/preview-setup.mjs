@@ -1,7 +1,8 @@
 /**
  * Test deploys only: load the demo restaurant and give the tester an
  * owner login, so a preview can be tried without running anything on a
- * computer. Runs during the Netlify build when DEMO_SETUP=1 is set for
+ * computer — with a believable week of guests and bookings
+ * (scripts/demo-day.mjs). Runs during the Netlify build when DEMO_SETUP=1 is set for
  * the deploy-preview / branch-deploy context. It refuses to run on a
  * production deploy, and both steps are safe to repeat on every deploy.
  *
@@ -24,6 +25,7 @@ if (!(process.env.DATABASE_URL ?? process.env.NETLIFY_DATABASE_URL)) {
 
 const run = (args) => execFileSync(process.execPath, args, { stdio: "inherit", env: process.env });
 run(["scripts/seed-demo.mjs"]);
+run(["scripts/demo-day.mjs"]);
 const email = process.env.DEMO_OWNER_EMAIL?.trim();
 if (email) run(["scripts/add-owner.mjs", email, "santorini"]);
 console.log("[preview-setup] Demo restaurant ready at /r/santorini.");
